@@ -53,7 +53,7 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
             if let userIdData = request.value, let receivedUserId = String(data: userIdData, encoding: .utf8) {
                 print("Received userId: \(receivedUserId)")
                 // 受信したユーザIDをFirestoreに保存
-                addReceivedUserIdToFirestore(receivedUserId)
+                Task { try await addReceivedUserIdToFirestore(receivedUserId) }
             }
             //centralmanagerに対して書き込みが成功したことを通知
             peripheralManager.respond(to: request, withResult: .success)
@@ -61,19 +61,11 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     }
 
     //受信したユーザーIDをFirebase Firestoreデータベースに保存する
-    func addReceivedUserIdToFirestore(_ receivedUserId: String) {
-        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-        let db = Firestore.firestore()
+    func addReceivedUserIdToFirestore(_ receivedUserId: String) async throws {
         //Firestoreのドキュメントに追加
-        db.collection("users").document(currentUserId).updateData([
+        try await Firestore.firestore().collection("users").document(userId).updateData([
             "connectList": FieldValue.arrayUnion([receivedUserId])
-        ]) { error in
-            if let error = error {
-                print("Error adding received user ID: \(error)")
-            } else {
-                print("Received user ID added successfully")
-            }
-        }
+        ])
     }
 
 }
