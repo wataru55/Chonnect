@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ProfileView: View {
     //MARK: - property
-    let user: User //自分じゃないユーザの情報
+    let user: User //他人のユーザ情報
+    let currentUser: User //自身のユーザ情報
+    static let shared = AuthService()
     let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
@@ -21,7 +23,7 @@ struct ProfileView: View {
                     Divider()
                     //post grid view
 
-                    if !user.isPrivate {
+                    if !user.isPrivate || currentUser.connectList.contains(user.id){
                         LazyVGrid(columns: GridItems, spacing: 2, content: {
                             ForEach(0...15, id: \.self) { index in
                                 Image("avengers")
@@ -45,5 +47,5 @@ struct ProfileView: View {
 }//view
 
 #Preview {
-    ProfileView(user: User.MOCK_USERS[0])
+    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1])
 }

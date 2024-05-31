@@ -45,7 +45,7 @@ class EditProfileViewModel: ObservableObject {
         //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
         self.profileImage = Image(uiImage: uiImage)
     }
-
+    @MainActor
     //Firebase Databaseのユーザ情報を変更する関数
     func updateUserData() async throws {
         //update profile image if changed

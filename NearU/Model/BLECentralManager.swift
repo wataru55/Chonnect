@@ -14,6 +14,9 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
     var discoveredPeripherals: [CBPeripheral] = [] //BLEデバイスのリストを保持
     var userId: String
 
+    let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
+    let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
+
     init(user: User) {
         self.userId = user.id
         super.init()
@@ -25,7 +28,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
         //central.stateプロパティで現在のBluetoothの状態を確認
         if central.state == .poweredOn {
             //BLEデバイスのスキャンを開始
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
+            centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
         }
     }
 
@@ -35,14 +38,15 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
         discoveredPeripherals.append(peripheral)
         //peripheralデバイスに接続を試みる
         centralManager.connect(peripheral, options: nil)
+        //peripheral.discoverServices([serviceUUID])
     }
 
     //接続が成功した後に呼び出される関数
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         //peripheralのデリゲードを自信に設定
         peripheral.delegate = self
-        //サービスを発見?
-        peripheral.discoverServices(nil)
+        //サービスを発見する
+        peripheral.discoverServices([serviceUUID])
     }
 
     //BLE周辺機器（ペリフェラル）のサービスが発見されたときに呼び出される関数
@@ -50,7 +54,8 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
         //発見されたサービスが存在するか確認
         guard let services = peripheral.services else { return }
         for service in services {
-            peripheral.discoverCharacteristics(nil, for: service) //サービスの特性を発見
+            //サービスの特性を発見
+            peripheral.discoverCharacteristics([characteristicUUID], for: service)
         }
     }
 

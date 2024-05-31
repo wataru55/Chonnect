@@ -11,18 +11,14 @@ struct MainTabView: View {
     //MARK: - property
     let user: User
 
-    @StateObject private var centralManager : BLECentralManager
-    @StateObject private var peripheralManager : BLEPeripheralManager
+    @StateObject var centralManager : BLECentralManager
+    @StateObject var peripheralManager : BLEPeripheralManager
 
     init(user: User) {
-        _centralManager = StateObject(wrappedValue: BLECentralManager(user: user))
-        _peripheralManager = StateObject(wrappedValue: BLEPeripheralManager(user: user))
         self.user = user
+        self._centralManager = StateObject(wrappedValue: BLECentralManager(user: user))
+        self._peripheralManager = StateObject(wrappedValue: BLEPeripheralManager(user: user))
     }
-//    init() {
-//        UITabBar.appearance().backgroundColor = .gray
-//        UITabBar.appearance().unselectedItemTintColor = .white
-//    }
 
     var body: some View {
         TabView {
@@ -31,7 +27,7 @@ struct MainTabView: View {
                     Image(systemName: "house")
                     Text("Home")
                 }
-            SearchView()
+            SearchView(currentUser: user)
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
