@@ -17,6 +17,9 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     var peripheralManager: CBPeripheralManager!
     var userId: String
 
+    let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
+    let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
+
     init(user: User) {
         self.userId = user.id
         super.init()
@@ -27,16 +30,15 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     //BLEサービスと特性を作成しアドバタイズを開始する関数
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn { //ペリフェラルのBluetoothがOnになっているか
-            let userIdData = userId.data(using: .utf8)! //ユーザーIDをUTF-8エンコードのデータ形式に変換
             //CBMutableCharacteristicを使って特性を作成
             let characteristic = CBMutableCharacteristic(
-                type: CBUUID(string: "YOUR_CHARACTERISTIC_UUID"), //特性のUUID
-                properties: .write, //書き込み可能
-                value: userIdData, //初期値
-                permissions: .writeable //アクセス権，書き込み可能
+                type: characteristicUUID,
+                properties: [.write], //書き込み可能
+                value: nil, //初期値
+                permissions: [.writeable] //アクセス権，書き込み可能
             )
             //CBMutableServiceを使ってサービスを作成
-            let service = CBMutableService(type: CBUUID(string: "YOUR_SERVICE_UUID"), primary: true)
+            let service = CBMutableService(type: serviceUUID, primary: true)
             //サービスに作成した特性を追加
             service.characteristics = [characteristic]
             //ペリフェラルが提供するサービスとして登録
@@ -53,7 +55,7 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
             if let userIdData = request.value, let receivedUserId = String(data: userIdData, encoding: .utf8) {
                 print("Received userId: \(receivedUserId)")
                 // 受信したユーザIDをFirestoreに保存
-                addReceivedUserIdToFirestore(receivedUserId)
+                Task { try await addReceivedUserIdToFirestore(receivedUserId) }
             }
             //centralmanagerに対して書き込みが成功したことを通知
             peripheralManager.respond(to: request, withResult: .success)
@@ -61,19 +63,11 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     }
 
     //受信したユーザーIDをFirebase Firestoreデータベースに保存する
-    func addReceivedUserIdToFirestore(_ receivedUserId: String) {
-        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
-        let db = Firestore.firestore()
+    func addReceivedUserIdToFirestore(_ receivedUserId: String) async throws {
         //Firestoreのドキュメントに追加
-        db.collection("users").document(currentUserId).updateData([
+        try await Firestore.firestore().collection("users").document(userId).updateData([
             "connectList": FieldValue.arrayUnion([receivedUserId])
-        ]) { error in
-            if let error = error {
-                print("Error adding received user ID: \(error)")
-            } else {
-                print("Received user ID added successfully")
-            }
-        }
+        ])
     }
 
 }
