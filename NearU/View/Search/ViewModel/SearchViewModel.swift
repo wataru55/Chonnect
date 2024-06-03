@@ -8,7 +8,7 @@
 import Foundation
 
 class SearchViewModel: ObservableObject {
-    @Published var users = [User]() //User型の空の配列を作成
+    @Published var allUsers = [User]() //User型の空の配列を作成
 
     init() {
         Task { try await fetchAllUsers() }
@@ -16,6 +16,6 @@ class SearchViewModel: ObservableObject {
 
     @MainActor
     func fetchAllUsers() async throws {
-        self.users = try await UserService.fetchAllUsers()
+        self.allUsers = try await UserService.fetchAllUsers()
     }
 }

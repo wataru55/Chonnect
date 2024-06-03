@@ -10,43 +10,22 @@ struct SearchView: View {
     //MARK: - property
     let currentUser: User
     @State private var searchText: String = ""
-    @StateObject var viewModel = SearchViewModel()
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack (spacing: 16){
-                    ForEach(viewModel.users) { user in
-                        NavigationLink(value: user) {
-                            HStack {
-                                CircleImageView(user: user, size: .xsmall)
-                                VStack (alignment: .leading){
-                                    Text(user.username)
-                                        .fontWeight(.bold)
+            VStack (spacing: -10){
+                EmptyView()
+                    .searchable(text: $searchText, prompt: "Search...") //検索欄
 
-                                    if let fullname = user.fullname { //usernameがnilじゃないなら
-                                        Text(fullname)
-                                    }
+                VStack {
+                    TopTabView(currentUser: currentUser)
 
-                                }//vstack
-                                .font(.footnote)
+                }//vstack
+                .navigationTitle("Explore")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+        }
 
-                                Spacer()
-                            }//hstack
-                            .foregroundStyle(.black) //navigationlinkのデフォルトカラーを青から黒に
-                            .padding(.horizontal)
-                        }//navigationlink
-                    }//foreach
-                }//lazyvstack
-                .padding(.top, 8)
-                .searchable(text: $searchText, prompt: "Search...") //検索欄
-            }//scrollview
-            .navigationDestination(for: User.self, destination: { value in
-                ProfileView(user: value, currentUser: currentUser)
-            })
-            .navigationTitle("Explore")
-            .navigationBarTitleDisplayMode(.inline)
-        }//navigationstack
     }
 }
 
