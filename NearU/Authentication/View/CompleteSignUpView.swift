@@ -13,13 +13,13 @@ struct CompleteSignUpView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Welcome to AppName, \(viewModel.username)")
+            Text("Welcome to 'Chonnect', \(viewModel.username)")
                 .multilineTextAlignment(.center)
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("Click below to complete registration and start using AppName")
+            Text("Click below to complete registration and start using 'Chonnect'")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
