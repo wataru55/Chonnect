@@ -12,7 +12,7 @@ struct ProfileView: View {
     let user: User //他人のユーザ情報
     let currentUser: User //自身のユーザ情報
     static let shared = AuthService()
-    let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 2), count: 3)
+    let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 2), count: 2)
 
     var body: some View {
             ScrollView(.vertical, showsIndicators: false) {
@@ -24,16 +24,76 @@ struct ProfileView: View {
                     //post grid view
 
                     if !user.isPrivate || currentUser.connectList.contains(user.id){
-                        LazyVGrid(columns: GridItems, spacing: 2, content: {
-                            ForEach(0...15, id: \.self) { index in
-                                Image("avengers")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .clipped()
+                        LazyVGrid(columns: GridItems, spacing: 20, content: {
+                            Button {
 
+                            } label: {
+                                Image("Instagram")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                    .cornerRadius(12)
+                                    .clipped()
+                            }
+
+                            Button {
+
+                            } label: {
+                                Image("X")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                    .cornerRadius(12)
+                                    .clipped()
+                            }
+
+                            Button {
+
+                            } label: {
+                                Image("YouTube")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                    .cornerRadius(12)
+                                    .clipped()
                             }
                         })//lazyvgrid
+                        .padding(.vertical, 10)
+
+                        HStack{
+                            Text("Work")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.gray)
+                                .padding(.horizontal, 20)
+
+                            Spacer()
+                        }
+
+                        LazyVGrid(columns: GridItems, spacing: 20, content: {
+                            Button {
+
+                            } label: {
+                                Image("Discord")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                    .cornerRadius(12)
+                                    .clipped()
+                            }
+
+                            Button {
+
+                            } label: {
+                                Image("Slack")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                    .cornerRadius(12)
+                                    .clipped()
+                            }
+                        })
+                        .padding(.vertical, 10)
                     } else {
                         Spacer()
                         Text("このユーザは非公開です")

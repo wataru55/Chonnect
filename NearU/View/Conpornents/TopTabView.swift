@@ -15,8 +15,8 @@ struct TopTabView: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack {
-                CustomTabBarButtonView(selected: $selectedTab, title: "Tab 1", tag: 0)
-                CustomTabBarButtonView(selected: $selectedTab, title: "Tab 2", tag: 1)
+                CustomTabBarButtonView(selected: $selectedTab, title: "All", tag: 0)
+                CustomTabBarButtonView(selected: $selectedTab, title: "Connected", tag: 1)
             }
             .padding()
 

@@ -32,11 +32,6 @@ struct MainTabView: View {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
                 }
-            PostView()
-                .tabItem {
-                    Image(systemName: "plus.app")
-                    Text("Post")
-                }
 
             CurrentUserProfileView(user: user)
                 .tabItem {
