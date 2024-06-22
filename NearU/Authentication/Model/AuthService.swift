@@ -14,7 +14,7 @@ class AuthService {
     @Published var userSession: FirebaseAuth.User? //Firebaseのユーザ認証に用いられる変数
     @Published var currentUser: User?
 
-    static let shared = AuthService()
+    static let shared = AuthService() //シングルトンインスタンス
 
     init() {
         Task{ try await loadUserData() }
@@ -56,7 +56,7 @@ class AuthService {
     }
 
     func signout() {
-        try? Auth.auth().signOut() //try?はエラーを無視する
+        try? Auth.auth().signOut() //try?はエラーを無視
         self.userSession = nil
         self.currentUser = nil
     }

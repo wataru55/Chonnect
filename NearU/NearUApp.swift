@@ -8,13 +8,42 @@
 import SwiftUI
 import FirebaseCore
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    //アプリケーションの起動時に呼び出されるメソッド
+    func application(_ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
 
-    return true
-  }
+        return true
+    }
+
+    //アプリケーションがバックグラウンドに移行する直前に呼ばれる
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        print("background")
+        BLECentralManager.shared.stopScan()
+        BLEPeripheralManager.shared.stopAdvertising()
+
+        if BLECentralManager.shared.centralManager.state == .poweredOn {
+            BLECentralManager.shared.startScanning()
+        }
+
+        if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
+            BLEPeripheralManager.shared.startAdvertising()
+        }
+
+    }
+
+    // アプリケーションがフォアグラウンドに移行する直前に呼ばれる
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        print("foreground")
+        if BLECentralManager.shared.centralManager.state == .poweredOn {
+            BLECentralManager.shared.startScanning()
+        }
+
+        if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
+            BLEPeripheralManager.shared.startAdvertising()
+        }
+    }
 }
 
 @main

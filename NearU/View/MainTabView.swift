@@ -11,13 +11,12 @@ struct MainTabView: View {
     //MARK: - property
     let user: User
 
-    @StateObject var centralManager : BLECentralManager
-    @StateObject var peripheralManager : BLEPeripheralManager
+    @StateObject var centralManager = BLECentralManager.shared
+    @StateObject var peripheralManager = BLEPeripheralManager.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     init(user: User) {
         self.user = user
-        self._centralManager = StateObject(wrappedValue: BLECentralManager(user: user))
-        self._peripheralManager = StateObject(wrappedValue: BLEPeripheralManager(user: user))
     }
 
     var body: some View {
@@ -46,7 +45,36 @@ struct MainTabView: View {
                 }
         }
         .accentColor(Color(.systemMint))
+        .onAppear {
+            centralManager.configure(with: user)
+            peripheralManager.configure(with: user)
+        }
+        .onChange(of: scenePhase) {
+            switch scenePhase {
+            case .active:
+                if BLECentralManager.shared.centralManager.state == .poweredOn {
+                    BLECentralManager.shared.startScanning()
+                }
 
+                if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
+                    BLEPeripheralManager.shared.startAdvertising()
+                }
+
+            case .inactive:
+                BLECentralManager.shared.stopScan()
+                BLEPeripheralManager.shared.stopAdvertising()
+            case .background:
+                if BLECentralManager.shared.centralManager.state == .poweredOn {
+                    BLECentralManager.shared.startScanning()
+                }
+
+                if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
+                    BLEPeripheralManager.shared.startAdvertising()
+                }
+            @unknown default:
+                print("Unexpected new value.")
+            }
+        }
     } //body
 }//view
 
