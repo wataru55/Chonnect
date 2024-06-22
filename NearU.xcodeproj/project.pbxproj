@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6367B7952BE14A080065C1BD /* UserStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6367B7942BE14A080065C1BD /* UserStatView.swift */; };
+		637AA27E2C0E0EF30048700A /* SNSButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA27D2C0E0EF30048700A /* SNSButtonView.swift */; };
 		638732062BF4AE3F0099F68A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638732052BF4AE3F0099F68A /* User.swift */; };
 		638732082BF4B0E40099F68A /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638732072BF4B0E40099F68A /* MainTabView.swift */; };
 		6387320B2BF4B3680099F68A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387320A2BF4B3680099F68A /* LoginView.swift */; };
@@ -31,7 +32,6 @@
 		63B64FE62B8C797400289469 /* BLECentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B64FE52B8C797400289469 /* BLECentralManager.swift */; };
 		63B650052B8DDDF700289469 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B650042B8DDDF700289469 /* HomeView.swift */; };
 		63B650072B8DDE9300289469 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B650062B8DDE9300289469 /* ProfileView.swift */; };
-		63B650092B8DDEE000289469 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B650082B8DDEE000289469 /* PostView.swift */; };
 		63B6500B2B8DDF0200289469 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B6500A2B8DDF0200289469 /* SettingView.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
@@ -55,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		6367B7942BE14A080065C1BD /* UserStatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatView.swift; sourceTree = "<group>"; };
+		637AA27D2C0E0EF30048700A /* SNSButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNSButtonView.swift; sourceTree = "<group>"; };
 		638732052BF4AE3F0099F68A /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		638732072BF4B0E40099F68A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		6387320A2BF4B3680099F68A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -80,7 +81,6 @@
 		63B64FE72B8C7BF200289469 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		63B650042B8DDDF700289469 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		63B650062B8DDE9300289469 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		63B650082B8DDEE000289469 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		63B6500A2B8DDF0200289469 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -141,6 +141,7 @@
 				6367B7942BE14A080065C1BD /* UserStatView.swift */,
 				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
 				63AEF0F82C0C4C2A00DE196E /* TopTabView.swift */,
+				637AA27D2C0E0EF30048700A /* SNSButtonView.swift */,
 			);
 			path = Conpornents;
 			sourceTree = "<group>";
@@ -264,7 +265,6 @@
 			isa = PBXGroup;
 			children = (
 				63B650042B8DDDF700289469 /* HomeView.swift */,
-				63B650082B8DDEE000289469 /* PostView.swift */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -445,7 +445,6 @@
 				63AEF0FB2C0C4C6500DE196E /* ConnectedSearchView.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
 				63B64FDA2B8C763900289469 /* ContentView.swift in Sources */,
-				63B650092B8DDEE000289469 /* PostView.swift in Sources */,
 				6367B7952BE14A080065C1BD /* UserStatView.swift in Sources */,
 				63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */,
 				638732232BF4BC770099F68A /* ContentViewModel.swift in Sources */,
@@ -463,6 +462,7 @@
 				63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */,
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
+				637AA27E2C0E0EF30048700A /* SNSButtonView.swift in Sources */,
 				6387320D2BF4B3930099F68A /* AddEmailView.swift in Sources */,
 				63DFF8902BF876D100A6DFB8 /* SearchViewModel.swift in Sources */,
 				63DFF8992BFC9A8300A6DFB8 /* CircleImageView.swift in Sources */,
@@ -614,6 +614,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "近くのデバイスから情報を受信するためにBluetooshを使用します";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "アイコンにフォルダ内の写真を使用します";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -625,7 +627,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU20240604;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -638,6 +640,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NearU/Preview Content\"";
@@ -645,6 +648,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "近くのデバイスから情報を受信するためにBluetooshを使用します";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "アイコンにフォルダ内の写真を使用します";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -656,8 +661,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU20240604;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

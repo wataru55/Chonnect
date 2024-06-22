@@ -50,7 +50,7 @@ struct ProfileHeaderView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .frame(width: 360, height: 32)
-                    .background(user.isCurrentUser ? .white : .blue) //.backgroundstyleじゃなぜダメ？
+                    .background(user.isCurrentUser ? .white : Color(.systemMint)) 
                     .cornerRadius(6)
                     .foregroundStyle(user.isCurrentUser ? .black : .white)
                     .overlay(

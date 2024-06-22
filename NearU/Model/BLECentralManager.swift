@@ -9,26 +9,34 @@ import Foundation
 
 //BLEデバイスをスキャンして管理するクラス
 class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    static let shared = BLECentralManager() //シングルトンインスタンス
     //BLEデバイスのスキャンや接続管理をするためのインスタンス変数
     var centralManager: CBCentralManager!
     var discoveredPeripherals: [CBPeripheral] = [] //BLEデバイスのリストを保持
-    var userId: String
+    var userId: String?
 
     let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
     let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
 
-    init(user: User) {
-        self.userId = user.id
+    private override init() {
+        //self.userId = user.id
         super.init()
         //インスタンスを作成し，デリゲードをselfに設定
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
+
+    func configure(with user: User) {
+        self.userId = user.id
+    }
+
     //Bluetoothの状態が変更されたときに呼び出される関数
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         //central.stateプロパティで現在のBluetoothの状態を確認
         if central.state == .poweredOn {
             //BLEデバイスのスキャンを開始
-            centralManager.scanForPeripherals(withServices: [serviceUUID], options: nil)
+            startScanning()
+        } else {
+            stopScan()
         }
     }
 
@@ -67,11 +75,24 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
             //特性のプロパティをチェックし、その特性が書き込み可能であるかを確認
             if characteristic.properties.contains(.write) {
                 //ユーザーIDをUTF-8エンコードのデータ形式に変換
-                let userIdData = userId.data(using: .utf8)!
-                //変換したユーザーIDデータを特性に書き込む
-                peripheral.writeValue(userIdData, for: characteristic, type: .withResponse)
+                if let userId = userId {
+                    let userIdData = userId.data(using: .utf8)!
+                    //変換したユーザーIDデータを特性に書き込む
+                    peripheral.writeValue(userIdData, for: characteristic, type: .withResponse)
+                }
             }
         }
+    }
+    //バックグラウンド時に呼び出される関数
+    func startScanning() {
+        centralManager.scanForPeripherals(withServices: [serviceUUID],
+                                          options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+        print("start Scanning")
+    }
+
+    func stopScan() {
+        centralManager.stopScan()
+        print("stop Scan")
     }
 
 }

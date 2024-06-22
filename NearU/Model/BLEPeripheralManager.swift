@@ -13,38 +13,31 @@ import Firebase
 
 //デバイスがペリフェラルとしてデータを提供するためのクラス
 class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDelegate {
+    static let shared = BLEPeripheralManager() // シングルトンインスタンス
     //サービスやキャラクタリスティックの作成を管理するインスタンス変数
     var peripheralManager: CBPeripheralManager!
-    var userId: String
+    var userId: String?
 
     let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
     let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
 
-    init(user: User) {
-        self.userId = user.id
+    private override init() { //外部プログラムからインスタンス生成ができないようにprivate
+        //self.userId = user.id
         super.init()
         //インスタンスを作成し，デリゲードを自身に設定
         peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
     }
 
+    func configure(with user: User) {
+        self.userId = user.id
+    }
+
     //BLEサービスと特性を作成しアドバタイズを開始する関数
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn { //ペリフェラルのBluetoothがOnになっているか
-            //CBMutableCharacteristicを使って特性を作成
-            let characteristic = CBMutableCharacteristic(
-                type: characteristicUUID,
-                properties: [.write], //書き込み可能
-                value: nil, //初期値
-                permissions: [.writeable] //アクセス権，書き込み可能
-            )
-            //CBMutableServiceを使ってサービスを作成
-            let service = CBMutableService(type: serviceUUID, primary: true)
-            //サービスに作成した特性を追加
-            service.characteristics = [characteristic]
-            //ペリフェラルが提供するサービスとして登録
-            peripheralManager.add(service)
-            //startAdvertisingメソッドでBLEアドバタイズを開始
-            peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [service.uuid]])
+            startAdvertising()
+        } else {
+            stopAdvertising()
         }
     }
     
@@ -65,9 +58,36 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     //受信したユーザーIDをFirebase Firestoreデータベースに保存する
     func addReceivedUserIdToFirestore(_ receivedUserId: String) async throws {
         //Firestoreのドキュメントに追加
-        try await Firestore.firestore().collection("users").document(userId).updateData([
-            "connectList": FieldValue.arrayUnion([receivedUserId])
-        ])
+        if let userId = self.userId{
+            try await Firestore.firestore().collection("users").document(userId).updateData([
+                "connectList": FieldValue.arrayUnion([receivedUserId])
+            ])
+        }
+    }
+
+    func startAdvertising() {
+        //CBMutableCharacteristicを使って特性を作成
+        let characteristic = CBMutableCharacteristic(
+            type: characteristicUUID,
+            properties: [.write], //書き込み可能
+            value: nil, //初期値
+            permissions: [.writeable] //アクセス権，書き込み可能
+        )
+        //CBMutableServiceを使ってサービスを作成
+        let service = CBMutableService(type: serviceUUID, primary: true)
+        //サービスに作成した特性を追加
+        service.characteristics = [characteristic]
+        //ペリフェラルが提供するサービスとして登録
+        peripheralManager.add(service)
+        //startAdvertisingメソッドでBLEアドバタイズを開始
+        peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [service.uuid],
+                                               CBAdvertisementDataLocalNameKey: "Chonnect"])
+        print("start Advertising")
+    }
+
+    func stopAdvertising() {
+        peripheralManager.stopAdvertising()
+        print("stop Advertising")
     }
 
 }
