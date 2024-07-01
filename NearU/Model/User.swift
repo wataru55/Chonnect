@@ -28,7 +28,7 @@ struct User: Identifiable, Hashable, Codable {
 
 extension User {
     static var MOCK_USERS: [User] = [
-        .init(id: NSUUID().uuidString, username: "ironman", profileImageUrl: "ironman1", fullname: "Tony Stark", bio: "I am ironman", email: "ironman@gmail.com", isPrivate: true, followList: [], followerList: [], connectList: []),
+        .init(id: NSUUID().uuidString, username: "ironman", profileImageUrl: "ironman1", fullname: "Tony Stark", bio: "I am ironman", email: "ironman@gmail.com", isPrivate: false, followList: [], followerList: [], connectList: []),
 
         .init(id: NSUUID().uuidString, username: "spiderman", profileImageUrl: "spiderman1", fullname: "peter parker",
               bio: "With great power comes great responsibility", email: "spiderman@gmail.com", isPrivate: true, followList: [], followerList: [], connectList: []),
