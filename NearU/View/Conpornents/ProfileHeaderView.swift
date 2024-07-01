@@ -16,10 +16,6 @@ struct ProfileHeaderView: View {
             // image and stats
             HStack (spacing: 35){
                 CircleImageView(user: user, size: .large)
-
-                UserStatView(count: 3, title: "Posts")
-                UserStatView(count: 1, title: "Followers")
-                UserStatView(count: 2, title: "Following")
             }
 
             //name and info

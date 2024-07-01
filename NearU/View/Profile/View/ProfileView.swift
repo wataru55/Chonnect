@@ -46,17 +46,6 @@ struct ProfileView: View {
                                     .cornerRadius(12)
                                     .clipped()
                             }
-
-                            Button {
-
-                            } label: {
-                                Image("YouTube")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            }
                         })//lazyvgrid
                         .padding(.vertical, 10)
 
