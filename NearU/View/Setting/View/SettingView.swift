@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SettingView: View {
     @StateObject var viewModel : SettingViewModel
-
     @State private var isOnBluetooth: Bool = true
 
     init(user: User) {
@@ -17,7 +16,6 @@ struct SettingView: View {
     }
 
     var body: some View {
-
         NavigationStack {
             Form {
                 Section(header: Text("Bluetooth")) {
@@ -34,11 +32,40 @@ struct SettingView: View {
                         Task { try await viewModel.updateIsPrivate() }
                     }
                 }
+
+
+                Section(header: Text("Application")) {
+                    HStack {
+                      Text("Product").foregroundStyle(Color.gray)
+                      Spacer()
+                      Text("Chonnect")
+                    }
+                    HStack {
+                      Text("Compatibility").foregroundStyle(Color.gray)
+                      Spacer()
+                        Text("iPhone")
+                    }
+                    HStack {
+                      Text("Developer").foregroundStyle(Color.gray)
+                      Spacer()
+                      Text("Wataru Takahashi")
+                    }
+                    HStack {
+                      Text("Designer").foregroundStyle(Color.gray)
+                      Spacer()
+                      Text("Ukyo Taniguchi")
+                    }
+                    HStack {
+                      Text("Version").foregroundStyle(Color.gray)
+                      Spacer()
+                      Text("1.0.0")
+                    }
+                  }
             }
-        }
-        .navigationTitle("Setting")
-    }
-}
+            .navigationTitle("Setting")
+        }//navigaiton
+    }//body
+}//view
 
 #Preview {
     SettingView(user: User.MOCK_USERS[0])

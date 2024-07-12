@@ -17,12 +17,11 @@ struct ConnectedSearchView: View {
         self._viewModel = StateObject(wrappedValue: ConnectedSearchViewModel(currentUser: currentUser))
     }
 
-
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack (spacing: 16){
-                    ForEach(viewModel.ConnectedUsers) { user in
+                    ForEach(viewModel.connectedUsers) { user in
                         NavigationLink(value: user) {
                             HStack {
                                 CircleImageView(user: user, size: .xsmall)

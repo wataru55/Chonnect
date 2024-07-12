@@ -35,7 +35,7 @@ struct MainTabView: View {
             CurrentUserProfileView(user: user)
                 .tabItem {
                     Image(systemName: "person")
-                    Text("MyGallery")
+                    Text("MyProfile")
                 }
 
             SettingView(user: user)
@@ -43,11 +43,19 @@ struct MainTabView: View {
                     Image(systemName: "gear")
                     Text("Setting")
                 }
-        }
+        } //tabview
         .accentColor(Color(.systemMint))
         .onAppear {
             centralManager.configure(with: user)
             peripheralManager.configure(with: user)
+
+            if centralManager.centralManager.state == .poweredOn {
+                centralManager.startScanning()
+            }
+
+            if peripheralManager.peripheralManager.state == .poweredOn {
+                peripheralManager.startAdvertising()
+            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
