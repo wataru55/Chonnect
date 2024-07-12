@@ -74,7 +74,7 @@ struct LoginView: View {
                         Text("Sign Up")
                             .font(.footnote)
                             .fontWeight(.bold)
-                            .foregroundStyle(Color(.systemMint))
+                            .foregroundStyle(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing))
                     }
                 }
                 .padding(.vertical)

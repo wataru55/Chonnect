@@ -59,6 +59,10 @@ class AuthService {
         try? Auth.auth().signOut() //try?はエラーを無視
         self.userSession = nil
         self.currentUser = nil
+
+        //BLE通信の停止
+        BLECentralManager.shared.stopCentralManagerDelegate()
+        BLEPeripheralManager.shared.stopPeripheralManagerDelegate()
     }
 
     //Firestore Databaseにユーザ情報を追加する関数
@@ -68,4 +72,24 @@ class AuthService {
         guard let encodedUser = try? Firestore.Encoder().encode(user) else { return } //ユーザ情報をJSONデータにエンコードしてencodedUserに格納
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser) //encodedUser(JSONデータ？)をドキュメントに書き込む
     }
+
+    //受信したユーザーIDをFirebase Firestoreデータベースに保存する
+    func addUserIdToFirestore(_ receivedUserId: String) async throws {
+        //Firestoreのドキュメントに追加
+        if let userId = self.currentUser?.id {
+            try await Firestore.firestore().collection("users").document(userId).updateData([
+                "connectList": FieldValue.arrayUnion([receivedUserId])
+            ])
+        }
+    }
+
+    func removeUserIdFromFirestore(_ receivedUserId: String) async throws {
+        // Firestoreのドキュメントから削除
+        if let userId = self.currentUser?.id {
+            try await Firestore.firestore().collection("users").document(userId).updateData([
+                "connectList": FieldValue.arrayRemove([receivedUserId])
+            ])
+        }
+    }
+
 }

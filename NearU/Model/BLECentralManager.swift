@@ -95,4 +95,9 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
         print("stop Scan")
     }
 
+    func stopCentralManagerDelegate() {
+        self.stopScan()
+        self.centralManager.delegate = nil
+    }
+
 }

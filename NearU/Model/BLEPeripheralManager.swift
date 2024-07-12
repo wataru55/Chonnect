@@ -4,7 +4,6 @@
 //
 //  Created by  髙橋和 on 2024/05/28.
 //
-
 import CoreBluetooth
 import Foundation
 import FirebaseAuth
@@ -43,12 +42,17 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     
     //BLEペリフェラルが書き込みリクエストを受け取ったときに呼び出される関数
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
-        for request in requests { //受け取ったリクエストを処理するfor文
+        //受け取ったリクエストを処理
+        for request in requests {
             //リクエストからデータを取り出し，それをString型に変換
             if let userIdData = request.value, let receivedUserId = String(data: userIdData, encoding: .utf8) {
-                print("Received userId: \(receivedUserId)")
+                //重複したidであるか確認
+                if !UserDefaultsManager.shared.getUserIDs().contains(receivedUserId) {
+                    UserDefaultsManager.shared.storeReceivedUserId(receivedUserId)
+                    print("Received userId: \(receivedUserId)")
+                }
                 // 受信したユーザIDをFirestoreに保存
-                Task { try await addReceivedUserIdToFirestore(receivedUserId) }
+                //Task { try await addReceivedUserIdToFirestore(receivedUserId) }
             }
             //centralmanagerに対して書き込みが成功したことを通知
             peripheralManager.respond(to: request, withResult: .success)
@@ -84,10 +88,14 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
                                                CBAdvertisementDataLocalNameKey: "Chonnect"])
         print("start Advertising")
     }
-
+    
     func stopAdvertising() {
         peripheralManager.stopAdvertising()
         print("stop Advertising")
     }
-
+    
+    func stopPeripheralManagerDelegate() {
+        self.stopAdvertising()
+        self.peripheralManager.delegate = nil
+    }
 }

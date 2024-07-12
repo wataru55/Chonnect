@@ -11,87 +11,86 @@ struct ProfileView: View {
     //MARK: - property
     let user: User //他人のユーザ情報
     let currentUser: User //自身のユーザ情報
-    static let shared = AuthService()
     let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 2), count: 2)
 
     var body: some View {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    //header
-                    ProfileHeaderView(user: user)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack {
+                //header
+                ProfileHeaderView(user: user)
 
-                    Divider()
-                    //post grid view
+                Divider()
+                //post view
 
-                    if !user.isPrivate || currentUser.connectList.contains(user.id){
-                        LazyVGrid(columns: GridItems, spacing: 20, content: {
-                            Button {
+                if !user.isPrivate || currentUser.connectList.contains(user.id) && user.connectList.contains(currentUser.id){
+                    LazyVGrid(columns: GridItems, spacing: 20, content: {
+                        Button {
 
-                            } label: {
-                                Image("Instagram")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            }
-
-                            Button {
-
-                            } label: {
-                                Image("X")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            }
-                        })//lazyvgrid
-                        .padding(.vertical, 10)
-
-                        HStack{
-                            Text("Work")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.gray)
-                                .padding(.horizontal, 20)
-
-                            Spacer()
+                        } label: {
+                            Image("Instagram")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                .cornerRadius(12)
+                                .clipped()
                         }
 
-                        LazyVGrid(columns: GridItems, spacing: 20, content: {
-                            Button {
+                        Button {
 
-                            } label: {
-                                Image("Discord")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            }
+                        } label: {
+                            Image("X")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                .cornerRadius(12)
+                                .clipped()
+                        }
+                    })//lazyvgrid
+                    .padding(.vertical, 10)
 
-                            Button {
+                    HStack{
+                        Text("Work")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.gray)
+                            .padding(.horizontal, 20)
 
-                            } label: {
-                                Image("Slack")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            }
-                        })
-                        .padding(.vertical, 10)
-                    } else {
-                        Spacer()
-                        Text("このユーザは非公開です")
                         Spacer()
                     }
-                }//Vstack
-            }//scrollView
-            .navigationTitle(user.username)
-            .navigationBarTitleDisplayMode(.inline)
+
+                    LazyVGrid(columns: GridItems, spacing: 20, content: {
+                        Button {
+
+                        } label: {
+                            Image("Discord")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                .cornerRadius(12)
+                                .clipped()
+                        }
+
+                        Button {
+
+                        } label: {
+                            Image("Slack")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
+                                .cornerRadius(12)
+                                .clipped()
+                        }
+                    })
+                    .padding(.vertical, 10)
+                } else {
+                    Spacer()
+                    Text("このユーザは非公開です")
+                    Spacer()
+                }
+            }//Vstack
+        }//scrollView
+        .navigationTitle(user.username)
+        .navigationBarTitleDisplayMode(.inline)
     }//body
 }//view
 

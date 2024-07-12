@@ -35,25 +35,83 @@ struct ProfileHeaderView: View {
             .padding(.horizontal)
 
             //action button
-            Button(action: {
-                if user.isCurrentUser {
+            if user.isCurrentUser {
+                Button(action: {
                     showEditProfile.toggle()
-                } else {
-                    print("Pressed Edit Profile")
-                }
-            }, label: {
-                Text(user.isCurrentUser ? "Edit Profile" : "Follow")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .frame(width: 360, height: 32)
-                    .background(user.isCurrentUser ? .white : Color(.systemMint)) 
-                    .cornerRadius(6)
-                    .foregroundStyle(user.isCurrentUser ? .black : .white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(user.isCurrentUser ? .gray : .clear, lineWidth: 1)
-                    )
-            })
+                }, label: {
+                    Text("Edit Profile")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .frame(width: 360, height: 32)
+                        .background(.white)
+                        .cornerRadius(6)
+                        .foregroundStyle(.black)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.gray)
+                        )
+                })
+            } else if AuthService.shared.currentUser?.connectList.contains(user.id) == true {
+                Button(action: {
+                    Task {
+                        do {
+                            UserDefaultsManager.shared.storeReceivedUserId(user.id)
+                            try await AuthService.shared.removeUserIdFromFirestore(user.id)
+                            // 保存されたユーザーIDをターミナルに表示
+                            let storedUserIds = UserDefaultsManager.shared.getUserIDs()
+                            print("Stored User IDs: \(storedUserIds)")
+                        } catch {
+                            // エラーハンドリング
+                            print("Error: \(error)")
+                        }
+                    }
+                }, label: {
+                    Image(systemName: "hand.wave.fill")
+                        .foregroundStyle(.white)
+                        .frame(width: 360, height: 35)
+                        .background(.gray)
+                        .cornerRadius(6)
+                })
+
+            } else {
+                HStack {
+                    Button(action: {
+                        Task {
+                            do {
+                                UserDefaultsManager.shared.removeUserID(user.id)
+                                try await AuthService.shared.addUserIdToFirestore(user.id)
+                                //degug
+                                let storedUserIds = UserDefaultsManager.shared.getUserIDs()
+                                print("Stored User IDs after removal: \(storedUserIds)")
+                            } catch {
+                                // エラーハンドリング
+                                print("Error: \(error)")
+                            }
+                        }
+                    }, label: {
+                        Image(systemName: "figure.2")
+                            .foregroundStyle(.white)
+                            .frame(width: 180, height: 35)
+                            .background(
+                              LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                            )
+                            .cornerRadius(6)
+
+                    })
+
+                    Button(action: {
+                        UserDefaultsManager.shared.removeUserID(user.id)
+
+                    }, label: {
+                        Image(systemName: "hand.wave.fill")
+                            .foregroundStyle(.white)
+                            .frame(width: 180, height: 35)
+                            .background(.gray)
+                            .cornerRadius(6)
+                    })
+                } //hstack
+            }
+
         }//vstack
         .fullScreenCover(isPresented: $showEditProfile, content: {
             EditProfileView(user: user)

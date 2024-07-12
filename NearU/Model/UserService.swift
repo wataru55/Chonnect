@@ -14,11 +14,19 @@ struct UserService {
         return try snapshot.data(as: User.self) //snapshotからUser型にデータをデコードして値を返す
     }
 
-    static func fetchAllUsers() async throws -> [User] {
-        let snapshot = try await Firestore.firestore().collection("users").getDocuments() //usersコレクションのドキュメントを全て取得
-        return snapshot.documents.compactMap({ try? $0.data(as: User.self) }) //compactMapメソッドによって一つずつドキュメントを取得し，User型に変換
-    }
+    static func fetchWaitingUsers(_ userIds: [String]) async throws -> [User] {
+        var users = [User]()
 
+        for userId in userIds {
+            let docRef = Firestore.firestore().collection("users").document(userId)
+            let document = try await docRef.getDocument()
+
+            if let user = try? document.data(as: User.self) {
+                users.append(user)
+            }
+        }
+        return users
+    }
 
     static func fetchConnectedUsers(withUid userId: String) async throws -> [User] {
         // First, fetch the user to get their connectList
