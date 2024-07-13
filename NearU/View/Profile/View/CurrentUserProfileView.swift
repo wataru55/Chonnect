@@ -10,6 +10,7 @@ import SwiftUI
 struct CurrentUserProfileView: View {
     //MARK: - property
     @State private var isAddingNewLink = false
+
     let user: User
     let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 2)
 
@@ -38,7 +39,7 @@ struct CurrentUserProfileView: View {
                     )
                     .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
                     .sheet(isPresented: $isAddingNewLink) {
-                        AddLinkView(isPresented: $isAddingNewLink)
+                        AddLinkView(isPresented: $isAddingNewLink, user: user)
                     }
 
                     HStack{
