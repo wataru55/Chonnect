@@ -49,7 +49,6 @@ class EditProfileViewModel: ObservableObject {
     //Firebase Databaseのユーザ情報を変更する関数
     func updateUserData() async throws {
         //update profile image if changed
-
         var data = [String: Any]() //keyがString型，valueがAnyの辞書を定義
 
         if let uiImage = uiImage {

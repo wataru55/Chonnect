@@ -19,14 +19,14 @@ class AuthService {
     init() {
         Task{ try await loadUserData() }
     }
-    
+
     @MainActor //メインスレットで行われることを保証
     func login(withEmail email: String, password: String) async throws { //throwsはエラーを投げる可能性がある時につける
         do { //エラーを補足するためにdo-catch構文
             let result = try await Auth.auth().signIn(withEmail: email, password: password) //Firebaseを利用してログイン．成功→ resultにユーザ情報が格納　失敗→エラー
             self.userSession = result.user
             try await loadUserData() //関数を非同期に実行
-            
+
         } catch { //doブロックでエラーが発生したら実行される
             print("DEBUG: Failed to log in with error \(error.localizedDescription)")
         }
@@ -67,7 +67,7 @@ class AuthService {
 
     //Firestore Databaseにユーザ情報を追加する関数
     private func uploadUserData(uid: String, username: String, email: String, isPrivate: Bool) async {
-        let user = User(id: uid, username: username, email: email, isPrivate: isPrivate, followList: [], followerList: [], connectList: []) //インスタンス化
+        let user = User(id: uid, username: username, email: email, isPrivate: isPrivate, connectList: [], snsLinks: [:]) //インスタンス化
         self.currentUser = user //curenntUserに現在のユーザ情報を格納
         guard let encodedUser = try? Firestore.Encoder().encode(user) else { return } //ユーザ情報をJSONデータにエンコードしてencodedUserに格納
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser) //encodedUser(JSONデータ？)をドキュメントに書き込む
@@ -91,5 +91,4 @@ class AuthService {
             ])
         }
     }
-
 }
