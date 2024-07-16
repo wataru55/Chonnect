@@ -16,13 +16,12 @@ struct AddLinkView: View {
     @StateObject var viewModel: AddLinkViewModel
 
     let snsOptions: [SNSOption] = [
-        SNSOption(name: "X (Twitter)", icon: "twitter", color: .primary),
-        SNSOption(name: "Instagram", icon: "instagram", color: .purple),
-        SNSOption(name: "Tiktok", icon: "tiktok", color: .indigo),
-        SNSOption(name: "BeReal", icon: "bereal", color: .primary),
-        SNSOption(name: "Facebook", icon: "facebook", color: .blue),
-        SNSOption(name: "Youtube", icon: "youtube", color: .red),
-        SNSOption(name: "その他", icon: "link", color: .gray)
+        SNSOption(name: "X (Twitter)", icon: "X (Twitter)", color: .black),
+        SNSOption(name: "Instagram", icon: "Instagram", color: .purple),
+        SNSOption(name: "TikTok", icon: "TikTok", color: .indigo),
+        SNSOption(name: "Facebook", icon: "Facebook", color: .blue),
+        SNSOption(name: "Youtube", icon: "Youtube", color: .red),
+        SNSOption(name: "Other", icon: "link", color: .gray)
     ]
 
     init(isPresented: Binding<Bool>, user: User) {
@@ -37,7 +36,16 @@ struct AddLinkView: View {
                     Picker("SNS", selection: $viewModel.selectedSNS) {
                         ForEach(snsOptions) { option in
                             HStack {
-                                Image(option.icon)
+                                if let uiImage = UIImage(named: option.icon) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                } else {
+                                    Image(systemName: option.icon)
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                }
+
                                 Text(option.name)
                                     .foregroundStyle(option.color)
 
@@ -60,9 +68,9 @@ struct AddLinkView: View {
                 })
             } //form
             .navigationTitle("Add Link")
-            .navigationBarItems(leading: Button("キャンセル") {
+            .navigationBarItems(leading: Button("Cancel") {
                 isPresented = false
-            }, trailing: Button("追加") {
+            }, trailing: Button("Done") {
                 Task {
                     try await viewModel.updateSNSLink()
                     await MainActor.run {

@@ -33,8 +33,14 @@ struct EditProfileView: View {
                 Spacer()
 
                 Button(action: {
-                    Task { try await viewModel.updateUserData() }
-                    dismiss()
+                    Task {
+                        try await viewModel.updateUserData()
+                        try await AuthService.shared.loadUserData()
+
+                        await MainActor.run {
+                            dismiss()
+                        }
+                    }
                 }, label: {
                     Text("Done")
                         .font(.subheadline)

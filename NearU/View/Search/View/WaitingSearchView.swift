@@ -15,12 +15,12 @@ struct WaitingSearchView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack (spacing: 16){
+                LazyVStack (spacing: 16) {
                     ForEach(viewModel.allUsers) { user in
                         NavigationLink(value: user) {
                             HStack {
                                 CircleImageView(user: user, size: .xsmall)
-                                VStack (alignment: .leading){
+                                VStack (alignment: .leading) {
                                     Text(user.username)
                                         .fontWeight(.bold)
                                         .foregroundStyle(Color.primary)
