@@ -9,79 +9,33 @@ import SwiftUI
 
 struct ProfileView: View {
     //MARK: - property
-    let user: User //他人のユーザ情報
-    let currentUser: User //自身のユーザ情報
-    let GridItems : [GridItem] = Array(repeating: .init(.flexible(), spacing: 2), count: 2)
+    @StateObject var viewModel: ProfileViewModel
+
+    init(user: User, currentUser: User) {
+        _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
+    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 //header
-                ProfileHeaderView(user: user)
+                ProfileHeaderView(user: viewModel.user)
 
                 Divider()
-                //post view
+                //link scroll view
 
-                if !user.isPrivate || currentUser.connectList.contains(user.id) && user.connectList.contains(currentUser.id){
-                    LazyVGrid(columns: GridItems, spacing: 20, content: {
-                        Button {
+                if !viewModel.user.isPrivate || viewModel.currentUser.connectList.contains(viewModel.user.id) && viewModel.user.connectList.contains(viewModel.currentUser.id){
 
-                        } label: {
-                            Image("Instagram")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                .cornerRadius(12)
-                                .clipped()
-                        }
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
+                                if let url = viewModel.user.snsLinks[key] {
+                                    SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                }
+                            }
+                        }//hstack
+                    }//scrollview
 
-                        Button {
-
-                        } label: {
-                            Image("X")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                .cornerRadius(12)
-                                .clipped()
-                        }
-                    })//lazyvgrid
-                    .padding(.vertical, 10)
-
-                    HStack{
-                        Text("Work")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.gray)
-                            .padding(.horizontal, 20)
-
-                        Spacer()
-                    }
-
-                    LazyVGrid(columns: GridItems, spacing: 20, content: {
-                        Button {
-
-                        } label: {
-                            Image("Discord")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                .cornerRadius(12)
-                                .clipped()
-                        }
-
-                        Button {
-
-                        } label: {
-                            Image("Slack")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: UIScreen.main.bounds.width / 2 - 40, height: 100)
-                                .cornerRadius(12)
-                                .clipped()
-                        }
-                    })
-                    .padding(.vertical, 10)
                 } else {
                     Spacer()
                     Text("このユーザは非公開です")
@@ -89,8 +43,11 @@ struct ProfileView: View {
                 }
             }//Vstack
         }//scrollView
-        .navigationTitle(user.username)
+        .navigationTitle(viewModel.user.username)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            await viewModel.loadUserData()
+        }
     }//body
 }//view
 

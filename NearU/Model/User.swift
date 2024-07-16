@@ -30,8 +30,6 @@ extension User {
         .init(id: NSUUID().uuidString, username: "ironman", profileImageUrl: "ironman1", fullname: "Tony Stark", bio: "I am ironman", email: "ironman@gmail.com", isPrivate: false, connectList: [], snsLinks: [:]),
 
         .init(id: NSUUID().uuidString, username: "spiderman", profileImageUrl: "spiderman1", fullname: "peter parker",
-              bio: "With great power comes great responsibility", email: "spiderman@gmail.com", isPrivate: true, connectList: [], snsLinks: [:]),
-
-        .init(id: NSUUID().uuidString, username: "wataru", profileImageUrl: "marvel", fullname: nil, bio: nil, email: "me@gmail.com", isPrivate: false,  connectList: [], snsLinks: [:]),
+              bio: "With great power comes great responsibility", email: "spiderman@gmail.com", isPrivate: true, connectList: [], snsLinks: [:])
     ]
 }

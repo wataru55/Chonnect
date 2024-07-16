@@ -55,11 +55,9 @@ struct ProfileHeaderView: View {
                 Button(action: {
                     Task {
                         do {
-                            UserDefaultsManager.shared.storeReceivedUserId(user.id)
                             try await AuthService.shared.removeUserIdFromFirestore(user.id)
-                            // 保存されたユーザーIDをターミナルに表示
-                            let storedUserIds = UserDefaultsManager.shared.getUserIDs()
-                            print("Stored User IDs: \(storedUserIds)")
+                            UserDefaultsManager.shared.storeReceivedUserId(user.id)
+
                         } catch {
                             // エラーハンドリング
                             print("Error: \(error)")
@@ -80,9 +78,7 @@ struct ProfileHeaderView: View {
                             do {
                                 UserDefaultsManager.shared.removeUserID(user.id)
                                 try await AuthService.shared.addUserIdToFirestore(user.id)
-                                //degug
-                                let storedUserIds = UserDefaultsManager.shared.getUserIDs()
-                                print("Stored User IDs after removal: \(storedUserIds)")
+
                             } catch {
                                 // エラーハンドリング
                                 print("Error: \(error)")
