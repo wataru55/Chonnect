@@ -10,6 +10,7 @@ import SwiftUI
 struct CurrentUserProfileView: View {
     //MARK: - property
     @State private var isAddingNewLink = false
+    @State private var showEditProfile = false
 
     let user: User
 
@@ -17,7 +18,48 @@ struct CurrentUserProfileView: View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack (spacing: 20) {
-                    ProfileHeaderView(user: user)
+                    VStack (spacing: 15){
+                        // image and stats
+                        CircleImageView(user: user, size: .large)
+
+                        //name and info
+                        VStack (alignment: .leading, content: {
+                            if let fullname = user.fullname {
+                                Text(fullname)
+                                    .font(.footnote)
+                                    .fontWeight(.bold)
+                            }
+
+                            if let bio = user.bio {
+                                Text(bio)
+                                    .font(.footnote)
+                            }
+                        })
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+
+                        //action button
+
+                        Button(action: {
+                            showEditProfile.toggle()
+                        }, label: {
+                            Text("Edit Profile")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(width: 360, height: 32)
+                                .background(.white)
+                                .cornerRadius(6)
+                                .foregroundStyle(.black)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(.gray)
+                                )
+                        })
+
+                    }//vstack
+                    .fullScreenCover(isPresented: $showEditProfile, content: {
+                        EditProfileView(user: user)
+                    })
                     Divider() //境界線
 
                     //link scroll view

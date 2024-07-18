@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingView: View {
     @StateObject var viewModel : SettingViewModel
-    @State private var isOnBluetooth: Bool = true
+    @State private var isOnBluetooth: Bool = UserDefaults.standard.bool(forKey: "isOnBluetooth")
 
     init(user: User) {
         self._viewModel = StateObject(wrappedValue: SettingViewModel(user: user))
@@ -21,6 +21,16 @@ struct SettingView: View {
                 Section(header: Text("Bluetooth")) {
                     Toggle(isOn: $isOnBluetooth) {
                         Text("Bluetooth")
+                    }
+                    .onChange(of: isOnBluetooth) {
+                        UserDefaults.standard.set(isOnBluetooth, forKey: "isOnBluetooth")
+                        if isOnBluetooth {
+                            BLECentralManager.shared.centralManagerDidUpdateState(BLECentralManager.shared.centralManager)
+                            BLEPeripheralManager.shared.peripheralManagerDidUpdateState(BLEPeripheralManager.shared.peripheralManager)
+                        } else {
+                            BLECentralManager.shared.stopCentralManagerDelegate()
+                            BLEPeripheralManager.shared.stopPeripheralManagerDelegate()
+                        }
                     }
                 }
 
