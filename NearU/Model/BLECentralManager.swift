@@ -31,10 +31,11 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
 
     //Bluetoothの状態が変更されたときに呼び出される関数
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        //central.stateプロパティで現在のBluetoothの状態を確認
         if central.state == .poweredOn {
-            //BLEデバイスのスキャンを開始
-            startScanning()
+            let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
+            if isOnBluetooth {
+                startScanning()
+            }
         } else {
             stopScan()
         }
@@ -85,14 +86,18 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
     }
     //バックグラウンド時に呼び出される関数
     func startScanning() {
-        centralManager.scanForPeripherals(withServices: [serviceUUID],
-                                          options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
-        print("start Scanning")
+        let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
+        if isOnBluetooth {
+            centralManager.scanForPeripherals(withServices: [serviceUUID],
+                                              options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+            print("start Scanning")
+        }
     }
 
     func stopScan() {
         centralManager.stopScan()
         print("stop Scan")
+
     }
 
     func stopCentralManagerDelegate() {

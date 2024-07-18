@@ -31,15 +31,17 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
         self.userId = user.id
     }
 
-    //BLEサービスと特性を作成しアドバタイズを開始する関数
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        if peripheral.state == .poweredOn { //ペリフェラルのBluetoothがOnになっているか
-            startAdvertising()
+        if peripheral.state == .poweredOn {
+            let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
+            if isOnBluetooth {
+                startAdvertising()
+            }
         } else {
             stopAdvertising()
         }
     }
-    
+
     //BLEペリフェラルが書き込みリクエストを受け取ったときに呼び出される関数
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
         //受け取ったリクエストを処理
@@ -70,23 +72,26 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     }
 
     func startAdvertising() {
-        //CBMutableCharacteristicを使って特性を作成
-        let characteristic = CBMutableCharacteristic(
-            type: characteristicUUID,
-            properties: [.write], //書き込み可能
-            value: nil, //初期値
-            permissions: [.writeable] //アクセス権，書き込み可能
-        )
-        //CBMutableServiceを使ってサービスを作成
-        let service = CBMutableService(type: serviceUUID, primary: true)
-        //サービスに作成した特性を追加
-        service.characteristics = [characteristic]
-        //ペリフェラルが提供するサービスとして登録
-        peripheralManager.add(service)
-        //startAdvertisingメソッドでBLEアドバタイズを開始
-        peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [service.uuid],
-                                               CBAdvertisementDataLocalNameKey: "Chonnect"])
-        print("start Advertising")
+        let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
+        if isOnBluetooth {
+            //CBMutableCharacteristicを使って特性を作成
+            let characteristic = CBMutableCharacteristic(
+                type: characteristicUUID,
+                properties: [.write], //書き込み可能
+                value: nil, //初期値
+                permissions: [.writeable] //アクセス権，書き込み可能
+            )
+            //CBMutableServiceを使ってサービスを作成
+            let service = CBMutableService(type: serviceUUID, primary: true)
+            //サービスに作成した特性を追加
+            service.characteristics = [characteristic]
+            //ペリフェラルが提供するサービスとして登録
+            peripheralManager.add(service)
+            //startAdvertisingメソッドでBLEアドバタイズを開始
+            peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [service.uuid],
+                                                   CBAdvertisementDataLocalNameKey: "Chonnect"])
+            print("start Advertising")
+        }
     }
     
     func stopAdvertising() {

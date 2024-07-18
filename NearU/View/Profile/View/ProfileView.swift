@@ -19,7 +19,7 @@ struct ProfileView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 //header
-                ProfileHeaderView(user: viewModel.user)
+                ProfileHeaderView(viewModel: viewModel)
 
                 Divider()
                 //link scroll view
@@ -47,6 +47,11 @@ struct ProfileView: View {
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             await viewModel.loadUserData()
+        }
+        .onAppear {
+            Task {
+                await viewModel.loadUserData()
+            }
         }
     }//body
 }//view
