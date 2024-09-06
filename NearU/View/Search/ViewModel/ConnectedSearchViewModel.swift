@@ -56,7 +56,6 @@ class ConnectedSearchViewModel: ObservableObject {
             }
     }
 
-
     deinit {
         listener?.remove()
     }
