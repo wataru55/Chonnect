@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 63135D8A2CA6643F004137AF /* FirebaseAppCheck */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
 		63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* AddLinkView.swift */; };
 		637BA0592C4252D200368566 /* AddLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA0582C4252D200368566 /* AddLinkViewModel.swift */; };
@@ -113,6 +114,7 @@
 				63E4CC8A2BED30EA009E0C9B /* FirebaseAuth in Frameworks */,
 				63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */,
 				63E4CC8C2BED30EA009E0C9B /* FirebaseFirestore in Frameworks */,
+				63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */,
 				63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */,
 				63E4CC8E2BED30EA009E0C9B /* FirebaseFirestoreSwift in Frameworks */,
 			);
@@ -394,6 +396,7 @@
 				63E4CC8F2BED30EA009E0C9B /* FirebaseStorage */,
 				63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */,
 				63DFF8962BFC99ED00A6DFB8 /* Kingfisher */,
+				63135D8A2CA6643F004137AF /* FirebaseAppCheck */,
 			);
 			productName = NearU;
 			productReference = 63B64FD42B8C763900289469 /* NearU.app */;
@@ -626,7 +629,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NearU/Preview Content\"";
-				DEVELOPMENT_TEAM = 9YCLAPV5D5;
+				DEVELOPMENT_TEAM = NQD3LAN9FK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
@@ -660,7 +663,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NearU/Preview Content\"";
-				DEVELOPMENT_TEAM = 9YCLAPV5D5;
+				DEVELOPMENT_TEAM = NQD3LAN9FK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
@@ -729,6 +732,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		63135D8A2CA6643F004137AF /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
 		63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

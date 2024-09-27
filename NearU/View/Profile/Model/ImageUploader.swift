@@ -16,9 +16,20 @@ struct ImageUploader {
         //Firebase Storageの特定のパスに画像ファイルを保存する参照を作成
         let ref = Storage.storage().reference(withPath: "/profile_images/\(filename)")
 
+        // Firebase Storageに保存する際のメタデータを設定
+        let metadata = StorageMetadata()
+
+        // 認証されたユーザーのUIDを取得して, authorIdとしてメタデータに追加
+        if let uid = AuthService.shared.currentUser?.id {
+            metadata.customMetadata = ["authorId": uid]  // ここでUIDを設定
+        } else {
+            print("DEBUG: Failed to get current user's UID.")
+            return nil
+        }
+
         do {
             //Firebase StorageのputDataAsyncメソッドでバイナリデータを参照先へupload (返り値を期待しないためlet _)
-            let _ = try await ref.putDataAsync(imageData)
+            let _ = try await ref.putDataAsync(imageData, metadata: metadata)
             //Firebase Storageに保存されたファイルのダウンロードURLを取得
             let url = try await ref.downloadURL()
             return url.absoluteString //取得したダウンロードURLを文字列として返す

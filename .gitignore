@@ -71,4 +71,5 @@ fastlane/test_output
 *.swp
 UserInterfaceState.xcuserstate
 # GoogleService-Info.plist
+Package.resolved
 
