@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct CurrentUserProfileView: View {
     //MARK: - property
@@ -22,7 +23,11 @@ struct CurrentUserProfileView: View {
                     VStack (spacing: 20) {
                         VStack (spacing: 15){
                             // image and stats
-                            CircleImageView(user: user, size: .large)
+                            BackgroundImageView(user: user)
+                                .overlay(alignment: .bottomLeading) {
+                                    CircleImageView(user: user, size: .large, borderColor: .white)
+                                        .padding()
+                                }
 
                             //name and info
                             VStack (alignment: .leading, content: {

@@ -11,17 +11,24 @@ import Firebase
 
 class EditProfileViewModel: ObservableObject {
     @Published var user: User
-    @Published var selectedImage: PhotosPickerItem? { //PhotosPickerから選択されたアイテムを保持するプロパティ
+    @Published var selectedProfileImage: PhotosPickerItem? { //PhotosPickerから選択されたアイテムを保持するプロパティ
         //didset:プロパティの値が変更された直後に呼び出される．
-        didSet { Task { await loadImage(fromItem: selectedImage) }}
+        didSet { Task { await loadProfileImage(fromItem: selectedProfileImage) }}
     }
 
+    @Published var selectedBackgroundImage: PhotosPickerItem? {
+        didSet { Task { await loadBackgroundImage(fromItem: selectedBackgroundImage) }}
+    }
+
+
     @Published var profileImage: Image?
+    @Published var backgroundImage: Image?
 
     @Published var fullname = ""
     @Published var bio = ""
 
-    private var uiImage: UIImage?
+    private var uiProfileImage: UIImage?
+    private var uiBackgroundImage: UIImage?
 
     init(user: User) {
         self.user = user
@@ -35,25 +42,42 @@ class EditProfileViewModel: ObservableObject {
         }
     }
 
-    func loadImage(fromItem item: PhotosPickerItem?) async {
+    func loadProfileImage(fromItem item: PhotosPickerItem?) async {
         guard let item = item else { return } //オプショナルでないか確認
         //データを読み込みバイナリデータとして取得
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return } 
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
         //バイナリデータをUIImage型に変換
         guard let uiImage = UIImage(data: data) else { return } //バイナリデータが有効な画像データであるか検証するため
-        self.uiImage = uiImage
+        self.uiProfileImage = uiImage
         //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
         self.profileImage = Image(uiImage: uiImage)
     }
+
+    func loadBackgroundImage(fromItem item: PhotosPickerItem?) async {
+        guard let item = item else { return } //オプショナルでないか確認
+        //データを読み込みバイナリデータとして取得
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+        //バイナリデータをUIImage型に変換
+        guard let uiImage = UIImage(data: data) else { return } //バイナリデータが有効な画像データであるか検証するため
+        self.uiBackgroundImage = uiImage
+        //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
+        self.backgroundImage = Image(uiImage: uiImage)
+    }
+
     @MainActor
     //Firebase Databaseのユーザ情報を変更する関数
     func updateUserData() async throws {
         //update profile image if changed
         var data = [String: Any]() //keyがString型，valueがAnyの辞書を定義
 
-        if let uiImage = uiImage {
+        if let uiImage = uiProfileImage {
             let imageUrl = try await ImageUploader.uploadImage(image: uiImage) //String型の画像のダウンロードURLが返される．
             data["profileImageUrl"] = imageUrl //辞書に格納
+        }
+
+        if let uiImage = uiBackgroundImage {
+            let imageUrl = try await ImageUploader.uploadImage(image: uiImage) //String型の画像のダウンロードURLが返される．
+            data["backgroundImageUrl"] = imageUrl //辞書に格納
         }
 
         //update name if changed

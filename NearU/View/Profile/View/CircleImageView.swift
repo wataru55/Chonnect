@@ -23,7 +23,7 @@ enum ProfileImageSize {
         case .medium:
             return 64
         case .large:
-            return 80
+            return 90
         }
     }
 }
@@ -31,6 +31,7 @@ enum ProfileImageSize {
 struct CircleImageView: View {
     let user: User
     let size: ProfileImageSize
+    let borderColor: Color
 
     var body: some View {
         if let imageUrl = user.profileImageUrl {
@@ -39,6 +40,10 @@ struct CircleImageView: View {
                 .scaledToFill()
                 .frame(width: size.dimension, height: size.dimension)
                 .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color(borderColor), lineWidth: 1)
+                }
         } else {
             Image(systemName: "person.circle.fill")
                 .resizable()
@@ -50,5 +55,5 @@ struct CircleImageView: View {
 }
 
 #Preview {
-    CircleImageView(user: User.MOCK_USERS[0], size: .large)
+    CircleImageView(user: User.MOCK_USERS[0], size: .large, borderColor: .clear)
 }

@@ -19,7 +19,7 @@ struct WaitingSearchView: View {
                     ForEach(viewModel.allUsers) { user in
                         NavigationLink(value: user) {
                             HStack {
-                                CircleImageView(user: user, size: .xsmall)
+                                CircleImageView(user: user, size: .xsmall, borderColor: .clear)
                                 VStack (alignment: .leading) {
                                     Text(user.username)
                                         .fontWeight(.bold)
