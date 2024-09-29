@@ -21,11 +21,6 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "house")
-                    Text("Home")
-                }
             SearchView(currentUser: user)
                 .tabItem {
                     Image(systemName: "magnifyingglass")

@@ -62,7 +62,7 @@ struct EditProfileView: View {
                                 .background(Color.gray)
                                 .clipShape(Circle())
                         } else {
-                            CircleImageView(user: viewModel.user, size: .large)
+                            CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
                         }
 
                         Text("Edit profile picture")
