@@ -20,10 +20,10 @@ class EditProfileViewModel: ObservableObject {
         didSet { Task { await loadBackgroundImage(fromItem: selectedBackgroundImage) }}
     }
 
-
     @Published var profileImage: Image?
     @Published var backgroundImage: Image?
 
+    @Published var username = ""
     @Published var fullname = ""
     @Published var bio = ""
 
@@ -32,6 +32,8 @@ class EditProfileViewModel: ObservableObject {
 
     init(user: User) {
         self.user = user
+
+        self.username = user.username
 
         if let fullname = user.fullname {
             self.fullname = fullname
@@ -80,22 +82,25 @@ class EditProfileViewModel: ObservableObject {
             data["backgroundImageUrl"] = imageUrl //辞書に格納
         }
 
-        //update name if changed
-        if !fullname.isEmpty && user.fullname != fullname {
-            data["fullname"] = fullname
-        }
+        if !username.isEmpty && user.username != username {
+            data["username"] = username
 
-        //update bio if changed
-        if !bio.isEmpty && user.bio != bio {
-            data["bio"] = bio
-        }
+            //update name if changed
+            if !fullname.isEmpty && user.fullname != fullname {
+                data["fullname"] = fullname
+            }
 
-        if !data.isEmpty {
-            //Firestore Databaseのドキュメントを更新
-            try await Firestore.firestore().collection("users").document(user.id).updateData(data)
-            print("complete")
-        }
+            //update bio if changed
+            if !bio.isEmpty && user.bio != bio {
+                data["bio"] = bio
+            }
 
+            if !data.isEmpty {
+                //Firestore Databaseのドキュメントを更新
+                try await Firestore.firestore().collection("users").document(user.id).updateData(data)
+                print("complete")
+            }
+
+        }
     }
-
 }
