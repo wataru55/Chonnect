@@ -123,6 +123,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		63135D8C2CA8FD67004137AF /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				638732162BF4B4630099F68A /* AuthService.swift */,
+				63DFF8BB2C01531000A6DFB8 /* ImageUploader.swift */,
+				63DFF8872BF704E500A6DFB8 /* UserService.swift */,
+				63B64FE52B8C797400289469 /* BLECentralManager.swift */,
+				63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */,
+				63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		6325D1BA2BC82F1000ED8227 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,10 +172,6 @@
 			isa = PBXGroup;
 			children = (
 				638732052BF4AE3F0099F68A /* User.swift */,
-				63DFF8872BF704E500A6DFB8 /* UserService.swift */,
-				63B64FE52B8C797400289469 /* BLECentralManager.swift */,
-				63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */,
-				63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -170,7 +179,6 @@
 		638732092BF4B34B0099F68A /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				6387321F2BF4B8280099F68A /* Model */,
 				638732152BF4B41B0099F68A /* ViewModel */,
 				638732142BF4B3F40099F68A /* View */,
 			);
@@ -204,14 +212,6 @@
 				6387321B2BF4B6B50099F68A /* IGTextFieldModifier.swift */,
 			);
 			path = Modifier;
-			sourceTree = "<group>";
-		};
-		6387321F2BF4B8280099F68A /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				638732162BF4B4630099F68A /* AuthService.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		638732202BF4BC150099F68A /* View */ = {
@@ -255,6 +255,7 @@
 				638732092BF4B34B0099F68A /* Authentication */,
 				6325D1BA2BC82F1000ED8227 /* View */,
 				638732042BF4AE0C0099F68A /* Model */,
+				63135D8C2CA8FD67004137AF /* Service */,
 				6387321A2BF4B68F0099F68A /* Modifier */,
 				63E4CC862BED3037009E0C9B /* GoogleService-Info.plist */,
 				63B64FDB2B8C763A00289469 /* Assets.xcassets */,
@@ -310,7 +311,6 @@
 		63DFF8922BF8B7E000A6DFB8 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				63DFF8BA2C0152F400A6DFB8 /* Model */,
 				63DFF8942BF8B7F500A6DFB8 /* ViewModel */,
 				63DFF8932BF8B7EA00A6DFB8 /* View */,
 			);
@@ -338,14 +338,6 @@
 				637BA05E2C44ADE400368566 /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		63DFF8BA2C0152F400A6DFB8 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				63DFF8BB2C01531000A6DFB8 /* ImageUploader.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		63DFF8BD2C0403CC00A6DFB8 /* Setting */ = {
