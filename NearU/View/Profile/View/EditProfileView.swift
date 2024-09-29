@@ -51,8 +51,9 @@ struct EditProfileView: View {
 
             Divider()
             //edit profile picture
+
             VStack {
-                PhotosPicker(selection: $viewModel.selectedImage) {
+                PhotosPicker(selection: $viewModel.selectedProfileImage) {
                     VStack {
                         if let image = viewModel.profileImage {
                             image
@@ -66,6 +67,28 @@ struct EditProfileView: View {
                         }
 
                         Text("Edit profile picture")
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+
+                        Divider()
+                    }//vstack
+                }
+            }//vstack
+
+            VStack {
+                PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+                    VStack {
+                        if let image = viewModel.backgroundImage {
+                            image
+                                .resizable()
+                                .foregroundStyle(.white)
+                                .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        } else {
+                            BackgroundImageView(user: viewModel.user)
+                        }
+
+                        Text("Edit background picture")
                             .font(.footnote)
                             .fontWeight(.semibold)
 
