@@ -61,11 +61,6 @@ struct SettingView: View {
                       Text("Wataru Takahashi")
                     }
                     HStack {
-                      Text("Designer").foregroundStyle(Color.gray)
-                      Spacer()
-                      Text("Ukyo Taniguchi")
-                    }
-                    HStack {
                       Text("Version").foregroundStyle(Color.gray)
                       Spacer()
                       Text("1.0.0")
