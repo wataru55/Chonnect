@@ -24,7 +24,7 @@ struct ConnectedSearchView: View {
                     ForEach(viewModel.connectedUsers) { user in
                         NavigationLink(value: user) {
                             HStack {
-                                CircleImageView(user: user, size: .xsmall)
+                                CircleImageView(user: user, size: .xsmall, borderColor: .clear)
                                 VStack (alignment: .leading){
                                     Text(user.username)
                                         .fontWeight(.bold)
