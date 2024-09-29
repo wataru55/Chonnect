@@ -13,8 +13,23 @@ struct ProfileHeaderView: View {
     var body: some View {
         VStack (spacing: 15){
             // image and stats
-            HStack (spacing: 35){
-                CircleImageView(user: viewModel.user, size: .large)
+//            HStack (spacing: 35){
+//                CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
+//            }
+            if let profileImageUrl = viewModel.user.profileImageUrl {
+                AsyncImage(url: URL(string: profileImageUrl)) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(alignment: .bottomLeading) {
+                            CircleImageView(user: viewModel.user, size: .large, borderColor: .white)
+                                .padding()
+                        }
+                } placeholder: {
+                    ProgressView()
+                }
             }
 
             //name and info
