@@ -23,17 +23,11 @@ struct CurrentUserProfileView: View {
                     VStack (spacing: 20) {
                         VStack (spacing: 15){
                             // image and stats
-                            if let profileImageUrl = user.profileImageUrl {
-                                KFImage(URL(string: profileImageUrl))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .overlay(alignment: .bottomLeading) {
-                                        CircleImageView(user: user, size: .large, borderColor: .white)
-                                            .padding()
-                                    }
-                            }
+                            BackgroundImageView(user: user)
+                                .overlay(alignment: .bottomLeading) {
+                                    CircleImageView(user: user, size: .large, borderColor: .white)
+                                        .padding()
+                                }
 
                             //name and info
                             VStack (alignment: .leading, content: {
