@@ -12,26 +12,33 @@ struct ProfileHeaderView: View {
 
     var body: some View {
         VStack (spacing: 15){
-            // image and stats
-//            HStack (spacing: 35){
-//                CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
-//            }
-            if let profileImageUrl = viewModel.user.profileImageUrl {
-                AsyncImage(url: URL(string: profileImageUrl)) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(alignment: .bottomLeading) {
-                            CircleImageView(user: viewModel.user, size: .large, borderColor: .white)
-                                .padding()
+            Group {
+                if let backgroundImageUrl = viewModel.user.backgroundImageUrl {
+                    AsyncImage(url: URL(string: backgroundImageUrl)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                } else {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(Color(.systemGray4))
+                        .overlay {
+                            Image(systemName: "photo.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.white)
                         }
-                } placeholder: {
-                    ProgressView()
                 }
             }
-
+            .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(alignment: .bottomLeading) {
+                CircleImageView(user: viewModel.user, size: .large, borderColor: .white)
+                    .padding()
+            }
             //name and info
             VStack (alignment: .leading, content: {
                 if let fullname = viewModel.user.fullname {
@@ -87,7 +94,7 @@ struct ProfileHeaderView: View {
                             .foregroundStyle(.white)
                             .frame(width: 180, height: 35)
                             .background(
-                              LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
                             )
                             .cornerRadius(6)
 
