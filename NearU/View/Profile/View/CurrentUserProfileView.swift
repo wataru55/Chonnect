@@ -69,16 +69,23 @@ struct CurrentUserProfileView: View {
                         })
                         Divider() //境界線
 
-                        //link scroll view
+                        // link scroll view
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach (Array(user.snsLinks.keys), id: \.self) { key in
-                                    if let url = user.snsLinks[key] {
-                                        SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                if user.snsLinks.isEmpty {
+                                    Text("自分のSNSのリンクを登録しましょう")
+                                        .foregroundColor(.orange)
+                                        .padding()
+                                } else {
+                                    ForEach(Array(user.snsLinks.keys), id: \.self) { key in
+                                        if let url = user.snsLinks[key] {
+                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                        }
                                     }
                                 }
-                            }//hstack
-                        }//scrollview
+                            } // HStack
+                        } // ScrollView
+
 
                         // add link button
                         Button(action: {

@@ -21,29 +21,37 @@ struct ConnectedSearchView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack (spacing: 16){
-                    ForEach(viewModel.connectedUsers) { user in
-                        NavigationLink(value: user) {
-                            HStack {
-                                CircleImageView(user: user, size: .xsmall, borderColor: .clear)
-                                VStack (alignment: .leading){
-                                    Text(user.username)
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(Color.primary)
-
-                                    if let fullname = user.fullname { //fullnameがnilじゃないなら
-                                        Text(fullname)
+                    if viewModel.connectedUsers.isEmpty {
+                        Text("相互に承認したユーザーがいません")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ForEach(viewModel.connectedUsers) { user in
+                            NavigationLink(value: user) {
+                                HStack {
+                                    CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+                                    VStack (alignment: .leading){
+                                        Text(user.username)
+                                            .fontWeight(.bold)
                                             .foregroundStyle(Color.primary)
-                                    }
 
-                                }//vstack
-                                .font(.footnote)
+                                        if let fullname = user.fullname { //fullnameがnilじゃないなら
+                                            Text(fullname)
+                                                .foregroundStyle(Color.primary)
+                                        }
 
-                                Spacer()
-                            }//hstack
-                            .foregroundStyle(.black) //navigationlinkのデフォルトカラーを青から黒に
-                            .padding(.horizontal)
-                        }//navigationlink
-                    }//foreach
+                                    }//vstack
+                                    .font(.footnote)
+
+                                    Spacer()
+                                }//hstack
+                                .foregroundStyle(.black) //navigationlinkのデフォルトカラーを青から黒に
+                                .padding(.horizontal)
+                            }//navigationlink
+                        }//foreach
+                    }
                 }//lazyvstack
                 .padding(.top, 8)
 
