@@ -98,9 +98,11 @@ struct EditProfileView: View {
             }//vstack
             //edit profile info
             VStack {
-                EditProfileRowView(title: "Name", placeholder: "Enter your name", text: $viewModel.fullname)
+                EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
+                EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
                 EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
             }
+            .padding(.top, 30)
 
             Spacer()
         }//vstack
