@@ -43,7 +43,7 @@ class EditProfileViewModel: ObservableObject {
             self.bio = bio
         }
     }
-
+    @MainActor
     func loadProfileImage(fromItem item: PhotosPickerItem?) async {
         guard let item = item else { return } //オプショナルでないか確認
         //データを読み込みバイナリデータとして取得
@@ -55,6 +55,7 @@ class EditProfileViewModel: ObservableObject {
         self.profileImage = Image(uiImage: uiImage)
     }
 
+    @MainActor
     func loadBackgroundImage(fromItem item: PhotosPickerItem?) async {
         guard let item = item else { return } //オプショナルでないか確認
         //データを読み込みバイナリデータとして取得
@@ -83,24 +84,25 @@ class EditProfileViewModel: ObservableObject {
         }
 
         if !username.isEmpty && user.username != username {
+
+
             data["username"] = username
+        }
 
-            //update name if changed
-            if !fullname.isEmpty && user.fullname != fullname {
-                data["fullname"] = fullname
-            }
+        //update name if changed
+        if !fullname.isEmpty && user.fullname != fullname {
+            data["fullname"] = fullname
+        }
 
-            //update bio if changed
-            if !bio.isEmpty && user.bio != bio {
-                data["bio"] = bio
-            }
+        //update bio if changed
+        if !bio.isEmpty && user.bio != bio {
+            data["bio"] = bio
+        }
 
-            if !data.isEmpty {
-                //Firestore Databaseのドキュメントを更新
-                try await Firestore.firestore().collection("users").document(user.id).updateData(data)
-                print("complete")
-            }
-
+        if !data.isEmpty {
+            //Firestore Databaseのドキュメントを更新
+            try await Firestore.firestore().collection("users").document(user.id).updateData(data)
+            print("complete")
         }
     }
 }
