@@ -33,6 +33,7 @@ struct SNSLinkButtonView: View {
                     HStack{
                         Image(selectedSNS)
                             .resizable()
+                            .scaledToFit()
                             .frame(width: 50, height: 50)
 
                         Spacer()
