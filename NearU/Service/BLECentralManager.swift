@@ -14,6 +14,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
     var centralManager: CBCentralManager!
     var discoveredPeripherals: [CBPeripheral] = [] //BLEデバイスのリストを保持
     var userId: String?
+    var scanningTimer: Timer? // 定期的な出力用のタイマーを追加
 
     let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
     let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
@@ -91,13 +92,16 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate, C
             centralManager.scanForPeripherals(withServices: [serviceUUID],
                                               options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
             print("start Scanning")
+
+            scanningTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { _ in
+                print("スキャンが継続中")
+            })
         }
     }
 
     func stopScan() {
         centralManager.stopScan()
         print("stop Scan")
-
     }
 
     func stopCentralManagerDelegate() {

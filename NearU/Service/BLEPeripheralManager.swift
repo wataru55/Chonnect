@@ -16,6 +16,7 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     //サービスやキャラクタリスティックの作成を管理するインスタンス変数
     var peripheralManager: CBPeripheralManager!
     var userId: String?
+    var advertisingTimer: Timer? // 定期的な出力用のタイマーを追加
 
     let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
     let characteristicUUID = CBUUID(string: "87654321-4321-4321-4321-9876543210ba")
@@ -91,14 +92,31 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
             peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [service.uuid],
                                                    CBAdvertisementDataLocalNameKey: "Chonnect"])
             print("start Advertising")
+
+            // アドバタイズが開始されたかを確認
+            if peripheralManager.isAdvertising {
+                print("アドバタイズが正常に開始されました")
+            } else {
+                print("アドバタイズが開始されていません")
+            }
+
+            // バックグラウンドでもアドバタイズが続いているかを確認するためのタイマー
+            advertisingTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+                if self.peripheralManager.isAdvertising {
+                    print("アドバタイズが継続中")
+                } else {
+                    print("アドバタイズが停止しています")
+                }
+            }
         }
     }
-    
+
+
     func stopAdvertising() {
         peripheralManager.stopAdvertising()
         print("stop Advertising")
     }
-    
+
     func stopPeripheralManagerDelegate() {
         self.stopAdvertising()
         self.peripheralManager.delegate = nil
