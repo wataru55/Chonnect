@@ -82,6 +82,7 @@ struct AddLinkView: View {
             }, trailing: Button("Done") {
                 Task {
                     try await viewModel.updateSNSLink()
+                    try await AuthService.shared.loadUserData()
                     await MainActor.run {
                         isPresented = false
                     }
