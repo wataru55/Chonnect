@@ -56,6 +56,9 @@ struct ConnectedSearchView: View {
                 .padding(.top, 8)
 
             }//scrollview
+            .refreshable {
+                print("refresh")
+            }
             .navigationDestination(for: User.self, destination: { value in
                 ProfileView(user: value, currentUser: currentUser)
             })

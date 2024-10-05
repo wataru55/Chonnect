@@ -82,6 +82,9 @@ struct WaitingSearchView: View {
                 } // LazyVStack
                 .padding(.top, 8)
             } // ScrollView
+            .refreshable {
+                print("refresh")
+            }
             .navigationDestination(for: User.self, destination: { value in
                 ProfileView(user: value, currentUser: currentUser)
             })

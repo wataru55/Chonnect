@@ -111,6 +111,11 @@ struct CurrentUserProfileView: View {
                 }//scrollView
                 .navigationTitle(user.username)
                 .navigationBarTitleDisplayMode(.inline)
+                .refreshable {
+                    Task {
+                        try await AuthService.shared.loadUserData()
+                    }
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
