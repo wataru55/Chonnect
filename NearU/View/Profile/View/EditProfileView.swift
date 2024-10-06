@@ -8,9 +8,14 @@
 import SwiftUI
 import PhotosUI
 
+enum Field: Hashable {
+    case title
+}
+
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel : EditProfileViewModel
+    @FocusState private var focusedField: Field?
 
     init(user: User) {
         self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
@@ -51,61 +56,70 @@ struct EditProfileView: View {
 
             Divider()
             //edit profile picture
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    PhotosPicker(selection: $viewModel.selectedProfileImage) {
+                        VStack {
+                            if let image = viewModel.profileImage {
+                                image
+                                    .resizable()
+                                    .foregroundStyle(.white)
+                                    .frame(width: 80, height: 80)
+                                    .background(Color.gray)
+                                    .clipShape(Circle())
+                            } else {
+                                CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
+                            }
 
-            VStack {
-                PhotosPicker(selection: $viewModel.selectedProfileImage) {
-                    VStack {
-                        if let image = viewModel.profileImage {
-                            image
-                                .resizable()
-                                .foregroundStyle(.white)
-                                .frame(width: 80, height: 80)
-                                .background(Color.gray)
-                                .clipShape(Circle())
-                        } else {
-                            CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
-                        }
+                            Text("Edit profile picture")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
 
-                        Text("Edit profile picture")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
+                            Divider()
+                        }//vstack
+                    }
+                    .disabled(focusedField != nil)
+                }//vstack
 
-                        Divider()
-                    }//vstack
+                VStack {
+                    PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+                        VStack {
+                            if let image = viewModel.backgroundImage {
+                                image
+                                    .resizable()
+                                    .foregroundStyle(.white)
+                                    .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            } else {
+                                BackgroundImageView(user: viewModel.user)
+                            }
+
+                            Text("Edit background picture")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+
+                            Divider()
+                        }//vstack
+                    }
+                    .disabled(focusedField != nil)
+                }//vstack
+                //edit profile info
+                VStack {
+                    EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
+                        .focused($focusedField, equals: .title)
+                    EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
+                        .focused($focusedField, equals: .title)
+                    EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
+                        .focused($focusedField, equals: .title)
                 }
+                .padding(.top, 30)
+
+                Spacer()
             }//vstack
-
-            VStack {
-                PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
-                    VStack {
-                        if let image = viewModel.backgroundImage {
-                            image
-                                .resizable()
-                                .foregroundStyle(.white)
-                                .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        } else {
-                            BackgroundImageView(user: viewModel.user)
-                        }
-
-                        Text("Edit background picture")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-
-                        Divider()
-                    }//vstack
-                }
-            }//vstack
-            //edit profile info
-            VStack {
-                EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
-                EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
-                EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
-            }
-            .padding(.top, 30)
-
-            Spacer()
-        }//vstack
+        }//scrollview
+        .onTapGesture {
+            focusedField = nil
+        }
     }//body
 }//view
 
