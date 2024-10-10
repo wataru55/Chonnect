@@ -77,9 +77,18 @@ class AuthService {
     func addUserIdToFirestore(_ receivedUserId: String) async throws {
         //Firestoreのドキュメントに追加
         if let userId = self.currentUser?.id {
-            try await Firestore.firestore().collection("users").document(userId).updateData([
-                "connectList": FieldValue.arrayUnion([receivedUserId])
-            ])
+            
+            // TODO: ここのタイムスタンプはすれ違ったときの時間を引数で受け取って格納する
+            let timestamp = Timestamp(date: Date())
+            
+            try await Firestore.firestore().collection("users")
+                .document(userId)
+                .collection("connectList")
+                .document(receivedUserId)
+                .setData([
+                    "id": receivedUserId,
+                    "timestamp": timestamp
+                ])
         }
     }
 
