@@ -78,6 +78,7 @@ class AuthService {
         //Firestoreのドキュメントに追加
         if let userId = self.currentUser?.id {
             
+            // TODO: ここのタイムスタンプはすれ違ったときの時間を引数で受け取って格納する
             let timestamp = Timestamp(date: Date())
             
             try await Firestore.firestore().collection("users")
