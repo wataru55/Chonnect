@@ -27,7 +27,7 @@ struct ProfileView: View {
                 if !viewModel.user.isPrivate || viewModel.currentUser.connectList.contains(viewModel.user.id) && viewModel.user.connectList.contains(viewModel.currentUser.id){
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
+                        HStack(spacing: 5) {
                             ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
                                 if let url = viewModel.user.snsLinks[key] {
                                     SNSLinkButtonView(selectedSNS: key, sns_url: url)
@@ -35,6 +35,7 @@ struct ProfileView: View {
                             }
                         }//hstack
                     }//scrollview
+                    .padding(.leading, 5)
 
                 } else {
                     Spacer()
