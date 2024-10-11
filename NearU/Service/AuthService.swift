@@ -29,6 +29,7 @@ class AuthService {
 
         } catch { //doブロックでエラーが発生したら実行される
             print("DEBUG: Failed to log in with error \(error.localizedDescription)")
+            throw error  // エラーを再スロー
         }
     }
 
