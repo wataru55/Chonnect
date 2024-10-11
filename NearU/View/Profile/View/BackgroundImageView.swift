@@ -10,24 +10,42 @@ import Kingfisher
 
 struct BackgroundImageView: View {
     let user: User
+    let height: CGFloat
+    let isGradient: Bool
 
     var body: some View {
         if let imageUrl = user.backgroundImageUrl {
             KFImage(URL(string: imageUrl))
                 .resizable()
                 .scaledToFill()
-                .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-
+                .frame(width: UIScreen.main.bounds.width, height: height)
+                .clipped()
+                .overlay(
+                    Group {
+                        if isGradient {
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: Color.white.opacity(0), location: 0.5),
+                                    .init(color: Color.white.opacity(1), location: 1)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        } else {
+                            Color.clear // グラデーションが不要な場合は透明なビューを重ねる
+                        }
+                    }
+                )
         } else {
-            RoundedRectangle(cornerRadius: 10)
-                .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+            RoundedRectangle(cornerRadius: 0)
+                .frame(width: UIScreen.main.bounds.width, height: height)
                 .foregroundColor(Color(.systemGray4))
                 .overlay {
                     Image(systemName: "photo.fill")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 50, height: 50)
+                   
                         .foregroundColor(.white)
                 }
         }
@@ -35,5 +53,5 @@ struct BackgroundImageView: View {
 }
 
 #Preview {
-    BackgroundImageView(user: User.MOCK_USERS[0])
+    BackgroundImageView(user: User.MOCK_USERS[0], height: 500, isGradient: true)
 }
