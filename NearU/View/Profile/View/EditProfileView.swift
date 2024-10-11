@@ -85,7 +85,7 @@ struct EditProfileView: View {
                                 .frame(width: UIScreen.main.bounds.width - 20, height: 250)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         } else {
-                            BackgroundImageView(user: viewModel.user)
+                            BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
                         }
 
                         Text("Edit background picture")
