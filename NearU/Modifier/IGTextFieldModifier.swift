@@ -10,6 +10,7 @@ import SwiftUI
 struct IGTextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .textInputAutocapitalization(.never) // 自動で大文字にしない
             .font(.subheadline)
             .padding(12)
             .background(Color(.systemGray6))
