@@ -13,6 +13,10 @@ class AddLinkViewModel: ObservableObject {
     @Published var user: User
     @Published var selectedSNS: String = ""
     @Published var sns_url: String = ""
+    @Published var abstract_title: String = ""
+    @Published var abstract_url: String = ""
+    @Published var abstractLinks: [String: String] = [:]
+ 
 
     init(user: User) {
         self.user = user
@@ -25,6 +29,18 @@ class AddLinkViewModel: ObservableObject {
 
             try await Firestore.firestore().collection("users").document(user.id).updateData(data)
             print("complete")
+        }
+        if !abstract_title.isEmpty && !abstract_url.isEmpty {
+            let data = [
+                        "abstract_title": abstract_title,
+                        "abstract_url": abstract_url
+            ]
+            
+            try await Firestore.firestore()
+                .collection("users")
+                .document(user.id)
+                .collection("abstract")
+                .addDocument(data: data)
         }
     }
 }
