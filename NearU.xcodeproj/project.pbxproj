@@ -14,6 +14,8 @@
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
 		63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* AddLinkView.swift */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
+		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */; };
 		637BA0592C4252D200368566 /* AddLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA0582C4252D200368566 /* AddLinkViewModel.swift */; };
 		637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA05A2C43934600368566 /* SNSLinkButtonView.swift */; };
 		637BA05F2C44ADE400368566 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA05E2C44ADE400368566 /* ProfileViewModel.swift */; };
@@ -62,12 +64,27 @@
 		63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8F2BED30EA009E0C9B /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		637B97292CB9024400EFB09F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		63135D8D2CA90523004137AF /* BackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageView.swift; sourceTree = "<group>"; };
 		63135D9B2CB7A25A004137AF /* EncountData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountData.swift; sourceTree = "<group>"; };
 		63135DA22CB7ABCC004137AF /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* AddLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkView.swift; sourceTree = "<group>"; };
+		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* AddLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkViewModel.swift; sourceTree = "<group>"; };
 		637BA05A2C43934600368566 /* SNSLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNSLinkButtonView.swift; sourceTree = "<group>"; };
 		637BA05E2C44ADE400368566 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
@@ -182,6 +199,7 @@
 			children = (
 				638732052BF4AE3F0099F68A /* User.swift */,
 				63135D9B2CB7A25A004137AF /* EncountData.swift */,
+				637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -386,6 +404,7 @@
 				63B64FD02B8C763900289469 /* Sources */,
 				63B64FD12B8C763900289469 /* Frameworks */,
 				63B64FD22B8C763900289469 /* Resources */,
+				637B97292CB9024400EFB09F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -477,6 +496,7 @@
 				6387320B2BF4B3680099F68A /* LoginView.swift in Sources */,
 				63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */,
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
+				637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */,
 				63AEF0FD2C0C507300DE196E /* WaitingSearchView.swift in Sources */,
 				63DFF8842BF6F1C000A6DFB8 /* EditProfileViewModel.swift in Sources */,
 				638732192BF4B62B0099F68A /* LoginViewModel.swift in Sources */,
@@ -648,7 +668,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -682,7 +702,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
