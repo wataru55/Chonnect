@@ -75,6 +75,26 @@ struct AddLinkView: View {
                             .font(Font.subheadline)
                     }
                 })
+                
+                Section(content: {
+                    TextField("タイトル", text: $viewModel.abstract_title)
+                        .foregroundColor(Color(.systemMint))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(10)
+                        .cornerRadius(10)
+                    TextField("URL", text: $viewModel.abstract_url)
+                        .foregroundColor(Color(.systemMint))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(10)
+                        
+                }, header: {
+                    HStack{
+                        Text("My abstract")
+                            .font(Font.subheadline)
+                    }
+                })
+                
+                
             } //form
             .navigationTitle("Add Link")
             .navigationBarItems(leading: Button("Cancel") {

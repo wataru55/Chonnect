@@ -13,11 +13,15 @@ enum Field: Hashable {
 }
 
 struct EditProfileView: View {
+    @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel : EditProfileViewModel
+  
+    let user: User
     @FocusState private var focusedField: Field?
 
     init(user: User) {
+        self.user = user
         self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
     }
 
@@ -58,30 +62,6 @@ struct EditProfileView: View {
             //edit profile picture
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
-                    PhotosPicker(selection: $viewModel.selectedProfileImage) {
-                        VStack {
-                            if let image = viewModel.profileImage {
-                                image
-                                    .resizable()
-                                    .foregroundStyle(.white)
-                                    .frame(width: 80, height: 80)
-                                    .background(Color.gray)
-                                    .clipShape(Circle())
-                            } else {
-                                CircleImageView(user: viewModel.user, size: .large, borderColor: .clear)
-                            }
-
-                            Text("Edit profile picture")
-                                .font(.footnote)
-                                .fontWeight(.semibold)
-
-                            Divider()
-                        }//vstack
-                    }
-                    .disabled(focusedField != nil)
-                }//vstack
-
-                VStack {
                     PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
                         VStack {
                             if let image = viewModel.backgroundImage {
@@ -91,7 +71,7 @@ struct EditProfileView: View {
                                     .frame(width: UIScreen.main.bounds.width - 20, height: 250)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             } else {
-                                BackgroundImageView(user: viewModel.user)
+                                BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
                             }
 
                             Text("Edit background picture")
@@ -113,10 +93,32 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 30)
-
-                Spacer()
-            }//vstack
-        }//scrollview
+      
+            // add link button
+            Button(action: {
+                isAddingNewLink.toggle()
+            }, label: {
+                Image(systemName: "plus.circle")
+                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                Text("Add Link")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+            })
+            .foregroundColor(.white)
+            .frame(width: 360, height: 35)
+            .background(
+                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                    .clipShape(Capsule())
+            )
+            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
+            .sheet(isPresented: $isAddingNewLink) {
+                AddLinkView(isPresented: $isAddingNewLink, user: user)
+            }
+            .padding(.bottom, 20)
+            
+            Spacer()
+              
+        　　}//scrollview
+        }//vstack
         .onTapGesture {
             focusedField = nil
         }

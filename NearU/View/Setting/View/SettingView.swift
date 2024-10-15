@@ -65,6 +65,27 @@ struct SettingView: View {
                       Spacer()
                       Text("1.0.0")
                     }
+                    
+                    HStack {
+                            Spacer() // 左のスペーサー
+                            Button(action: {
+                                AuthService.shared.signout()
+                            }, label: {
+                                Text("Log out")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.black)
+                                    .frame(width: 200, height: 44)
+                                    .background(.white)
+                                    .cornerRadius(12)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(.gray)
+                                    )
+                            })
+                            Spacer() // 右のスペーサー
+                    }
+                    .padding(.top)
                   }
             }
             .navigationTitle("Setting")

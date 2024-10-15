@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
 		63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 63135D8A2CA6643F004137AF /* FirebaseAppCheck */; };
 		63135D8E2CA90523004137AF /* BackgroundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135D8D2CA90523004137AF /* BackgroundImageView.swift */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
@@ -60,6 +61,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
 		63135D8D2CA90523004137AF /* BackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageView.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* AddLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkView.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				63173DF72C37D77600F1FE82 /* AddLinkView.swift */,
 				637BA05A2C43934600368566 /* SNSLinkButtonView.swift */,
 				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
+				3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -485,6 +488,7 @@
 				638732112BF4B3BD0099F68A /* CreatePasswordView.swift in Sources */,
 				63DFF8882BF704E500A6DFB8 /* UserService.swift in Sources */,
 				63DFF8C12C04040B00A6DFB8 /* SettingViewModel.swift in Sources */,
+				3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */,
 				638732132BF4B3E90099F68A /* CompleteSignUpView.swift in Sources */,
 				63AEF0FF2C0CC89F00DE196E /* ConnectedSearchViewModel.swift in Sources */,
 				63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */,
