@@ -16,15 +16,15 @@ struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel : EditProfileViewModel
-  
+    
     let user: User
     @FocusState private var focusedField: Field?
-
+    
     init(user: User) {
         self.user = user
         self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
     }
-
+    
     var body: some View {
         VStack {
             //toolbar
@@ -32,20 +32,20 @@ struct EditProfileView: View {
                 Button("Cancel") {
                     dismiss()
                 }
-
+                
                 Spacer()
-
+                
                 Text("Edit Profile")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-
+                
                 Spacer()
-
+                
                 Button(action: {
                     Task {
                         try await viewModel.updateUserData()
                         try await AuthService.shared.loadUserData()
-
+                        
                         await MainActor.run {
                             dismiss()
                         }
@@ -57,7 +57,7 @@ struct EditProfileView: View {
                 })
             }//hstack
             .padding(.horizontal)
-
+            
             Divider()
             //edit profile picture
             ScrollView(.vertical, showsIndicators: false) {
@@ -73,11 +73,11 @@ struct EditProfileView: View {
                             } else {
                                 BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
                             }
-
+                            
                             Text("Edit background picture")
                                 .font(.footnote)
                                 .fontWeight(.semibold)
-
+                            
                             Divider()
                         }//vstack
                     }
@@ -93,31 +93,31 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 30)
-      
-            // add link button
-            Button(action: {
-                isAddingNewLink.toggle()
-            }, label: {
-                Image(systemName: "plus.circle")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
-                Text("Add Link")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-            })
-            .foregroundColor(.white)
-            .frame(width: 360, height: 35)
-            .background(
-                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                    .clipShape(Capsule())
-            )
-            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
-            .sheet(isPresented: $isAddingNewLink) {
-                AddLinkView(isPresented: $isAddingNewLink, user: user)
-            }
-            .padding(.bottom, 20)
-            
-            Spacer()
-              
-        　　}//scrollview
+                
+                // add link button
+                Button(action: {
+                    isAddingNewLink.toggle()
+                }, label: {
+                    Image(systemName: "plus.circle")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    Text("Add Link")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                })
+                .foregroundColor(.white)
+                .frame(width: 360, height: 35)
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                        .clipShape(Capsule())
+                )
+                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
+                .sheet(isPresented: $isAddingNewLink) {
+                    AddLinkView(isPresented: $isAddingNewLink, user: user)
+                }
+                .padding(.bottom, 20)
+                
+                Spacer()
+                
+            } //scrollview
         }//vstack
         .onTapGesture {
             focusedField = nil
@@ -129,16 +129,16 @@ struct EditProfileRowView: View {
     let title: String
     let placeholder: String
     @Binding var text: String
-
+    
     var body: some View {
         HStack {
             Text(title)
                 .padding(.leading, 8)
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: .leading)
-
+            
             VStack {
                 TextField(placeholder, text: $text)
-
+                
                 Divider()
             }//vstack
         }//hstack
