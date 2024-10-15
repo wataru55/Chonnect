@@ -8,12 +8,17 @@
 import SwiftUI
 import PhotosUI
 
+enum Field: Hashable {
+    case title
+}
+
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel : EditProfileViewModel
-    
+  
     let user: User
+    @FocusState private var focusedField: Field?
 
     init(user: User) {
         self.user = user
@@ -55,37 +60,40 @@ struct EditProfileView: View {
 
             Divider()
             //edit profile picture
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+                        VStack {
+                            if let image = viewModel.backgroundImage {
+                                image
+                                    .resizable()
+                                    .foregroundStyle(.white)
+                                    .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            } else {
+                                BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
+                            }
 
-            VStack {
-                PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
-                    VStack {
-                        if let image = viewModel.backgroundImage {
-                            image
-                                .resizable()
-                                .foregroundStyle(.white)
-                                .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        } else {
-                            BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
-                        }
+                            Text("Edit background picture")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
 
-                        Text("Edit background picture")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-
-                        Divider()
-                    }//vstack
+                            Divider()
+                        }//vstack
+                    }
+                    .disabled(focusedField != nil)
+                }//vstack
+                //edit profile info
+                VStack {
+                    EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
+                        .focused($focusedField, equals: .title)
+                    EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
+                        .focused($focusedField, equals: .title)
+                    EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
+                        .focused($focusedField, equals: .title)
                 }
-            }//vstack
-            //edit profile info
-            VStack {
-                EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
-                EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
-                EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
-            }
-            .padding(.top, 30)
-            .padding(.bottom, 30)
-            
+                .padding(.top, 30)
+      
             // add link button
             Button(action: {
                 isAddingNewLink.toggle()
@@ -108,7 +116,12 @@ struct EditProfileView: View {
             .padding(.bottom, 20)
             
             Spacer()
+              
+        　　}//scrollview
         }//vstack
+        .onTapGesture {
+            focusedField = nil
+        }
     }//body
 }//view
 
