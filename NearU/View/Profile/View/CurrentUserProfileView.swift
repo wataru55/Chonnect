@@ -24,6 +24,7 @@ struct CurrentUserProfileView: View {
                     BackgroundImageView(user: user, height: 500, isGradient: true)
                         .overlay(alignment: .bottomLeading) {
                             VStack(alignment: .leading){
+                                TagsView(userId: user.id)
                                 if let fullname = user.fullname {
                                     Text(fullname)
                                         .font(.system(size: 25, weight: .bold, design: .default))
@@ -37,14 +38,6 @@ struct CurrentUserProfileView: View {
                             }//VStack
                             .padding(.bottom)
                             .padding(.leading)
-                        }
-                        .overlay(alignment: .bottomTrailing) {
-                            Button("技術"){
-                                
-                            }
-                            .foregroundStyle(.black)
-                            .padding(.bottom)
-                            .padding(.trailing)
                         }
                     
                     Button(action: {
