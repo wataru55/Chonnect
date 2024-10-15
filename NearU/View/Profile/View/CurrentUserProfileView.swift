@@ -144,13 +144,12 @@ struct CurrentUserProfileView: View {
                                 if let fullname = user.fullname {
                                     Text(fullname)
                                         .font(.system(size: 25, weight: .bold, design: .default))
-//                                        .foregroundStyle(.white)
                                         .padding(.bottom, 5)
                                 }
                                 if let bio = user.bio {
                                     Text(bio)
                                         .font(.footnote)
-//                                        .foregroundStyle(.white)
+                                        .frame(width: 250, alignment: .leading)
                                 }
                             }//VStack
                             .padding(.bottom)
