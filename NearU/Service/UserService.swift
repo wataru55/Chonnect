@@ -42,4 +42,19 @@ struct UserService {
 
         return connectedUsers
     }
+    
+    static func fetchUserTags(withUid uid: String) async throws -> [String] {
+        let snapshot = try await Firestore.firestore().collection("users").document(uid).collection("selectedTags").getDocuments()
+        var tags: [String] = []
+        
+        for document in snapshot.documents {
+            if let tagArray = document.data()["tags"] as? [String] {
+                tags.append(contentsOf: tagArray)
+            } else {
+                print("No 'tags' field found or it's not a list in document: \(document.documentID)")
+            }
+        }
+        
+        return tags
+    }
 }
