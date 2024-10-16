@@ -43,18 +43,22 @@ struct UserService {
         return connectedUsers
     }
     
+    // ユーザーの選択されたタグをFirestoreに保存する関数
+    static func saveUserTags(userId: String, selectedTags: [String]) async throws {
+        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("tags")
+        
+        try await ref.setData(["tags": selectedTags])
+    }
+    
+    // 選択したタグをフェッチする関数
     static func fetchUserTags(withUid uid: String) async throws -> [String] {
-        let snapshot = try await Firestore.firestore().collection("users").document(uid).collection("selectedTags").getDocuments()
-        var tags: [String] = []
+        let snapshot = try await Firestore.firestore().collection("users").document(uid).collection("selectedTags").document("tags").getDocument()
         
-        for document in snapshot.documents {
-            if let tagArray = document.data()["tags"] as? [String] {
-                tags.append(contentsOf: tagArray)
-            } else {
-                print("No 'tags' field found or it's not a list in document: \(document.documentID)")
-            }
+        if let tagArray = snapshot.data()?["tags"] as? [String] {
+            return tagArray
+        } else {
+            print("No 'tags' field found or it's not a list in document")
+            return []
         }
-        
-        return tags
     }
 }

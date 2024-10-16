@@ -85,6 +85,7 @@ struct EditProfileView: View {
                 }//vstack
                 //edit profile info
                 VStack {
+                    EditTagsView(userId: user.id)
                     EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
                     EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
