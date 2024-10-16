@@ -26,6 +26,8 @@ class EditProfileViewModel: ObservableObject {
     @Published var username = ""
     @Published var fullname = ""
     @Published var bio = ""
+    
+    @Published var selectedTags: [String] = []
 
     private var uiProfileImage: UIImage?
     private var uiBackgroundImage: UIImage?
@@ -97,6 +99,10 @@ class EditProfileViewModel: ObservableObject {
         //update bio if changed
         if !bio.isEmpty && user.bio != bio {
             data["bio"] = bio
+        }
+        
+        if !selectedTags.isEmpty {
+            data["tags"] = selectedTags
         }
 
         if !data.isEmpty {

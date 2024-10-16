@@ -44,6 +44,7 @@ struct EditProfileView: View {
                 Button(action: {
                     Task {
                         try await viewModel.updateUserData()
+                        try await UserService.saveUserTags(userId: user.id, selectedTags: viewModel.selectedTags) 
                         try await AuthService.shared.loadUserData()
                         
                         await MainActor.run {
@@ -85,7 +86,7 @@ struct EditProfileView: View {
                 }//vstack
                 //edit profile info
                 VStack {
-                    EditTagsView(userId: user.id)
+                    EditTagsView(selectedTags: $viewModel.selectedTags, userId: user.id)
                     EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
                     EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)

@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct EditTagsView: View {
+    @Binding var selectedTags: [String] // バインディングでタグを親ビューと共有
     @State private var tags: [String] = ["Python", "Java", "Ruby"] // 固定のタグ
-    @State private var selectedTags: [String] = [] // 選択されたタグを保持する配列
     let userId: String
     
     var body: some View {
@@ -23,8 +23,8 @@ struct EditTagsView: View {
                             Text(tag)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 12)
-                                .background(self.selectedTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground)) // 選択された場合は青色
-                                .foregroundColor(self.selectedTags.contains(tag) ? .white : .black) // 選択された場合はテキストを白色
+                                .background(self.selectedTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground)) // 選択されていれば青背景
+                                .foregroundColor(self.selectedTags.contains(tag) ? .white : .black) // 選択されていれば白テキスト
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     toggleTagSelection(tag: tag)
@@ -33,7 +33,7 @@ struct EditTagsView: View {
                     }
                     .padding(5)
                 }
-                .frame(height: 50) // タグが収まる高さに設定
+                .frame(height: 50)
             }
         }
         .onAppear {
@@ -51,18 +51,9 @@ struct EditTagsView: View {
     // タグの選択をトグルし、Firestoreに保存する関数
     private func toggleTagSelection(tag: String) {
         if let index = selectedTags.firstIndex(of: tag) {
-            selectedTags.remove(at: index) // 選択済みの場合は削除
+            selectedTags.remove(at: index) // 選択済みタグを解除
         } else {
-            selectedTags.append(tag) // 未選択の場合は追加
-        }
-        
-        // Firestoreに選択したタグを保存
-        Task {
-            do {
-                try await UserService.saveUserTags(userId: userId, selectedTags: selectedTags)
-            } catch {
-                print("Failed to save tags: \(error)")
-            }
+            selectedTags.append(tag) // タグを選択
         }
     }
 }
