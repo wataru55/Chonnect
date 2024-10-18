@@ -29,31 +29,66 @@ class AuthService {
 
         } catch { //doブロックでエラーが発生したら実行される
             print("DEBUG: Failed to log in with error \(error.localizedDescription)")
+            throw error  // エラーを再スロー
         }
     }
 
     @MainActor
-    //新規ユーザを作成する関数
+    // 新規ユーザを作成する関数
     func createUser(email: String, password: String, username: String) async throws {
         do {
-            let result = try await Auth.auth().createUser(withEmail: email, password: password) //FirebaseAuthenticationに新規ユーザを登録
-            self.userSession = result.user //新規登録されたユーザーの情報をuserSessionに格納する．userはAuthDataResultのプロパティ．ユーザの情報を含む．
-            await uploadUserData(uid: result.user.uid, username: username, email: email, isPrivate: false) //関数を非同期に実行
+            // Firebase Authenticationに新規ユーザを登録
+            let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            self.userSession = result.user // 新規登録されたユーザーの情報をuserSessionに格納
+
+            // ユニークなuserIdが生成されるまで繰り返す
+            var documentId = ""
+            var isUnique = false
+
+            repeat {
+                documentId = generateRandomDocumentId() // ランダムなuserIdを生成
+                isUnique = try await isDocumentIdUnique(documentId) // 一意性を確認
+            } while !isUnique // 一意になるまで繰り返す
+
+            // 一意なuserIdが確定したら、Firestoreにユーザーデータを保存
+            await uploadUserData(id: documentId, uid: result.user.uid, username: username, email: email, isPrivate: false)
 
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
+            throw error // エラーをスロー
         }
     }
 
-    @MainActor
-    //ユーザデータを読み込む関数
-    func loadUserData() async throws {
-        self.userSession = Auth.auth().currentUser //FirebaseAuthenticationから現在のユーザデータ情報を取得しuserSessionに格納
-        guard let currentUid = userSession?.uid else { return } //currentUserのユーザidを取得し，currentUidに格納
-        self.currentUser = try await UserService.fetchUser(withUid: currentUid)
-        let snapshot = try await Firestore.firestore().collection("users").document(currentUid).getDocument()
-        self.currentUser = try? snapshot.data(as: User?.self)
+    // 8文字のランダムなdocumentIdを生成する関数
+    private func generateRandomDocumentId(length: Int = 8) -> String {
+        let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return String((0..<length).compactMap { _ in characters.randomElement() })
     }
+
+    func isDocumentIdUnique(_ userId: String) async throws -> Bool {
+        let query = Firestore.firestore().collection("users").whereField("userId", isEqualTo: userId).limit(to: 1)
+        let snapshot = try await query.getDocuments()
+        return snapshot.isEmpty
+    }
+
+    @MainActor
+    func loadUserData() async throws {
+        self.userSession = Auth.auth().currentUser // Firebase Authenticationから現在のユーザデータ情報を取得
+        guard let currentUid = userSession?.uid else { return } // currentUserのuidを取得
+        // uidフィールドがcurrentUidと一致するユーザードキュメントをクエリ
+        let querySnapshot = try await Firestore.firestore().collection("users").whereField("uid", isEqualTo: currentUid).getDocuments()
+
+        if let document = querySnapshot.documents.first {
+            // Firestoreから取得したデータをデコード
+            var user = try document.data(as: User.self)
+            // ドキュメントIDを手動でセット
+            user.id = document.documentID
+            self.currentUser = user
+        } else {
+            print("DEBUG: ユーザーデータが見つかりませんでした。")
+        }
+    }
+
 
     func signout() {
         try? Auth.auth().signOut() //try?はエラーを無視
@@ -66,20 +101,30 @@ class AuthService {
     }
 
     //Firestore Databaseにユーザ情報を追加する関数
-    private func uploadUserData(uid: String, username: String, email: String, isPrivate: Bool) async {
-        let user = User(id: uid, username: username, email: email, isPrivate: isPrivate, connectList: [], snsLinks: [:]) //インスタンス化
-        self.currentUser = user //curenntUserに現在のユーザ情報を格納
-        guard let encodedUser = try? Firestore.Encoder().encode(user) else { return } //ユーザ情報をJSONデータにエンコードしてencodedUserに格納
-        try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser) //encodedUser(JSONデータ？)をドキュメントに書き込む
-    }
+    private func uploadUserData(id: String, uid: String, username: String, email: String, isPrivate: Bool) async {
+        let user = User(id: id, uid: uid, username: username, email: email, isPrivate: isPrivate, connectList: [], snsLinks: [:]) // インスタンス化
+        self.currentUser = user
+        guard let encodedUser = try? Firestore.Encoder().encode(user) else { return }
 
+        // ドキュメントIDとしてuserIdを使用して保存
+        try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+    }
     //受信したユーザーIDをFirebase Firestoreデータベースに保存する
     func addUserIdToFirestore(_ receivedUserId: String) async throws {
         //Firestoreのドキュメントに追加
         if let userId = self.currentUser?.id {
-            try await Firestore.firestore().collection("users").document(userId).updateData([
-                "connectList": FieldValue.arrayUnion([receivedUserId])
-            ])
+
+            // TODO: ここのタイムスタンプはすれ違ったときの時間を引数で受け取って格納する
+            let timestamp = Timestamp(date: Date())
+
+            try await Firestore.firestore().collection("users")
+                .document(userId)
+                .collection("connectList")
+                .document(receivedUserId)
+                .setData([
+                    "id": receivedUserId,
+                    "timestamp": timestamp
+                ])
         }
     }
 

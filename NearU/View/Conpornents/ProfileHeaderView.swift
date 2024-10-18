@@ -33,7 +33,7 @@ struct ProfileHeaderView: View {
                         }
                 }
             }
-            .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+            .frame(width: UIScreen.main.bounds.width, height: 250)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(alignment: .bottomLeading) {
                 CircleImageView(user: viewModel.user, size: .large, borderColor: .white)

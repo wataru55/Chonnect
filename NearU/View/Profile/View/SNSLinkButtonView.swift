@@ -19,46 +19,25 @@ struct SNSLinkButtonView: View {
 
         }, label: {
             ZStack {
-                Rectangle()
-                    .frame(width: 180, height: 240)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                Circle()
+                    .frame(width: 70, height: 70)
                     .foregroundStyle(.white)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.black, lineWidth: 2)
+                        Circle()
+                            .stroke(Color.gray, lineWidth: 1)
                     )
-                    .padding(.horizontal, 10)
+
 
                 VStack {
-                    HStack{
+                    VStack{
                         Image(selectedSNS)
                             .resizable()
-                            .frame(width: 50, height: 50)
-
-                        Spacer()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
                     }
-                    .frame(width: 150, height: 100)
-
-                    Text(selectedSNS)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.black)
-                        .padding(.top, 10)
-
-                    Spacer()
-
-                    HStack {
-                        Text("Touch me")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.black)
-
-                        Image(systemName: "hand.tap.fill")
-                            .foregroundStyle(.black)
-                    }
-                    .padding(.bottom)
+                    .frame(width: 100, height: 100)
                 }
-                .frame(width: 150, height: 240)
+                .frame(width: 70, height: 70)
 
             }
         })

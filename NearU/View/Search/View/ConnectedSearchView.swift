@@ -22,7 +22,7 @@ struct ConnectedSearchView: View {
             ScrollView {
                 LazyVStack (spacing: 16){
                     if viewModel.connectedUsers.isEmpty {
-                        Text("相互に承認したユーザーがいません")
+                        Text("承認したユーザーがいません")
                             .font(.footnote)
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
@@ -56,6 +56,9 @@ struct ConnectedSearchView: View {
                 .padding(.top, 8)
 
             }//scrollview
+            .refreshable {
+                print("refresh")
+            }
             .navigationDestination(for: User.self, destination: { value in
                 ProfileView(user: value, currentUser: currentUser)
             })

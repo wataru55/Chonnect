@@ -15,14 +15,23 @@ struct AddLinkView: View {
 
     @StateObject var viewModel: AddLinkViewModel
 
-    let snsOptions: [SNSOption] = [
-        SNSOption(name: "X (Twitter)", icon: "X (Twitter)", color: .black),
-        SNSOption(name: "Instagram", icon: "Instagram", color: .purple),
-        SNSOption(name: "TikTok", icon: "TikTok", color: .indigo),
-        SNSOption(name: "Facebook", icon: "Facebook", color: .blue),
-        SNSOption(name: "Youtube", icon: "Youtube", color: .red),
-        SNSOption(name: "Other", icon: "link", color: .gray)
-    ]
+    @Environment(\.colorScheme) private var colorScheme
+
+    // 計算プロパティとしてsnsOptionsを定義
+    var snsOptions: [SNSOption] {
+        [
+            SNSOption(
+                name: "GitHub",
+                icon: colorScheme == .dark ? "GitHub-white" : "GitHub",
+                color: colorScheme == .dark ? .white : .black
+            ),
+            SNSOption(name: "X (Twitter)", icon: "X (Twitter)", color: .black),
+            SNSOption(name: "Instagram", icon: "Instagram", color: .purple),
+            SNSOption(name: "Facebook", icon: "Facebook", color: .blue),
+            SNSOption(name: "Youtube", icon: "Youtube", color: .red),
+            SNSOption(name: "Other", icon: "link", color: .gray)
+        ]
+    }
 
     init(isPresented: Binding<Bool>, user: User) {
         self._isPresented = isPresented
@@ -66,6 +75,26 @@ struct AddLinkView: View {
                             .font(Font.subheadline)
                     }
                 })
+                
+                Section(content: {
+                    TextField("タイトル", text: $viewModel.abstract_title)
+                        .foregroundColor(Color(.systemMint))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(10)
+                        .cornerRadius(10)
+                    TextField("URL", text: $viewModel.abstract_url)
+                        .foregroundColor(Color(.systemMint))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(10)
+                        
+                }, header: {
+                    HStack{
+                        Text("My abstract")
+                            .font(Font.subheadline)
+                    }
+                })
+                
+                
             } //form
             .navigationTitle("Add Link")
             .navigationBarItems(leading: Button("Cancel") {
@@ -73,6 +102,7 @@ struct AddLinkView: View {
             }, trailing: Button("Done") {
                 Task {
                     try await viewModel.updateSNSLink()
+                    try await AuthService.shared.loadUserData()
                     await MainActor.run {
                         isPresented = false
                     }

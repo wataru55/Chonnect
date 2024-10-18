@@ -7,10 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
 		63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 63135D8A2CA6643F004137AF /* FirebaseAppCheck */; };
 		63135D8E2CA90523004137AF /* BackgroundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135D8D2CA90523004137AF /* BackgroundImageView.swift */; };
+		63135D9C2CB7A25A004137AF /* EncountData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135D9B2CB7A25A004137AF /* EncountData.swift */; };
+		63135DA32CB7ABCC004137AF /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135DA22CB7ABCC004137AF /* RealmManager.swift */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
 		63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* AddLinkView.swift */; };
+		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
+		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */; };
 		637BA0592C4252D200368566 /* AddLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA0582C4252D200368566 /* AddLinkViewModel.swift */; };
 		637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA05A2C43934600368566 /* SNSLinkButtonView.swift */; };
 		637BA05F2C44ADE400368566 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BA05E2C44ADE400368566 /* ProfileViewModel.swift */; };
@@ -59,10 +65,28 @@
 		63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8F2BED30EA009E0C9B /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		637B97292CB9024400EFB09F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
 		63135D8D2CA90523004137AF /* BackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageView.swift; sourceTree = "<group>"; };
+		63135D9B2CB7A25A004137AF /* EncountData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountData.swift; sourceTree = "<group>"; };
+		63135DA22CB7ABCC004137AF /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* AddLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkView.swift; sourceTree = "<group>"; };
+		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* AddLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkViewModel.swift; sourceTree = "<group>"; };
 		637BA05A2C43934600368566 /* SNSLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNSLinkButtonView.swift; sourceTree = "<group>"; };
 		637BA05E2C44ADE400368566 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
@@ -112,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */,
 				63DFF8972BFC99ED00A6DFB8 /* Kingfisher in Frameworks */,
 				63E4CC8A2BED30EA009E0C9B /* FirebaseAuth in Frameworks */,
 				63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */,
@@ -134,6 +159,7 @@
 				63B64FE52B8C797400289469 /* BLECentralManager.swift */,
 				63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */,
 				63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */,
+				63135DA22CB7ABCC004137AF /* RealmManager.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -174,6 +200,8 @@
 			isa = PBXGroup;
 			children = (
 				638732052BF4AE3F0099F68A /* User.swift */,
+				63135D9B2CB7A25A004137AF /* EncountData.swift */,
+				637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -329,6 +357,7 @@
 				63173DF72C37D77600F1FE82 /* AddLinkView.swift */,
 				637BA05A2C43934600368566 /* SNSLinkButtonView.swift */,
 				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
+				3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -378,6 +407,7 @@
 				63B64FD02B8C763900289469 /* Sources */,
 				63B64FD12B8C763900289469 /* Frameworks */,
 				63B64FD22B8C763900289469 /* Resources */,
+				637B97292CB9024400EFB09F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -392,6 +422,7 @@
 				63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */,
 				63DFF8962BFC99ED00A6DFB8 /* Kingfisher */,
 				63135D8A2CA6643F004137AF /* FirebaseAppCheck */,
+				637B97262CB8FBC100EFB09F /* RealmSwift */,
 			);
 			productName = NearU;
 			productReference = 63B64FD42B8C763900289469 /* NearU.app */;
@@ -424,6 +455,7 @@
 			packageReferences = (
 				63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = 63B64FD52B8C763900289469 /* Products */;
 			projectDirPath = "";
@@ -457,6 +489,7 @@
 				63B64FDA2B8C763900289469 /* ContentView.swift in Sources */,
 				63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */,
 				638732232BF4BC770099F68A /* ContentViewModel.swift in Sources */,
+				63135DA32CB7ABCC004137AF /* RealmManager.swift in Sources */,
 				6387321E2BF4B7F80099F68A /* RegistrationViewModel.swift in Sources */,
 				63B650052B8DDDF700289469 /* HomeView.swift in Sources */,
 				637BA0652C4970A800368566 /* MenuView.swift in Sources */,
@@ -466,6 +499,7 @@
 				6387320B2BF4B3680099F68A /* LoginView.swift in Sources */,
 				63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */,
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
+				637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */,
 				63AEF0FD2C0C507300DE196E /* WaitingSearchView.swift in Sources */,
 				63DFF8842BF6F1C000A6DFB8 /* EditProfileViewModel.swift in Sources */,
 				638732192BF4B62B0099F68A /* LoginViewModel.swift in Sources */,
@@ -475,6 +509,7 @@
 				637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */,
 				63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */,
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
+				63135D9C2CB7A25A004137AF /* EncountData.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
 				6387320D2BF4B3930099F68A /* AddEmailView.swift in Sources */,
 				63DFF8902BF876D100A6DFB8 /* SearchViewModel.swift in Sources */,
@@ -485,6 +520,7 @@
 				638732112BF4B3BD0099F68A /* CreatePasswordView.swift in Sources */,
 				63DFF8882BF704E500A6DFB8 /* UserService.swift in Sources */,
 				63DFF8C12C04040B00A6DFB8 /* SettingViewModel.swift in Sources */,
+				3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */,
 				638732132BF4B3E90099F68A /* CompleteSignUpView.swift in Sources */,
 				63AEF0FF2C0CC89F00DE196E /* ConnectedSearchViewModel.swift in Sources */,
 				63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */,
@@ -636,7 +672,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -670,7 +706,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -709,6 +745,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -732,6 +776,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAppCheck;
+		};
+		637B97262CB8FBC100EFB09F /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 		63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
