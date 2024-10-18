@@ -66,22 +66,33 @@ class RealmManager: ObservableObject {
     func removeData(_ userId: String) {
         do {
             let realm = try Realm()
+
+            // 該当するデータを検索
             if let existingEncountData = realm.objects(EncountData.self).filter("userId == %@", userId).first {
                 try realm.write {
+                    // Realmからデータを削除
                     realm.delete(existingEncountData)
                 }
                 print("User ID \(userId) has been removed from Realm.")
 
+                // `encountData`リストからも削除
                 if let index = self.encountData.firstIndex(where: { $0.userId == userId }) {
                     self.encountData.remove(at: index)
                     print("encountData removed for userId: \(userId)")
                 }
             }
+
+            // Realmに残っているデータの一覧を表示
+            let allEncountData = realm.objects(EncountData.self)
+            print("Current Realm data after deletion:")
+            for data in allEncountData {
+                print(data) // `EncountData`の各プロパティを表示する
+            }
+
         } catch {
             print("Error removing Realm data: \(error)")
         }
     }
-
 
     // RealmからEncountDataを取得する関数
     func getUserIDs() -> [EncountDataStruct] {
