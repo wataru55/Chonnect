@@ -7,10 +7,10 @@
 import SwiftUI
 
 struct EditTagsView: View {
-    @Binding var selectedTags: [String] // バインディングでタグを親ビューと共有
     @State private var tags: [String] = ["Python", "Java", "Ruby"] // 固定のタグ
+    @Binding var selectedTags: [String] // バインディングでタグを親ビューと共有
     let userId: String
-    
+
     var body: some View {
         VStack {
             if tags.isEmpty {
@@ -36,18 +36,18 @@ struct EditTagsView: View {
                 .frame(height: 50)
             }
         }
-        .onAppear {
-            Task {
-                do {
-                    // Firestoreから既に選択されたタグを取得
-                    self.selectedTags = try await UserService.fetchUserTags(withUid: userId)
-                } catch {
-                    print("Failed to fetch tags: \(error)")
-                }
-            }
-        }
+//        .onAppear {
+//            Task {
+//                do {
+//                    // Firestoreから既に選択されたタグを取得
+//                    self.selectedTags = try await UserService.fetchUserTags(withUid: userId)
+//                } catch {
+//                    print("Failed to fetch tags: \(error)")
+//                }
+//            }
+//        }
     }
-    
+
     // タグの選択をトグルし、Firestoreに保存する関数
     private func toggleTagSelection(tag: String) {
         if let index = selectedTags.firstIndex(of: tag) {

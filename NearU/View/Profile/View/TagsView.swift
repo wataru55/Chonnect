@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct TagsView: View {
-    @State private var tags: [String] = []
-    let userId: String
-    
+    var tags: [String]
+    //let userId: String
+
     var body: some View {
         VStack {
             if tags.isEmpty {
@@ -32,14 +32,14 @@ struct TagsView: View {
                 .frame(height: 50) // タグが収まる高さに設定
             }
         }
-        .onAppear {
-            Task {
-                do {
-                    self.tags = try await UserService.fetchUserTags(withUid: userId)
-                } catch {
-                    print("Failed to fetch tags: \(error)")
-                }
-            }
-        }
+//        .onAppear {
+//            Task {
+//                do {
+//                    self.tags = try await UserService.fetchUserTags(withUid: userId)
+//                } catch {
+//                    print("Failed to fetch tags: \(error)")
+//                }
+//            }
+//        }
     }
 }
