@@ -15,15 +15,15 @@ enum Field: Hashable {
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
-    @StateObject var viewModel : EditProfileViewModel
-    
-    let user: User
+    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+
+    //let user: User
     @FocusState private var focusedField: Field?
     
-    init(user: User) {
-        self.user = user
-        self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
-    }
+//    init(user: User) {
+//        self.user = user
+//        //self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
+//    }
     
     var body: some View {
         VStack {
@@ -44,8 +44,10 @@ struct EditProfileView: View {
                 Button(action: {
                     Task {
                         try await viewModel.updateUserData()
+                        try await viewModel.updateUserTags()
                         try await AuthService.shared.loadUserData()
-                        
+                        try await viewModel.loadUserTags()
+
                         await MainActor.run {
                             dismiss()
                         }
@@ -85,6 +87,7 @@ struct EditProfileView: View {
                 }//vstack
                 //edit profile info
                 VStack {
+                    EditTagsView(selectedTags: $viewModel.selectedTags, userId: viewModel.user.id)
                     EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
                     EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
@@ -111,7 +114,7 @@ struct EditProfileView: View {
                 )
                 .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
                 .sheet(isPresented: $isAddingNewLink) {
-                    AddLinkView(isPresented: $isAddingNewLink, user: user)
+                    AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
                 }
                 .padding(.bottom, 20)
                 
@@ -148,5 +151,5 @@ struct EditProfileRowView: View {
 }//view
 
 #Preview {
-    EditProfileView(user: User.MOCK_USERS[0])
+    EditProfileView()
 }

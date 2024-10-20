@@ -8,20 +8,18 @@
 import PhotosUI
 import SwiftUI
 import Firebase
+import Combine
 
-class EditProfileViewModel: ObservableObject {
+class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
-    @Published var selectedProfileImage: PhotosPickerItem? { //PhotosPickerから選択されたアイテムを保持するプロパティ
-        //didset:プロパティの値が変更された直後に呼び出される．
-        didSet { Task { await loadProfileImage(fromItem: selectedProfileImage) }}
-    }
 
     @Published var selectedBackgroundImage: PhotosPickerItem? {
         didSet { Task { await loadBackgroundImage(fromItem: selectedBackgroundImage) }}
     }
 
-    @Published var profileImage: Image?
     @Published var backgroundImage: Image?
+
+    @Published var selectedTags: [String] = []
 
     @Published var username = ""
     @Published var fullname = ""
@@ -30,29 +28,31 @@ class EditProfileViewModel: ObservableObject {
     private var uiProfileImage: UIImage?
     private var uiBackgroundImage: UIImage?
 
-    init(user: User) {
-        self.user = user
+    private var cancellables = Set<AnyCancellable>()
 
-        self.username = user.username
-
-        if let fullname = user.fullname {
-            self.fullname = fullname
+    init() {
+        if let currentUser = AuthService.shared.currentUser {
+            self.user = currentUser
+        } else {
+            self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
         }
-
-        if let bio = user.bio {
-            self.bio = bio
+        setupSubscribers()
+        Task {
+            try await loadUserTags()
         }
     }
-    @MainActor
-    func loadProfileImage(fromItem item: PhotosPickerItem?) async {
-        guard let item = item else { return } //オプショナルでないか確認
-        //データを読み込みバイナリデータとして取得
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        //バイナリデータをUIImage型に変換
-        guard let uiImage = UIImage(data: data) else { return } //バイナリデータが有効な画像データであるか検証するため
-        self.uiProfileImage = uiImage
-        //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
-        self.profileImage = Image(uiImage: uiImage)
+
+    func setupSubscribers() {
+        // currentUserプロパティが変更されるとクロージャが実行される
+        AuthService.shared.$currentUser
+            .compactMap({ $0 })
+            .sink { [weak self] currentUser in
+                self?.user = currentUser
+                self?.username = currentUser.username
+                self?.fullname = currentUser.fullname ?? ""
+                self?.bio = currentUser.bio ?? ""
+            }
+            .store(in: &cancellables)
     }
 
     @MainActor
@@ -65,6 +65,20 @@ class EditProfileViewModel: ObservableObject {
         self.uiBackgroundImage = uiImage
         //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
         self.backgroundImage = Image(uiImage: uiImage)
+    }
+
+    @MainActor
+    func loadUserTags() async throws {
+        do {
+            let fetchedTags = try await UserService.fetchUserTags(withUid: user.id)
+            self.selectedTags = fetchedTags.tags
+        } catch {
+            print("Failed to fetch tags: \(error)")
+        }
+    }
+
+    func updateUserTags() async throws {
+        try await UserService.saveUserTags(userId: user.id, selectedTags: selectedTags)
     }
 
     @MainActor
@@ -84,7 +98,6 @@ class EditProfileViewModel: ObservableObject {
         }
 
         if !username.isEmpty && user.username != username {
-
 
             data["username"] = username
         }
