@@ -9,7 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct CurrentUserProfileView: View {
-    //MARK: - property
+    @StateObject private var viewModel = CurrentUserProfileViewModel()
+
     @State private var isAddingNewLink = false
     @State private var showEditProfile = false
     @State var isMenuOpen = false
@@ -24,7 +25,7 @@ struct CurrentUserProfileView: View {
                     BackgroundImageView(user: user, height: 500, isGradient: true)
                         .overlay(alignment: .bottomLeading) {
                             VStack(alignment: .leading){
-                                TagsView(userId: user.id)
+                                TagsView(tags: viewModel.selectedTags)
                                 if let fullname = user.fullname {
                                     Text(fullname)
                                         .font(.system(size: 25, weight: .bold, design: .default))
@@ -93,7 +94,8 @@ struct CurrentUserProfileView: View {
                 }//VStack
                 .padding(.bottom, 100)
                 .fullScreenCover(isPresented: $showEditProfile) {
-                    EditProfileView(user: user)
+                    EditProfileView()
+                        .environmentObject(viewModel)
                 }
             }//scrollView
             .ignoresSafeArea(.all)
