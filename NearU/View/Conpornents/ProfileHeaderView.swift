@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileHeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
+    let date: Date
 
     var body: some View {
         VStack (spacing: 15){
@@ -61,7 +62,7 @@ struct ProfileHeaderView: View {
                     Task {
                         do {
                             try await AuthService.shared.removeUserIdFromFirestore(viewModel.user.id)
-                            UserDefaultsManager.shared.storeReceivedUserId(viewModel.user.id)
+                            RealmManager.shared.storeData(viewModel.user.id, date: date)
 
                         } catch {
                             // エラーハンドリング
@@ -81,8 +82,8 @@ struct ProfileHeaderView: View {
                     Button(action: {
                         Task {
                             do {
-                                UserDefaultsManager.shared.removeUserID(viewModel.user.id)
-                                try await AuthService.shared.addUserIdToFirestore(viewModel.user.id)
+                                RealmManager.shared.removeData(viewModel.user.id)
+                                try await AuthService.shared.addUserIdToFirestore(viewModel.user.id, date)
 
                             } catch {
                                 // エラーハンドリング
@@ -101,8 +102,11 @@ struct ProfileHeaderView: View {
                     })
 
                     Button(action: {
-                        UserDefaultsManager.shared.removeUserID(viewModel.user.id)
-
+                        RealmManager.shared.storeData(viewModel.user.id, date: date)
+                        //TODO: deletefirestore
+                        Task {
+                            try await AuthService.shared.removeUserIdFromFirestore(viewModel.user.id)
+                        }
                     }, label: {
                         Image(systemName: "hand.wave.fill")
                             .foregroundStyle(.white)
@@ -117,5 +121,5 @@ struct ProfileHeaderView: View {
 }//view
 
 #Preview {
-    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]))
+    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date())
 }
