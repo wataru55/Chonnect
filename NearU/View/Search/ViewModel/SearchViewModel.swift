@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 class SearchViewModel: ObservableObject {
-    @Published var userDatePairs = [(User, Date)]()
+    @Published var userDatePairs = [UserDatePair]()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -28,7 +28,8 @@ class SearchViewModel: ObservableObject {
             let userIds = encountDataList.map { $0.userId }
             let dates = encountDataList.map { $0.date }
             let users = try await UserService.fetchWaitingUsers(userIds)
-            self.userDatePairs = Array(zip(users, dates))
+            // ユーザーと日付を UserDatePair に変換
+            self.userDatePairs = zip(users, dates).map { UserDatePair(user: $0, date: $1) }
         } catch {
             print("Error fetching users: \(error)")
         }
