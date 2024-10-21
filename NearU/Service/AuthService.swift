@@ -110,30 +110,41 @@ class AuthService {
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
     }
     //受信したユーザーIDをFirebase Firestoreデータベースに保存する
-    func addUserIdToFirestore(_ receivedUserId: String) async throws {
-        //Firestoreのドキュメントに追加
-        if let userId = self.currentUser?.id {
+    func addUserIdToFirestore(_ receivedUserId: String, _ date: Date) async throws {
+        // 現在のユーザーIDを取得
+        guard let userId = self.currentUser?.id else {
+            print("Current user ID is not available.")
+            return
+        }
+        // 新しいUUIDを生成
+        let newId = UUID().uuidString
 
-            // TODO: ここのタイムスタンプはすれ違ったときの時間を引数で受け取って格納する
-            let timestamp = Timestamp(date: Date())
+        // 保存するデータを辞書として定義
+        let encountData: [String: Any] = [
+            "id": newId,
+            "userId": receivedUserId,
+            "date": date
+        ]
 
-            try await Firestore.firestore().collection("users")
-                .document(userId)
-                .collection("connectList")
-                .document(receivedUserId)
-                .setData([
-                    "id": receivedUserId,
-                    "timestamp": timestamp
-                ])
+        do {
+            try await Firestore.firestore().collection("users").document(userId).collection("connectList").document(receivedUserId).setData(encountData)
+            print("EncountDataStruct successfully saved with ID: \(newId)")
+        } catch {
+            print("Error saving EncountDataStruct: \(error)")
+            throw error
         }
     }
 
     func removeUserIdFromFirestore(_ receivedUserId: String) async throws {
+        // 現在のユーザーIDを取得
+        guard let documentId = self.currentUser?.id else { return }
         // Firestoreのドキュメントから削除
-        if let userId = self.currentUser?.id {
-            try await Firestore.firestore().collection("users").document(userId).updateData([
-                "connectList": FieldValue.arrayRemove([receivedUserId])
-            ])
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).collection("connectList").document(receivedUserId).delete()
+            print("Document successfully removed!")
+        } catch {
+            print("Error removing document: \(error)")
+            throw error
         }
     }
 }

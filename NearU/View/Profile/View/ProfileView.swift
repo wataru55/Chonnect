@@ -11,21 +11,23 @@ struct ProfileView: View {
     //MARK: - property
     @StateObject var viewModel: ProfileViewModel
 
-    init(user: User, currentUser: User) {
+    let date: Date
+
+    init(user: User, currentUser: User, date: Date) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
+        self.date = date
     }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 //header
-                ProfileHeaderView(viewModel: viewModel)
+                ProfileHeaderView(viewModel: viewModel, date: date)
 
                 Divider()
                 //link scroll view
 
                 if !viewModel.user.isPrivate || viewModel.currentUser.connectList.contains(viewModel.user.id) && viewModel.user.connectList.contains(viewModel.currentUser.id){
-
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 5) {
                             ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
@@ -58,5 +60,5 @@ struct ProfileView: View {
 }//view
 
 #Preview {
-    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1])
+    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1], date: Date())
 }

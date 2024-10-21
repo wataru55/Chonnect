@@ -28,16 +28,16 @@ struct UserService {
         return users
     }
 
-    static func fetchConnectedUsers(withUid userId: String) async throws -> [User] {
-        // First, fetch the user to get their connectList
-        let user = try await fetchUser(withUid: userId)
-        let connectList = user.connectList
+    static func fetchConnectedUsers(documentId: String) async throws -> [UserDatePair] {
+        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("connectList").getDocuments()
 
-        // Fetch the connected users
-        var connectedUsers: [User] = []
-        for connectedUserId in connectList {
-            let connectedUser = try await fetchUser(withUid: connectedUserId)
-            connectedUsers.append(connectedUser)
+        var connectedUsers: [UserDatePair] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: EncountDataStruct.self)
+            let connectedUser = try await fetchUser(withUid: data.userId)
+            let userDatePair = UserDatePair(user: connectedUser, date: data.date)
+            connectedUsers.append(userDatePair)
         }
 
         return connectedUsers

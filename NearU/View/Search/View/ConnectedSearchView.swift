@@ -21,23 +21,23 @@ struct ConnectedSearchView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack (spacing: 16){
-                    if viewModel.connectedUsers.isEmpty {
+                    if viewModel.userDatePairs.isEmpty {
                         Text("承認したユーザーがいません")
                             .font(.footnote)
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
                             .padding()
                     } else {
-                        ForEach(viewModel.connectedUsers) { user in
-                            NavigationLink(value: user) {
+                        ForEach(viewModel.userDatePairs, id: \.self) { pair in
+                            NavigationLink(value: pair ) {
                                 HStack {
-                                    CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
                                     VStack (alignment: .leading){
-                                        Text(user.username)
+                                        Text(pair.user.username)
                                             .fontWeight(.bold)
                                             .foregroundStyle(Color.primary)
 
-                                        if let fullname = user.fullname { //fullnameがnilじゃないなら
+                                        if let fullname = pair.user.fullname { //fullnameがnilじゃないなら
                                             Text(fullname)
                                                 .foregroundStyle(Color.primary)
                                         }
@@ -59,8 +59,8 @@ struct ConnectedSearchView: View {
             .refreshable {
                 print("refresh")
             }
-            .navigationDestination(for: User.self, destination: { value in
-                ProfileView(user: value, currentUser: currentUser)
+            .navigationDestination(for: UserDatePair.self, destination: { pair in
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         }//navigationstack
     }
