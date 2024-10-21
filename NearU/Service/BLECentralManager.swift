@@ -50,7 +50,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
             print("Received userId (LocalName): \(receivedDocumentId), RSSI: \(RSSI)")
             DispatchQueue.main.async {
                 // 受信したuserIdをRealmに保存
-                RealmManager.shared.storeData(receivedDocumentId)
+                RealmManager.shared.storeData(receivedDocumentId, date: Date())
             }
         }
     }
