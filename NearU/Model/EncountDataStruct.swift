@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-struct EncountDataStruct: Identifiable, Hashable, Codable {
-    let id: String
+struct EncountDataStruct: Hashable, Codable {
     let userId: String
     var date: Date
 
     init(from object: EncountData) {
-        self.id = object.id
         self.userId = object.userId
         self.date = object.date
     }
@@ -21,7 +19,6 @@ struct EncountDataStruct: Identifiable, Hashable, Codable {
     // Realmオブジェクトに変換するメソッド
     func toRealmObject() -> EncountData {
         let realmObject = EncountData()
-        realmObject.id = self.id
         realmObject.userId = self.userId
         realmObject.date = self.date
         return realmObject

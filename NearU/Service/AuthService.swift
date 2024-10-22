@@ -89,7 +89,6 @@ class AuthService {
         }
     }
 
-
     func signout() {
         try? Auth.auth().signOut() //try?はエラーを無視
         self.userSession = nil
@@ -116,19 +115,17 @@ class AuthService {
             print("Current user ID is not available.")
             return
         }
-        // 新しいUUIDを生成
-        let newId = UUID().uuidString
 
         // 保存するデータを辞書として定義
         let encountData: [String: Any] = [
-            "id": newId,
+            //"id": newId,
             "userId": receivedUserId,
             "date": date
         ]
 
         do {
             try await Firestore.firestore().collection("users").document(userId).collection("connectList").document(receivedUserId).setData(encountData)
-            print("EncountDataStruct successfully saved with ID: \(newId)")
+            print("EncountDataStruct successfully saved with ID: \(receivedUserId)")
         } catch {
             print("Error saving EncountDataStruct: \(error)")
             throw error
