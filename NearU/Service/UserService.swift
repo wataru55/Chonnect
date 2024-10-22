@@ -29,7 +29,7 @@ struct UserService {
     }
 
     static func fetchConnectedUsers(documentId: String) async throws -> [UserDatePair] {
-        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("connectList").getDocuments()
+        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
 
         var connectedUsers: [UserDatePair] = []
 
@@ -70,7 +70,5 @@ struct UserService {
             print("Error saving Followed: \(error)")
             throw error
         }
-
-
     }
 }

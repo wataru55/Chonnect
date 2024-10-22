@@ -124,7 +124,7 @@ class AuthService {
         ]
 
         do {
-            try await Firestore.firestore().collection("users").document(userId).collection("connectList").document(receivedUserId).setData(encountData)
+            try await Firestore.firestore().collection("users").document(userId).collection("follows").document(receivedUserId).setData(encountData)
             print("EncountDataStruct successfully saved with ID: \(receivedUserId)")
         } catch {
             print("Error saving EncountDataStruct: \(error)")
@@ -137,7 +137,7 @@ class AuthService {
         guard let documentId = self.currentUser?.id else { return }
         // Firestoreのドキュメントから削除
         do {
-            try await Firestore.firestore().collection("users").document(documentId).collection("connectList").document(receivedUserId).delete()
+            try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedUserId).delete()
             print("Document successfully removed!")
         } catch {
             print("Error removing document: \(error)")
