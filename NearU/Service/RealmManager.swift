@@ -32,28 +32,33 @@ class RealmManager: ObservableObject {
         }
     }
 
-    // すれ違ったユーザーIDを保存または更新
-    func storeData(_ receivedUserId: String) {
+    // すれ違ったユーザーIDと日付を保存または更新
+    func storeData(_ receivedUserId: String, date: Date) {
         do {
             let realm = try Realm()
+            // 既存のユーザーIDがRealmにあるか確認
             if let existingEncountData = realm.objects(EncountData.self).filter("userId == %@", receivedUserId).first {
+                // 既存データがあれば、日付を更新
                 try realm.write {
-                    existingEncountData.date = Date()
+                    existingEncountData.date = date
                 }
                 print("User ID \(receivedUserId) already exists, date updated in Realm.")
+                // メモリ上のencountData配列も更新
                 if let index = self.encountData.firstIndex(where: { $0.userId == receivedUserId }) {
                     self.encountData[index].date = existingEncountData.date
                 }
             } else {
+                // 新規データの作成
                 let newEncountData = EncountData()
                 newEncountData.userId = receivedUserId
-                newEncountData.date = Date()
+                newEncountData.date = date
 
+                // Realmに保存
                 try realm.write {
                     realm.add(newEncountData)
                 }
                 print("User ID \(receivedUserId) has been stored in Realm.")
-
+                // メモリ上の配列に追加
                 let newEncountDataStruct = EncountDataStruct(from: newEncountData)
                 self.encountData.append(newEncountDataStruct)
             }
@@ -61,7 +66,6 @@ class RealmManager: ObservableObject {
             print("Error storing Realm data: \(error)")
         }
     }
-
 
     func removeData(_ userId: String) {
         do {

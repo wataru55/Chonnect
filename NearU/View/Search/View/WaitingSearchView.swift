@@ -31,16 +31,16 @@ struct WaitingSearchView: View {
                             .foregroundColor(.gray)
                             .padding()
                     } else {
-                        ForEach(viewModel.userDatePairs, id: \.0.id) { user, date in
-                            NavigationLink(value: user) {
+                        ForEach(viewModel.userDatePairs, id: \.self) { pair in
+                            NavigationLink(value: pair) {
                                 HStack {
-                                    CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
                                     VStack(alignment: .leading) {
-                                        Text(user.username)
+                                        Text(pair.user.username)
                                             .fontWeight(.bold)
                                             .foregroundStyle(Color.primary)
 
-                                        if let fullname = user.fullname {
+                                        if let fullname = pair.user.fullname {
                                             Text(fullname)
                                                 .foregroundStyle(Color.primary)
                                         }
@@ -49,15 +49,15 @@ struct WaitingSearchView: View {
 
                                     Spacer()
 
-                                    Text("\(dateFormatter.string(from: date))")
+                                    Text("\(dateFormatter.string(from: pair.date))")
                                         .font(.caption)
                                         .foregroundColor(.gray)
 
                                     Button(action: {
                                         Task {
                                             do {
-                                                try await AuthService.shared.addUserIdToFirestore(user.id)
-                                                RealmManager.shared.removeData(user.id)
+                                                try await AuthService.shared.addUserIdToFirestore(pair.user.id, pair.date)
+                                                RealmManager.shared.removeData(pair.user.id)
                                                 // デバッグ
                                                 let storedUserIds = RealmManager.shared.getUserIDs()
                                                 print("Stored User IDs after removal: \(storedUserIds)")
@@ -77,7 +77,7 @@ struct WaitingSearchView: View {
                                     })
 
                                     Button(action: {
-                                        RealmManager.shared.removeData(user.id)
+                                        RealmManager.shared.removeData(pair.user.id)
                                     }, label: {
                                         Image(systemName: "hand.wave.fill")
                                             .foregroundStyle(.white)
@@ -97,8 +97,8 @@ struct WaitingSearchView: View {
             .refreshable {
                 print("refresh")
             }
-            .navigationDestination(for: User.self, destination: { value in
-                ProfileView(user: value, currentUser: currentUser)
+            .navigationDestination(for: UserDatePair.self, destination: { pair in
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // NavigationStack
     }
