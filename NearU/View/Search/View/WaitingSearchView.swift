@@ -57,6 +57,7 @@ struct WaitingSearchView: View {
                                         Task {
                                             do {
                                                 try await AuthService.shared.addUserIdToFirestore(pair.user.id, pair.date)
+                                                try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
                                                 RealmManager.shared.removeData(pair.user.id)
                                                 // デバッグ
                                                 let storedUserIds = RealmManager.shared.getUserIDs()

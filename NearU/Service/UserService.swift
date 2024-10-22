@@ -54,4 +54,23 @@ struct UserService {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("tags").getDocument()
         return try snapshot.data(as: Tags.self)
     }
+
+    static func followUser(receivedId: String, date: Date) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        let encountData: [String: Any] = [
+            "userId": documentId,
+            "date": date
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(receivedId).collection("followers").document(documentId).setData(encountData)
+            print("Followed successfully saved")
+        } catch {
+            print("Error saving Followed: \(error)")
+            throw error
+        }
+
+
+    }
 }
