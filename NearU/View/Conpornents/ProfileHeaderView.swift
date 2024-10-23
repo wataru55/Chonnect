@@ -61,7 +61,7 @@ struct ProfileHeaderView: View {
                 Button(action: {
                     Task {
                         do {
-                            try await AuthService.shared.removeUserIdFromFirestore(viewModel.user.id)
+                            try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
                             RealmManager.shared.storeData(viewModel.user.id, date: date)
 
                         } catch {
@@ -83,7 +83,7 @@ struct ProfileHeaderView: View {
                         Task {
                             do {
                                 RealmManager.shared.removeData(viewModel.user.id)
-                                try await AuthService.shared.addUserIdToFirestore(viewModel.user.id, date)
+                                try await UserService.followUser(receivedId: viewModel.user.id, date: date)
 
                             } catch {
                                 // エラーハンドリング
@@ -103,9 +103,8 @@ struct ProfileHeaderView: View {
 
                     Button(action: {
                         RealmManager.shared.storeData(viewModel.user.id, date: date)
-                        //TODO: deletefirestore
                         Task {
-                            try await AuthService.shared.removeUserIdFromFirestore(viewModel.user.id)
+                            try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
                         }
                     }, label: {
                         Image(systemName: "hand.wave.fill")

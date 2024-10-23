@@ -108,40 +108,4 @@ class AuthService {
         // ドキュメントIDとしてuserIdを使用して保存
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
     }
-    //受信したユーザーIDをFirebase Firestoreデータベースに保存する
-    func addUserIdToFirestore(_ receivedUserId: String, _ date: Date) async throws {
-        // 現在のユーザーIDを取得
-        guard let userId = self.currentUser?.id else {
-            print("Current user ID is not available.")
-            return
-        }
-
-        // 保存するデータを辞書として定義
-        let encountData: [String: Any] = [
-            //"id": newId,
-            "userId": receivedUserId,
-            "date": date
-        ]
-
-        do {
-            try await Firestore.firestore().collection("users").document(userId).collection("follows").document(receivedUserId).setData(encountData)
-            print("EncountDataStruct successfully saved with ID: \(receivedUserId)")
-        } catch {
-            print("Error saving EncountDataStruct: \(error)")
-            throw error
-        }
-    }
-
-    func removeUserIdFromFirestore(_ receivedUserId: String) async throws {
-        // 現在のユーザーIDを取得
-        guard let documentId = self.currentUser?.id else { return }
-        // Firestoreのドキュメントから削除
-        do {
-            try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedUserId).delete()
-            print("Document successfully removed!")
-        } catch {
-            print("Error removing document: \(error)")
-            throw error
-        }
-    }
 }
