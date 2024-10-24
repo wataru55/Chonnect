@@ -29,7 +29,7 @@ struct UserService {
     }
 
     static func fetchConnectedUsers(documentId: String) async throws -> [UserDatePair] {
-        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("connectList").getDocuments()
+        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
 
         var connectedUsers: [UserDatePair] = []
 
@@ -53,5 +53,48 @@ struct UserService {
     static func fetchUserTags(withUid id: String) async throws -> Tags {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("tags").getDocument()
         return try snapshot.data(as: Tags.self)
+    }
+
+    static func followUser(receivedId: String, date: Date) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        let path = Firestore.firestore().collection("users")
+
+        let followerData: [String: Any] = [
+            "userId": documentId,
+            "date": date
+        ]
+
+        let followData: [String: Any] = [
+            "userId": receivedId,
+            "date": date
+        ]
+
+        do {
+            // 相手のfollowersコレクションに保存
+            try await path.document(receivedId).collection("followers").document(documentId).setData(followerData)
+            // 自分のfollowsコレクションに保存
+            try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
+            print("Followed successfully saved")
+        } catch {
+            print("Error saving Followed: \(error)")
+            throw error
+        }
+    }
+
+    static func deleteFollowedUser(receivedId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        do {
+            // 相手のfollowersコレクションから削除
+            try await Firestore.firestore().collection("users").document(receivedId).collection("followers").document(documentId).delete()
+            // 自分のfollowsコレクションから削除
+            try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedId).delete()
+            print("Followed successfully deleted")
+        } catch {
+            print("Error deleting Followed: \(error)")
+            throw error
+        }
+
     }
 }

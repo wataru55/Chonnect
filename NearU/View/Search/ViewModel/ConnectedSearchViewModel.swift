@@ -40,7 +40,7 @@ class ConnectedSearchViewModel: ObservableObject {
     }
 
     func listenForUpdates() {
-        listener = Firestore.firestore().collection("users").document(currentUser.id).collection("connectList")
+        listener = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
             .addSnapshotListener { [weak self] querySnapshot, error in
                 guard let self = self else { return }
                 if let error = error {
