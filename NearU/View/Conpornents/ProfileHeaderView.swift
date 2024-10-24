@@ -18,11 +18,24 @@ struct ProfileHeaderView: View {
                         image
                             .resizable()
                             .scaledToFill()
+                            .clipped()
+                            .overlay(
+                                Group{
+                                    LinearGradient(
+                                        gradient: Gradient(stops: [
+                                            .init(color: Color.white.opacity(0), location: 0.5),
+                                            .init(color: Color(red: 0.92, green: 0.93, blue: 0.94).opacity(1), location: 1)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                            )
                     } placeholder: {
                         ProgressView()
                     }
                 } else {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 0)
                         .foregroundColor(Color(.systemGray4))
                         .overlay {
                             Image(systemName: "photo.fill")
@@ -33,28 +46,26 @@ struct ProfileHeaderView: View {
                         }
                 }
             }
-            .frame(width: UIScreen.main.bounds.width, height: 250)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(alignment: .bottomLeading) {
-                CircleImageView(user: viewModel.user, size: .large, borderColor: .white)
-                    .padding()
-            }
+            .frame(width: UIScreen.main.bounds.width, height: 500)
             //name and info
-            VStack (alignment: .leading, content: {
-                if let fullname = viewModel.user.fullname {
-                    Text(fullname)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                }
-
-                if let bio = viewModel.user.bio {
-                    Text(bio)
-                        .font(.footnote)
-                }
-            })
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal)
-
+            .overlay(alignment: .bottomLeading) {
+                VStack(alignment: .leading){
+                    if let fullname = viewModel.user.fullname {
+                        Text(fullname)
+                            .font(.system(size: 25, weight: .bold, design: .default))
+                            .padding(.bottom, 5)
+                    }
+                    if let bio = viewModel.user.bio {
+                        Text(bio)
+                            .font(.footnote)
+                            .frame(width: 250, alignment: .leading)
+                    }
+                }//VStack
+                .padding(.bottom)
+                .padding(.leading)
+            }
+            .padding(.bottom)
+            
             //action button
             if viewModel.currentUser.connectList.contains(viewModel.user.id) == true {
                 Button(action: {

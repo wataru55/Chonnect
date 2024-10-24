@@ -11,6 +11,7 @@ import Firebase
 class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
+    @Published var abstractLinks: [String: String] = [:]
 
     init(user: User, currentUser: User) {
         self.user = user
@@ -33,4 +34,33 @@ class ProfileViewModel: ObservableObject {
             print("Error loading user data: \(error.localizedDescription)")
         }
     }
+    
+    func fetchAbstractLinks() {
+            Firestore.firestore()
+                .collection("users")
+                .document(user.id)
+                .collection("abstract")
+                .getDocuments { [weak self] (snapshot, error) in
+                    if let error = error {
+                        print("Error fetching abstract links: \(error)")
+                        return
+                    }
+                    
+                    guard let documents = snapshot?.documents else { return }
+                    
+                    // フェッチしたデータを辞書に保存
+                    var fetchedLinks: [String: String] = [:]
+                    
+                    for document in documents {
+                        if let title = document.data()["abstract_title"] as? String,
+                           let url = document.data()["abstract_url"] as? String {
+                            fetchedLinks[title] = url
+                        }
+                    }
+                    print("Fetched abstract links:", fetchedLinks)
+                    DispatchQueue.main.async {
+                        self?.abstractLinks = fetchedLinks
+                    }
+                }
+        }
 }
