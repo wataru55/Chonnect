@@ -18,30 +18,16 @@ struct SiteLinkButtonView: View {
             }
         }, label: {
             Text(abstract_title)
-                .frame(width: 300, height: 70) // ボタンサイズの調整
-                .background(Color.white) // ボタン背景色
+                .frame(width: 350, height: 70) // ボタンサイズの調整
+                .background(Color(red: 0.92, green: 0.93, blue: 0.94)) // ボタン背景色
                 .foregroundColor(.black) // テキスト色
-                .clipShape(RoundedCorners(radius: 100, corners: [.topLeft, .bottomLeft]))
                 .overlay(
-                    RoundedCorners(radius: 100, corners: [.topLeft, .bottomLeft])
-                        .stroke(Color.black, lineWidth: 1) // 枠線を設定
+                    Rectangle()
+                        .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), lineWidth: 1) // 枠線を設定
                 )
         })
         .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct RoundedCorners: Shape {
-    var radius: CGFloat = 10
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
+        .padding(.bottom, 10)
     }
 }
 
