@@ -39,7 +39,25 @@ struct UserService {
             let connectedUser = try await fetchUser(withUid: connectedUserId)
             connectedUsers.append(connectedUser)
         }
-
         return connectedUsers
+    }
+    
+    static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
+        var abstractLinks: [String: String] = [:]
+
+        let snapshot = try await Firestore.firestore()
+            .collection("users")
+            .document(userId)
+            .collection("abstract")
+            .getDocuments()
+        
+        for document in snapshot.documents {
+            if let title = document.data()["abstract_title"] as? String,
+               let url = document.data()["abstract_url"] as? String {
+                abstractLinks[title] = url
+            }
+        }
+        
+        return abstractLinks
     }
 }
