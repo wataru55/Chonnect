@@ -32,6 +32,16 @@ class AuthService {
             throw error  // エラーを再スロー
         }
     }
+    
+    @MainActor
+    func resetPassword(withEmail email: String) async throws { //パスワードリセット
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch {
+            print("DEBUG: パスワードリセットに失敗しました。エラー: \(error.localizedDescription)")
+            throw error
+        }
+    }
 
     @MainActor
     // 新規ユーザを作成する関数

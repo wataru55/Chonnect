@@ -11,6 +11,7 @@ struct IGTextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .textInputAutocapitalization(.never) // 自動で大文字にしない
+            .disableAutocorrection(true) // スペルチェックを無効にする
             .font(.subheadline)
             .padding(12)
             .background(Color(.systemGray6))
