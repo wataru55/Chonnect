@@ -42,11 +42,16 @@ struct LoginView: View {
                 Button(action: {
                     print("show forgot password")
                 }, label: {
-                    Text("パスワードを忘れた場合")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(Color(.systemMint))
-                        .padding(.top)
+                    NavigationLink {
+                        PasswordResetView()
+                            .navigationBarBackButtonHidden()
+                    } label: {
+                        Text("パスワードを忘れた場合")
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color(.systemMint))
+                            .padding(.top)
+                    }
                 })
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.trailing)
