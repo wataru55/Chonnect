@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct EditTagsView: View {
-    @State private var tags: [String] = ["Python", "Java", "Ruby"] // 固定のタグ
-    @Binding var selectedTags: [String] // バインディングでタグを親ビューと共有
+    @State private var tags: [String] = ["JavaScript","Python", "Java", "Ruby","Swift","PHP","TypeScript","Go","C","C++","Kotlin","C#","HTML/CSS","Objective-C","Rust","Dart","Perl","Scala","Elixir","Lisp","Haskell","R","SASS"]
+    @Binding var selectedTags: [String]
     let userId: String
 
     var body: some View {
@@ -23,8 +23,8 @@ struct EditTagsView: View {
                             Text(tag)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 12)
-                                .background(self.selectedTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground)) // 選択されていれば青背景
-                                .foregroundColor(self.selectedTags.contains(tag) ? .white : .black) // 選択されていれば白テキスト
+                                .background(self.selectedTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground))
+                                .foregroundColor(self.selectedTags.contains(tag) ? .white : .black)
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     toggleTagSelection(tag: tag)
@@ -51,9 +51,9 @@ struct EditTagsView: View {
     // タグの選択をトグルし、Firestoreに保存する関数
     private func toggleTagSelection(tag: String) {
         if let index = selectedTags.firstIndex(of: tag) {
-            selectedTags.remove(at: index) // 選択済みタグを解除
+            selectedTags.remove(at: index)
         } else {
-            selectedTags.append(tag) // タグを選択
+            selectedTags.append(tag)
         }
     }
 }
