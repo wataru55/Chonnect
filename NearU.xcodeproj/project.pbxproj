@@ -16,6 +16,7 @@
 		63135DA32CB7ABCC004137AF /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135DA22CB7ABCC004137AF /* RealmManager.swift */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
 		63173DF82C37D77600F1FE82 /* AddLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* AddLinkView.swift */; };
+		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */; };
@@ -94,6 +95,7 @@
 		63135DA22CB7ABCC004137AF /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* AddLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkView.swift; sourceTree = "<group>"; };
+		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* AddLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLinkViewModel.swift; sourceTree = "<group>"; };
 		637BA05A2C43934600368566 /* SNSLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNSLinkButtonView.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */,
 				637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */,
 				63DFF8972BFC99ED00A6DFB8 /* Kingfisher in Frameworks */,
 				63E4CC8A2BED30EA009E0C9B /* FirebaseAuth in Frameworks */,
@@ -295,6 +298,7 @@
 		63B64FD62B8C763900289469 /* NearU */ = {
 			isa = PBXGroup;
 			children = (
+				6375622A2CCC83C900137B27 /* NearU.entitlements */,
 				63B64FE72B8C7BF200289469 /* Info.plist */,
 				63B64FD72B8C763900289469 /* NearUApp.swift */,
 				6367B7922BE149DF0065C1BD /* Main */,
@@ -441,6 +445,7 @@
 				63DFF8962BFC99ED00A6DFB8 /* Kingfisher */,
 				63135D8A2CA6643F004137AF /* FirebaseAppCheck */,
 				637B97262CB8FBC100EFB09F /* RealmSwift */,
+				6375622B2CCE50B100137B27 /* FirebaseMessaging */,
 			);
 			productName = NearU;
 			productReference = 63B64FD42B8C763900289469 /* NearU.app */;
@@ -682,10 +687,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = NearU/NearU.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NearU/Preview Content\"";
-				DEVELOPMENT_TEAM = 9YCLAPV5D5;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NQD3LAN9FK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
@@ -702,8 +710,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU20241007;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Chonnect;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -715,11 +725,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NearU/NearU.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NearU/Preview Content\"";
-				DEVELOPMENT_TEAM = 9YCLAPV5D5;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NQD3LAN9FK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
@@ -736,9 +749,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU20241007;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wataru.NearU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Chonnect;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -800,6 +814,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAppCheck;
+		};
+		6375622B2CCE50B100137B27 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		637B97262CB8FBC100EFB09F /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
