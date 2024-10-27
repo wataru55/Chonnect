@@ -21,6 +21,7 @@ struct User: Identifiable, Hashable, Codable {
     var isPrivate: Bool
     var connectList: [String]
     var snsLinks: [String: String]
+    var fcmtoken: String?
 
     var isCurrentUser: Bool {
         guard let currentUid = Auth.auth().currentUser?.uid else { return false } //現在のユーザ情報があればそれをcurrentUidに格納
