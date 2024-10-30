@@ -55,16 +55,7 @@ struct WaitingSearchView: View {
 
                                     Button(action: {
                                         Task {
-                                            do {
-                                                try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
-                                                RealmManager.shared.removeData(pair.user.id)
-                                                // デバッグ
-                                                let storedUserIds = RealmManager.shared.getUserIDs()
-                                                print("Stored User IDs after removal: \(storedUserIds)")
-                                            } catch {
-                                                // エラーハンドリング
-                                                print("Error: \(error)")
-                                            }
+                                            await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
                                         }
                                     }, label: {
                                         Image(systemName: "figure.2")
