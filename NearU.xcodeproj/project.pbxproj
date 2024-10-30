@@ -812,7 +812,7 @@
 			repositoryURL = "https://github.com/vapor/jwt-kit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.1.0;
+				minimumVersion = 4.0.0;
 			};
 		};
 		63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
