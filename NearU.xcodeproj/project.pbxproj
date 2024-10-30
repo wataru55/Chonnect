@@ -50,6 +50,8 @@
 		63B650052B8DDDF700289469 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B650042B8DDDF700289469 /* HomeView.swift */; };
 		63B650072B8DDE9300289469 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B650062B8DDE9300289469 /* ProfileView.swift */; };
 		63B6500B2B8DDF0200289469 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B6500A2B8DDF0200289469 /* SettingView.swift */; };
+		63BEA4942CD0B46A006382AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4932CD0B46A006382AF /* NotificationManager.swift */; };
+		63BEA4962CD1CE3C006382AF /* FCMMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4952CD1CE3C006382AF /* FCMMessage.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -129,6 +131,8 @@
 		63B650042B8DDDF700289469 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		63B650062B8DDE9300289469 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		63B6500A2B8DDF0200289469 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		63BEA4932CD0B46A006382AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		63BEA4952CD1CE3C006382AF /* FCMMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCMMessage.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -175,6 +179,7 @@
 				63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */,
 				63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */,
 				63135DA22CB7ABCC004137AF /* RealmManager.swift */,
+				63BEA4932CD0B46A006382AF /* NotificationManager.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 				637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */,
 				63AEA5CA2CC4053C009A22A2 /* Tags.swift */,
 				63AEA5CC2CC66B18009A22A2 /* UserDatePair.swift */,
+				63BEA4952CD1CE3C006382AF /* FCMMessage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -525,9 +531,11 @@
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
 				637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */,
 				63AEF0FD2C0C507300DE196E /* WaitingSearchView.swift in Sources */,
+				63BEA4942CD0B46A006382AF /* NotificationManager.swift in Sources */,
 				63DFF8842BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift in Sources */,
 				638732192BF4B62B0099F68A /* LoginViewModel.swift in Sources */,
 				63B650072B8DDE9300289469 /* ProfileView.swift in Sources */,
+				63BEA4962CD1CE3C006382AF /* FCMMessage.swift in Sources */,
 				63B64FE62B8C797400289469 /* BLECentralManager.swift in Sources */,
 				630B9EA62CC345B4002F06AB /* EditTagsView.swift in Sources */,
 				63DFF88C2BF8760B00A6DFB8 /* SearchView.swift in Sources */,
