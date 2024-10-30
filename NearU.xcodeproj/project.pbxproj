@@ -52,6 +52,8 @@
 		63B6500B2B8DDF0200289469 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B6500A2B8DDF0200289469 /* SettingView.swift */; };
 		63BEA4942CD0B46A006382AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4932CD0B46A006382AF /* NotificationManager.swift */; };
 		63BEA4962CD1CE3C006382AF /* FCMMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4952CD1CE3C006382AF /* FCMMessage.swift */; };
+		63BEA49A2CD21E04006382AF /* Private.json in Resources */ = {isa = PBXBuildFile; fileRef = 63BEA4992CD21E04006382AF /* Private.json */; };
+		63BEA49D2CD2211A006382AF /* JWTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 63BEA49C2CD2211A006382AF /* JWTKit */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -133,6 +135,7 @@
 		63B6500A2B8DDF0200289469 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		63BEA4932CD0B46A006382AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		63BEA4952CD1CE3C006382AF /* FCMMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCMMessage.swift; sourceTree = "<group>"; };
+		63BEA4992CD21E04006382AF /* Private.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Private.json; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -159,6 +162,7 @@
 				63DFF8972BFC99ED00A6DFB8 /* Kingfisher in Frameworks */,
 				63E4CC8A2BED30EA009E0C9B /* FirebaseAuth in Frameworks */,
 				63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */,
+				63BEA49D2CD2211A006382AF /* JWTKit in Frameworks */,
 				63E4CC8C2BED30EA009E0C9B /* FirebaseFirestore in Frameworks */,
 				63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */,
 				63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */,
@@ -304,6 +308,7 @@
 		63B64FD62B8C763900289469 /* NearU */ = {
 			isa = PBXGroup;
 			children = (
+				63BEA4992CD21E04006382AF /* Private.json */,
 				6375622A2CCC83C900137B27 /* NearU.entitlements */,
 				63B64FE72B8C7BF200289469 /* Info.plist */,
 				63B64FD72B8C763900289469 /* NearUApp.swift */,
@@ -452,6 +457,7 @@
 				63135D8A2CA6643F004137AF /* FirebaseAppCheck */,
 				637B97262CB8FBC100EFB09F /* RealmSwift */,
 				6375622B2CCE50B100137B27 /* FirebaseMessaging */,
+				63BEA49C2CD2211A006382AF /* JWTKit */,
 			);
 			productName = NearU;
 			productReference = 63B64FD42B8C763900289469 /* NearU.app */;
@@ -485,6 +491,7 @@
 				63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */,
+				63BEA49B2CD2211A006382AF /* XCRemoteSwiftPackageReference "jwt-kit" */,
 			);
 			productRefGroup = 63B64FD52B8C763900289469 /* Products */;
 			projectDirPath = "";
@@ -503,6 +510,7 @@
 				63B64FDF2B8C763A00289469 /* Preview Assets.xcassets in Resources */,
 				63B64FDC2B8C763A00289469 /* Assets.xcassets in Resources */,
 				63E4CC872BED3037009E0C9B /* GoogleService-Info.plist in Resources */,
+				63BEA49A2CD21E04006382AF /* Private.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,6 +807,14 @@
 				kind = branch;
 			};
 		};
+		63BEA49B2CD2211A006382AF /* XCRemoteSwiftPackageReference "jwt-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/jwt-kit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 		63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -832,6 +848,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		63BEA49C2CD2211A006382AF /* JWTKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63BEA49B2CD2211A006382AF /* XCRemoteSwiftPackageReference "jwt-kit" */;
+			productName = JWTKit;
 		};
 		63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
