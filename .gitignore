@@ -72,4 +72,5 @@ fastlane/test_output
 UserInterfaceState.xcuserstate
 # GoogleService-Info.plist
 Package.resolved
+Private.json
 
