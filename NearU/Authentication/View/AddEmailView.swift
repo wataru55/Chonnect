@@ -13,12 +13,12 @@ struct AddEmailView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Add your email")
+            Text("メールアドレスを設定")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("You'll use this email to signIn to your account")
+            Text("サインインにこのメールアドレスを使用します。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -26,9 +26,8 @@ struct AddEmailView: View {
                 .padding(.bottom)
 
 
-            TextField("Email", text: $viewModel.email)
-                .autocapitalization(.none) //自動的に大文字にしない
-                .modifier(IGTextFieldModifier()) //カスタムモディファイア
+            TextField("メールアドレス", text: $viewModel.email)
+                .modifier(IGTextFieldModifier())
 
             NavigationLink {
                 CreateUserNameView()

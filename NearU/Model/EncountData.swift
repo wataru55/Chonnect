@@ -9,8 +9,7 @@ import Foundation
 import RealmSwift
 
 class EncountData: Object, Identifiable {
-    @Persisted(primaryKey: true) var id: String = UUID().uuidString
-    @Persisted var userId: String = ""
+    @Persisted(primaryKey: true) var userId: String = ""
     @Persisted var date: Date = Date()
 }
 

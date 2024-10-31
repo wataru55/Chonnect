@@ -13,12 +13,12 @@ struct CreateUserNameView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Create username")
+            Text("ユーザ名を設定")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("Pick a username for your new account. You can always charge it")
+            Text("他のユーザに公開される名前です。いつでも変更ができます。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -26,9 +26,8 @@ struct CreateUserNameView: View {
                 .padding(.bottom)
 
 
-            TextField("Username", text: $viewModel.username)
-                .autocapitalization(.none) //自動的に大文字にしない
-                .modifier(IGTextFieldModifier()) //カスタムモディファイア
+            TextField("ユーザ名", text: $viewModel.username)
+                .modifier(IGTextFieldModifier())
 
             NavigationLink {
                 CreatePasswordView()

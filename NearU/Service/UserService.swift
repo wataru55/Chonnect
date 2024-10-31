@@ -28,18 +28,89 @@ struct UserService {
         return users
     }
 
-    static func fetchConnectedUsers(withUid userId: String) async throws -> [User] {
-        // First, fetch the user to get their connectList
-        let user = try await fetchUser(withUid: userId)
-        let connectList = user.connectList
+    static func fetchConnectedUsers(documentId: String) async throws -> [UserDatePair] {
+        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
 
-        // Fetch the connected users
-        var connectedUsers: [User] = []
-        for connectedUserId in connectList {
-            let connectedUser = try await fetchUser(withUid: connectedUserId)
-            connectedUsers.append(connectedUser)
+        var connectedUsers: [UserDatePair] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: EncountDataStruct.self)
+            let connectedUser = try await fetchUser(withUid: data.userId)
+            let userDatePair = UserDatePair(user: connectedUser, date: data.date)
+            connectedUsers.append(userDatePair)
         }
-
         return connectedUsers
+    }
+    
+    static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
+        var abstractLinks: [String: String] = [:]
+        
+        let snapshot = try await Firestore.firestore()
+            .collection("users")
+            .document(userId)
+            .collection("abstract")
+            .getDocuments()
+        
+        for document in snapshot.documents {
+            if let title = document.data()["abstract_title"] as? String,
+               let url = document.data()["abstract_url"] as? String {
+                abstractLinks[title] = url
+            }
+        }
+        
+        return abstractLinks
+    }
+    // ユーザーの選択されたタグをFirestoreに保存する関数
+    static func saveUserTags(userId: String, selectedTags: [String]) async throws {
+        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("tags")
+        try await ref.setData(["tags": selectedTags])
+    }
+    
+    // 選択したタグをフェッチする関数
+    static func fetchUserTags(withUid id: String) async throws -> Tags {
+        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("tags").getDocument()
+        return try snapshot.data(as: Tags.self)
+    }
+
+    static func followUser(receivedId: String, date: Date) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        let path = Firestore.firestore().collection("users")
+
+        let followerData: [String: Any] = [
+            "userId": documentId,
+            "date": date
+        ]
+
+        let followData: [String: Any] = [
+            "userId": receivedId,
+            "date": date
+        ]
+
+        do {
+            // 相手のfollowersコレクションに保存
+            try await path.document(receivedId).collection("followers").document(documentId).setData(followerData)
+            // 自分のfollowsコレクションに保存
+            try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
+            print("Followed successfully saved")
+        } catch {
+            print("Error saving Followed: \(error)")
+            throw error
+        }
+    }
+
+    static func deleteFollowedUser(receivedId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        do {
+            // 相手のfollowersコレクションから削除
+            try await Firestore.firestore().collection("users").document(receivedId).collection("followers").document(documentId).delete()
+            // 自分のfollowsコレクションから削除
+            try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedId).delete()
+            print("Followed successfully deleted")
+        } catch {
+            print("Error deleting Followed: \(error)")
+            throw error
+        }
     }
 }

@@ -32,6 +32,16 @@ class AuthService {
             throw error  // エラーを再スロー
         }
     }
+    
+    @MainActor
+    func resetPassword(withEmail email: String) async throws { //パスワードリセット
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch {
+            print("DEBUG: パスワードリセットに失敗しました。エラー: \(error.localizedDescription)")
+            throw error
+        }
+    }
 
     @MainActor
     // 新規ユーザを作成する関数
@@ -89,7 +99,6 @@ class AuthService {
         }
     }
 
-
     func signout() {
         try? Auth.auth().signOut() //try?はエラーを無視
         self.userSession = nil
@@ -108,32 +117,5 @@ class AuthService {
 
         // ドキュメントIDとしてuserIdを使用して保存
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
-    }
-    //受信したユーザーIDをFirebase Firestoreデータベースに保存する
-    func addUserIdToFirestore(_ receivedUserId: String) async throws {
-        //Firestoreのドキュメントに追加
-        if let userId = self.currentUser?.id {
-
-            // TODO: ここのタイムスタンプはすれ違ったときの時間を引数で受け取って格納する
-            let timestamp = Timestamp(date: Date())
-
-            try await Firestore.firestore().collection("users")
-                .document(userId)
-                .collection("connectList")
-                .document(receivedUserId)
-                .setData([
-                    "id": receivedUserId,
-                    "timestamp": timestamp
-                ])
-        }
-    }
-
-    func removeUserIdFromFirestore(_ receivedUserId: String) async throws {
-        // Firestoreのドキュメントから削除
-        if let userId = self.currentUser?.id {
-            try await Firestore.firestore().collection("users").document(userId).updateData([
-                "connectList": FieldValue.arrayRemove([receivedUserId])
-            ])
-        }
     }
 }
