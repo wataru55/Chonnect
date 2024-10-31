@@ -17,7 +17,7 @@ struct ProfileView: View {
     init(user: User, currentUser: User, date: Date) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
         _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
-      　self.date = date
+        self.date = date
     }
 
     var body: some View {
@@ -28,7 +28,7 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //header
-                    ProfileHeaderView(viewModel: viewModel)
+                    ProfileHeaderView(viewModel: viewModel, date: date)
 
                     Divider()
                     //link scroll view

@@ -44,7 +44,7 @@ struct UserService {
     
     static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
         var abstractLinks: [String: String] = [:]
-
+        
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
@@ -59,6 +59,7 @@ struct UserService {
         }
         
         return abstractLinks
+    }
     // ユーザーの選択されたタグをFirestoreに保存する関数
     static func saveUserTags(userId: String, selectedTags: [String]) async throws {
         let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("tags")

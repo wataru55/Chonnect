@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32860C6A2CD32B4300D9BBD7 /* AbstractLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32860C692CD32B4300D9BBD7 /* AbstractLinksViewModel.swift */; };
 		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
 		630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA32CC344E9002F06AB /* TagsView.swift */; };
 		630B9EA62CC345B4002F06AB /* EditTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA52CC345B4002F06AB /* EditTagsView.swift */; };
@@ -86,6 +87,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32860C692CD32B4300D9BBD7 /* AbstractLinksViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractLinksViewModel.swift; sourceTree = "<group>"; };
 		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
 		630B9EA32CC344E9002F06AB /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
 		630B9EA52CC345B4002F06AB /* EditTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTagsView.swift; sourceTree = "<group>"; };
@@ -383,6 +385,7 @@
 		63DFF8942BF8B7F500A6DFB8 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				32860C692CD32B4300D9BBD7 /* AbstractLinksViewModel.swift */,
 				63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */,
 				637BA0582C4252D200368566 /* AddLinkViewModel.swift */,
 				637BA05E2C44ADE400368566 /* ProfileViewModel.swift */,
@@ -551,6 +554,7 @@
 				638732082BF4B0E40099F68A /* MainTabView.swift in Sources */,
 				63AEA5CB2CC4053C009A22A2 /* Tags.swift in Sources */,
 				63DFF8BC2C01531000A6DFB8 /* ImageUploader.swift in Sources */,
+				32860C6A2CD32B4300D9BBD7 /* AbstractLinksViewModel.swift in Sources */,
 				F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
