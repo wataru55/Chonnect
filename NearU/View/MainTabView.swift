@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct MainTabView: View {
     //MARK: - property
@@ -50,6 +51,10 @@ struct MainTabView: View {
             if peripheralManager.peripheralManager.state == .poweredOn {
                 peripheralManager.startAdvertising()
             }
+            // FCM トークンを Firestore に保存
+            if let fcmToken = UserDefaults.standard.string(forKey: "FCMToken") {
+                Task { await setFCMToken(fcmToken: fcmToken) }
+            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
@@ -78,6 +83,26 @@ struct MainTabView: View {
             }
         }
     } //body
+
+    // FCMトークンをFirestoreに保存するメソッド
+    func setFCMToken(fcmToken: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            print("ユーザーがログインしていません")
+            return
+        }
+
+        let data: [String: Any] = [
+            "fcmtoken": fcmToken
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+            print("Document successfully updated with FCM token")
+        } catch {
+            print("Error updating document: \(error)")
+        }
+    }
+
 }//view
 
 #Preview {
