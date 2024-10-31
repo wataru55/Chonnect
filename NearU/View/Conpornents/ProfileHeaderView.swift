@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ProfileHeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
+    @State private var isShowAlert: Bool = false
+    let date: Date
 
     var body: some View {
         VStack (spacing: 15){
@@ -70,14 +72,8 @@ struct ProfileHeaderView: View {
             if viewModel.currentUser.connectList.contains(viewModel.user.id) == true {
                 Button(action: {
                     Task {
-                        do {
-                            try await AuthService.shared.removeUserIdFromFirestore(viewModel.user.id)
-                            UserDefaultsManager.shared.storeReceivedUserId(viewModel.user.id)
-
-                        } catch {
-                            // エラーハンドリング
-                            print("Error: \(error)")
-                        }
+                        try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
+                        RealmManager.shared.storeData(viewModel.user.id, date: date)
                     }
                 }, label: {
                     Image(systemName: "hand.wave.fill")
@@ -90,16 +86,7 @@ struct ProfileHeaderView: View {
             } else {
                 HStack {
                     Button(action: {
-                        Task {
-                            do {
-                                UserDefaultsManager.shared.removeUserID(viewModel.user.id)
-                                try await AuthService.shared.addUserIdToFirestore(viewModel.user.id)
-
-                            } catch {
-                                // エラーハンドリング
-                                print("Error: \(error)")
-                            }
-                        }
+                        isShowAlert.toggle()
                     }, label: {
                         Image(systemName: "figure.2")
                             .foregroundStyle(.white)
@@ -108,12 +95,10 @@ struct ProfileHeaderView: View {
                                 LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
                             )
                             .cornerRadius(6)
-
                     })
 
                     Button(action: {
-                        UserDefaultsManager.shared.removeUserID(viewModel.user.id)
-
+                        isShowAlert.toggle()
                     }, label: {
                         Image(systemName: "hand.wave.fill")
                             .foregroundStyle(.white)
@@ -124,9 +109,22 @@ struct ProfileHeaderView: View {
                 } //hstack
             }
         }//vstack
+        .alert("確認", isPresented: $isShowAlert) {
+            Button("戻る", role: .cancel) {
+                isShowAlert.toggle()
+            }
+            Button("解除", role: .destructive) {
+                RealmManager.shared.storeData(viewModel.user.id, date: date)
+                Task {
+                    try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
+                }
+            }
+        } message: {
+            Text("本当にフォローを解除しますか？")
+        }
     }//body
 }//view
 
 #Preview {
-    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]))
+    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date())
 }

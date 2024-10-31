@@ -41,7 +41,6 @@ struct MainTabView: View {
         } //tabview
         .accentColor(Color(.systemMint))
         .onAppear {
-            centralManager.configure(with: user)
             peripheralManager.configure(with: user)
 
             if centralManager.centralManager.state == .poweredOn {

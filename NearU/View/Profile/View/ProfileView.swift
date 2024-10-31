@@ -12,9 +12,12 @@ struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
     @StateObject var abstractLinksViewModel: AbstractLinkModel
 
-    init(user: User, currentUser: User) {
+    let date: Date
+
+    init(user: User, currentUser: User, date: Date) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
         _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
+      　self.date = date
     }
 
     var body: some View {
@@ -83,5 +86,5 @@ struct ProfileView: View {
 }//view
 
 #Preview {
-    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1])
+    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1], date: Date())
 }

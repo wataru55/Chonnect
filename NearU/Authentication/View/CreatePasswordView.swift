@@ -13,12 +13,12 @@ struct CreatePasswordView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Create Password")
+            Text("パスワードを設定")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("Your password must be at least 6 characters in length")
+            Text("6文字以上のパスワードを入力してください。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -26,8 +26,7 @@ struct CreatePasswordView: View {
                 .padding(.bottom)
 
 
-            TextField("Password", text: $viewModel.password)
-                .autocapitalization(.none) //自動的に大文字にしない
+            TextField("パスワード", text: $viewModel.password)
                 .modifier(IGTextFieldModifier())
 
             NavigationLink {

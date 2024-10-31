@@ -3,36 +3,44 @@
 //  NearU
 //
 //  Created by  髙橋和 on 2024/06/02.
-//
 
 import SwiftUI
 
 struct WaitingSearchView: View {
     // MARK: - property
-    let currentUser: User
     @StateObject var viewModel = SearchViewModel()
+
+    let currentUser: User
+
+    // 日付をフォーマットするためのフォーマッター
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    if viewModel.allUsers.isEmpty {
+                    if viewModel.userDatePairs.isEmpty {
                         Text("すれ違ったユーザーがいません")
                             .font(.footnote)
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
                             .padding()
                     } else {
-                        ForEach(viewModel.allUsers) { user in
-                            NavigationLink(value: user) {
+                        ForEach(viewModel.userDatePairs, id: \.self) { pair in
+                            NavigationLink(value: pair) {
                                 HStack {
-                                    CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
                                     VStack(alignment: .leading) {
-                                        Text(user.username)
+                                        Text(pair.user.username)
                                             .fontWeight(.bold)
                                             .foregroundStyle(Color.primary)
 
-                                        if let fullname = user.fullname {
+                                        if let fullname = pair.user.fullname {
                                             Text(fullname)
                                                 .foregroundStyle(Color.primary)
                                         }
@@ -41,13 +49,17 @@ struct WaitingSearchView: View {
 
                                     Spacer()
 
+                                    Text("\(dateFormatter.string(from: pair.date))")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+
                                     Button(action: {
                                         Task {
                                             do {
-                                                try await AuthService.shared.addUserIdToFirestore(user.id)
-                                                UserDefaultsManager.shared.removeUserID(user.id)
+                                                try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
+                                                RealmManager.shared.removeData(pair.user.id)
                                                 // デバッグ
-                                                let storedUserIds = UserDefaultsManager.shared.getUserIDs()
+                                                let storedUserIds = RealmManager.shared.getUserIDs()
                                                 print("Stored User IDs after removal: \(storedUserIds)")
                                             } catch {
                                                 // エラーハンドリング
@@ -65,7 +77,7 @@ struct WaitingSearchView: View {
                                     })
 
                                     Button(action: {
-                                        UserDefaultsManager.shared.removeUserID(user.id)
+                                        RealmManager.shared.removeData(pair.user.id)
                                     }, label: {
                                         Image(systemName: "hand.wave.fill")
                                             .foregroundStyle(.white)
@@ -85,13 +97,12 @@ struct WaitingSearchView: View {
             .refreshable {
                 print("refresh")
             }
-            .navigationDestination(for: User.self, destination: { value in
-                ProfileView(user: value, currentUser: currentUser)
+            .navigationDestination(for: UserDatePair.self, destination: { pair in
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // NavigationStack
     }
 }
-
 
 #Preview {
     WaitingSearchView(currentUser: User.MOCK_USERS[0])
