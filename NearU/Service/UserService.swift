@@ -41,7 +41,7 @@ struct UserService {
         }
         return connectedUsers
     }
-    
+
     static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
         var abstractLinks: [String: String] = [:]
         
@@ -60,15 +60,28 @@ struct UserService {
         
         return abstractLinks
     }
-    // ユーザーの選択されたタグをFirestoreに保存する関数
-    static func saveUserTags(userId: String, selectedTags: [String]) async throws {
-        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("tags")
+  
+    // ユーザーの選択されたタグをFirestoreに保存する関数(言語)
+    static func saveLanguageTags(userId: String, selectedTags: [String]) async throws {
+        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("languageTags")
         try await ref.setData(["tags": selectedTags])
     }
     
-    // 選択したタグをフェッチする関数
-    static func fetchUserTags(withUid id: String) async throws -> Tags {
-        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("tags").getDocument()
+    // ユーザーの選択されたタグをFirestoreに保存する関数(ライブラリ、フレームワーク)
+    static func saveFrameworkTags(userId: String, selectedTags: [String]) async throws {
+        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("frameworkTags")
+        try await ref.setData(["tags": selectedTags])
+    }
+    
+    // 選択したタグをフェッチする関数(言語)
+    static func fetchLanguageTags(withUid id: String) async throws -> Tags {
+        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("languageTags").getDocument()
+        return try snapshot.data(as: Tags.self)
+    }
+    
+    // 選択したタグをフェッチする関数(ライブラリ、フレームワーク)
+    static func fetchFrameworkTags(withUid id: String) async throws -> Tags {
+        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("frameworkTags").getDocument()
         return try snapshot.data(as: Tags.self)
     }
 

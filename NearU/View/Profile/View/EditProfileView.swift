@@ -44,9 +44,11 @@ struct EditProfileView: View {
                 Button(action: {
                     Task {
                         try await viewModel.updateUserData()
-                        try await viewModel.updateUserTags()
+                        try await viewModel.updateLanguageTags()
+                        try await viewModel.updateFrameworkTags()
                         try await AuthService.shared.loadUserData()
-                        try await viewModel.loadUserTags()
+                        try await viewModel.loadLanguageTags()
+                        try await viewModel.loadFrameworkTags()
 
                         await MainActor.run {
                             dismiss()
@@ -86,8 +88,21 @@ struct EditProfileView: View {
                     .disabled(focusedField != nil)
                 }//vstack
                 //edit profile info
-                VStack {
-                    EditTagsView(selectedTags: $viewModel.selectedTags, userId: viewModel.user.id)
+                VStack (spacing:0){
+                    Text("言語")
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(5)
+                        .opacity(0.7)
+                        .foregroundColor(Color.gray)
+                    EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
+                    Text("フレームワーク")
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(5)
+                        .opacity(0.7)
+                        .foregroundColor(Color.gray)
+                    EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
                     EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
                     EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
@@ -95,7 +110,7 @@ struct EditProfileView: View {
                     EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
                 }
-                .padding(.top, 30)
+                .padding(.top, 5)
                 
                 // add link button
                 Button(action: {

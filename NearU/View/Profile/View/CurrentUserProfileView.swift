@@ -25,7 +25,8 @@ struct CurrentUserProfileView: View {
                     BackgroundImageView(user: user, height: 500, isGradient: true)
                         .overlay(alignment: .bottomLeading) {
                             VStack(alignment: .leading){
-                                TagsView(tags: viewModel.selectedTags)
+                                TagsView(tags: viewModel.selectedLanguageTags)
+                                TagsView(tags: viewModel.selectedFrameworkTags)
                                 if let fullname = user.fullname {
                                     Text(fullname)
                                         .font(.system(size: 25, weight: .bold, design: .default))
