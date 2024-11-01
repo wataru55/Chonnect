@@ -13,13 +13,13 @@ struct CompleteSignUpView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Welcome to 'Chonnect', \(viewModel.username)")
+            Text("Welcome to Chonnect! \(viewModel.username)")
                 .multilineTextAlignment(.center)
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("Click below to complete registration and start using 'Chonnect'")
+            Text("ご入力ありがとうございます。下のボタンをクリックすると、ログインできます。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -27,9 +27,9 @@ struct CompleteSignUpView: View {
                 .padding(.bottom)
 
             Button(action: {
-                Task { try await viewModel.createUser() } //Userを作成
+                Task { try await viewModel.createUser() }
             }, label: {
-                Text("Complete Sign Up")
+                Text("登録を完了してログイン")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
