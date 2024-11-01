@@ -103,6 +103,8 @@ struct UserService {
         do {
             // 相手のfollowersコレクションに保存
             try await path.document(receivedId).collection("followers").document(documentId).setData(followerData)
+            // 相手のnotificationsコレクションに保存
+            try await Firestore.firestore().collection("users").document(documentId).collection("notifications").document(documentId).setData(followerData)
             // 自分のfollowsコレクションに保存
             try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
             print("Followed successfully saved")
