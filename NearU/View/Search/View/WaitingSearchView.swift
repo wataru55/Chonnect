@@ -9,6 +9,7 @@ import SwiftUI
 struct WaitingSearchView: View {
     // MARK: - property
     @StateObject var viewModel = SearchViewModel()
+    @State var isShowAlert: Bool = false
 
     let currentUser: User
 
@@ -55,7 +56,11 @@ struct WaitingSearchView: View {
 
                                     Button(action: {
                                         Task {
-                                            await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                            do {
+                                                try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                            } catch {
+                                                isShowAlert = true
+                                            }
                                         }
                                     }, label: {
                                         Image(systemName: "figure.2")
@@ -92,6 +97,11 @@ struct WaitingSearchView: View {
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // NavigationStack
+        .alert("エラー", isPresented: $isShowAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("予期せぬエラーが発生しました\nもう一度お試しください")
+        }
     }
 }
 
