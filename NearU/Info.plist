@@ -12,7 +12,9 @@
 		<string>bluetooth-peripheral</string>
 		<string>remote-notification</string>
 	</array>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 </dict>
 </plist>
