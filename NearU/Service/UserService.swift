@@ -44,41 +44,41 @@ struct UserService {
 
     static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
         var abstractLinks: [String: String] = [:]
-        
+
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
             .collection("abstract")
             .getDocuments()
-        
+
         for document in snapshot.documents {
             if let title = document.data()["abstract_title"] as? String,
                let url = document.data()["abstract_url"] as? String {
                 abstractLinks[title] = url
             }
         }
-        
+
         return abstractLinks
     }
-  
+
     // ユーザーの選択されたタグをFirestoreに保存する関数(言語)
     static func saveLanguageTags(userId: String, selectedTags: [String]) async throws {
         let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("languageTags")
         try await ref.setData(["tags": selectedTags])
     }
-    
+
     // ユーザーの選択されたタグをFirestoreに保存する関数(ライブラリ、フレームワーク)
     static func saveFrameworkTags(userId: String, selectedTags: [String]) async throws {
         let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("frameworkTags")
         try await ref.setData(["tags": selectedTags])
     }
-    
+
     // 選択したタグをフェッチする関数(言語)
     static func fetchLanguageTags(withUid id: String) async throws -> Tags {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("languageTags").getDocument()
         return try snapshot.data(as: Tags.self)
     }
-    
+
     // 選択したタグをフェッチする関数(ライブラリ、フレームワーク)
     static func fetchFrameworkTags(withUid id: String) async throws -> Tags {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("frameworkTags").getDocument()
@@ -128,4 +128,30 @@ struct UserService {
             throw error
         }
     }
+
+    func fetchNotifications() async {
+        guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
+        let notificationsRef = Firestore.firestore().collection("users").document(myDocumentId).collection("notifications")
+
+        do {
+            let snapshot = try await notificationsRef.getDocuments()
+
+            for document in snapshot.documents {
+                if let data = try? document.data(as: EncountDataStruct.self) {
+                    // Realmに保存
+                    await RealmManager.shared.storeData(data.userId, date: data.date)
+                }
+                // 通知を削除
+                do {
+                    try await document.reference.delete()
+                    print("Notification deleted successfully.")
+                } catch {
+                    print("Error deleting notification: \(error)")
+                }
+            }
+        } catch {
+            print("Error fetching notifications: \(error)")
+        }
+    }
+
 }

@@ -55,6 +55,8 @@ struct MainTabView: View {
             if let fcmToken = UserDefaults.standard.string(forKey: "FCMToken") {
                 Task { await setFCMToken(fcmToken: fcmToken) }
             }
+            // 通知の確認
+            Task { await UserService().fetchNotifications() }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
