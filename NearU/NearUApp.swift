@@ -43,15 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // アプリがフォアグラウンドで通知を受け取ったときの処理をこのクラスで行う
         UNUserNotificationCenter.current().delegate = self
 
-        // Push通知許可のポップアップを表示
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, _ in
-            guard granted else { return }
-            DispatchQueue.main.async {
-                application.registerForRemoteNotifications()
-            }
-        }
-
         return true
     }
 
@@ -63,18 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             if let error = error {
                 print("Error fetching FCM registration token: \(error)")
             } else if let token = token {
-                // UserDefaultsにFCMトークンを保存
-                UserDefaults.standard.set(token, forKey: "FCMToken")
-                // 保存が正常に完了したことを確認
-                if let savedToken = UserDefaults.standard.string(forKey: "FCMToken") {
-                    if savedToken == token {
-                        print("FCM token successfully saved to UserDefaults.")
-                    } else {
-                        print("FCM token saved to UserDefaults does not match the original token.")
-                    }
-                } else {
-                    print("Failed to retrieve FCM token from UserDefaults after saving.")
-                }
+                Task { await self.setFCMToken(fcmToken: token)}
             }
         }
     }
@@ -96,20 +76,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let fcmToken = fcmToken else { return }
         print("messaging(_:didReceiveRegistrationToken:) called with token: \(fcmToken)")
-        // UserDefaultsにFCMトークンを保存
-        UserDefaults.standard.set(fcmToken, forKey: "FCMToken")
-        // 保存が正常に完了したことを確認
-        if let savedToken = UserDefaults.standard.string(forKey: "FCMToken") {
-            if savedToken == fcmToken {
-                print("FCM token successfully saved to UserDefaults.")
-            } else {
-                print("FCM token saved to UserDefaults does not match the original token.")
-            }
-        } else {
-            print("Failed to retrieve FCM token from UserDefaults after saving.")
-        }
 
-        // 必要に応じてトークンをサーバーに送信
+        Task { await setFCMToken(fcmToken: fcmToken)}
+
     }
 
 
@@ -143,6 +112,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
             BLEPeripheralManager.shared.startAdvertising()
+        }
+    }
+
+    // FCMトークンをFirestoreに保存するメソッド
+    func setFCMToken(fcmToken: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            print("ユーザーがログインしていません")
+            return
+        }
+
+        let data: [String: Any] = [
+            "fcmtoken": fcmToken
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+            print("Document successfully updated with FCM token")
+        } catch {
+            print("Error updating document: \(error)")
         }
     }
 }
