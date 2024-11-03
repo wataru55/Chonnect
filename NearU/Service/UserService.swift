@@ -131,6 +131,8 @@ struct UserService {
 
     func fetchNotifications() async {
         guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
+
+        let startTime = Date()
         let notificationsRef = Firestore.firestore().collection("users").document(myDocumentId).collection("notifications")
 
         do {
@@ -151,6 +153,15 @@ struct UserService {
             }
         } catch {
             print("Error fetching notifications: \(error)")
+        }
+        // 経過時間の計算
+        let elapsed = Date().timeIntervalSince(startTime)
+        let minimumLoadingTime: TimeInterval = 2.0 // 2秒
+
+        if elapsed < minimumLoadingTime {
+            let remainingTime = minimumLoadingTime - elapsed
+            // Task.sleepで待機
+            try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
         }
     }
 
