@@ -139,7 +139,7 @@ struct UserService {
             let snapshot = try await notificationsRef.getDocuments()
 
             for document in snapshot.documents {
-                if let data = try? document.data(as: EncountDataStruct.self) {
+                if let data = try? document.data(as: NotificationData.self) {
                     // Realmに保存
                     await RealmManager.shared.storeData(data.userId, date: data.date)
                 }
