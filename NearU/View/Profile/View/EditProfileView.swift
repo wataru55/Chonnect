@@ -112,29 +112,6 @@ struct EditProfileView: View {
                 }
                 .padding(.top, 5)
                 
-                // add link button
-                Button(action: {
-                    isAddingNewLink.toggle()
-                }, label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    Text("Add Link")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                })
-                .foregroundColor(.white)
-                .frame(width: 360, height: 35)
-                .background(
-                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                        .clipShape(Capsule())
-                )
-                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
-                .sheet(isPresented: $isAddingNewLink) {
-                    AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
-                }
-                .padding(.bottom, 20)
-                
-                Spacer()
-                
             } //scrollview
         }//vstack
         .onTapGesture {
