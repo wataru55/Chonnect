@@ -147,7 +147,7 @@ struct NearUApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LaunchScreen()
         }
     }
 }
