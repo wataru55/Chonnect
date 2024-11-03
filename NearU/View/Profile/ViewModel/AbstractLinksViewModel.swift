@@ -23,7 +23,7 @@ class AbstractLinkModel: ObservableObject {
     func fetchAbstractLinks() async {
         do {
             let links = try await UserService.fetchAbstractLinks(withUid: userId)
-            self.abstractLinks = links
+            self.abstractLinks = [:]
         } catch {
             print("Error fetching abstract links: \(error.localizedDescription)")
         }
