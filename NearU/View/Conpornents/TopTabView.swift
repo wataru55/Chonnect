@@ -22,7 +22,7 @@ struct TopTabView: View {
 
 
             if selectedTab == 0 {
-                WaitingSearchView(currentUser: currentUser).tag(0)
+                BLEHistoryView(currentUser: currentUser).tag(0)
             } else {
                 ConnectedSearchView(currentUser: currentUser).tag(1)
             }

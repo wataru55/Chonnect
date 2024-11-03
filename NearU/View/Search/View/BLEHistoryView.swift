@@ -6,9 +6,9 @@
 
 import SwiftUI
 
-struct WaitingSearchView: View {
+struct BLEHistoryView: View {
     // MARK: - property
-    @StateObject var viewModel = SearchViewModel()
+    @StateObject var viewModel = BLEHistoryViewModel()
     @EnvironmentObject var loadingViewModel: LoadingViewModel
     @State var isShowAlert: Bool = false
 
@@ -114,5 +114,5 @@ struct WaitingSearchView: View {
 }
 
 #Preview {
-    WaitingSearchView(currentUser: User.MOCK_USERS[0])
+    BLEHistoryView(currentUser: User.MOCK_USERS[0])
 }

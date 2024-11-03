@@ -8,7 +8,7 @@ import Combine
 import SwiftUI
 
 @MainActor
-class SearchViewModel: ObservableObject {
+class BLEHistoryViewModel: ObservableObject {
     @Published var userDatePairs = [UserDatePair]()
     private var cancellables = Set<AnyCancellable>()
 
@@ -45,7 +45,6 @@ class SearchViewModel: ObservableObject {
             documentId: currentUser.id,
             date: pair.date
         )
-
         // フォロー処理を実行
         try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
         RealmManager.shared.removeData(pair.user.id)
