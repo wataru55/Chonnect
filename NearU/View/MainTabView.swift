@@ -14,6 +14,8 @@ struct MainTabView: View {
 
     @StateObject var centralManager = BLECentralManager.shared
     @StateObject var peripheralManager = BLEPeripheralManager.shared
+    @StateObject var viewTransitionManager = ViewTransitionManager.shared
+    @StateObject private var loadingViewModel = LoadingViewModel()
     @Environment(\.scenePhase) private var scenePhase
 
     init(user: User) {
@@ -23,6 +25,7 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             SearchView(currentUser: user)
+                .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
@@ -40,6 +43,16 @@ struct MainTabView: View {
                     Text("Setting")
                 }
         } //tabview
+        .overlay {
+            if loadingViewModel.isLoading {
+                LoadingView()
+            }
+        }
+        .sheet(isPresented: $viewTransitionManager.showProfile) {
+            if let selectedUser = viewTransitionManager.selectedUser {
+                ProfileView(user: selectedUser, currentUser: user, date: Date())
+            }
+        }
         .accentColor(Color(.systemMint))
         .onAppear {
             // 通知の許可をリクエスト
@@ -54,8 +67,15 @@ struct MainTabView: View {
             if peripheralManager.peripheralManager.state == .poweredOn {
                 peripheralManager.startAdvertising()
             }
+            // ローディング開始
+            loadingViewModel.isLoading = true
             // 通知の確認
-            Task { await UserService().fetchNotifications() }
+            Task {
+                // データのフェッチ
+                await UserService().fetchNotifications()
+                // ローディング終了
+                loadingViewModel.isLoading = false
+            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
