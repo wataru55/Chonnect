@@ -42,8 +42,9 @@ struct UserService {
         return connectedUsers
     }
 
-    static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
-        var abstractLinks: [String: String] = [:]
+    // 記事をフェッチする関数
+    static func fetchAbstractLinks(withUid userId: String) async throws -> [String] {
+        var abstractUrls: [String] = []
         
         let snapshot = try await Firestore.firestore()
             .collection("users")
@@ -52,13 +53,12 @@ struct UserService {
             .getDocuments()
         
         for document in snapshot.documents {
-            if let title = document.data()["abstract_title"] as? String,
-               let url = document.data()["abstract_url"] as? String {
-                abstractLinks[title] = url
+            if let abstractUrlString = document.data()["abstract_url"] as? String {
+                abstractUrls.append(abstractUrlString)
             }
         }
         
-        return abstractLinks
+        return abstractUrls
     }
   
     // ユーザーの選択されたタグをFirestoreに保存する関数(言語)

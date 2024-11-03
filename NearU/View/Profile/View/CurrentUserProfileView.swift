@@ -106,10 +106,21 @@ struct CurrentUserProfileView: View {
                             .frame(maxHeight: .infinity)
                             .background(.black)
                         
-                        VStack(alignment: .trailing, spacing: 60){
-                            SiteLinkButtonView(abstract_title: "test", abstract_url: "https://rakus-newgraduate.snar.jp/v2/mypage/webes.aspx")
-                            SiteLinkButtonView(abstract_title: "test", abstract_url: "https://qiita.com/vivy/items/9a65538a48500d4b4cc1")
-                            SiteLinkButtonView(abstract_title: "https://stock-check-754y20l58-vivys-projects.vercel.app/", abstract_url: "https://stock-check-754y20l58-vivys-projects.vercel.app/")
+                        VStack(alignment: .trailing, spacing: 20) {
+                            if viewModel.abstractUrls.isEmpty {
+                                Text("リンクがありません")
+                                    .foregroundColor(.orange)
+                                    .padding()
+                            } else {
+                                ForEach(viewModel.abstractUrls, id: \.self) { url in
+                                    SiteLinkButtonView(abstract_url: url)
+                                }
+                            }
+                        }
+                        .onAppear {
+                            Task {
+                                await viewModel.loadAbstractLinks()
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)

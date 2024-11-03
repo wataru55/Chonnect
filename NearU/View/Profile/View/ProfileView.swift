@@ -10,13 +10,13 @@ import SwiftUI
 struct ProfileView: View {
     //MARK: - property
     @StateObject var viewModel: ProfileViewModel
-    @StateObject var abstractLinksViewModel: AbstractLinkModel
+//    @StateObject var abstractLinksViewModel: AbstractLinkModel
 
     let date: Date
 
     init(user: User, currentUser: User, date: Date) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
-        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
+//        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
         self.date = date
     }
 
@@ -52,19 +52,19 @@ struct ProfileView: View {
                         Text("このユーザは非公開です")
                         Spacer()
                     }
-                    VStack(){
-                        if viewModel.abstractLinks.isEmpty {
-                            Text("リンクがありません")
-                                .foregroundColor(.orange)
-                                .padding()
-                        } else {
-                            ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
-                                if let url = abstractLinksViewModel.abstractLinks[key] {
-                                    SiteLinkButtonView(abstract_title: key, abstract_url: url)
-                                }
-                            }
-                        }
-                    }
+//                    VStack(){
+//                        if viewModel.abstractLinks.isEmpty {
+//                            Text("リンクがありません")
+//                                .foregroundColor(.orange)
+//                                .padding()
+//                        } else {
+//                            ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
+//                                if let url = abstractLinksViewModel.abstractLinks[key] {
+//                                    SiteLinkButtonView(abstract_title: key, abstract_url: url)
+//                                }
+//                            }
+//                        }
+//                    }
 
                 }//Vstack
                 .padding(.bottom, 100)

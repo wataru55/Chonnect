@@ -10,7 +10,7 @@ import SwiftUI
 struct AddLinkView: View {
     @State private var url = ""
     @State private var selectedSNS: String?
-
+    
     @Binding var isPresented: Bool
 
     @StateObject var viewModel: AddLinkViewModel
@@ -77,23 +77,30 @@ struct AddLinkView: View {
                 })
                 
                 Section(content: {
-                    TextField("タイトル", text: $viewModel.abstract_title)
-                        .foregroundColor(Color(.systemMint))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .padding(10)
-                        .cornerRadius(10)
-                    TextField("URL", text: $viewModel.abstract_url)
-                        .foregroundColor(Color(.systemMint))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .padding(10)
-                        
+                    ForEach(viewModel.urls.indices, id: \.self) { index in
+                        TextField("URLを入力", text: $viewModel.urls[index])
+                            .foregroundColor(Color(.systemMint))
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .padding(10)
+                            .cornerRadius(10)
+                    }
+                    
+                    Button(action: {
+                        viewModel.urls.append("") // ViewModelのurlsに追加
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle")
+                            Text("URLを追加")
+                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                        }
+                    }
+                    .padding(.top, 10)
                 }, header: {
-                    HStack{
-                        Text("My abstract")
+                    HStack {
+                        Text("記事等のURLを追加する")
                             .font(Font.subheadline)
                     }
                 })
-                
                 
             } //form
             .navigationTitle("Add Link")
