@@ -64,6 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("Failed to register for remote notifications: \(error)")
     }
 
+    // バックグラウンドや終了状態で通知を受信した際に呼ばれるメソッド
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let messageID = userInfo["gcm.message_id"] {
             print("MessageID: \(messageID)")
@@ -78,13 +79,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("messaging(_:didReceiveRegistrationToken:) called with token: \(fcmToken)")
 
         Task { await setFCMToken(fcmToken: fcmToken)}
-
     }
-
 
     // アプリがForeground時にPush通知を受信する処理
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
+    }
+
+    // 通知をタップした時に呼ばれるメソッド
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        // NotificationCenterを使用して通知を投稿
+        NotificationCenter.default.post(name: Notification.Name("didReceiveRemoteNotification"), object: nil, userInfo: userInfo)
+        completionHandler()
     }
 
     // アプリケーションがバックグラウンドに移行する直前に呼ばれる
@@ -100,7 +107,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
             BLEPeripheralManager.shared.startAdvertising()
         }
-
     }
 
     // アプリケーションがフォアグラウンドに移行する直前に呼ばれる
