@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HistroyDataStruct {
+struct HistoryDataStruct {
     let userId: String
     var date: Date
     var isRead: Bool
