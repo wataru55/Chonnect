@@ -23,90 +23,88 @@ struct WaitingSearchView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 16) {
-                    if viewModel.userDatePairs.isEmpty {
-                        Text("すれ違ったユーザーがいません")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
-                    } else {
-                        ForEach(viewModel.userDatePairs, id: \.self) { pair in
-                            NavigationLink(value: pair) {
-                                HStack {
-                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
-                                    VStack(alignment: .leading) {
-                                        Text(pair.user.username)
-                                            .fontWeight(.bold)
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                if viewModel.userDatePairs.isEmpty {
+                    Text("すれ違ったユーザーがいません")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    ForEach(viewModel.userDatePairs, id: \.self) { pair in
+                        NavigationLink(value: pair) {
+                            HStack {
+                                CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
+                                VStack(alignment: .leading) {
+                                    Text(pair.user.username)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(Color.primary)
+
+                                    if let fullname = pair.user.fullname {
+                                        Text(fullname)
                                             .foregroundStyle(Color.primary)
+                                    }
+                                } // VStack
+                                .font(.footnote)
 
-                                        if let fullname = pair.user.fullname {
-                                            Text(fullname)
-                                                .foregroundStyle(Color.primary)
+                                Spacer()
+
+                                Text("\(dateFormatter.string(from: pair.date))")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+
+                                Button(action: {
+                                    Task {
+                                        loadingViewModel.isLoading = true
+                                        do {
+                                            try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                            loadingViewModel.isLoading = false
+                                        } catch {
+                                            isShowAlert = true
                                         }
-                                    } // VStack
-                                    .font(.footnote)
+                                    }
+                                }, label: {
+                                    Image(systemName: "figure.2")
+                                        .foregroundStyle(.white)
+                                        .frame(width: 60, height: 35)
+                                        .background(
+                                            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                                        )
+                                        .cornerRadius(6)
+                                })
 
-                                    Spacer()
-
-                                    Text("\(dateFormatter.string(from: pair.date))")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-
-                                    Button(action: {
-                                        Task {
-                                            loadingViewModel.isLoading = true
-                                            do {
-                                                try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
-                                                loadingViewModel.isLoading = false
-                                            } catch {
-                                                isShowAlert = true
-                                            }
-                                        }
-                                    }, label: {
-                                        Image(systemName: "figure.2")
-                                            .foregroundStyle(.white)
-                                            .frame(width: 60, height: 35)
-                                            .background(
-                                                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                                            )
-                                            .cornerRadius(6)
-                                    })
-
-                                    Button(action: {
-                                        RealmManager.shared.removeData(pair.user.id)
-                                    }, label: {
-                                        Image(systemName: "hand.wave.fill")
-                                            .foregroundStyle(.white)
-                                            .frame(width: 60, height: 35)
-                                            .background(.gray)
-                                            .cornerRadius(6)
-                                    })
-                                } // HStack
-                                .foregroundStyle(.black) // NavigationLinkのデフォルトカラーを青から黒に
-                                .padding(.horizontal)
-                            } // NavigationLink
-                        } // ForEach
-                    }
-                } // LazyVStack
-                .padding(.top, 8)
-            } // ScrollView
-            .refreshable {
-                loadingViewModel.isLoading = true
-                Task {
-                    // データのフェッチ
-                    await UserService().fetchNotifications()
-                    // ローディング終了
-                    //isLoading = false
-                    loadingViewModel.isLoading = false
+                                Button(action: {
+                                    RealmManager.shared.removeData(pair.user.id)
+                                }, label: {
+                                    Image(systemName: "hand.wave.fill")
+                                        .foregroundStyle(.white)
+                                        .frame(width: 60, height: 35)
+                                        .background(.gray)
+                                        .cornerRadius(6)
+                                })
+                            } // HStack
+                            .foregroundStyle(.black) // NavigationLinkのデフォルトカラーを青から黒に
+                            .padding(.horizontal)
+                        } // NavigationLink
+                    } // ForEach
                 }
-            }
+            } // LazyVStack
+            .padding(.top, 8)
             .navigationDestination(for: UserDatePair.self, destination: { pair in
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
-        } // NavigationStack
+        } // ScrollView
+        .refreshable {
+            loadingViewModel.isLoading = true
+            Task {
+                // データのフェッチ
+                await UserService().fetchNotifications()
+                // ローディング終了
+                //isLoading = false
+                loadingViewModel.isLoading = false
+            }
+        }
         .alert("エラー", isPresented: $isShowAlert) {
             Button("OK", role: .cancel) { }
         } message: {
