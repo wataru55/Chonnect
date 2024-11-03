@@ -9,6 +9,8 @@ import SwiftUI
 struct WaitingSearchView: View {
     // MARK: - property
     @StateObject var viewModel = SearchViewModel()
+    @EnvironmentObject var loadingViewModel: LoadingViewModel
+    @State var isShowAlert: Bool = false
 
     let currentUser: User
 
@@ -55,7 +57,13 @@ struct WaitingSearchView: View {
 
                                     Button(action: {
                                         Task {
-                                            await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                            loadingViewModel.isLoading = true
+                                            do {
+                                                try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                                loadingViewModel.isLoading = false
+                                            } catch {
+                                                isShowAlert = true
+                                            }
                                         }
                                     }, label: {
                                         Image(systemName: "figure.2")
@@ -86,12 +94,24 @@ struct WaitingSearchView: View {
                 .padding(.top, 8)
             } // ScrollView
             .refreshable {
-                print("refresh")
+                loadingViewModel.isLoading = true
+                Task {
+                    // データのフェッチ
+                    await UserService().fetchNotifications()
+                    // ローディング終了
+                    //isLoading = false
+                    loadingViewModel.isLoading = false
+                }
             }
             .navigationDestination(for: UserDatePair.self, destination: { pair in
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // NavigationStack
+        .alert("エラー", isPresented: $isShowAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("予期せぬエラーが発生しました\nもう一度お試しください")
+        }
     }
 }
 

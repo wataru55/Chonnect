@@ -44,41 +44,41 @@ struct UserService {
 
     static func fetchAbstractLinks(withUid userId: String) async throws -> [String: String] {
         var abstractLinks: [String: String] = [:]
-        
+
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
             .collection("abstract")
             .getDocuments()
-        
+
         for document in snapshot.documents {
             if let title = document.data()["abstract_title"] as? String,
                let url = document.data()["abstract_url"] as? String {
                 abstractLinks[title] = url
             }
         }
-        
+
         return abstractLinks
     }
-  
+
     // ユーザーの選択されたタグをFirestoreに保存する関数(言語)
     static func saveLanguageTags(userId: String, selectedTags: [String]) async throws {
         let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("languageTags")
         try await ref.setData(["tags": selectedTags])
     }
-    
+
     // ユーザーの選択されたタグをFirestoreに保存する関数(ライブラリ、フレームワーク)
     static func saveFrameworkTags(userId: String, selectedTags: [String]) async throws {
         let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("frameworkTags")
         try await ref.setData(["tags": selectedTags])
     }
-    
+
     // 選択したタグをフェッチする関数(言語)
     static func fetchLanguageTags(withUid id: String) async throws -> Tags {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("languageTags").getDocument()
         return try snapshot.data(as: Tags.self)
     }
-    
+
     // 選択したタグをフェッチする関数(ライブラリ、フレームワーク)
     static func fetchFrameworkTags(withUid id: String) async throws -> Tags {
         let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("frameworkTags").getDocument()
@@ -103,6 +103,8 @@ struct UserService {
         do {
             // 相手のfollowersコレクションに保存
             try await path.document(receivedId).collection("followers").document(documentId).setData(followerData)
+            // 相手のnotificationsコレクションに保存
+            try await path.document(receivedId).collection("notifications").document(documentId).setData(followerData)
             // 自分のfollowsコレクションに保存
             try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
             print("Followed successfully saved")
@@ -126,4 +128,41 @@ struct UserService {
             throw error
         }
     }
+
+    func fetchNotifications() async {
+        guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
+
+        let startTime = Date()
+        let notificationsRef = Firestore.firestore().collection("users").document(myDocumentId).collection("notifications")
+
+        do {
+            let snapshot = try await notificationsRef.getDocuments()
+
+            for document in snapshot.documents {
+                if let data = try? document.data(as: EncountDataStruct.self) {
+                    // Realmに保存
+                    await RealmManager.shared.storeData(data.userId, date: data.date)
+                }
+                // 通知を削除
+                do {
+                    try await document.reference.delete()
+                    print("Notification deleted successfully.")
+                } catch {
+                    print("Error deleting notification: \(error)")
+                }
+            }
+        } catch {
+            print("Error fetching notifications: \(error)")
+        }
+        // 経過時間の計算
+        let elapsed = Date().timeIntervalSince(startTime)
+        let minimumLoadingTime: TimeInterval = 2.0 // 2秒
+
+        if elapsed < minimumLoadingTime {
+            let remainingTime = minimumLoadingTime - elapsed
+            // Task.sleepで待機
+            try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
+        }
+    }
+
 }
