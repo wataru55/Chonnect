@@ -115,7 +115,7 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
-                
+               
                 ScrollView(.horizontal, showsIndicators: false) {
                    HStack {
                        if user.snsLinks.isEmpty {
@@ -170,7 +170,6 @@ struct EditProfileView: View {
                 .padding(.bottom, 20)
                 
                 Spacer()
-                
             } //scrollview
         }//vstack
         .onTapGesture {

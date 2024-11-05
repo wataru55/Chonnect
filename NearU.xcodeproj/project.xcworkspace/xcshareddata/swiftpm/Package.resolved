@@ -1,5 +1,5 @@
 {
-  "originHash" : "bf2ed194e5bb6cb189301e98d34f9ef8c38174d9cbeabefc36d0c1765bf83dfe",
+  "originHash" : "941a5020e76e123b481ead6b647c90b6b0f1ca84fb843304a0b4cdc63058b6c0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -116,6 +116,15 @@
       "state" : {
         "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
         "version" : "2.30910.0"
+      }
+    },
+    {
+      "identity" : "opengraph",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/satoshi-takano/OpenGraph",
+      "state" : {
+        "revision" : "15fa71b31cf85695cf7035a077aaa624f679f53a",
+        "version" : "1.6.0"
       }
     },
     {

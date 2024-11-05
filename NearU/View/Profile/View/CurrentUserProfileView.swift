@@ -73,6 +73,46 @@ struct CurrentUserProfileView: View {
                             }
                         
                         TagsView(tags: viewModel.selectedTags)
+                      
+                        HStack(spacing: 16) {
+                        // edit profile button
+                        Button(action: {
+                            showEditProfile.toggle()
+                        }, label: {
+                            Text("Edit Profile")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
+                                .background(.white)
+                                .cornerRadius(6)
+                                .foregroundStyle(.black)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(.gray)
+                                )
+                        })
+                        
+                        // add link button
+                        Button(action: {
+                            isAddingNewLink.toggle()
+                        }, label: {
+                            Text("Add Link")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
+                                .background(.white)
+                                .cornerRadius(6)
+                                .foregroundStyle(.black)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(.gray)
+                                )
+                        })
+                        .sheet(isPresented: $isAddingNewLink) {
+                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                        }
+                        }//HStack
+                        .padding(.bottom, 20)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                            HStack {
@@ -98,11 +138,14 @@ struct CurrentUserProfileView: View {
                                     .foregroundColor(.orange)
                                     .padding()
                             } else {
-                                ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
-                                    if let url = abstractLinksViewModel.abstractLinks[key] {
-                                        SiteLinkButtonView(abstract_title: key, abstract_url: url)
-                                    }
+                                ForEach(viewModel.abstractUrls, id: \.self) { url in
+                                    SiteLinkButtonView(abstract_url: url)
                                 }
+                            }
+                        }
+                        .onAppear {
+                            Task {
+                                await viewModel.loadAbstractLinks()
                             }
                         }
                         
@@ -120,7 +163,3 @@ struct CurrentUserProfileView: View {
         }
     }// body
 }// view
-
-//#Preview {
-//    CurrentUserProfileView(user: User.MOCK_USERS[1])
-//}

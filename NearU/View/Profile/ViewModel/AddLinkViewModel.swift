@@ -13,34 +13,33 @@ class AddLinkViewModel: ObservableObject {
     @Published var user: User
     @Published var selectedSNS: String = ""
     @Published var sns_url: String = ""
-    @Published var abstract_title: String = ""
-    @Published var abstract_url: String = ""
-    @Published var abstractLinks: [String: String] = [:]
- 
-
+    @Published var urls: [String] = [""] // 複数のURLを保存する配列
+    
     init(user: User) {
         self.user = user
     }
 
     @MainActor
     func updateSNSLink() async throws {
+        // SNSリンクが入力されている場合の更新
         if !selectedSNS.isEmpty && !sns_url.isEmpty {
             let data = ["snsLinks.\(selectedSNS)": sns_url]
 
             try await Firestore.firestore().collection("users").document(user.id).updateData(data)
-            print("complete")
+            print("SNSリンクの更新完了")
         }
-        if !abstract_title.isEmpty && !abstract_url.isEmpty {
-            let data = [
-                        "abstract_title": abstract_title,
-                        "abstract_url": abstract_url
-            ]
-            
-            try await Firestore.firestore()
-                .collection("users")
-                .document(user.id)
-                .collection("abstract")
-                .addDocument(data: data)
+        
+        // 複数のURLが入力されている場合の更新
+        for url in urls {
+            if !url.isEmpty {
+                let data = ["abstract_url": url]
+                try await Firestore.firestore()
+                    .collection("users")
+                    .document(user.id)
+                    .collection("abstract")
+                    .addDocument(data: data)
+                print("URL \(url) が abstract コレクションに追加されました")
+            }
         }
     }
 }

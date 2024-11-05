@@ -80,6 +80,7 @@
 		F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */; };
 		F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25861692CCB245000715D20 /* PasswordResetView.swift */; };
 		F258616C2CCB260900715D20 /* PasswordResetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F258616B2CCB260900715D20 /* PasswordResetViewModel.swift */; };
+		F273EA052CD7D7F90072121E /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = F273EA042CD7D7F90072121E /* OpenGraph */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -169,6 +170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F273EA052CD7D7F90072121E /* OpenGraph in Frameworks */,
 				6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */,
 				637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */,
 				63DFF8972BFC99ED00A6DFB8 /* Kingfisher in Frameworks */,
@@ -476,6 +478,7 @@
 				637B97262CB8FBC100EFB09F /* RealmSwift */,
 				6375622B2CCE50B100137B27 /* FirebaseMessaging */,
 				63BEA49C2CD2211A006382AF /* JWTKit */,
+				F273EA042CD7D7F90072121E /* OpenGraph */,
 			);
 			productName = NearU;
 			productReference = 63B64FD42B8C763900289469 /* NearU.app */;
@@ -510,6 +513,7 @@
 				63DFF8952BFC99ED00A6DFB8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				637B97252CB8FBC100EFB09F /* XCRemoteSwiftPackageReference "realm-swift" */,
 				63BEA49B2CD2211A006382AF /* XCRemoteSwiftPackageReference "jwt-kit" */,
+				F273EA032CD7D7F90072121E /* XCRemoteSwiftPackageReference "OpenGraph" */,
 			);
 			productRefGroup = 63B64FD52B8C763900289469 /* Products */;
 			projectDirPath = "";
@@ -855,6 +859,14 @@
 				minimumVersion = 10.25.0;
 			};
 		};
+		F273EA032CD7D7F90072121E /* XCRemoteSwiftPackageReference "OpenGraph" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/satoshi-takano/OpenGraph";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -907,6 +919,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 63E4CC882BED30EA009E0C9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		F273EA042CD7D7F90072121E /* OpenGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F273EA032CD7D7F90072121E /* XCRemoteSwiftPackageReference "OpenGraph" */;
+			productName = OpenGraph;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
