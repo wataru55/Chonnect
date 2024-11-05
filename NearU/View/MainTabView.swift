@@ -14,6 +14,8 @@ struct MainTabView: View {
 
     @StateObject var centralManager = BLECentralManager.shared
     @StateObject var peripheralManager = BLEPeripheralManager.shared
+    @StateObject var viewTransitionManager = ViewTransitionManager.shared
+    @StateObject private var loadingViewModel = LoadingViewModel()
     @Environment(\.scenePhase) private var scenePhase
 
     init(user: User) {
@@ -23,6 +25,7 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             SearchView(currentUser: user)
+                .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
@@ -40,8 +43,21 @@ struct MainTabView: View {
                     Text("Setting")
                 }
         } //tabview
+        .overlay {
+            if loadingViewModel.isLoading {
+                LoadingView()
+            }
+        }
+        .sheet(isPresented: $viewTransitionManager.showProfile) {
+            if let selectedUser = viewTransitionManager.selectedUser {
+                ProfileView(user: selectedUser, currentUser: user, date: Date())
+            }
+        }
         .accentColor(Color(.systemMint))
         .onAppear {
+            // 通知の許可をリクエスト
+            requestNotificationAuthorization()
+
             peripheralManager.configure(with: user)
 
             if centralManager.centralManager.state == .poweredOn {
@@ -51,9 +67,14 @@ struct MainTabView: View {
             if peripheralManager.peripheralManager.state == .poweredOn {
                 peripheralManager.startAdvertising()
             }
-            // FCM トークンを Firestore に保存
-            if let fcmToken = UserDefaults.standard.string(forKey: "FCMToken") {
-                Task { await setFCMToken(fcmToken: fcmToken) }
+            // ローディング開始
+            loadingViewModel.isLoading = true
+            // 通知の確認
+            Task {
+                // データのフェッチ
+                await UserService().fetchNotifications()
+                // ローディング終了
+                loadingViewModel.isLoading = false
             }
         }
         .onChange(of: scenePhase) {
@@ -84,25 +105,16 @@ struct MainTabView: View {
         }
     } //body
 
-    // FCMトークンをFirestoreに保存するメソッド
-    func setFCMToken(fcmToken: String) async {
-        guard let documentId = AuthService.shared.currentUser?.id else {
-            print("ユーザーがログインしていません")
-            return
-        }
-
-        let data: [String: Any] = [
-            "fcmtoken": fcmToken
-        ]
-
-        do {
-            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
-            print("Document successfully updated with FCM token")
-        } catch {
-            print("Error updating document: \(error)")
+    // 通知の許可をリクエストするメソッド
+    private func requestNotificationAuthorization() {
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, _ in
+            guard granted else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
         }
     }
-
 }//view
 
 #Preview {
