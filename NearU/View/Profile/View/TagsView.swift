@@ -23,14 +23,17 @@ struct TagsView: View {
                             Text(tag)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 12)
-                                .background(Color(.systemGroupedBackground))
+                                .background(Color(red: 0.85, green: 0.85, blue: 0.85))
                                 .cornerRadius(15)
                         }
                     }
-                    .padding(5)
+                    
                 }
                 .frame(height: 50) // タグが収まる高さに設定
+                .padding(.leading)
+                .padding(.trailing)
             }
+            
         }
 //        .onAppear {
 //            Task {
