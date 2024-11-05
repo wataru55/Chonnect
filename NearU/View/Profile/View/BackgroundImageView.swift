@@ -26,7 +26,7 @@ struct BackgroundImageView: View {
                             LinearGradient(
                                 gradient: Gradient(stops: [
                                     .init(color: Color.white.opacity(0), location: 0.5),
-                                    .init(color: Color.white.opacity(1), location: 1)
+                                    .init(color: Color(red: 0.92, green: 0.93, blue: 0.94).opacity(1), location: 1)
                                 ]),
                                 startPoint: .top,
                                 endPoint: .bottom

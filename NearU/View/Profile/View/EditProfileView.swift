@@ -16,14 +16,18 @@ struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @StateObject var abstractLinksViewModel: AbstractLinkModel
 
+
+    let user: User
+    
     //let user: User
     @FocusState private var focusedField: Field?
     
-//    init(user: User) {
-//        self.user = user
-//        //self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
-//    }
+    init(user: User) {
+        self.user = user
+        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
+    }
     
     var body: some View {
         VStack {
@@ -111,7 +115,61 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
+               
+                ScrollView(.horizontal, showsIndicators: false) {
+                   HStack {
+                       if user.snsLinks.isEmpty {
+                           Text("自分のSNSのリンクを登録しましょう")
+                               .foregroundColor(.orange)
+                               .padding()
+                       } else {
+                           ForEach(Array(user.snsLinks.keys), id: \.self) { key in
+                               if let url = user.snsLinks[key] {
+                                   SNSLinkButtonView(selectedSNS: key, sns_url: url,  backgroundColor: .white)
+                               }
+                           }
+                       }
+                   } // HStack
+                } // ScrollView
+                .padding(.leading)
+                .padding(.bottom, 10)
                 
+                VStack(){
+                    if abstractLinksViewModel.abstractLinks.isEmpty {
+                        Text("リンクがありません")
+                            .foregroundColor(.orange)
+                            .padding()
+                    } else {
+                        ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
+                            if let url = abstractLinksViewModel.abstractLinks[key] {
+                                SiteLinkButtonView(abstract_title: key, abstract_url: url)
+                            }
+                        }
+                    }
+                }
+                
+                // add link button
+                Button(action: {
+                    isAddingNewLink.toggle()
+                }, label: {
+                    Image(systemName: "plus.circle")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    Text("Add Link")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                })
+                .foregroundColor(.white)
+                .frame(width: 360, height: 35)
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                        .clipShape(Capsule())
+                )
+                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
+                .sheet(isPresented: $isAddingNewLink) {
+                    AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                }
+                .padding(.bottom, 20)
+                
+                Spacer()
             } //scrollview
         }//vstack
         .onTapGesture {
@@ -142,6 +200,6 @@ struct EditProfileRowView: View {
     }//body
 }//view
 
-#Preview {
-    EditProfileView()
-}
+//#Preview {
+//    EditProfileView()
+//}
