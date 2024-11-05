@@ -34,6 +34,25 @@ class SearchViewModel: ObservableObject {
             print("Error fetching users: \(error)")
         }
     }
+
+    func handleFollowButton(currentUser: User, pair: UserDatePair) async throws {
+        guard let fcmToken = pair.user.fcmtoken else { return }
+
+        // プッシュ通知を送信
+        try await NotificationManager.shared.sendPushNotification(
+            fcmToken: fcmToken,
+            username: currentUser.username,
+            documentId: currentUser.id,
+            date: pair.date
+        )
+
+        // フォロー処理を実行
+        try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
+        RealmManager.shared.removeData(pair.user.id)
+        // デバッグ
+        let storedUserIds = RealmManager.shared.getUserIDs()
+        print("Stored User IDs after removal: \(storedUserIds)")
+    }
 }
 
 

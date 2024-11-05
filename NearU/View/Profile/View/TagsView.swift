@@ -14,8 +14,6 @@ struct TagsView: View {
     var body: some View {
         VStack {
             if tags.isEmpty {
-                Text("No tags")
-                    .foregroundColor(.gray)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 7) {
@@ -35,14 +33,5 @@ struct TagsView: View {
             }
             
         }
-//        .onAppear {
-//            Task {
-//                do {
-//                    self.tags = try await UserService.fetchUserTags(withUid: userId)
-//                } catch {
-//                    print("Failed to fetch tags: \(error)")
-//                }
-//            }
-//        }
     }
 }

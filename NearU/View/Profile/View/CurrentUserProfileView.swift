@@ -85,7 +85,6 @@ struct CurrentUserProfileView: View {
                                        if let url = user.snsLinks[key] {
                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
                                        }
-                                   }
                                }
                            } // HStack
                         } // ScrollView

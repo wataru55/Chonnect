@@ -9,6 +9,8 @@ import SwiftUI
 struct WaitingSearchView: View {
     // MARK: - property
     @StateObject var viewModel = SearchViewModel()
+    @EnvironmentObject var loadingViewModel: LoadingViewModel
+    @State var isShowAlert: Bool = false
 
     let currentUser: User
 
@@ -55,15 +57,12 @@ struct WaitingSearchView: View {
 
                                     Button(action: {
                                         Task {
+                                            loadingViewModel.isLoading = true
                                             do {
-                                                try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
-                                                RealmManager.shared.removeData(pair.user.id)
-                                                // デバッグ
-                                                let storedUserIds = RealmManager.shared.getUserIDs()
-                                                print("Stored User IDs after removal: \(storedUserIds)")
+                                                try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                                                loadingViewModel.isLoading = false
                                             } catch {
-                                                // エラーハンドリング
-                                                print("Error: \(error)")
+                                                isShowAlert = true
                                             }
                                         }
                                     }, label: {
@@ -95,12 +94,24 @@ struct WaitingSearchView: View {
                 .padding(.top, 8)
             } // ScrollView
             .refreshable {
-                print("refresh")
+                loadingViewModel.isLoading = true
+                Task {
+                    // データのフェッチ
+                    await UserService().fetchNotifications()
+                    // ローディング終了
+                    //isLoading = false
+                    loadingViewModel.isLoading = false
+                }
             }
             .navigationDestination(for: UserDatePair.self, destination: { pair in
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // NavigationStack
+        .alert("エラー", isPresented: $isShowAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("予期せぬエラーが発生しました\nもう一度お試しください")
+        }
     }
 }
 
