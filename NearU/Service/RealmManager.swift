@@ -19,6 +19,7 @@ class RealmManager: ObservableObject {
     private init() {
         // 初期化時にRealmからデータを読み込む
         loadHistoryDataFromRealm()
+        loadRealtimeDataFromRealm()
     }
 
     // Realmからデータを読み込む
@@ -36,7 +37,22 @@ class RealmManager: ObservableObject {
         }
     }
 
-    // すれ違ったユーザーIDと日付を保存または更新
+    // Realmからリアルタイムデータを読み込む
+    func loadRealtimeDataFromRealm() {
+        do {
+            // Realmのインスタンスを生成
+            let realm = try Realm()
+            // RealmからEncountDataオブジェクトの全てのデータを取得
+            let results = realm.objects(EncountData.self)
+            // EncountDataオブジェクトをEncountDataStructに変換して配列に格納
+            let encountDataArray = results.map { EncountDataStruct(from: $0) }
+            self.realtimeData = Array(encountDataArray)
+        } catch {
+            print("Error loading Realm data: \(error)")
+        }
+    }
+
+    // すれ違ったユーザーIDと日付を履歴に保存または更新
     func storeData(_ receivedUserId: String, date: Date) {
         do {
             let realm = try Realm()
@@ -66,6 +82,44 @@ class RealmManager: ObservableObject {
                 // メモリ上の配列に追加
                 let newHistoryDataStruct = HistoryDataStruct(from: newHistoryData)
                 self.historyData.append(newHistoryDataStruct)
+            }
+        } catch {
+            print("Error storing Realm data: \(error)")
+        }
+    }
+
+    // すれ違ったユーザーIDと日付をリアルタイム用のデータに保存または更新
+    func storeRealtimeData (receivedUserId: String, date: Date, rssi: Int) {
+        do {
+            let realm = try Realm()
+            // 既存のユーザーIDがRealmにあるか確認
+            if let existingRealtimeData = realm.objects(EncountData.self).filter("userId == %@", receivedUserId).first {
+                // 既存データがあれば、日付を更新
+                try realm.write {
+                    existingRealtimeData.date = date
+                    existingRealtimeData.rssi = rssi
+                }
+                print("User ID \(receivedUserId) already exists, rssiupdated in Realm.")
+                // メモリ上のencountData配列も更新
+                if let index = self.realtimeData.firstIndex(where: { $0.userId == receivedUserId }) {
+                    self.realtimeData[index].date = existingRealtimeData.date
+                    self.realtimeData[index].rssi = existingRealtimeData.rssi
+                }
+            } else {
+                // 新規データの作成
+                let newRealtimeData = EncountData()
+                newRealtimeData.userId = receivedUserId
+                newRealtimeData.date = date
+                newRealtimeData.rssi = rssi
+
+                // Realmに保存
+                try realm.write {
+                    realm.add(newRealtimeData)
+                }
+                print("User ID \(receivedUserId) has been stored in Realm.")
+                // メモリ上の配列に追加
+                let newRealtimeDataStruct = EncountDataStruct(from: newRealtimeData)
+                self.realtimeData.append(newRealtimeDataStruct)
             }
         } catch {
             print("Error storing Realm data: \(error)")
@@ -121,6 +175,27 @@ class RealmManager: ObservableObject {
 
         } catch {
             print("Error removing Realm data: \(error)")
+        }
+    }
+
+    // 古いリアルタイムデータを削除するメソッド
+    func removeRealtimeData(interval: TimeInterval = 5.0) {
+        do {
+            let realm = try Realm()
+            let removeDate = Date().addingTimeInterval(-interval)
+            let outdatedUsers = realm.objects(EncountData.self).filter("date < %@", removeDate)
+
+            if !outdatedUsers.isEmpty {
+                try realm.write {
+                    realm.delete(outdatedUsers)
+                }
+                print("Deleted \(outdatedUsers.count) outdated users from Realm.")
+                // メモリ上のrealtimeData配列からも削除
+                let outdatedUserIds = outdatedUsers.map { $0.userId }
+                realtimeData.removeAll { outdatedUserIds.contains($0.userId) }
+            }
+        } catch {
+            print("Error during cleanup: \(error)")
         }
     }
 
