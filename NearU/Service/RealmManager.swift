@@ -13,20 +13,24 @@ import FirebaseFirestore
 class RealmManager: ObservableObject {
     static let shared = RealmManager()
 
-    @Published var encountData: [EncountDataStruct] = []
+    @Published var historyData: [HistoryDataStruct] = []
+    @Published var realtimeData: [EncountDataStruct] = []
 
     private init() {
         // 初期化時にRealmからデータを読み込む
-        loadUserIdsFromRealm()
+        loadHistoryDataFromRealm()
     }
 
     // Realmからデータを読み込む
-    func loadUserIdsFromRealm() {
+    func loadHistoryDataFromRealm() {
         do {
+            // Realmのインスタンスを生成
             let realm = try Realm()
-            let results = realm.objects(EncountData.self)
-            let encountDataArray = results.map { EncountDataStruct(from: $0) }
-            self.encountData = Array(encountDataArray)
+            // RealmからHistoryDataオブジェクトの全てのデータを取得
+            let results = realm.objects(HistoryData.self)
+            // HistoryDataオブジェクトをHistoryDataStructに変換して配列に格納
+            let historyDataArray = results.map { HistoryDataStruct(from: $0) }
+            self.historyData = Array(historyDataArray)
         } catch {
             print("Error loading Realm data: \(error)")
         }
@@ -37,33 +41,55 @@ class RealmManager: ObservableObject {
         do {
             let realm = try Realm()
             // 既存のユーザーIDがRealmにあるか確認
-            if let existingEncountData = realm.objects(EncountData.self).filter("userId == %@", receivedUserId).first {
+            if let existingHistoryData = realm.objects(HistoryData.self).filter("userId == %@", receivedUserId).first {
                 // 既存データがあれば、日付を更新
                 try realm.write {
-                    existingEncountData.date = date
+                    existingHistoryData.date = date
                 }
                 print("User ID \(receivedUserId) already exists, date updated in Realm.")
                 // メモリ上のencountData配列も更新
-                if let index = self.encountData.firstIndex(where: { $0.userId == receivedUserId }) {
-                    self.encountData[index].date = existingEncountData.date
+                if let index = self.historyData.firstIndex(where: { $0.userId == receivedUserId }) {
+                    self.historyData[index].date = existingHistoryData.date
                 }
             } else {
                 // 新規データの作成
-                let newEncountData = EncountData()
-                newEncountData.userId = receivedUserId
-                newEncountData.date = date
+                let newHistoryData = HistoryData()
+                newHistoryData.userId = receivedUserId
+                newHistoryData.date = date
+                newHistoryData.isRead = false
 
                 // Realmに保存
                 try realm.write {
-                    realm.add(newEncountData)
+                    realm.add(newHistoryData)
                 }
                 print("User ID \(receivedUserId) has been stored in Realm.")
                 // メモリ上の配列に追加
-                let newEncountDataStruct = EncountDataStruct(from: newEncountData)
-                self.encountData.append(newEncountDataStruct)
+                let newHistoryDataStruct = HistoryDataStruct(from: newHistoryData)
+                self.historyData.append(newHistoryDataStruct)
             }
         } catch {
             print("Error storing Realm data: \(error)")
+        }
+    }
+
+    // 既読情報を更新するメソッド
+    func updateRead(_ receivedUserId: String) {
+        do {
+            let realm = try Realm()
+            // 既存のユーザーIDがRealmにあるか確認
+            guard let existingHistoryData = realm.objects(HistoryData.self).filter("userId == %@", receivedUserId).first else { return }
+
+            // 既読情報を更新
+            try realm.write {
+                existingHistoryData.isRead = true
+            }
+            // メモリ上のhistoryData配列も更新
+            // indexを取得
+            guard let index = self.historyData.firstIndex(where: { $0.userId == receivedUserId }) else { return }
+            // 更新
+            self.historyData[index].isRead = existingHistoryData.isRead
+        } catch {
+            print("Error updating isRead data: \(error)")
         }
     }
 
@@ -80,8 +106,8 @@ class RealmManager: ObservableObject {
                 print("User ID \(userId) has been removed from Realm.")
 
                 // `encountData`リストからも削除
-                if let index = self.encountData.firstIndex(where: { $0.userId == userId }) {
-                    self.encountData.remove(at: index)
+                if let index = self.historyData.firstIndex(where: { $0.userId == userId }) {
+                    self.historyData.remove(at: index)
                     print("encountData removed for userId: \(userId)")
                 }
             }
@@ -98,9 +124,5 @@ class RealmManager: ObservableObject {
         }
     }
 
-    // RealmからEncountDataを取得する関数
-    func getUserIDs() -> [EncountDataStruct] {
-        return encountData
-    }
 }
 
