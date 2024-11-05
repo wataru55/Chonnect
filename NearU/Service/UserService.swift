@@ -14,7 +14,7 @@ struct UserService {
         return try snapshot.data(as: User.self) //snapshotからUser型にデータをデコードして値を返す
     }
 
-    static func fetchWaitingUsers(_ userIds: [String]) async throws -> [User] {
+    static func fetchUsers(_ userIds: [String]) async throws -> [User] {
         var users = [User]()
 
         for userId in userIds {
@@ -28,7 +28,7 @@ struct UserService {
         return users
     }
 
-    static func fetchConnectedUsers(documentId: String) async throws -> [UserDatePair] {
+    static func fetchfollowedUsers(documentId: String) async throws -> [UserDatePair] {
         let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
 
         var connectedUsers: [UserDatePair] = []
