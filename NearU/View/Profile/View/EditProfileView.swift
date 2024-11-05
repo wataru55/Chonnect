@@ -16,14 +16,18 @@ struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @StateObject var abstractLinksViewModel: AbstractLinkModel
 
+
+    let user: User
+    
     //let user: User
     @FocusState private var focusedField: Field?
     
-//    init(user: User) {
-//        self.user = user
-//        //self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
-//    }
+    init(user: User) {
+        self.user = user
+        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
+    }
     
     var body: some View {
         VStack {
@@ -97,6 +101,38 @@ struct EditProfileView: View {
                 }
                 .padding(.top, 30)
                 
+                ScrollView(.horizontal, showsIndicators: false) {
+                   HStack {
+                       if user.snsLinks.isEmpty {
+                           Text("自分のSNSのリンクを登録しましょう")
+                               .foregroundColor(.orange)
+                               .padding()
+                       } else {
+                           ForEach(Array(user.snsLinks.keys), id: \.self) { key in
+                               if let url = user.snsLinks[key] {
+                                   SNSLinkButtonView(selectedSNS: key, sns_url: url,  backgroundColor: .white)
+                               }
+                           }
+                       }
+                   } // HStack
+                } // ScrollView
+                .padding(.leading)
+                .padding(.bottom, 10)
+                
+                VStack(){
+                    if abstractLinksViewModel.abstractLinks.isEmpty {
+                        Text("リンクがありません")
+                            .foregroundColor(.orange)
+                            .padding()
+                    } else {
+                        ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
+                            if let url = abstractLinksViewModel.abstractLinks[key] {
+                                SiteLinkButtonView(abstract_title: key, abstract_url: url)
+                            }
+                        }
+                    }
+                }
+                
                 // add link button
                 Button(action: {
                     isAddingNewLink.toggle()
@@ -150,6 +186,6 @@ struct EditProfileRowView: View {
     }//body
 }//view
 
-#Preview {
-    EditProfileView()
-}
+//#Preview {
+//    EditProfileView()
+//}
