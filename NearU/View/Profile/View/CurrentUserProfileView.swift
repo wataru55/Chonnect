@@ -41,22 +41,45 @@ struct CurrentUserProfileView: View {
                             .padding(.bottom)
                             .padding(.leading)
                         }
-                    
-                    Button(action: {
-                        showEditProfile.toggle()
-                    }, label: {
-                        Text("Edit Profile")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(width: 360, height: 32)
-                            .background(.white)
-                            .cornerRadius(6)
-                            .foregroundStyle(.black)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(.gray)
-                            )
-                    })
+
+                    HStack(spacing: 16) {
+                        // edit profile button
+                        Button(action: {
+                            showEditProfile.toggle()
+                        }, label: {
+                            Text("Edit Profile")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
+                                .background(.white)
+                                .cornerRadius(6)
+                                .foregroundStyle(.black)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(.gray)
+                                )
+                        })
+                        
+                        // add link button
+                        Button(action: {
+                            isAddingNewLink.toggle()
+                        }, label: {
+                            Text("Add Link")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
+                                .background(.white)
+                                .cornerRadius(6)
+                                .foregroundStyle(.black)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(.gray)
+                                )
+                        })
+                        .sheet(isPresented: $isAddingNewLink) {
+                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                        }
+                    }//HStack
                     .padding(.bottom, 20)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -79,13 +102,25 @@ struct CurrentUserProfileView: View {
                     
                     
                     HStack(spacing: 30){
-//                        Text("abstract")
                         Divider()
                             .frame(maxHeight: .infinity)
                             .background(.black)
                         
-                        VStack(alignment: .trailing){
-                            SiteLinkButtonView(abstract_title: "test", abstract_url: "test")
+                        VStack(alignment: .trailing, spacing: 20) {
+                            if viewModel.abstractUrls.isEmpty {
+                                Text("リンクがありません")
+                                    .foregroundColor(.orange)
+                                    .padding()
+                            } else {
+                                ForEach(viewModel.abstractUrls, id: \.self) { url in
+                                    SiteLinkButtonView(abstract_url: url)
+                                }
+                            }
+                        }
+                        .onAppear {
+                            Task {
+                                await viewModel.loadAbstractLinks()
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -103,7 +138,3 @@ struct CurrentUserProfileView: View {
         }
     }// body
 }// view
-
-//#Preview {
-//    CurrentUserProfileView(user: User.MOCK_USERS[1])
-//}

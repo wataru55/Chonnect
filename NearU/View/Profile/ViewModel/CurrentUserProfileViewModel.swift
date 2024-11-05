@@ -21,6 +21,8 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
+    
+    @Published var abstractUrls: [String] = []
 
     @Published var username = ""
     @Published var fullname = ""
@@ -95,6 +97,16 @@ class CurrentUserProfileViewModel: ObservableObject {
     
     func updateFrameworkTags() async throws {
                 try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
+    }
+    
+    @MainActor
+    func loadAbstractLinks() async {
+        do {
+            let fetchedAbstractUrls = try await UserService.fetchAbstractLinks(withUid: user.id)
+            self.abstractUrls = fetchedAbstractUrls
+        } catch {
+            print("Failed to fetch abstract links: \(error)")
+        }
     }
 
     @MainActor
