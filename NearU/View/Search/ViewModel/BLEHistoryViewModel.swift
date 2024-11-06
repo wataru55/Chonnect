@@ -13,6 +13,10 @@ class BLEHistoryViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
+        Task {
+            await fetchHistoryAllUsers(historyDataList: RealmManager.shared.historyData)
+        }
+
         RealmManager.shared.$historyData
             .sink { [weak self] historyDataList in
                 guard let self = self else { return }

@@ -15,6 +15,9 @@ class BLERealtimeViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
+        Task {
+            await fetchRealtimeAllUsers(realtimeDataList: RealmManager.shared.realtimeData)
+        }
         setupSubscribers()
     }
 
