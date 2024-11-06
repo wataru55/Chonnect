@@ -20,11 +20,10 @@ struct TopTabView: View {
             }
             .padding()
 
-
             if selectedTab == 0 {
                 BLEHistoryView(currentUser: currentUser).tag(0)
             } else {
-                ConnectedSearchView(currentUser: currentUser).tag(1)
+                BLERealtimeView(currentUser: currentUser).tag(1)
             }
         }
         .ignoresSafeArea(edges: .bottom)
