@@ -9,33 +9,37 @@ import SwiftUI
 
 @MainActor
 class BLEHistoryViewModel: ObservableObject {
-    @Published var userDatePairs = [UserDatePair]()
+    @Published var userHistoryRecords = [UserHistoryRecord]()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        RealmManager.shared.$encountData
-            .sink { [weak self] encountDataList in
+        RealmManager.shared.$historyData
+            .sink { [weak self] historyDataList in
                 guard let self = self else { return }
                 Task {
-                    await self.fetchWaitingAllUsers(encountDataList: encountDataList)
+                    await self.fetchHistoryAllUsers(historyDataList: historyDataList)
                 }
             }
             .store(in: &cancellables)
     }
 
-    func fetchWaitingAllUsers(encountDataList: [EncountDataStruct]) async {
+    //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
+    func fetchHistoryAllUsers(historyDataList: [HistoryDataStruct]) async {
         do {
-            let userIds = encountDataList.map { $0.userId }
-            let dates = encountDataList.map { $0.date }
-            let users = try await UserService.fetchWaitingUsers(userIds)
-            // ユーザーと日付を UserDatePair に変換
-            self.userDatePairs = zip(users, dates).map { UserDatePair(user: $0, date: $1) }
+            let userIds = historyDataList.map { $0.userId }
+            let dates = historyDataList.map { $0.date }
+            let isReads = historyDataList.map { $0.isRead }
+            let users = try await UserService.fetchUsers(userIds)
+            // すべての配列のインデックスを利用してUserHistoryRecordを作成
+            self.userHistoryRecords = (0..<users.count).map { index in
+                UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
+            }
         } catch {
             print("Error fetching users: \(error)")
         }
     }
 
-    func handleFollowButton(currentUser: User, pair: UserDatePair) async throws {
+    func handleFollowButton(currentUser: User, pair: UserHistoryRecord) async throws {
         guard let fcmToken = pair.user.fcmtoken else { return }
 
         // プッシュ通知を送信
@@ -48,9 +52,6 @@ class BLEHistoryViewModel: ObservableObject {
         // フォロー処理を実行
         try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
         RealmManager.shared.removeData(pair.user.id)
-        // デバッグ
-        let storedUserIds = RealmManager.shared.getUserIDs()
-        print("Stored User IDs after removal: \(storedUserIds)")
     }
 }
 

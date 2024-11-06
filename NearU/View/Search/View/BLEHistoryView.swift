@@ -25,73 +25,20 @@ struct BLEHistoryView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                if viewModel.userDatePairs.isEmpty {
+                if viewModel.userHistoryRecords.isEmpty {
                     Text("すれ違ったユーザーがいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.userDatePairs, id: \.self) { pair in
-                        NavigationLink(value: pair) {
-                            HStack {
-                                CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
-                                VStack(alignment: .leading) {
-                                    Text(pair.user.username)
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(Color.primary)
-
-                                    if let fullname = pair.user.fullname {
-                                        Text(fullname)
-                                            .foregroundStyle(Color.primary)
-                                    }
-                                } // VStack
-                                .font(.footnote)
-
-                                Spacer()
-
-                                Text("\(dateFormatter.string(from: pair.date))")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-
-                                Button(action: {
-                                    Task {
-                                        loadingViewModel.isLoading = true
-                                        do {
-                                            try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
-                                            loadingViewModel.isLoading = false
-                                        } catch {
-                                            isShowAlert = true
-                                        }
-                                    }
-                                }, label: {
-                                    Image(systemName: "figure.2")
-                                        .foregroundStyle(.white)
-                                        .frame(width: 60, height: 35)
-                                        .background(
-                                            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                                        )
-                                        .cornerRadius(6)
-                                })
-
-                                Button(action: {
-                                    RealmManager.shared.removeData(pair.user.id)
-                                }, label: {
-                                    Image(systemName: "hand.wave.fill")
-                                        .foregroundStyle(.white)
-                                        .frame(width: 60, height: 35)
-                                        .background(.gray)
-                                        .cornerRadius(6)
-                                })
-                            } // HStack
-                            .foregroundStyle(.black) // NavigationLinkのデフォルトカラーを青から黒に
-                            .padding(.horizontal)
-                        } // NavigationLink
+                    ForEach(viewModel.userHistoryRecords, id: \.self) { pair in
+                        historyRow(for: pair)
                     } // ForEach
                 }
             } // LazyVStack
             .padding(.top, 8)
-            .navigationDestination(for: UserDatePair.self, destination: { pair in
+            .navigationDestination(for: UserHistoryRecord.self, destination: { pair in
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
             })
         } // ScrollView
@@ -111,6 +58,72 @@ struct BLEHistoryView: View {
             Text("予期せぬエラーが発生しました\nもう一度お試しください")
         }
     }
+
+    // 切り出した行表示メソッド
+    @ViewBuilder
+    private func historyRow(for pair: UserHistoryRecord) -> some View {
+        NavigationLink(value: pair) {
+            HStack {
+                CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(pair.user.username)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.primary)
+
+                        Circle()
+                            .frame(width: 8, height: 8)
+                            .foregroundColor(pair.isRead ? .clear : .blue)
+                    }
+
+                    if let fullname = pair.user.fullname {
+                        Text(fullname)
+                            .foregroundStyle(Color.primary)
+                    }
+                } // VStack
+                .font(.footnote)
+
+                Spacer()
+
+                Text("\(dateFormatter.string(from: pair.date))")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+
+                Button(action: {
+                    Task {
+                        loadingViewModel.isLoading = true
+                        do {
+                            try await viewModel.handleFollowButton(currentUser: currentUser, pair: pair)
+                            loadingViewModel.isLoading = false
+                        } catch {
+                            isShowAlert = true
+                        }
+                    }
+                }, label: {
+                    Image(systemName: "figure.2")
+                        .foregroundStyle(.white)
+                        .frame(width: 60, height: 35)
+                        .background(
+                            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                        )
+                        .cornerRadius(6)
+                    })
+
+                Button(action: {
+                    RealmManager.shared.removeData(pair.user.id)
+                }, label: {
+                    Image(systemName: "hand.wave.fill")
+                        .foregroundStyle(.white)
+                        .frame(width: 60, height: 35)
+                        .background(.gray)
+                        .cornerRadius(6)
+                })
+            } // HStack
+            .foregroundStyle(.black) // NavigationLinkのデフォルトカラーを青から黒に
+            .padding(.horizontal)
+        } // NavigationLink
+    }
+
 }
 
 #Preview {
