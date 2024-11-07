@@ -72,7 +72,8 @@ struct CurrentUserProfileView: View {
                                 .padding(.trailing)
                             }
                         
-                        TagsView(tags: viewModel.selectedTags)
+                        TagsView(tags: viewModel.selectedLanguageTags)
+                        TagsView(tags: viewModel.selectedFrameworkTags)
                       
                         HStack(spacing: 16) {
                         // edit profile button
@@ -125,6 +126,7 @@ struct CurrentUserProfileView: View {
                                        if let url = user.snsLinks[key] {
                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
                                        }
+                                   }
                                }
                            } // HStack
                         } // ScrollView
@@ -132,8 +134,8 @@ struct CurrentUserProfileView: View {
                         .padding(.bottom, 10)
                         
                         
-                        VStack(){
-                            if abstractLinksViewModel.abstractLinks.isEmpty {
+                        VStack(alignment: .trailing, spacing: 20) {
+                            if viewModel.abstractUrls.isEmpty {
                                 Text("リンクがありません")
                                     .foregroundColor(.orange)
                                     .padding()
@@ -160,6 +162,6 @@ struct CurrentUserProfileView: View {
                 }//scrollView
                 .ignoresSafeArea(.all)
             }
-        }
+        }// zstack
     }// body
 }// view

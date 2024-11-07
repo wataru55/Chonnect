@@ -134,19 +134,19 @@ struct EditProfileView: View {
                 .padding(.leading)
                 .padding(.bottom, 10)
                 
-                VStack(){
-                    if abstractLinksViewModel.abstractLinks.isEmpty {
-                        Text("リンクがありません")
-                            .foregroundColor(.orange)
-                            .padding()
-                    } else {
-                        ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
-                            if let url = abstractLinksViewModel.abstractLinks[key] {
-                                SiteLinkButtonView(abstract_title: key, abstract_url: url)
-                            }
-                        }
-                    }
-                }
+//                VStack(){
+//                    if abstractLinksViewModel.abstractLinks.isEmpty {
+//                        Text("リンクがありません")
+//                            .foregroundColor(.orange)
+//                            .padding()
+//                    } else {
+//                        ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
+//                            if let url = abstractLinksViewModel.abstractLinks[key] {
+//                                SiteLinkButtonView(abstract_title: key, abstract_url: url)
+//                            }
+//                        }
+//                    }
+//                }
                 
                 // add link button
                 Button(action: {
