@@ -10,18 +10,11 @@ import Kingfisher
 
 struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
-    @StateObject var abstractLinksViewModel: AbstractLinkModel
-
     @State private var isAddingNewLink = false
     @State private var showEditProfile = false
     @State var isMenuOpen = false
 
     let user: User
-    
-    init(user: User) {
-        self.user = user
-        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
-    }
 
     var body: some View {
         ZStack{
@@ -35,21 +28,27 @@ struct CurrentUserProfileView: View {
                         BackgroundImageView(user: user, height: 500, isGradient: true)
                             .overlay(alignment: .bottomLeading) {
                                 VStack(alignment: .leading){
-                                    if let fullname = user.fullname {
+                                    TagsView(tags: viewModel.selectedLanguageTags)
+                                    TagsView(tags: viewModel.selectedFrameworkTags)
+                                    Text(user.username)
+                                        .font(.system(size: 25, weight: .bold, design: .default))
+                                        .padding(.bottom, 2)
+                                        .padding(.top, 5)
+                                    if let fullname = user.fullname{
                                         Text(fullname)
-                                            .font(.system(size: 25, weight: .bold, design: .default))
+                                            .font(.system(size: 10, weight: .bold))
                                             .padding(.bottom, 5)
                                     }
                                     if let bio = user.bio {
                                         Text(bio)
                                             .font(.footnote)
-                                            .frame(width: 250, alignment: .leading)
+                                            .frame(alignment: .leading)
                                     }
                                 }//VStack
                                 .padding(.bottom)
                                 .padding(.leading)
                             }
-                            .overlay(alignment: .bottomTrailing){
+                            .overlay(alignment: .topTrailing){
                                 Button(action: {
                                     showEditProfile.toggle()
                                 }, label: {
@@ -65,55 +64,33 @@ struct CurrentUserProfileView: View {
                                         )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 30)
-                                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
+                                                .stroke(Color.black.opacity(0.5))
                                         )
                                 })
-                                .padding(.bottom)
+                                .padding(.top, 50)
                                 .padding(.trailing)
                             }
-                        
-                        TagsView(tags: viewModel.selectedLanguageTags)
-                        TagsView(tags: viewModel.selectedFrameworkTags)
                       
-                        HStack(spacing: 16) {
-                        // edit profile button
-                        Button(action: {
-                            showEditProfile.toggle()
-                        }, label: {
-                            Text("Edit Profile")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
-                                .background(.white)
-                                .cornerRadius(6)
-                                .foregroundStyle(.black)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(.gray)
-                                )
-                        })
-                        
                         // add link button
-                        Button(action: {
-                            isAddingNewLink.toggle()
-                        }, label: {
-                            Text("Add Link")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
-                                .background(.white)
-                                .cornerRadius(6)
-                                .foregroundStyle(.black)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(.gray)
-                                )
-                        })
-                        .sheet(isPresented: $isAddingNewLink) {
-                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
-                        }
-                        }//HStack
-                        .padding(.bottom, 20)
+//                        Button(action: {
+//                            isAddingNewLink.toggle()
+//                        }, label: {
+//                            Text("Add Link")
+//                                .font(.subheadline)
+//                                .fontWeight(.semibold)
+//                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
+//                                .background(.white)
+//                                .cornerRadius(6)
+//                                .foregroundStyle(.black)
+//                                .overlay(
+//                                    RoundedRectangle(cornerRadius: 6)
+//                                        .stroke(.gray)
+//                                )
+//                        })
+//                        .sheet(isPresented: $isAddingNewLink) {
+//                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+//                        }
+//                        .padding(.bottom, 20)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                            HStack {
