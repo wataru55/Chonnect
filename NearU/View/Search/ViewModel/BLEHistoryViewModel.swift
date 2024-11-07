@@ -37,6 +37,10 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
 
+    func markAsRead(_ pair: UserHistoryRecord) {
+        RealmManager.shared.updateRead(pair.user.id)
+    }
+
     func handleFollowButton(currentUser: User, pair: UserHistoryRecord) async throws {
         guard let fcmToken = pair.user.fcmtoken else { return }
 

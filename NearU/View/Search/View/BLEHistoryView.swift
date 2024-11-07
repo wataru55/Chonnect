@@ -40,6 +40,9 @@ struct BLEHistoryView: View {
             .padding(.top, 8)
             .navigationDestination(for: UserHistoryRecord.self, destination: { pair in
                 ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+                    .onAppear {
+                        viewModel.markAsRead(pair)
+                    }
             })
         } // ScrollView
         .refreshable {
