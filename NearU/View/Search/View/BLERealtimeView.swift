@@ -18,14 +18,14 @@ struct BLERealtimeView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 // TODO: 毎回一瞬だけ表示されるから関数で渡すべきかも
-                if viewModel.userRealtimeRecords.isEmpty {
+                if viewModel.sortedUserRealtimeRecords.isEmpty {
                     Text("付近にユーザーがいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.userRealtimeRecords, id: \.self) { pair in
+                    ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { pair in
                         realtimeRow(for: pair)
                     } // ForEach
                 }
