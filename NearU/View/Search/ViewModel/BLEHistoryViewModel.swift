@@ -9,7 +9,8 @@ import SwiftUI
 
 @MainActor
 class BLEHistoryViewModel: ObservableObject {
-    @Published var userHistoryRecords = [UserHistoryRecord]()
+    @Published var userHistoryRecords: [UserHistoryRecord] = []
+    @Published var sortedUserHistoryRecords: [UserHistoryRecord] = []
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -17,14 +18,7 @@ class BLEHistoryViewModel: ObservableObject {
             await fetchHistoryAllUsers(historyDataList: RealmManager.shared.historyData)
         }
 
-        RealmManager.shared.$historyData
-            .sink { [weak self] historyDataList in
-                guard let self = self else { return }
-                Task {
-                    await self.fetchHistoryAllUsers(historyDataList: historyDataList)
-                }
-            }
-            .store(in: &cancellables)
+        setupSubscribers()
     }
 
     //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
@@ -56,6 +50,23 @@ class BLEHistoryViewModel: ObservableObject {
         // フォロー処理を実行
         try await UserService.followUser(receivedId: pair.user.id, date: pair.date)
         RealmManager.shared.removeData(pair.user.id)
+    }
+
+    func setupSubscribers() {
+        RealmManager.shared.$historyData
+            .sink { [weak self] historyDataList in
+                guard let self = self else { return }
+                Task {
+                    await self.fetchHistoryAllUsers(historyDataList: historyDataList)
+                }
+            }
+            .store(in: &cancellables)
+
+        $userHistoryRecords
+            .map { records in
+                records.sorted { !$0.isRead && $1.isRead }
+            }
+            .assign(to: &$sortedUserHistoryRecords)
     }
 }
 

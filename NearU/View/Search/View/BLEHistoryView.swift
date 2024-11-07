@@ -25,14 +25,14 @@ struct BLEHistoryView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                if viewModel.userHistoryRecords.isEmpty {
+                if viewModel.sortedUserHistoryRecords.isEmpty {
                     Text("すれ違ったユーザーがいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.userHistoryRecords, id: \.self) { pair in
+                    ForEach(viewModel.sortedUserHistoryRecords, id: \.self) { pair in
                         historyRow(for: pair)
                     } // ForEach
                 }
