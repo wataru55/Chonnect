@@ -26,11 +26,11 @@ struct LaunchScreen: View {
                         .opacity(opacity)
                         .onAppear {
                             // ロゴアニメーション
-                            withAnimation(.easeOut(duration: 3.0)) {
+                            withAnimation(.easeOut(duration: 1.0)) {
                                 self.size = 0.9
                                 self.opacity = 1.0
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                 withAnimation(.easeIn(duration: 1.0)) {
                                     self.isTextVisible = true
                                 }
@@ -47,8 +47,8 @@ struct LaunchScreen: View {
                 }
             }
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                    withAnimation(.easeInOut(duration: 3.0)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation(.easeInOut(duration: 1.0)) {
                         self.isActive = true
                     }
                 }
