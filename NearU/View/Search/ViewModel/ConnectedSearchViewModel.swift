@@ -22,14 +22,14 @@ class ConnectedSearchViewModel: ObservableObject {
         listenForUpdates()
 
         Task {
-            await fetchConnectedUsers()
+            await fetchFollowedUsers()
         }
     }
 
     //MARK: - func
-    func fetchConnectedUsers() async {
+    func fetchFollowedUsers() async {
         do {
-            let users = try await UserService.fetchConnectedUsers(documentId: currentUser.id)
+            let users = try await UserService.fetchfollowedUsers(documentId: currentUser.id)
             //メインスレッドで実行する必要がある
             await MainActor.run {
                 self.userDatePairs = users
@@ -51,9 +51,9 @@ class ConnectedSearchViewModel: ObservableObject {
                     print("QuerySnapshot data was empty.")
                     return
                 }
-                // ドキュメントに変更があれば fetchConnectedUsers() を実行
+                // ドキュメントに変更があれば fetchfollowedUsers() を実行
                 Task {
-                    await self.fetchConnectedUsers()
+                    await self.fetchFollowedUsers()
                 }
             }
     }
