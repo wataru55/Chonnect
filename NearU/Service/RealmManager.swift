@@ -180,12 +180,10 @@ class RealmManager: ObservableObject {
 
     // 古いリアルタイムデータを削除するメソッド
     func removeRealtimeData(interval: TimeInterval = 5.0) {
-        print("---------removeRealtimeData--------")
         do {
             let realm = try Realm()
             let removeDate = Date().addingTimeInterval(-interval)
-            var outdatedUsers = realm.objects(EncountData.self).filter("date <= %@", removeDate)
-            print("Outdated users count: \(outdatedUsers.count)")
+            let outdatedUsers = realm.objects(EncountData.self).filter("date <= %@", removeDate)
 
             if !outdatedUsers.isEmpty {
                 // 削除前にuserIdリストを取得
@@ -193,19 +191,9 @@ class RealmManager: ObservableObject {
 
                 try realm.write {
                     realm.delete(outdatedUsers)
-                    print("Deletion executed for \(outdatedUsers.count) outdated users.")
                 }
                 // メモリ上のrealtimeData配列からも削除
                 realtimeData.removeAll { outdatedUserIds.contains($0.userId) }
-                print(realtimeData)
-
-                // 削除後のRealm内のデータを取得
-                let remainingUsers = realm.objects(EncountData.self)
-                print("----- Remaining EncountData in Realm -----")
-                for user in remainingUsers {
-                    print("UserID: \(user.userId), Date: \(user.date)")
-                }
-                print("----- End of EncountData -----")
             }
         } catch {
             print("Error during cleanup: \(error)")
