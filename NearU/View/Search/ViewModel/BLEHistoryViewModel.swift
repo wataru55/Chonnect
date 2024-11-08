@@ -68,7 +68,12 @@ class BLEHistoryViewModel: ObservableObject {
 
         $userHistoryRecords
             .map { records in
-                records.sorted { !$0.isRead && $1.isRead }
+                records.sorted {
+                    if $0.isRead == $1.isRead {
+                        return $0.date > $1.date  // date が新しいもの順にソート
+                    }
+                    return !$0.isRead && $1.isRead
+                }
             }
             .assign(to: &$sortedUserHistoryRecords)
     }
