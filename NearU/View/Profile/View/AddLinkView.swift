@@ -64,14 +64,11 @@ struct AddLinkView: View {
                     } //picker
                     .pickerStyle(WheelPickerStyle())
 
-                    TextField("URL", text: $viewModel.sns_url)
-                        .foregroundColor(Color(.systemMint))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .padding(10)
-                        .cornerRadius(10)
+                    TextField("URLを入力", text: $viewModel.sns_url)
+                        .modifier(URLFieldModifier())
                 }, header: {
                     HStack{
-                        Text("Major SNS")
+                        Text("SNS")
                             .font(Font.subheadline)
                     }
                 })
@@ -79,10 +76,7 @@ struct AddLinkView: View {
                 Section(content: {
                     ForEach(viewModel.urls.indices, id: \.self) { index in
                         TextField("URLを入力", text: $viewModel.urls[index])
-                            .foregroundColor(Color(.systemMint))
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .padding(10)
-                            .cornerRadius(10)
+                            .modifier(URLFieldModifier())
                     }
                     
                     Button(action: {
@@ -91,13 +85,13 @@ struct AddLinkView: View {
                         HStack {
                             Image(systemName: "plus.circle")
                             Text("URLを追加")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .font(.system(size: 10))
                         }
                     }
                     .padding(.top, 10)
                 }, header: {
                     HStack {
-                        Text("記事等のURLを追加する")
+                        Text("その他")
                             .font(Font.subheadline)
                     }
                 })
