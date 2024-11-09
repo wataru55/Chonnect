@@ -21,6 +21,7 @@ struct EditFrameworkTagsView: View {
                             Text(tag)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 12)
+                                .font(.system(size: 15, weight: .semibold, design: .default))
                                 .background(self.selectedFrameworkTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground))
                                 .foregroundColor(self.selectedFrameworkTags.contains(tag) ? .white : .black)
                                 .cornerRadius(15)
