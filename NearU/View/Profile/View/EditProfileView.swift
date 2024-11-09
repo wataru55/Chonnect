@@ -91,18 +91,24 @@ struct EditProfileView: View {
                         .padding(5)
                         .opacity(0.7)
                         .foregroundColor(Color.gray)
+                  
                     EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
+                  
                     Text("フレームワーク")
                         .font(.footnote)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)
                         .opacity(0.7)
                         .foregroundColor(Color.gray)
+                  
                     EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
+                  
                     EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
+                  
                     EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
                         .focused($focusedField, equals: .title)
+                  
                     EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
                 }
@@ -126,20 +132,6 @@ struct EditProfileView: View {
                 .padding(.leading)
                 .padding(.bottom, 10)
                 
-//                VStack(){
-//                    if abstractLinksViewModel.abstractLinks.isEmpty {
-//                        Text("リンクがありません")
-//                            .foregroundColor(.orange)
-//                            .padding()
-//                    } else {
-//                        ForEach(Array(abstractLinksViewModel.abstractLinks.keys), id: \.self) { key in
-//                            if let url = abstractLinksViewModel.abstractLinks[key] {
-//                                SiteLinkButtonView(abstract_title: key, abstract_url: url)
-//                            }
-//                        }
-//                    }
-//                }
-                
                 // add link button
                 Button(action: {
                     isAddingNewLink.toggle()
@@ -162,6 +154,7 @@ struct EditProfileView: View {
                 .padding(.bottom, 20)
                 
                 Spacer()
+
             } //scrollview
         }//vstack
         .onTapGesture {

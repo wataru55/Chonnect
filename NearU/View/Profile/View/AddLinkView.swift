@@ -64,24 +64,19 @@ struct AddLinkView: View {
                     .pickerStyle(WheelPickerStyle())
 
                     TextField("URL", text: $viewModel.snsUrl)
-                        .foregroundColor(Color(.systemMint))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .padding(10)
-                        .cornerRadius(10)
+                        .modifier(URLFieldModifier())
                 }, header: {
                     HStack{
-                        Text("Major SNS")
+                        Text("SNS")
                             .font(Font.subheadline)
                     }
                 })
                 
                 Section(content: {
+
                     ForEach(viewModel.articleUrls.indices, id: \.self) { index in
                         TextField("URLを入力", text: $viewModel.articleUrls[index])
-                            .foregroundColor(Color(.systemMint))
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .padding(10)
-                            .cornerRadius(10)
+                            .modifier(URLFieldModifier())
                     }
                     
                     Button(action: {
@@ -90,13 +85,13 @@ struct AddLinkView: View {
                         HStack {
                             Image(systemName: "plus.circle")
                             Text("URLを追加")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .font(.system(size: 10))
                         }
                     }
                     .padding(.top, 10)
                 }, header: {
                     HStack {
-                        Text("記事等のURLを追加する")
+                        Text("その他")
                             .font(Font.subheadline)
                     }
                 })

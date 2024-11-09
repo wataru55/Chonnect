@@ -44,26 +44,17 @@ struct SiteLinkButtonView: View {
                                 .lineLimit(1)
                                 .padding(.bottom, 2)
                         }
+                        .padding(.leading, 15)
                     }
-                } else {
-                    // メタデータが取得できなかった場合のフォールバック表示
-                    VStack(alignment: .leading) {
-                        Text(ogpData.url.count > 35 ? String(ogpData.url.prefix(35)) + "..." : ogpData.url)
-                            .font(.headline)
-                            .lineLimit(1)
-                            .padding(.bottom, 2)
-                    }
-                    .padding(.leading, 15)
                 }
+                .padding()
+                .frame(width: 350, height: 150, alignment: .leading)
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(radius: 5)
             }
-            .padding()
-            .frame(width: 350, height: 150, alignment: .leading)
-            .background(Color.white)
-            .cornerRadius(10)
-            .shadow(radius: 5)
-        }
-        .buttonStyle(PlainButtonStyle())
+            .buttonStyle(PlainButtonStyle())
+            
     }
-
 }
 

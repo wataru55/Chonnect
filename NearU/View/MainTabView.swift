@@ -28,19 +28,16 @@ struct MainTabView: View {
                 .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "magnifyingglass")
-                    Text("Search")
                 }
 
             CurrentUserProfileView(user: user)
                 .tabItem {
                     Image(systemName: "person")
-                    Text("MyProfile")
                 }
 
             SettingView(user: user)
                 .tabItem {
                     Image(systemName: "gear")
-                    Text("Setting")
                 }
         } //tabview
         .overlay {
@@ -117,7 +114,7 @@ struct MainTabView: View {
     }
 }//view
 
-#Preview {
-    MainTabView(user: User.MOCK_USERS[0])
-}
+//#Preview {
+//    MainTabView(user: User.MOCK_USERS[0])
+//}
 
