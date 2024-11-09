@@ -17,11 +17,9 @@ struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     @StateObject var abstractLinksViewModel: AbstractLinkModel
-
-
+    
     let user: User
     
-    //let user: User
     @FocusState private var focusedField: Field?
     
     init(user: User) {
@@ -53,7 +51,7 @@ struct EditProfileView: View {
                         try await AuthService.shared.loadUserData()
                         try await viewModel.loadLanguageTags()
                         try await viewModel.loadFrameworkTags()
-
+                        
                         await MainActor.run {
                             dismiss()
                         }
@@ -82,11 +80,10 @@ struct EditProfileView: View {
                                 BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
                             }
                             
-                            Text("Edit background picture")
+                            Text("背景画像を変更する")
                                 .font(.footnote)
                                 .fontWeight(.semibold)
-                            
-                            Divider()
+                                .padding(.bottom, 10)
                         }//vstack
                     }
                     .disabled(focusedField != nil)
@@ -97,21 +94,20 @@ struct EditProfileView: View {
                         .font(.footnote)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)
-                        .opacity(0.7)
                         .foregroundColor(Color.gray)
                     EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
-                    Text("フレームワーク")
+                    Text("フレームワーク・ライブラリ")
                         .font(.footnote)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)
-                        .opacity(0.7)
                         .foregroundColor(Color.gray)
                     EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
-                    EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
+                        .padding(.bottom, 10)
+                    EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
-                    EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
+                    EditProfileRowView(title: "本名(公開したくない場合は空欄にしてください)", placeholder: "", text: $viewModel.fullname)
                         .focused($focusedField, equals: .title)
-                    EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
+                    EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
@@ -129,22 +125,71 @@ struct EditProfileRowView: View {
     @Binding var text: String
     
     var body: some View {
-        HStack {
+        VStack (spacing:10){
             Text(title)
-                .padding(.leading, 8)
-                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: .leading)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(Color.gray)
             
             VStack {
                 TextField(placeholder, text: $text)
+                    .padding(.leading, 5)
                 
                 Divider()
             }//vstack
         }//hstack
         .font(.subheadline)
-        .frame(height: 36)
+        .padding(5)
     }//body
 }//view
 
-//#Preview {
-//    EditProfileView()
-//}
+struct EditProfileBioRowView: View {
+    let title: String
+    let placeholder: String
+    @Binding var text: String
+    private let characterLimit = 150 // 文字制限
+    private let lineLimit = 5 // 行数制限
+    private let lineHeight: CGFloat = 27 // 1行の高さ
+    
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(Color.gray)
+            
+            VStack {
+                ZStack(alignment: .topLeading) {
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .foregroundColor(.gray)
+                            .padding(.leading, 5)
+                            .padding(.top, 8)
+                    }
+                    
+                    TextEditor(text: $text)
+                        .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit)) // 高さを5行分に設定
+                        .padding(.horizontal, 5)
+                        .onChange(of: text) {enforceTextLimit()}
+                }
+                Divider()
+            }
+        }
+        .font(.subheadline)
+        .padding(5)
+    }
+    
+    private func enforceTextLimit() {
+        let lines = text.components(separatedBy: "\n")
+        // 行数制限を超えた場合、制限内の行のみを保持
+        if lines.count > lineLimit {
+            text = lines.prefix(lineLimit).joined(separator: "\n")
+        }
+        // 文字数制限を超えた場合、制限内の文字のみを保持
+        if text.count > characterLimit {
+            text = String(text.prefix(characterLimit))
+        }
+    }
+}
+
+
