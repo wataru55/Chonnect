@@ -9,17 +9,16 @@ import SwiftUI
 import OpenGraph
 
 struct SiteLinkButtonView: View {
-    let abstract_url: String
-    @State private var openGraphData: OpenGraph?
-    
+    let ogpData: OpenGraphData
+
     var body: some View {
         Button(action: {
-            if let url = URL(string: abstract_url) {
+            if let url = URL(string: ogpData.url) {
                 UIApplication.shared.open(url)
             }
         }) {
             VStack(alignment: .leading) {
-                if let data = openGraphData {
+                if let data = ogpData.openGraph {
                     // メタデータが取得できた場合のリンクプレビュー
                     VStack(alignment: .leading) {
                         if let imageUrl = data[.image], let url = URL(string: imageUrl) {
@@ -40,7 +39,7 @@ struct SiteLinkButtonView: View {
                                 .font(.headline)
                                 .lineLimit(1)
                         } else {
-                            Text(abstract_url.count > 35 ? String(abstract_url.prefix(35)) + "..." : abstract_url)
+                            Text(ogpData.url.count > 35 ? String(ogpData.url.prefix(35)) + "..." : ogpData.url)
                                 .font(.headline)
                                 .lineLimit(1)
                                 .padding(.bottom, 2)
@@ -49,7 +48,7 @@ struct SiteLinkButtonView: View {
                 } else {
                     // メタデータが取得できなかった場合のフォールバック表示
                     VStack(alignment: .leading) {
-                        Text(abstract_url.count > 35 ? String(abstract_url.prefix(35)) + "..." : abstract_url)
+                        Text(ogpData.url.count > 35 ? String(ogpData.url.prefix(35)) + "..." : ogpData.url)
                             .font(.headline)
                             .lineLimit(1)
                             .padding(.bottom, 2)
@@ -64,25 +63,7 @@ struct SiteLinkButtonView: View {
             .shadow(radius: 5)
         }
         .buttonStyle(PlainButtonStyle())
-        .onAppear {
-            fetchOpenGraphData(for: abstract_url)
-        }
     }
-    
-    // メタデータを取得する関数
-    private func fetchOpenGraphData(for urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        
-        OpenGraph.fetch(url: url) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let og):
-                    self.openGraphData = og
-                case .failure:
-                    self.openGraphData = nil
-                }
-            }
-        }
-    }
+
 }
 

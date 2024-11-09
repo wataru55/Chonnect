@@ -62,29 +62,31 @@ class ArticleLinksViewModel: ObservableObject {
     }
 
     // urlからOGPを取得する
+    @MainActor
     private func getOpenGraphData(urls: [String]) async {
-        var openGraphDataArray: [OpenGraphData] = []
+        self.openGraphData = []
 
         for urlString in urls {
             guard let url = URL(string: urlString) else {
                 let data = OpenGraphData(url: urlString, openGraph: nil)
-                openGraphDataArray.append(data)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
                 continue
             }
 
             do {
                 let og = try await OpenGraph.fetch(url: url)
                 let data = OpenGraphData(url: urlString, openGraph: og)
-                openGraphDataArray.append(data)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
             } catch {
                 let data = OpenGraphData(url: urlString, openGraph: nil)
-                openGraphDataArray.append(data)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
             }
-        }
-
-        // メインスレッドでプロパティを更新
-        await MainActor.run {
-            self.openGraphData = openGraphDataArray
         }
     }
 }
