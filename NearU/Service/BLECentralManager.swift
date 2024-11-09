@@ -13,11 +13,23 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     static let shared = BLECentralManager() // シングルトンインスタンス
     var centralManager: CBCentralManager!
     var scanningTimer: Timer?
+    var cleanupTimer: Timer? // クリーンアップ用タイマー
     let serviceUUID = CBUUID(string: "12345678-1234-1234-1234-1234567890ab")
 
     private override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
+        startCleanupTimer()
+    }
+
+    deinit {
+        // タイマーを無効化
+        scanningTimer?.invalidate()
+        cleanupTimer?.invalidate()
+        scanningTimer = nil
+        cleanupTimer = nil
+        // Central Manager のデリゲートを解除
+        centralManager.delegate = nil
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -50,6 +62,9 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
             print("Received userId (LocalName): \(receivedDocumentId), RSSI: \(RSSI)")
             DispatchQueue.main.async {
                 // 受信したuserIdをRealmに保存
+                // リアルタイムデータ
+                RealmManager.shared.storeRealtimeData(receivedUserId: receivedDocumentId, date: Date(), rssi: RSSI.intValue)
+                // 履歴データ
                 RealmManager.shared.storeData(receivedDocumentId, date: Date())
             }
         }
@@ -65,6 +80,15 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     func stopCentralManagerDelegate() {
         self.stopScan()
         self.centralManager.delegate = nil
+    }
+
+    // クリーンアップタイマーの開始
+    func startCleanupTimer() {
+        cleanupTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            Task { @MainActor in
+                RealmManager.shared.removeRealtimeData()
+            }
+        }
     }
 }
 
