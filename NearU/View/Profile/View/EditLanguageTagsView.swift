@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct EditLanguageTagsView: View {
-    @State private var LanguageTags: [String] = ["JavaScript","Python", "Java", "Ruby","Swift","PHP","TypeScript","Go","C","C++","Kotlin","C#","HTML/CSS","Objective-C","Rust","Dart","Perl","Scala","Elixir","Lisp","Haskell","R","SASS"]
+    @State private var LanguageTags: [String] = ["JavaScript","Python", "Java", "Ruby","Swift","PHP","TypeScript","Go","C","C++","Kotlin","C#","HTML","CSS","Rust","Dart","Elixir"]
     @Binding var selectedLanguageTags: [String]
     let userId: String
 
