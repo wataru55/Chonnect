@@ -11,14 +11,19 @@ import Kingfisher
 struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @State private var isAddingNewLink = false
+    @State private var showEditAbstract = false
     @State private var showEditProfile = false
     @State var isMenuOpen = false
+    
+    var backgroundColor: Color = Color(red: 0.92, green: 0.93, blue: 0.94) // デフォルトの背景色
+
+    let grayColor = Color.init(white: 0.8, opacity: 1)
 
     let user: User
 
     var body: some View {
         ZStack{
-            Color(red: 0.92, green: 0.93, blue: 0.94)
+            Color(red: 0.96, green: 0.97, blue: 0.98)
                 .ignoresSafeArea()
             
             VStack{
@@ -104,6 +109,24 @@ struct CurrentUserProfileView: View {
                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
                                        }
                                    }
+                                   
+                                   Button(action: {
+                                       isAddingNewLink.toggle()
+                                   }, label: {
+                                       Image(systemName: "plus")
+                                              .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
+                                              .frame(width: 80, height: 80)
+                                              .background(Color(red: 0.96, green: 0.97, blue: 0.98))
+                                              .clipShape(Circle())
+                                              .overlay(
+                                                  Circle()
+                                                      .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
+                                              )
+                                   })
+                                   .padding(.horizontal, 8)
+                                   .sheet(isPresented: $isAddingNewLink) {
+                                       AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                                   }
                                }
                            } // HStack
                         } // ScrollView
@@ -121,6 +144,27 @@ struct CurrentUserProfileView: View {
                                     SiteLinkButtonView(abstract_url: url)
                                 }
                             }
+                            VStack{
+                                Button(action: {
+                                    showEditAbstract.toggle()
+                                }, label: {
+                                    Text("edit abstract")
+                                        .font(.footnote)
+                                        .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
+                                        .padding(10)
+                                        .background(Color(red: 0.96, green: 0.97, blue: 0.98))
+                                        .clipShape(Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
+                                        )
+                                })
+                            }
+                            .padding(.bottom)
+                            .sheet(isPresented: $showEditAbstract) {
+                                EditAbstractView(isPresented: $showEditAbstract, user: viewModel.user)
+                            }
+
                         }
                         .onAppear {
                             Task {
@@ -128,6 +172,7 @@ struct CurrentUserProfileView: View {
                             }
                         }
                         
+                                                
                         Spacer()
                         
                     }//VStack

@@ -60,6 +60,22 @@ struct UserService {
         
         return abstractUrls
     }
+    
+    static func deleteAbstractLink(userId: String, url: String) async throws {
+        let db = Firestore.firestore()
+        // URLが一致するドキュメントを取得して削除
+        let snapshot = try await db
+            .collection("users")
+            .document(userId)
+            .collection("abstract")
+            .whereField("abstract_url", isEqualTo: url)
+            .getDocuments()
+        
+        // 一致する各ドキュメントを削除
+        if let document = snapshot.documents.first {
+            try await document.reference.delete()
+        }
+    }
 
     // ユーザーの選択されたタグをFirestoreに保存する関数(言語)
     static func saveLanguageTags(userId: String, selectedTags: [String]) async throws {
