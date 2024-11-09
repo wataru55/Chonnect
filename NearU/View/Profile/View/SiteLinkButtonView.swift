@@ -12,11 +12,11 @@ struct SiteLinkButtonView: View {
     let ogpData: OpenGraphData
 
     var body: some View {
-        Button(action: {
+        Button {
             if let url = URL(string: ogpData.url) {
                 UIApplication.shared.open(url)
             }
-        }) {
+        }label: {
             VStack(alignment: .leading) {
                 if let data = ogpData.openGraph {
                     // メタデータが取得できた場合のリンクプレビュー
@@ -32,7 +32,6 @@ struct SiteLinkButtonView: View {
                                 Color.gray.frame(height: 100).cornerRadius(10)
                             }
                         }
-                        
                         // タイトルがない場合はurlを表示
                         if let title = data[.title], !title.isEmpty {
                             Text(title)
@@ -44,17 +43,17 @@ struct SiteLinkButtonView: View {
                                 .lineLimit(1)
                                 .padding(.bottom, 2)
                         }
-                        .padding(.leading, 15)
-                    }
-                }
-                .padding()
-                .frame(width: 350, height: 150, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 5)
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-    }
-}
+                        //.padding(.leading, 15)
+                    }// Vstack
+                    .padding()
+                    .frame(width: 350, height: 150, alignment: .leading)
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
+                } //vstack
+            } //vstack
+        } //button
+        .buttonStyle(PlainButtonStyle())
+    }//body
+} //view
 

@@ -96,7 +96,7 @@ class CurrentUserProfileViewModel: ObservableObject {
     }
 
     func updateFrameworkTags() async throws {
-            try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
+        try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
     }
 
     @MainActor
@@ -146,7 +146,7 @@ class CurrentUserProfileViewModel: ObservableObject {
             print("complete")
         }
     }
-    
+
     @MainActor
     func deleteAbstractLink(url: String) async {
         do {
@@ -155,4 +155,5 @@ class CurrentUserProfileViewModel: ObservableObject {
         } catch {
             print("Failed to delete abstract link: \(error)")
         }
-    }}
+    }
+}

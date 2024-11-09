@@ -15,7 +15,7 @@ struct CurrentUserProfileView: View {
     @State private var showEditAbstract = false
     @State private var showEditProfile = false
     @State var isMenuOpen = false
-    
+
     var backgroundColor: Color = Color(red: 0.92, green: 0.93, blue: 0.94) // デフォルトの背景色
 
     let grayColor = Color.init(white: 0.8, opacity: 1)
@@ -107,7 +107,7 @@ struct CurrentUserProfileView: View {
                                    })
                                    .padding(.horizontal, 8)
                                    .sheet(isPresented: $isAddingNewLink) {
-                                       AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                                       AddLinkView(isPresented: $isAddingNewLink)
                                    }
                                }
                            } // HStack
@@ -145,7 +145,6 @@ struct CurrentUserProfileView: View {
                             .sheet(isPresented: $showEditAbstract) {
                                 EditAbstractView(isPresented: $showEditAbstract, user: viewModel.user)
                             }
-
                         }
 
                         Spacer()
@@ -158,7 +157,6 @@ struct CurrentUserProfileView: View {
                     }
                 }//scrollView
                 .ignoresSafeArea(.all)
-            }
         }// zstack
     }// body
 }// view
