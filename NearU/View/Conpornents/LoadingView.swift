@@ -13,16 +13,16 @@ struct LoadingView: View {
         ZStack {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
-            VStack(spacing: 20) {
+            VStack(spacing: 8) {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .black))
                     .scaleEffect(1.2)
-                Text("処理中です...")
-                    .foregroundColor(.black)
-                    .font(.headline)
+                Text("Loading...")
+                    .foregroundColor(.gray)
+                    .font(.footnote)
             }
-            .padding()
-            .background() {
+            .padding(12)
+            .background {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(.white)
             }
