@@ -13,7 +13,6 @@ import Combine
 class ArticleLinksViewModel: ObservableObject {
     @Published var selectedSNS: String = ""
     @Published var snsUrl: String = ""
-    @Published var articleUrls: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
     private var cancellable: AnyCancellable?
 
@@ -39,7 +38,7 @@ class ArticleLinksViewModel: ObservableObject {
         }
     }
 
-    func addLink() async throws {
+    func addLink(urls: [String]) async throws {
         guard let userId = AuthService.shared.currentUser?.id else { return }
         // SNSリンクが入力されている場合の更新
         if !selectedSNS.isEmpty && !snsUrl.isEmpty {
@@ -50,7 +49,7 @@ class ArticleLinksViewModel: ObservableObject {
         }
 
         // 複数のURLが入力されている場合の更新
-        for url in articleUrls {
+        for url in urls {
             if !url.isEmpty {
                 do {
                     try await UserService.seveArticleLink(userId: userId, url: url)

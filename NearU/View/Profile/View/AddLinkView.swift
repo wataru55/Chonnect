@@ -10,7 +10,8 @@ import SwiftUI
 struct AddLinkView: View {
     @State private var url = ""
     @State private var selectedSNS: String?
-    
+    @State private var articleUrls: [String] = [""]
+
     @Binding var isPresented: Bool
 
     @EnvironmentObject var viewModel: ArticleLinksViewModel
@@ -56,7 +57,6 @@ struct AddLinkView: View {
 
                                 Text(option.name)
                                     .foregroundStyle(option.color)
-
                             }
                             .tag(option.name)
                         }
@@ -71,16 +71,16 @@ struct AddLinkView: View {
                             .font(Font.subheadline)
                     }
                 })
-                
+
                 Section(content: {
 
-                    ForEach(viewModel.articleUrls.indices, id: \.self) { index in
-                        TextField("URLを入力", text: $viewModel.articleUrls[index])
+                    ForEach(articleUrls.indices, id: \.self) { index in
+                        TextField("URLを入力", text: $articleUrls[index])
                             .modifier(URLFieldModifier())
                     }
-                    
+
                     Button(action: {
-                        viewModel.articleUrls.append("") // ViewModelのurlsに追加
+                        articleUrls.append("")
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
@@ -95,20 +95,19 @@ struct AddLinkView: View {
                             .font(Font.subheadline)
                     }
                 })
-                
+
             } //form
             .navigationTitle("Add Link")
             .navigationBarItems(leading: Button("Cancel") {
                 isPresented = false
             }, trailing: Button("Done") {
                 Task {
-                    try await viewModel.addLink()
+                    try await viewModel.addLink(urls: articleUrls)
                     await viewModel.fetchArticleUrls()
                     try await AuthService.shared.loadUserData()
                     await MainActor.run {
                         isPresented = false
                     }
-
                 }
             })
         }//navigationstack
