@@ -42,10 +42,19 @@ struct UserService {
         return connectedUsers
     }
 
+    static func seveArticleLink(userId: String, url: String) async throws {
+        let data = ["abstract_url": url]
+        do {
+            try await Firestore.firestore().collection("users").document(userId).collection("abstract").addDocument(data: data)
+        } catch {
+            throw error
+        }
+    }
+
     // 記事をフェッチする関数
     static func fetchAbstractLinks(withUid userId: String) async throws -> [String] {
         var abstractUrls: [String] = []
-        
+
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
@@ -57,7 +66,7 @@ struct UserService {
                 abstractUrls.append(abstractUrlString)
             }
         }
-        
+
         return abstractUrls
     }
 
