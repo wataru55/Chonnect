@@ -31,6 +31,7 @@ struct LaunchScreen: View {
                                 self.opacity = 1.0
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+
                                 withAnimation(.easeIn(duration: 0.5)) {
                                     self.isTextVisible = true
                                 }
@@ -47,6 +48,7 @@ struct LaunchScreen: View {
                 }
             }
             .onAppear {
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     withAnimation(.easeInOut(duration: 0.5)) {
                         self.isActive = true

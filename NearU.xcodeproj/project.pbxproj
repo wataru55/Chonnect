@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3207D11D2CDD232F00A6E637 /* EditAbstractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */; };
 		32860C6A2CD32B4300D9BBD7 /* AbstractLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32860C692CD32B4300D9BBD7 /* AbstractLinksViewModel.swift */; };
 		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
 		630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA32CC344E9002F06AB /* TagsView.swift */; };
@@ -106,6 +107,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAbstractView.swift; sourceTree = "<group>"; };
 		32860C692CD32B4300D9BBD7 /* AbstractLinksViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractLinksViewModel.swift; sourceTree = "<group>"; };
 		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
 		630B9EA32CC344E9002F06AB /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 			children = (
 				63B650062B8DDE9300289469 /* ProfileView.swift */,
 				63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */,
+				3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */,
 				63DFF8982BFC9A8300A6DFB8 /* CircleImageView.swift */,
 				63DFF89A2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift */,
 				63173DF72C37D77600F1FE82 /* AddLinkView.swift */,
@@ -569,6 +572,7 @@
 			files = (
 				63AEF0FB2C0C4C6500DE196E /* ConnectedSearchView.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
+				3207D11D2CDD232F00A6E637 /* EditAbstractView.swift in Sources */,
 				63B64FDA2B8C763900289469 /* ContentView.swift in Sources */,
 				63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */,
 				6344BE442CDBA93D009F404E /* BLERealtimeViewModel.swift in Sources */,
