@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct CurrentUserProfileView: View {
+    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @State private var isAddingNewLink = false
     @State private var showEditAbstract = false
@@ -75,27 +76,8 @@ struct CurrentUserProfileView: View {
                                 .padding(.top, 50)
                                 .padding(.trailing)
                             }
-                      
-                        // add link button
-//                        Button(action: {
-//                            isAddingNewLink.toggle()
-//                        }, label: {
-//                            Text("Add Link")
-//                                .font(.subheadline)
-//                                .fontWeight(.semibold)
-//                                .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 32)
-//                                .background(.white)
-//                                .cornerRadius(6)
-//                                .foregroundStyle(.black)
-//                                .overlay(
-//                                    RoundedRectangle(cornerRadius: 6)
-//                                        .stroke(.gray)
-//                                )
-//                        })
-//                        .sheet(isPresented: $isAddingNewLink) {
-//                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
-//                        }
-//                        .padding(.bottom, 20)
+                        }//HStack
+                        .padding(.bottom, 20)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                            HStack {
@@ -132,16 +114,15 @@ struct CurrentUserProfileView: View {
                         } // ScrollView
                         .padding(.leading)
                         .padding(.bottom, 10)
-                        
-                        
+
                         VStack(alignment: .trailing, spacing: 20) {
-                            if viewModel.abstractUrls.isEmpty {
+                            if articleLinksViewModel.openGraphData.isEmpty {
                                 Text("リンクがありません")
                                     .foregroundColor(.orange)
                                     .padding()
                             } else {
-                                ForEach(viewModel.abstractUrls, id: \.self) { url in
-                                    SiteLinkButtonView(abstract_url: url)
+                                ForEach(articleLinksViewModel.openGraphData) { openGraphData in
+                                    SiteLinkButtonView(ogpData: openGraphData)
                                 }
                             }
                             VStack{
@@ -166,13 +147,7 @@ struct CurrentUserProfileView: View {
                             }
 
                         }
-                        .onAppear {
-                            Task {
-                                await viewModel.loadAbstractLinks()
-                            }
-                        }
-                        
-                                                
+
                         Spacer()
                         
                     }//VStack
