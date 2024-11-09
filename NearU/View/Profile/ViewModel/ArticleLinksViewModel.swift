@@ -8,12 +8,83 @@
 import Foundation
 import Firebase
 import OpenGraph
+import Combine
 
-class AbstractLinksViewModel: ObservableObject {
-    @Published var openGraphData: [OpenGraph] = []
-    @Published var article_urls: [String] = []
+class ArticleLinksViewModel: ObservableObject {
+    @Published var selectedSNS: String = ""
+    @Published var snsUrl: String = ""
+    @Published var articleUrls: [String] = []
+    @Published var openGraphData: [OpenGraphData] = []
+    private var cancellable: AnyCancellable?
 
-    func fetchArticleUrls() {
-        
+    init() {
+        Task {
+            await fetchArticleUrls()
+        }
+    }
+
+    func fetchArticleUrls() async {
+        guard let userId = AuthService.shared.currentUser?.id else { return }
+
+        do {
+            let snapshot = try await Firestore.firestore().collection("users").document(userId).collection("abstract").getDocuments()
+
+            // Firestoreから取得した記事URLを配列として返す
+            let urls = snapshot.documents.compactMap { $0.data()["abstract_url"] as? String }
+
+            await getOpenGraphData(urls: urls)
+
+        } catch {
+            print("Error fetchArticleUrls: \(error)")
+        }
+    }
+
+    func addLink() async throws {
+        guard let userId = AuthService.shared.currentUser?.id else { return }
+        // SNSリンクが入力されている場合の更新
+        if !selectedSNS.isEmpty && !snsUrl.isEmpty {
+            let data = ["snsLinks.\(selectedSNS)": snsUrl]
+
+            try await Firestore.firestore().collection("users").document(userId).updateData(data)
+            print("SNSリンクの更新完了")
+        }
+
+        // 複数のURLが入力されている場合の更新
+        for url in articleUrls {
+            if !url.isEmpty {
+                do {
+                    try await UserService.seveArticleLink(userId: userId, url: url)
+                } catch {
+                    print("Error adding URL to abstract collection: \(error)")
+                }
+            }
+        }
+    }
+
+    // urlからOGPを取得する
+    private func getOpenGraphData(urls: [String]) async {
+        var openGraphDataArray: [OpenGraphData] = []
+
+        for urlString in urls {
+            guard let url = URL(string: urlString) else {
+                let data = OpenGraphData(url: urlString, openGraph: nil)
+                openGraphDataArray.append(data)
+                continue
+            }
+
+            do {
+                let og = try await OpenGraph.fetch(url: url)
+                let data = OpenGraphData(url: urlString, openGraph: og)
+                openGraphDataArray.append(data)
+            } catch {
+                let data = OpenGraphData(url: urlString, openGraph: nil)
+                openGraphDataArray.append(data)
+            }
+        }
+
+        // メインスレッドでプロパティを更新
+        await MainActor.run {
+            self.openGraphData = openGraphDataArray
+        }
     }
 }
