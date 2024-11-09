@@ -13,7 +13,7 @@ struct AddLinkView: View {
     
     @Binding var isPresented: Bool
 
-    @StateObject var viewModel: AddLinkViewModel
+    @EnvironmentObject var viewModel: ArticleLinksViewModel
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -33,9 +33,8 @@ struct AddLinkView: View {
         ]
     }
 
-    init(isPresented: Binding<Bool>, user: User) {
+    init(isPresented: Binding<Bool>) {
         self._isPresented = isPresented
-        self._viewModel = StateObject(wrappedValue: AddLinkViewModel(user: user))
     }
 
     var body: some View {
@@ -64,7 +63,7 @@ struct AddLinkView: View {
                     } //picker
                     .pickerStyle(WheelPickerStyle())
 
-                    TextField("URL", text: $viewModel.sns_url)
+                    TextField("URL", text: $viewModel.snsUrl)
                         .foregroundColor(Color(.systemMint))
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .padding(10)
@@ -77,8 +76,8 @@ struct AddLinkView: View {
                 })
                 
                 Section(content: {
-                    ForEach(viewModel.urls.indices, id: \.self) { index in
-                        TextField("URLを入力", text: $viewModel.urls[index])
+                    ForEach(viewModel.articleUrls.indices, id: \.self) { index in
+                        TextField("URLを入力", text: $viewModel.articleUrls[index])
                             .foregroundColor(Color(.systemMint))
                             .font(.system(size: 20, weight: .bold, design: .rounded))
                             .padding(10)
@@ -86,7 +85,7 @@ struct AddLinkView: View {
                     }
                     
                     Button(action: {
-                        viewModel.urls.append("") // ViewModelのurlsに追加
+                        viewModel.articleUrls.append("") // ViewModelのurlsに追加
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
@@ -108,7 +107,8 @@ struct AddLinkView: View {
                 isPresented = false
             }, trailing: Button("Done") {
                 Task {
-                    try await viewModel.updateSNSLink()
+                    try await viewModel.addLink()
+                    await viewModel.fetchArticleUrls()
                     try await AuthService.shared.loadUserData()
                     await MainActor.run {
                         isPresented = false
@@ -129,5 +129,5 @@ struct SNSOption: Identifiable, Hashable {
 
 
 #Preview {
-    AddLinkView(isPresented: .constant(true), user: User.MOCK_USERS[0])
+    AddLinkView(isPresented: .constant(true))
 }
