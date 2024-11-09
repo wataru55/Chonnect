@@ -16,19 +16,11 @@ struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    @StateObject var abstractLinksViewModel: AbstractLinkModel
-
 
     let user: User
-    
-    //let user: User
+
     @FocusState private var focusedField: Field?
-    
-    init(user: User) {
-        self.user = user
-        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
-    }
-    
+
     var body: some View {
         VStack {
             //toolbar
@@ -165,7 +157,7 @@ struct EditProfileView: View {
                 )
                 .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
                 .sheet(isPresented: $isAddingNewLink) {
-                    AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                    AddLinkView(isPresented: $isAddingNewLink)
                 }
                 .padding(.bottom, 20)
                 

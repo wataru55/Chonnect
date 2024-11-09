@@ -9,19 +9,14 @@ import SwiftUI
 import Kingfisher
 
 struct CurrentUserProfileView: View {
+    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
     @StateObject private var viewModel = CurrentUserProfileViewModel()
-    @StateObject var abstractLinksViewModel: AbstractLinkModel
 
     @State private var isAddingNewLink = false
     @State private var showEditProfile = false
     @State var isMenuOpen = false
 
     let user: User
-    
-    init(user: User) {
-        self.user = user
-        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
-    }
 
     var body: some View {
         ZStack{
@@ -110,7 +105,8 @@ struct CurrentUserProfileView: View {
                                 )
                         })
                         .sheet(isPresented: $isAddingNewLink) {
-                            AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
+                            AddLinkView(isPresented: $isAddingNewLink)
+                                .environmentObject(articleLinksViewModel)
                         }
                         }//HStack
                         .padding(.bottom, 20)
@@ -132,25 +128,19 @@ struct CurrentUserProfileView: View {
                         } // ScrollView
                         .padding(.leading)
                         .padding(.bottom, 10)
-                        
-                        
+
                         VStack(alignment: .trailing, spacing: 20) {
-                            if viewModel.abstractUrls.isEmpty {
+                            if articleLinksViewModel.openGraphData.isEmpty {
                                 Text("リンクがありません")
                                     .foregroundColor(.orange)
                                     .padding()
                             } else {
-                                ForEach(viewModel.abstractUrls, id: \.self) { url in
-                                    SiteLinkButtonView(abstract_url: url)
+                                ForEach(articleLinksViewModel.openGraphData) { openGraphData in
+                                    SiteLinkButtonView(ogpData: openGraphData)
                                 }
                             }
                         }
-                        .onAppear {
-                            Task {
-                                await viewModel.loadAbstractLinks()
-                            }
-                        }
-                        
+
                         Spacer()
                         
                     }//VStack
