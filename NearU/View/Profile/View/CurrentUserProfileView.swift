@@ -108,6 +108,7 @@ struct CurrentUserProfileView: View {
                                    .padding(.horizontal, 8)
                                    .sheet(isPresented: $isAddingNewLink) {
                                        AddLinkView(isPresented: $isAddingNewLink)
+                                           .environmentObject(articleLinksViewModel)
                                    }
                                }
                            } // HStack
