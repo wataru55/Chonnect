@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct EditFrameworkTagsView: View {
-    @State private var FrameworkTags: [String] = ["React","Next.js","Vue","Nuxt.js","Angular","Express","Node.js","Django","Flask","Laravel","CakePHP","Flutter","Rails","Remix","Tailwind CSS","Spring"]
+    @State private var FrameworkTags: [String] = ["React","Next.js","Vue","Nuxt.js","Angular","Node.js","Django","Flask","Laravel","CakePHP","Flutter","Rails","Remix","Tailwind CSS","Spring"]
     @Binding var selectedFrameworkTags: [String]
     let userId: String
 

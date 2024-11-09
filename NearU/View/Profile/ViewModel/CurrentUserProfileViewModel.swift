@@ -21,7 +21,7 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
-    
+
     @Published var abstractUrls: [String] = []
 
     @Published var username = ""
@@ -84,7 +84,7 @@ class CurrentUserProfileViewModel: ObservableObject {
     func updateLanguageTags() async throws {
         try await UserService.saveLanguageTags(userId: user.id, selectedTags: selectedLanguageTags)
     }
-    
+
     @MainActor
     func loadFrameworkTags() async throws {
         do {
@@ -94,11 +94,11 @@ class CurrentUserProfileViewModel: ObservableObject {
             print("Failed to fetch tags: \(error)")
         }
     }
-    
+
     func updateFrameworkTags() async throws {
-                try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
+        try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
     }
-    
+
     @MainActor
     func loadAbstractLinks() async {
         do {
@@ -146,7 +146,7 @@ class CurrentUserProfileViewModel: ObservableObject {
             print("complete")
         }
     }
-    
+
     @MainActor
     func deleteAbstractLink(url: String) async {
         do {
@@ -155,4 +155,5 @@ class CurrentUserProfileViewModel: ObservableObject {
         } catch {
             print("Failed to delete abstract link: \(error)")
         }
-    }}
+    }
+}

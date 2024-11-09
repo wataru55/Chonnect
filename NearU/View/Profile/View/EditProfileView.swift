@@ -16,17 +16,11 @@ struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    @StateObject var abstractLinksViewModel: AbstractLinkModel
-    
+
     let user: User
-    
+
     @FocusState private var focusedField: Field?
-    
-    init(user: User) {
-        self.user = user
-        _abstractLinksViewModel = StateObject(wrappedValue: AbstractLinkModel(userId: user.id))
-    }
-    
+
     var body: some View {
         VStack {
             //toolbar
@@ -95,12 +89,14 @@ struct EditProfileView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)
                         .foregroundColor(Color.gray)
+                  
                     EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
                     Text("フレームワーク・ライブラリ")
                         .font(.footnote)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)
                         .foregroundColor(Color.gray)
+                  
                     EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
                         .padding(.bottom, 10)
                     EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
@@ -111,6 +107,48 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
+               
+                ScrollView(.horizontal, showsIndicators: false) {
+                   HStack {
+                       if user.snsLinks.isEmpty {
+                           Text("自分のSNSのリンクを登録しましょう")
+                               .foregroundColor(.orange)
+                               .padding()
+                       } else {
+                           ForEach(Array(user.snsLinks.keys), id: \.self) { key in
+                               if let url = user.snsLinks[key] {
+                                   SNSLinkButtonView(selectedSNS: key, sns_url: url,  backgroundColor: .white)
+                               }
+                           }
+                       }
+                   } // HStack
+                } // ScrollView
+                .padding(.leading)
+                .padding(.bottom, 10)
+                
+                // add link button
+                Button(action: {
+                    isAddingNewLink.toggle()
+                }, label: {
+                    Image(systemName: "plus.circle")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    Text("Add Link")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                })
+                .foregroundColor(.white)
+                .frame(width: 360, height: 35)
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                        .clipShape(Capsule())
+                )
+                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
+                .sheet(isPresented: $isAddingNewLink) {
+                    AddLinkView(isPresented: $isAddingNewLink)
+                }
+                .padding(.bottom, 20)
+                
+                Spacer()
+
             } //scrollview
         }//vstack
         .onTapGesture {
