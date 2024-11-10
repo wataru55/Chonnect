@@ -86,8 +86,8 @@ struct CurrentUserProfileView: View {
                                        .foregroundColor(.orange)
                                        .padding()
                                } else {
-                                   ForEach(Array(user.snsLinks.keys), id: \.self) { key in
-                                       if let url = user.snsLinks[key] {
+                                   ForEach(Array(addLinkViewModel.snsUrls.keys), id: \.self) { key in
+                                       if let url = addLinkViewModel.snsUrls[key] {
                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
                                        }
                                    }
@@ -108,7 +108,7 @@ struct CurrentUserProfileView: View {
                                    .padding(.horizontal, 8)
                                    .sheet(isPresented: $isAddingNewLink) {
                                        AddLinkView(isPresented: $isAddingNewLink)
-                                           .environmentObject(articleLinksViewModel)
+                                           .environmentObject(addLinkViewModel)
                                    }
                                }
                            } // HStack

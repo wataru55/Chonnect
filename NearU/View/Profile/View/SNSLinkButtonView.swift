@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct SNSLinkButtonView: View {
-    @State var selectedSNS: String
-    @State var sns_url: String
-    var backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
+    let selectedSNS: String
+    let sns_url: String
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     let grayColor = Color.init(white: 0.8, opacity: 1)
 

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddLinkView: View {
+    @EnvironmentObject var viewModel: AddLinkViewModel
     @State private var snsUrls: [String] = [""]
     @Binding var isPresented: Bool
 
@@ -62,7 +63,13 @@ struct AddLinkView: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-
+                        Task {
+                            try await viewModel.updateSNSLink(urls: snsUrls)
+                            await viewModel.loadSNSLinks()
+                            await MainActor.run {
+                                isPresented = false
+                            }
+                        }
                     } label: {
                         HStack(spacing: 2) {
                             Image(systemName: "square.and.arrow.down")
@@ -71,7 +78,6 @@ struct AddLinkView: View {
                                 .offset(y: 3)
                         }
                     }
-
                 }
             }
         }//navigationstack
