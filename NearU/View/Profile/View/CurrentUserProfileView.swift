@@ -26,7 +26,7 @@ struct CurrentUserProfileView: View {
         ZStack{
             Color(red: 0.96, green: 0.97, blue: 0.98)
                 .ignoresSafeArea()
-            
+
             VStack{
                 ScrollView(.vertical, showsIndicators: false){
                     VStack{
@@ -78,7 +78,7 @@ struct CurrentUserProfileView: View {
                             }
                         }//HStack
                         .padding(.bottom, 20)
-                        
+
                         ScrollView(.horizontal, showsIndicators: false) {
                            HStack {
                                if user.snsLinks.isEmpty {
@@ -91,7 +91,7 @@ struct CurrentUserProfileView: View {
                                            SNSLinkButtonView(selectedSNS: key, sns_url: url)
                                        }
                                    }
-                                   
+
                                    Button(action: {
                                        isAddingNewLink.toggle()
                                    }, label: {
@@ -123,7 +123,7 @@ struct CurrentUserProfileView: View {
                                     .padding()
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
-                                    SiteLinkButtonView(ogpData: openGraphData)
+                                    SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
                                 }
                             }
                             VStack{
@@ -149,7 +149,7 @@ struct CurrentUserProfileView: View {
                         }
 
                         Spacer()
-                        
+
                     }//VStack
                     .padding(.bottom, 100)
                     .fullScreenCover(isPresented: $showEditProfile) {

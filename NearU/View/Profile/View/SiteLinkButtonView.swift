@@ -10,6 +10,7 @@ import OpenGraph
 
 struct SiteLinkButtonView: View {
     let ogpData: OpenGraphData
+    var showDeleteButton: Bool
 
     var body: some View {
         Button {
