@@ -73,7 +73,6 @@ struct TagsView: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
                                     .foregroundStyle(.ultraThinMaterial)
-                                    .shadow(color: .init(white: 0.4, opacity: 0.4), radius: 5)
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 30)
