@@ -69,20 +69,20 @@ struct UserService {
 
         return abstractUrls
     }
-    
-    static func deleteAbstractLink(userId: String, url: String) async throws {
-        let db = Firestore.firestore()
-        // URLが一致するドキュメントを取得して削除
-        let snapshot = try await db
-            .collection("users")
-            .document(userId)
-            .collection("abstract")
-            .whereField("abstract_url", isEqualTo: url)
-            .getDocuments()
-        
-        // 一致する各ドキュメントを削除
-        if let document = snapshot.documents.first {
-            try await document.reference.delete()
+
+    static func deleteArticleLink(url: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let query = Firestore.firestore().collection("users").document(documentId).collection("abstract").whereField("abstract_url", isEqualTo: url)
+
+        // Firestoreから削除
+        do {
+            let snapshot = try await query.getDocuments()
+
+            if let document = snapshot.documents.first {
+                try await document.reference.delete()
+            }
+        } catch {
+            throw error
         }
     }
 
