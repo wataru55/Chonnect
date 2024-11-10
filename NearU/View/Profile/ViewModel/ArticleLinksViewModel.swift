@@ -88,4 +88,21 @@ class ArticleLinksViewModel: ObservableObject {
             }
         }
     }
+
+    func removeArticle(url: String) async {
+        // Firestoreから削除
+        do {
+            print(url)
+            try await UserService.deleteArticleLink(url: url)
+        } catch {
+            print("Error removing article: \(error)")
+        }
+        // UI更新
+        await MainActor.run {
+            if let index = openGraphData.firstIndex(where: { $0.url == url }) {
+                openGraphData.remove(at: index)
+            }
+        }
+
+    }
 }
