@@ -59,7 +59,7 @@ struct TagsView: View {
                             if let iconName = iconMapping[tag] {
                                 Image(iconName)
                                     .resizable()
-                                    .frame(width: 15, height: 15)
+                                    .frame(width: 18, height: 18)
                             }
                             Text(tag)
                                 .font(.system(size: 10, weight: .semibold, design: .default))

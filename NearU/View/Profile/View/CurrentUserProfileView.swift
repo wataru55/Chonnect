@@ -38,16 +38,16 @@ struct CurrentUserProfileView: View {
                                     TagsView(tags: viewModel.selectedFrameworkTags)
                                     Text(user.username)
                                         .font(.system(size: 25, weight: .bold, design: .default))
-                                        .padding(.bottom, 2)
+                                        .padding(.bottom, 1)
                                         .padding(.top, 5)
                                     if let fullname = user.fullname{
                                         Text(fullname)
-                                            .font(.system(size: 10, weight: .bold))
+                                            .font(.system(size: 13, weight: .regular, design: .default))
                                             .padding(.bottom, 5)
                                     }
                                     if let bio = user.bio {
                                         Text(bio)
-                                            .font(.footnote)
+                                            .font(.callout)
                                             .frame(alignment: .leading)
                                     }
                                 }//VStack
