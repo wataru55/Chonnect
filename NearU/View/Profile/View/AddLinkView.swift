@@ -8,119 +8,75 @@
 import SwiftUI
 
 struct AddLinkView: View {
-    @State private var url = ""
-    @State private var selectedSNS: String?
-    @State private var articleUrls: [String] = [""]
-
+    @State private var snsUrls: [String] = [""]
     @Binding var isPresented: Bool
-
-    @EnvironmentObject var viewModel: ArticleLinksViewModel
-
-    @Environment(\.colorScheme) private var colorScheme
-
-    // 計算プロパティとしてsnsOptionsを定義
-    var snsOptions: [SNSOption] {
-        [
-            SNSOption(
-                name: "GitHub",
-                icon: colorScheme == .dark ? "GitHub-white" : "GitHub",
-                color: colorScheme == .dark ? .white : .black
-            ),
-            SNSOption(name: "X (Twitter)", icon: "X (Twitter)", color: .black),
-            SNSOption(name: "Instagram", icon: "Instagram", color: .purple),
-            SNSOption(name: "Facebook", icon: "Facebook", color: .blue),
-            SNSOption(name: "Youtube", icon: "Youtube", color: .red),
-            SNSOption(name: "Other", icon: "link", color: .gray)
-        ]
-    }
-
-    init(isPresented: Binding<Bool>) {
-        self._isPresented = isPresented
-    }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(content: {
-                    Picker("SNS", selection: $viewModel.selectedSNS) {
-                        ForEach(snsOptions) { option in
+            VStack(alignment: .leading, spacing: 0) {
+                Text("SNSのURLを追加")
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .padding(.leading, 5)
+                    .padding(.vertical, 10)
+
+                ScrollView {
+                    VStack(spacing: 3) {
+                        ForEach(snsUrls.indices, id: \.self) { index in
+                            TextField("URLを入力", text: $snsUrls[index])
+                                .textInputAutocapitalization(.never) // 自動で大文字にしない
+                                .disableAutocorrection(true) // スペルチェックを無効にする
+                                .font(.subheadline)
+                                .padding(12)
+                                .padding(.horizontal, 10)
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+
+                        Button(action: {
+                            snsUrls.append("")
+                        }) {
                             HStack {
-                                if let uiImage = UIImage(named: option.icon) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                } else {
-                                    Image(systemName: option.icon)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                }
-
-                                Text(option.name)
-                                    .foregroundStyle(option.color)
+                                Image(systemName: "plus.circle")
+                                    .offset(y: 3)
+                                Text("入力欄を追加")
+                                    .padding(.top, 5)
+                                    .font(.system(size: 15, weight: .bold))
                             }
-                            .tag(option.name)
                         }
-                    } //picker
-                    .pickerStyle(WheelPickerStyle())
-
-                    TextField("URL", text: $viewModel.snsUrl)
-                        .modifier(URLFieldModifier())
-                }, header: {
-                    HStack{
-                        Text("SNS")
-                            .font(Font.subheadline)
-                    }
-                })
-
-                Section(content: {
-
-                    ForEach(articleUrls.indices, id: \.self) { index in
-                        TextField("URLを入力", text: $articleUrls[index])
-                            .modifier(URLFieldModifier())
-                    }
-
-                    Button(action: {
-                        articleUrls.append("")
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle")
-                            Text("URLを追加")
-                                .font(.system(size: 10))
-                        }
-                    }
-                    .padding(.top, 10)
-                }, header: {
-                    HStack {
-                        Text("その他")
-                            .font(Font.subheadline)
-                    }
-                })
-
-            } //form
-            .navigationTitle("Add Link")
-            .navigationBarItems(leading: Button("Cancel") {
-                isPresented = false
-            }, trailing: Button("Done") {
-                Task {
-                    try await viewModel.addLink(urls: articleUrls)
-                    await viewModel.fetchArticleUrls()
-                    try await AuthService.shared.loadUserData()
-                    await MainActor.run {
-                        isPresented = false
+                        .padding(.horizontal, 15)
+                        .padding(.bottom, 10)
                     }
                 }
-            })
+            }// vstack
+            .padding()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("SNSの追加・削除")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image(systemName: "chevron.backward")
+                        .onTapGesture {
+                            isPresented = false
+                        }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+
+                    } label: {
+                        HStack(spacing: 2) {
+                            Image(systemName: "square.and.arrow.down")
+                            Text("追加")
+                                .fontWeight(.bold)
+                                .offset(y: 3)
+                        }
+                    }
+
+                }
+            }
         }//navigationstack
     }
 }
-
-struct SNSOption: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let icon: String
-    let color: Color
-}
-
 
 #Preview {
     AddLinkView(isPresented: .constant(true))
