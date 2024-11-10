@@ -9,12 +9,12 @@ import SwiftUI
 import Kingfisher
 
 struct CurrentUserProfileView: View {
-    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
     @StateObject private var viewModel = CurrentUserProfileViewModel()
+    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
+    @StateObject var addLinkViewModel = AddLinkViewModel()
     @State private var isAddingNewLink = false
     @State private var showEditAbstract = false
     @State private var showEditProfile = false
-    @State var isMenuOpen = false
 
     var backgroundColor: Color = Color(red: 0.92, green: 0.93, blue: 0.94) // デフォルトの背景色
 
