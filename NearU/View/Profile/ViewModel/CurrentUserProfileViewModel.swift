@@ -146,14 +146,4 @@ class CurrentUserProfileViewModel: ObservableObject {
             print("complete")
         }
     }
-
-    @MainActor
-    func deleteAbstractLink(url: String) async {
-        do {
-            try await UserService.deleteAbstractLink(userId: user.id, url: url)
-            await loadAbstractLinks()  // 削除後にリロードしてUI更新
-        } catch {
-            print("Failed to delete abstract link: \(error)")
-        }
-    }
 }
