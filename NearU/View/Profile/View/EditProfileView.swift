@@ -107,48 +107,6 @@ struct EditProfileView: View {
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
-               
-                ScrollView(.horizontal, showsIndicators: false) {
-                   HStack {
-                       if user.snsLinks.isEmpty {
-                           Text("自分のSNSのリンクを登録しましょう")
-                               .foregroundColor(.orange)
-                               .padding()
-                       } else {
-                           ForEach(Array(user.snsLinks.keys), id: \.self) { key in
-                               if let url = user.snsLinks[key] {
-                                   SNSLinkButtonView(selectedSNS: key, sns_url: url,  backgroundColor: .white)
-                               }
-                           }
-                       }
-                   } // HStack
-                } // ScrollView
-                .padding(.leading)
-                .padding(.bottom, 10)
-                
-                // add link button
-                Button(action: {
-                    isAddingNewLink.toggle()
-                }, label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    Text("Add Link")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                })
-                .foregroundColor(.white)
-                .frame(width: 360, height: 35)
-                .background(
-                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                        .clipShape(Capsule())
-                )
-                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
-                .sheet(isPresented: $isAddingNewLink) {
-                    AddLinkView(isPresented: $isAddingNewLink)
-                }
-                .padding(.bottom, 20)
-                
-                Spacer()
-
             } //scrollview
         }//vstack
         .onTapGesture {
@@ -185,16 +143,26 @@ struct EditProfileBioRowView: View {
     let title: String
     let placeholder: String
     @Binding var text: String
-    private let characterLimit = 150 // 文字制限
-    private let lineLimit = 5 // 行数制限
-    private let lineHeight: CGFloat = 27 // 1行の高さ
+    private let characterLimit = 100 // 文字制限
+    private let lineLimit = 4 // 行数制限
+    private let lineHeight: CGFloat = 20 // 1行の高さ
+    @State private var isOverCharacterLimit = false // 文字制限を超えたかどうか
     
     var body: some View {
         VStack {
-            Text(title)
-                .font(.footnote)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color.gray)
+            HStack {
+                Text(title)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                
+                // 文字制限を超えている場合
+                if isOverCharacterLimit {
+                    Text("自己紹介は100字以内で入力してください")
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             VStack {
                 ZStack(alignment: .topLeading) {
@@ -206,9 +174,11 @@ struct EditProfileBioRowView: View {
                     }
                     
                     TextEditor(text: $text)
-                        .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit)) // 高さを5行分に設定
+                        .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit))
                         .padding(.horizontal, 5)
-                        .onChange(of: text) {enforceTextLimit()}
+                        .onChange(of: text) {
+                            enforceTextLimit()
+                        }
                 }
                 Divider()
             }
@@ -219,15 +189,19 @@ struct EditProfileBioRowView: View {
     
     private func enforceTextLimit() {
         let lines = text.components(separatedBy: "\n")
+        
         // 行数制限を超えた場合、制限内の行のみを保持
         if lines.count > lineLimit {
             text = lines.prefix(lineLimit).joined(separator: "\n")
         }
-        // 文字数制限を超えた場合、制限内の文字のみを保持
+        
+        // 文字数制限を超えたかどうかを確認して超えている場合に切り捨てる
         if text.count > characterLimit {
             text = String(text.prefix(characterLimit))
+            isOverCharacterLimit = true
+        } else {
+            isOverCharacterLimit = false
         }
     }
 }
-
 
