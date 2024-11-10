@@ -42,6 +42,17 @@ struct UserService {
         return connectedUsers
     }
 
+    static func saveSNSLink(serviceName: String, url: String) async throws{
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        let data = ["snsLinks.\(serviceName)": url]
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+        } catch {
+            throw error
+        }
+    }
+
     static func seveArticleLink(userId: String, url: String) async throws {
         let data = ["abstract_url": url]
         do {
