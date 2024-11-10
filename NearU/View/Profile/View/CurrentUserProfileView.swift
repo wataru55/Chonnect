@@ -123,7 +123,7 @@ struct CurrentUserProfileView: View {
                                     .padding()
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
-                                    SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
+                                    SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false, isOpenURL: true)
                                 }
                             }
                             VStack{
@@ -144,7 +144,8 @@ struct CurrentUserProfileView: View {
                             }
                             .padding(.bottom)
                             .sheet(isPresented: $showEditAbstract) {
-                                EditAbstractView(isPresented: $showEditAbstract, user: viewModel.user)
+                                EditAbstractView(isPresented: $showEditAbstract)
+                                    .environmentObject(articleLinksViewModel)
                             }
                         }
 
