@@ -24,7 +24,7 @@ struct ProfileView: View {
         ZStack{
             Color(red: 0.92, green: 0.93, blue: 0.94)
                 .ignoresSafeArea()
-            
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //header
@@ -39,7 +39,7 @@ struct ProfileView: View {
                             HStack() {
                                 ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
                                     if let url = viewModel.user.snsLinks[key] {
-                                        SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isDisabled: false, isShowDeleteButton: false)
                                     }
                                 }
                             }//hstack
@@ -81,7 +81,7 @@ struct ProfileView: View {
                 viewModel.fetchAbstractLinks()
             }
         }
-        
+
     }//body
 }//view
 

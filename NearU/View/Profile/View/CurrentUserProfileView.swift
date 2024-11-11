@@ -88,7 +88,7 @@ struct CurrentUserProfileView: View {
                                } else {
                                    ForEach(Array(addLinkViewModel.snsUrls.keys), id: \.self) { key in
                                        if let url = addLinkViewModel.snsUrls[key] {
-                                           SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                           SNSLinkButtonView(selectedSNS: key, sns_url: url, isDisabled: false, isShowDeleteButton: false)
                                        }
                                    }
 
