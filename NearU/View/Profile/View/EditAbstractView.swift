@@ -4,78 +4,101 @@ struct EditAbstractView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
     @State private var articleUrls: [String] = [""]
     @Binding var isPresented: Bool
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    ForEach(articleUrls.indices, id: \.self) { index in
-                        TextField("URLを入力", text: $articleUrls[index])
-                            .modifier(URLFieldModifier())
-                    }
+            ZStack {
+                backgroundColor.ignoresSafeArea()
 
-                    Button {
-                        articleUrls.append("")
-                    } label: {
-                        HStack {
-                            Image(systemName: "plus.circle")
-                            Text("URLを追加")
-                                .font(.system(size: 10, weight: .bold))
-                        }
-                    }// label
-                } header: {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("記事のURLを追加")
                         .font(.footnote)
                         .fontWeight(.bold)
-                        .offset(x: -15)
-                        .padding(.bottom, 10)
-                } //header
+                        .padding(.leading, 5)
+                        .padding(.vertical, 10)
 
-                Section {
-                    if viewModel.openGraphData.isEmpty {
-                        Text("リンクがありません")
-                            .foregroundColor(.orange)
-                            .padding()
-                    } else {
-                        ForEach(viewModel.openGraphData) { openGraphData in
-                            SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true, isOpenURL: false)
-                                .environmentObject(viewModel)
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 3) {
+                            ForEach(articleUrls.indices, id: \.self) { index in
+                                TextField("URLを入力", text: $articleUrls[index])
+                                    .textInputAutocapitalization(.never) // 自動で大文字にしない
+                                    .disableAutocorrection(true) // スペルチェックを無効にする
+                                    .font(.subheadline)
+                                    .padding(12)
+                                    .padding(.horizontal, 10)
+                                    .background(Color(.systemGray5))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+
+                            Button {
+                                articleUrls.append("")
+                            } label: {
+                                HStack {
+                                    Image(systemName: "plus.circle")
+                                        .offset(y: 3)
+                                    Text("URLを追加")
+                                        .padding(.top, 5)
+                                        .font(.system(size: 15, weight: .bold))
+                                }
+                                .foregroundStyle(Color.mint)
+                            }// label
+                            .padding(.horizontal, 15)
+                            .padding(.bottom, 10)
+
+                        Text("記事一覧")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 5)
+                            .padding(.vertical, 10)
+
+                            VStack(spacing: 20) {
+                                if viewModel.openGraphData.isEmpty {
+                                    Text("リンクがありません")
+                                        .foregroundColor(.orange)
+                                        .padding()
+                                } else {
+                                    ForEach(viewModel.openGraphData) { openGraphData in
+                                        SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true, isOpenURL: true)
+                                            .environmentObject(viewModel)
+                                    }
+                                }
+                            } //vstack
+                            .padding(.leading)
+                            .padding(.bottom, 10)
+                        } // vstack
+                    } // scrollview
+                } //vstack
+                .padding()
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("記事の追加・削除")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Image(systemName: "chevron.backward")
+                            .onTapGesture {
+                                isPresented = false
+                            }
+                    }
+
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            Task {
+                                try await viewModel.addLink(urls: articleUrls)
+                                await viewModel.fetchArticleUrls()
+                            }
+                        } label: {
+                            HStack(spacing: 2) {
+                                Image(systemName: "plus.app")
+                                Text("追加")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                            }
+                            .foregroundStyle(Color.mint)
                         }
                     }
-                } header: {
-                    Text("リンク一覧")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .offset(x: -15)
                 }
-            } //Form
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("記事の追加・削除")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.backward")
-                        .onTapGesture {
-                            isPresented = false
-                        }
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task {
-                            try await viewModel.addLink(urls: articleUrls)
-                            await viewModel.fetchArticleUrls()
-                        }
-                    } label: {
-                        HStack(spacing: 2) {
-                            Image(systemName: "square.and.arrow.down")
-                            Text("追加")
-                                .fontWeight(.bold)
-                                .offset(y: 3)
-                        }
-                    }
-
-                }
-            }
+            } //zstach
         } // navigationstack
     }
 }
