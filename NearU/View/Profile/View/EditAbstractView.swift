@@ -89,6 +89,9 @@ struct EditAbstractView: View {
                             Task {
                                 try await viewModel.addLink(urls: articleUrls)
                                 await viewModel.fetchArticleUrls()
+                                await MainActor.run {
+                                    articleUrls = [""]
+                                }
                             }
                         } label: {
                             HStack(spacing: 2) {

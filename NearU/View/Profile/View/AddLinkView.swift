@@ -100,6 +100,9 @@ struct AddLinkView: View {
                             Task {
                                 try await viewModel.updateSNSLink(urls: snsUrls)
                                 await viewModel.loadSNSLinks()
+                                await MainActor.run {
+                                    snsUrls = [""]
+                                }
                             }
                         } label: {
                             HStack(spacing: 2) {
