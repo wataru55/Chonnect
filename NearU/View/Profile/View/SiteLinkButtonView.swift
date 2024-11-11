@@ -65,7 +65,7 @@ struct SiteLinkButtonView: View {
                 Button {
                     isShowAlert.toggle()
                 } label: {
-                    Image(systemName: "trash")
+                    Image(systemName: "minus.circle.fill")
                         .foregroundStyle(.black)
                         .padding()
                 }

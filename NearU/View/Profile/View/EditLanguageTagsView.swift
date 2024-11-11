@@ -22,7 +22,7 @@ struct EditLanguageTagsView: View {
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 12)
                                 .font(.system(size: 15, weight: .semibold, design: .default))
-                                .background(self.selectedLanguageTags.contains(tag) ? Color.blue : Color(.systemGroupedBackground))
+                                .background(self.selectedLanguageTags.contains(tag) ? Color.mint : Color(.systemGroupedBackground))
                                 .foregroundColor(self.selectedLanguageTags.contains(tag) ? .white : .black)
                                 .cornerRadius(15)
                                 .onTapGesture {

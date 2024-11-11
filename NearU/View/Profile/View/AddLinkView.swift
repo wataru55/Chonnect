@@ -10,7 +10,7 @@ import SwiftUI
 struct AddLinkView: View {
     @EnvironmentObject var viewModel: AddLinkViewModel
     @State private var snsUrls: [String] = [""]
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
@@ -48,6 +48,7 @@ struct AddLinkView: View {
                                         .padding(.top, 5)
                                         .font(.system(size: 15, weight: .bold))
                                 }
+                                .foregroundStyle(Color.mint)
                             }
                             .padding(.horizontal, 15)
                             .padding(.bottom, 10)
@@ -62,8 +63,10 @@ struct AddLinkView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                HStack {
                                    if viewModel.snsUrls.isEmpty {
-                                       Text("自分のSNSのリンクを登録しましょう")
-                                           .foregroundColor(.orange)
+                                       Text("SNSのリンクがありません")
+                                           .font(.subheadline)
+                                           .fontWeight(.bold)
+                                           .foregroundColor(.gray)
                                            .padding()
                                    } else {
                                        ForEach(Array(viewModel.snsUrls.keys), id: \.self) { key in
@@ -88,7 +91,7 @@ struct AddLinkView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Image(systemName: "chevron.backward")
                             .onTapGesture {
-                                isPresented = false
+                                dismiss()
                             }
                     }
 
@@ -98,16 +101,17 @@ struct AddLinkView: View {
                                 try await viewModel.updateSNSLink(urls: snsUrls)
                                 await viewModel.loadSNSLinks()
                                 await MainActor.run {
-                                    isPresented = false
+                                    snsUrls = [""]
                                 }
                             }
                         } label: {
                             HStack(spacing: 2) {
-                                Image(systemName: "square.and.arrow.down")
+                                Image(systemName: "plus.app")
                                 Text("追加")
+                                    .font(.subheadline)
                                     .fontWeight(.bold)
-                                    .offset(y: 3)
                             }
+                            .foregroundStyle(Color.mint)
                         }
                     }
                 }
@@ -117,6 +121,6 @@ struct AddLinkView: View {
 }
 
 #Preview {
-    AddLinkView(isPresented: .constant(true))
+    AddLinkView()
         .environmentObject(AddLinkViewModel())
 }
