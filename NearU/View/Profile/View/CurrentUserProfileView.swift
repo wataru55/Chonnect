@@ -9,12 +9,12 @@ import SwiftUI
 import Kingfisher
 
 struct CurrentUserProfileView: View {
-    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
     @StateObject private var viewModel = CurrentUserProfileViewModel()
+    @StateObject var articleLinksViewModel = ArticleLinksViewModel()
+    @StateObject var addLinkViewModel = AddLinkViewModel()
     @State private var isAddingNewLink = false
     @State private var showEditAbstract = false
     @State private var showEditProfile = false
-    @State var isMenuOpen = false
 
     var backgroundColor: Color = Color(red: 0.92, green: 0.93, blue: 0.94) // デフォルトの背景色
 
@@ -86,9 +86,9 @@ struct CurrentUserProfileView: View {
                                        .foregroundColor(.orange)
                                        .padding()
                                } else {
-                                   ForEach(Array(user.snsLinks.keys), id: \.self) { key in
-                                       if let url = user.snsLinks[key] {
-                                           SNSLinkButtonView(selectedSNS: key, sns_url: url)
+                                   ForEach(Array(addLinkViewModel.snsUrls.keys), id: \.self) { key in
+                                       if let url = addLinkViewModel.snsUrls[key] {
+                                           SNSLinkButtonView(selectedSNS: key, sns_url: url, isDisabled: false, isShowDeleteButton: false)
                                        }
                                    }
 
@@ -108,7 +108,7 @@ struct CurrentUserProfileView: View {
                                    .padding(.horizontal, 8)
                                    .sheet(isPresented: $isAddingNewLink) {
                                        AddLinkView(isPresented: $isAddingNewLink)
-                                           .environmentObject(articleLinksViewModel)
+                                           .environmentObject(addLinkViewModel)
                                    }
                                }
                            } // HStack

@@ -11,10 +11,7 @@ import OpenGraph
 import Combine
 
 class ArticleLinksViewModel: ObservableObject {
-    @Published var selectedSNS: String = ""
-    @Published var snsUrl: String = ""
     @Published var openGraphData: [OpenGraphData] = []
-    private var cancellable: AnyCancellable?
 
     init() {
         Task {
@@ -40,13 +37,6 @@ class ArticleLinksViewModel: ObservableObject {
 
     func addLink(urls: [String]) async throws {
         guard let userId = AuthService.shared.currentUser?.id else { return }
-        // SNSリンクが入力されている場合の更新
-        if !selectedSNS.isEmpty && !snsUrl.isEmpty {
-            let data = ["snsLinks.\(selectedSNS)": snsUrl]
-
-            try await Firestore.firestore().collection("users").document(userId).updateData(data)
-            print("SNSリンクの更新完了")
-        }
 
         // 複数のURLが入力されている場合の更新
         for url in urls {
