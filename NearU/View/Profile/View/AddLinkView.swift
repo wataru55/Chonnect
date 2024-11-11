@@ -48,6 +48,7 @@ struct AddLinkView: View {
                                         .padding(.top, 5)
                                         .font(.system(size: 15, weight: .bold))
                                 }
+                                .foregroundStyle(Color.mint)
                             }
                             .padding(.horizontal, 15)
                             .padding(.bottom, 10)
@@ -103,11 +104,12 @@ struct AddLinkView: View {
                             }
                         } label: {
                             HStack(spacing: 2) {
-                                Image(systemName: "square.and.arrow.down")
+                                Image(systemName: "plus.app")
                                 Text("追加")
+                                    .font(.subheadline)
                                     .fontWeight(.bold)
-                                    .offset(y: 3)
                             }
+                            .foregroundStyle(Color.mint)
                         }
                     }
                 }

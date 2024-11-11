@@ -106,7 +106,7 @@ struct CurrentUserProfileView: View {
                                               )
                                    })
                                    .padding(.horizontal, 8)
-                                   .sheet(isPresented: $isAddingNewLink) {
+                                   .fullScreenCover(isPresented: $isAddingNewLink) {
                                        AddLinkView(isPresented: $isAddingNewLink)
                                            .environmentObject(addLinkViewModel)
                                    }
@@ -124,6 +124,7 @@ struct CurrentUserProfileView: View {
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
                                     SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false, isOpenURL: true)
+                                        .environmentObject(articleLinksViewModel)
                                 }
                             }
                             VStack{
@@ -143,7 +144,7 @@ struct CurrentUserProfileView: View {
                                 })
                             }
                             .padding(.bottom)
-                            .sheet(isPresented: $showEditAbstract) {
+                            .fullScreenCover(isPresented: $showEditAbstract) {
                                 EditAbstractView(isPresented: $showEditAbstract)
                                     .environmentObject(articleLinksViewModel)
                             }

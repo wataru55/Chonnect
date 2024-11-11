@@ -25,13 +25,16 @@ struct EditProfileView: View {
         VStack {
             //toolbar
             HStack {
-                Button("Cancel") {
+                Button {
                     dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(.black)
                 }
-                
+
                 Spacer()
                 
-                Text("Edit Profile")
+                Text("プロフィール編集")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 
@@ -51,9 +54,10 @@ struct EditProfileView: View {
                         }
                     }
                 }, label: {
-                    Text("Done")
+                    Text("完了")
                         .font(.subheadline)
                         .fontWeight(.bold)
+                        .foregroundStyle(Color.mint)
                 })
             }//hstack
             .padding(.horizontal)
@@ -77,6 +81,7 @@ struct EditProfileView: View {
                             Text("背景画像を変更する")
                                 .font(.footnote)
                                 .fontWeight(.semibold)
+                                .foregroundStyle(Color.mint)
                                 .padding(.bottom, 10)
                         }//vstack
                     }
@@ -99,10 +104,13 @@ struct EditProfileView: View {
                   
                     EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
                         .padding(.bottom, 10)
+
                     EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
+
                     EditProfileRowView(title: "本名(公開したくない場合は空欄にしてください)", placeholder: "", text: $viewModel.fullname)
                         .focused($focusedField, equals: .title)
+
                     EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
                 }
