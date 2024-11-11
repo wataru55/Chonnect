@@ -3,7 +3,7 @@ import SwiftUI
 struct EditAbstractView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
     @State private var articleUrls: [String] = [""]
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
@@ -46,17 +46,20 @@ struct EditAbstractView: View {
                             .padding(.horizontal, 15)
                             .padding(.bottom, 10)
 
-                        Text("記事一覧")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 5)
-                            .padding(.vertical, 10)
+                            Text("記事一覧")
+                                .font(.footnote)
+                                .fontWeight(.bold)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 5)
+                                .padding(.vertical, 10)
 
                             VStack(spacing: 20) {
                                 if viewModel.openGraphData.isEmpty {
-                                    Text("リンクがありません")
-                                        .foregroundColor(.orange)
+                                    Text("記事のリンクがありません")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundColor(.gray)
                                         .padding()
                                 } else {
                                     ForEach(viewModel.openGraphData) { openGraphData in
@@ -77,7 +80,7 @@ struct EditAbstractView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Image(systemName: "chevron.backward")
                             .onTapGesture {
-                                isPresented = false
+                                dismiss()
                             }
                     }
 
@@ -104,7 +107,7 @@ struct EditAbstractView: View {
 }
 
 #Preview {
-    EditAbstractView(isPresented: .constant(true))
+    EditAbstractView()
         .environmentObject(ArticleLinksViewModel())
 }
 
