@@ -43,15 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // アプリがフォアグラウンドで通知を受け取ったときの処理をこのクラスで行う
         UNUserNotificationCenter.current().delegate = self
 
-        // Push通知許可のポップアップを表示
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, _ in
-            guard granted else { return }
-            DispatchQueue.main.async {
-                application.registerForRemoteNotifications()
-            }
-        }
-
         return true
     }
 
@@ -63,18 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             if let error = error {
                 print("Error fetching FCM registration token: \(error)")
             } else if let token = token {
-                // UserDefaultsにFCMトークンを保存
-                UserDefaults.standard.set(token, forKey: "FCMToken")
-                // 保存が正常に完了したことを確認
-                if let savedToken = UserDefaults.standard.string(forKey: "FCMToken") {
-                    if savedToken == token {
-                        print("FCM token successfully saved to UserDefaults.")
-                    } else {
-                        print("FCM token saved to UserDefaults does not match the original token.")
-                    }
-                } else {
-                    print("Failed to retrieve FCM token from UserDefaults after saving.")
-                }
+                Task { await self.setFCMToken(fcmToken: token)}
             }
         }
     }
@@ -84,6 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("Failed to register for remote notifications: \(error)")
     }
 
+    // バックグラウンドや終了状態で通知を受信した際に呼ばれるメソッド
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let messageID = userInfo["gcm.message_id"] {
             print("MessageID: \(messageID)")
@@ -96,26 +77,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let fcmToken = fcmToken else { return }
         print("messaging(_:didReceiveRegistrationToken:) called with token: \(fcmToken)")
-        // UserDefaultsにFCMトークンを保存
-        UserDefaults.standard.set(fcmToken, forKey: "FCMToken")
-        // 保存が正常に完了したことを確認
-        if let savedToken = UserDefaults.standard.string(forKey: "FCMToken") {
-            if savedToken == fcmToken {
-                print("FCM token successfully saved to UserDefaults.")
-            } else {
-                print("FCM token saved to UserDefaults does not match the original token.")
-            }
-        } else {
-            print("Failed to retrieve FCM token from UserDefaults after saving.")
-        }
 
-        // 必要に応じてトークンをサーバーに送信
+        Task { await setFCMToken(fcmToken: fcmToken)}
     }
-
 
     // アプリがForeground時にPush通知を受信する処理
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
+    }
+
+    // 通知をタップした時に呼ばれるメソッド
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        // NotificationCenterを使用して通知を投稿
+        NotificationCenter.default.post(name: Notification.Name("didReceiveRemoteNotification"), object: nil, userInfo: userInfo)
+        completionHandler()
     }
 
     // アプリケーションがバックグラウンドに移行する直前に呼ばれる
@@ -131,7 +107,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
             BLEPeripheralManager.shared.startAdvertising()
         }
-
     }
 
     // アプリケーションがフォアグラウンドに移行する直前に呼ばれる
@@ -145,6 +120,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             BLEPeripheralManager.shared.startAdvertising()
         }
     }
+
+    // FCMトークンをFirestoreに保存するメソッド
+    func setFCMToken(fcmToken: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            print("ユーザーがログインしていません")
+            return
+        }
+
+        let data: [String: Any] = [
+            "fcmtoken": fcmToken
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+            print("Document successfully updated with FCM token")
+        } catch {
+            print("Error updating document: \(error)")
+        }
+    }
 }
 
 @main
@@ -153,7 +147,7 @@ struct NearUApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LaunchScreen()
         }
     }
 }

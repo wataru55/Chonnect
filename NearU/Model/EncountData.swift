@@ -11,5 +11,6 @@ import RealmSwift
 class EncountData: Object, Identifiable {
     @Persisted(primaryKey: true) var userId: String = ""
     @Persisted var date: Date = Date()
+    @Persisted var rssi: Int = 0
 }
 

@@ -10,14 +10,22 @@ import FirebaseMessaging
 import FirebaseFirestore
 import JWTKit
 
+enum PushNotificationError: Error {
+    case invalidURL
+    case jsonEncodingFailed
+    case accessTokenGenerationFailed(Error)
+    case networkError(Error)
+    case invalidResponse
+    case httpError(statusCode: Int, responseBody: String?)
+}
+
 class NotificationManager {
     static let shared = NotificationManager()
 
-    func sendPushNotification(fcmToken: String, username: String, documentId: String, date: Date) async {
+    func sendPushNotification(fcmToken: String, username: String, documentId: String, date: Date) async throws {
         // エンドポイントが正しいか確認
         guard let url = URL(string: "https://fcm.googleapis.com/v1/projects/nearu-46768/messages:send") else {
-            print("Invalid URL")
-            return
+            throw PushNotificationError.invalidURL
         }
 
         // 通知データの作成
@@ -27,9 +35,9 @@ class NotificationManager {
         let message = FCMMessage.Message(token: fcmToken, notification: notification, data: data)
         let fcmMessage = FCMMessage(message: message)
 
+        // jsonエンコーディング
         guard let jsonData = try? JSONEncoder().encode(fcmMessage) else {
-            print("Failed to create JSON data")
-            return
+            throw PushNotificationError.jsonEncodingFailed
         }
 
         // アクセストークンの取得
@@ -37,8 +45,7 @@ class NotificationManager {
         do {
             accessToken = try await generateAccessToken()
         } catch {
-            print("Failed to generate access token: \(error)")
-            return
+            throw PushNotificationError.accessTokenGenerationFailed(error)
         }
 
         // FCMに対する通知リクエストの設定
@@ -52,14 +59,16 @@ class NotificationManager {
         // 非同期メソッドを使用してリクエストを送信
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
-            if let httpResponse = response as? HTTPURLResponse {
-                print("Response: \(httpResponse.statusCode)")
-                if let responseBody = String(data: data, encoding: .utf8) {
-                    print("Response Body: \(responseBody)")
-                }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw PushNotificationError.invalidResponse
+            }
+
+            if !(200...299).contains(httpResponse.statusCode) {
+                let responseBody = String(data: data, encoding: .utf8)
+                throw PushNotificationError.httpError(statusCode: httpResponse.statusCode, responseBody: responseBody)
             }
         } catch {
-            print("Error sending push notification: \(error.localizedDescription)")
+            throw PushNotificationError.networkError(error)
         }
     }
 

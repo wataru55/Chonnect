@@ -17,25 +17,24 @@ struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
 
-    //let user: User
+    let user: User
+
     @FocusState private var focusedField: Field?
-    
-//    init(user: User) {
-//        self.user = user
-//        //self._viewModel = StateObject(wrappedValue: EditProfileViewModel(user: user))
-//    }
-    
+
     var body: some View {
         VStack {
             //toolbar
             HStack {
-                Button("Cancel") {
+                Button {
                     dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(.black)
                 }
-                
+
                 Spacer()
                 
-                Text("Edit Profile")
+                Text("プロフィール編集")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 
@@ -44,18 +43,21 @@ struct EditProfileView: View {
                 Button(action: {
                     Task {
                         try await viewModel.updateUserData()
-                        try await viewModel.updateUserTags()
+                        try await viewModel.updateLanguageTags()
+                        try await viewModel.updateFrameworkTags()
                         try await AuthService.shared.loadUserData()
-                        try await viewModel.loadUserTags()
-
+                        try await viewModel.loadLanguageTags()
+                        try await viewModel.loadFrameworkTags()
+                        
                         await MainActor.run {
                             dismiss()
                         }
                     }
                 }, label: {
-                    Text("Done")
+                    Text("完了")
                         .font(.subheadline)
                         .fontWeight(.bold)
+                        .foregroundStyle(Color.mint)
                 })
             }//hstack
             .padding(.horizontal)
@@ -76,50 +78,43 @@ struct EditProfileView: View {
                                 BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
                             }
                             
-                            Text("Edit background picture")
+                            Text("背景画像を変更する")
                                 .font(.footnote)
                                 .fontWeight(.semibold)
-                            
-                            Divider()
+                                .foregroundStyle(Color.mint)
+                                .padding(.bottom, 10)
                         }//vstack
                     }
                     .disabled(focusedField != nil)
                 }//vstack
                 //edit profile info
-                VStack {
-                    EditTagsView(selectedTags: $viewModel.selectedTags, userId: viewModel.user.id)
-                    EditProfileRowView(title: "userName", placeholder: "Enter your username", text: $viewModel.username)
+                VStack (spacing:0){
+                    Text("言語")
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(5)
+                        .foregroundColor(Color.gray)
+                  
+                    EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
+                    Text("フレームワーク・ライブラリ")
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(5)
+                        .foregroundColor(Color.gray)
+                  
+                    EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
+                        .padding(.bottom, 10)
+
+                    EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
-                    EditProfileRowView(title: "fullName", placeholder: "Enter your fullname", text: $viewModel.fullname)
+
+                    EditProfileRowView(title: "本名(公開したくない場合は空欄にしてください)", placeholder: "", text: $viewModel.fullname)
                         .focused($focusedField, equals: .title)
-                    EditProfileRowView(title: "bio", placeholder: "Enter your bio", text: $viewModel.bio)
+
+                    EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
                 }
-                .padding(.top, 30)
-                
-                // add link button
-                Button(action: {
-                    isAddingNewLink.toggle()
-                }, label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    Text("Add Link")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                })
-                .foregroundColor(.white)
-                .frame(width: 360, height: 35)
-                .background(
-                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                        .clipShape(Capsule())
-                )
-                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
-                .sheet(isPresented: $isAddingNewLink) {
-                    AddLinkView(isPresented: $isAddingNewLink, user: viewModel.user)
-                }
-                .padding(.bottom, 20)
-                
-                Spacer()
-                
+                .padding(.top, 5)
             } //scrollview
         }//vstack
         .onTapGesture {
@@ -134,22 +129,87 @@ struct EditProfileRowView: View {
     @Binding var text: String
     
     var body: some View {
-        HStack {
+        VStack (spacing:10){
             Text(title)
-                .padding(.leading, 8)
-                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: .leading)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(Color.gray)
             
             VStack {
                 TextField(placeholder, text: $text)
+                    .padding(.leading, 5)
                 
                 Divider()
             }//vstack
         }//hstack
         .font(.subheadline)
-        .frame(height: 36)
+        .padding(5)
     }//body
 }//view
 
-#Preview {
-    EditProfileView()
+struct EditProfileBioRowView: View {
+    let title: String
+    let placeholder: String
+    @Binding var text: String
+    private let characterLimit = 100 // 文字制限
+    private let lineLimit = 4 // 行数制限
+    private let lineHeight: CGFloat = 20 // 1行の高さ
+    @State private var isOverCharacterLimit = false // 文字制限を超えたかどうか
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text(title)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                
+                // 文字制限を超えている場合
+                if isOverCharacterLimit {
+                    Text("自己紹介は100字以内で入力してください")
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            VStack {
+                ZStack(alignment: .topLeading) {
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .foregroundColor(.gray)
+                            .padding(.leading, 5)
+                            .padding(.top, 8)
+                    }
+                    
+                    TextEditor(text: $text)
+                        .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit))
+                        .padding(.horizontal, 5)
+                        .onChange(of: text) {
+                            enforceTextLimit()
+                        }
+                }
+                Divider()
+            }
+        }
+        .font(.subheadline)
+        .padding(5)
+    }
+    
+    private func enforceTextLimit() {
+        let lines = text.components(separatedBy: "\n")
+        
+        // 行数制限を超えた場合、制限内の行のみを保持
+        if lines.count > lineLimit {
+            text = lines.prefix(lineLimit).joined(separator: "\n")
+        }
+        
+        // 文字数制限を超えたかどうかを確認して超えている場合に切り捨てる
+        if text.count > characterLimit {
+            text = String(text.prefix(characterLimit))
+            isOverCharacterLimit = true
+        } else {
+            isOverCharacterLimit = false
+        }
+    }
 }
+

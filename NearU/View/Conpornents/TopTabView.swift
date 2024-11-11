@@ -15,16 +15,15 @@ struct TopTabView: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack {
-                CustomTabBarButtonView(selected: $selectedTab, title: "Waiting", tag: 0)
-                CustomTabBarButtonView(selected: $selectedTab, title: "Connected", tag: 1)
+                CustomTabBarButtonView(selected: $selectedTab, title: "すれちがい履歴", tag: 0)
+                CustomTabBarButtonView(selected: $selectedTab, title: "リアルタイム", tag: 1)
             }
             .padding()
 
-
             if selectedTab == 0 {
-                WaitingSearchView(currentUser: currentUser).tag(0)
+                BLEHistoryView(currentUser: currentUser).tag(0)
             } else {
-                ConnectedSearchView(currentUser: currentUser).tag(1)
+                BLERealtimeView(currentUser: currentUser).tag(1)
             }
         }
         .ignoresSafeArea(edges: .bottom)

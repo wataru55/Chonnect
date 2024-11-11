@@ -19,7 +19,10 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var backgroundImage: Image?
 
-    @Published var selectedTags: [String] = []
+    @Published var selectedLanguageTags: [String] = []
+    @Published var selectedFrameworkTags: [String] = []
+
+    @Published var abstractUrls: [String] = []
 
     @Published var username = ""
     @Published var fullname = ""
@@ -38,7 +41,8 @@ class CurrentUserProfileViewModel: ObservableObject {
         }
         setupSubscribers()
         Task {
-            try await loadUserTags()
+            try await loadLanguageTags()
+            try await loadFrameworkTags()
         }
     }
 
@@ -68,17 +72,41 @@ class CurrentUserProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadUserTags() async throws {
+    func loadLanguageTags() async throws {
         do {
-            let fetchedTags = try await UserService.fetchUserTags(withUid: user.id)
-            self.selectedTags = fetchedTags.tags
+            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
+            self.selectedLanguageTags = fetchedLanguageTags.tags
         } catch {
             print("Failed to fetch tags: \(error)")
         }
     }
 
-    func updateUserTags() async throws {
-        try await UserService.saveUserTags(userId: user.id, selectedTags: selectedTags)
+    func updateLanguageTags() async throws {
+        try await UserService.saveLanguageTags(userId: user.id, selectedTags: selectedLanguageTags)
+    }
+
+    @MainActor
+    func loadFrameworkTags() async throws {
+        do {
+            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
+            self.selectedFrameworkTags = fetchedFrameworkTags.tags
+        } catch {
+            print("Failed to fetch tags: \(error)")
+        }
+    }
+
+    func updateFrameworkTags() async throws {
+        try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
+    }
+
+    @MainActor
+    func loadAbstractLinks() async {
+        do {
+            let fetchedAbstractUrls = try await UserService.fetchAbstractLinks(withUid: user.id)
+            self.abstractUrls = fetchedAbstractUrls
+        } catch {
+            print("Failed to fetch abstract links: \(error)")
+        }
     }
 
     @MainActor

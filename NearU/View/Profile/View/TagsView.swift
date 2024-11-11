@@ -7,39 +7,78 @@
 
 import SwiftUI
 
+// タグとアイコン画像の名前の対応関係を定義
+private let iconMapping: [String: String] = [
+    // 言語
+    "JavaScript": "JavaScript",
+    "Python": "Python",
+    "Java": "Java",
+    "Ruby": "Ruby",
+    "Swift": "Swift",
+    "PHP": "PHP",
+    "TypeScript": "TypeScript",
+    "Go": "Go",
+    "C": "C",
+    "C++": "C-plus",
+    "Kotlin": "Kotlin",
+    "C#": "C-sharp",
+    "HTML": "HTML",
+    "CSS": "CSS",
+    "Rust": "Rust",
+    "Dart": "Dart",
+    "Elixir": "Elixir",
+    // フレームワーク
+    "React": "React",
+    "Next.js": "Next-js",
+    "Vue": "Vue",
+    "Nuxt.js": "Nuxt-js",
+    "Angular": "Angular",
+    "Node.js": "Node-js",
+    "Django": "Django",
+    "Flask": "Flask",
+    "Laravel": "Laravel",
+    "CakePHP": "CakePHP",
+    "Flutter": "Flutter",
+    "Rails": "Rails",
+    "Remix": "Remix",
+    "Tailwind CSS": "Tailwind-CSS",
+    "Spring": "Spring"
+]
+
+
 struct TagsView: View {
     var tags: [String]
-    //let userId: String
-
+    
     var body: some View {
         VStack {
-            if tags.isEmpty {
-                Text("No tags")
-                    .foregroundColor(.gray)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 7) {
-                        ForEach(tags, id: \.self) { tag in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 7) {
+                    ForEach(tags, id: \.self) { tag in
+                        HStack(spacing: 4) {
+                            // アイコンを表示
+                            if let iconName = iconMapping[tag] {
+                                Image(iconName)
+                                    .resizable()
+                                    .frame(width: 18, height: 18)
+                            }
                             Text(tag)
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 12)
-                                .background(Color(.systemGroupedBackground))
-                                .cornerRadius(15)
+                                .font(.system(size: 10, weight: .semibold, design: .default))
+                                .foregroundColor(.black)
                         }
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 30)
+                                .foregroundStyle(.ultraThinMaterial)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
+                        )
                     }
-                    .padding(5)
                 }
-                .frame(height: 50) // タグが収まる高さに設定
             }
         }
-//        .onAppear {
-//            Task {
-//                do {
-//                    self.tags = try await UserService.fetchUserTags(withUid: userId)
-//                } catch {
-//                    print("Failed to fetch tags: \(error)")
-//                }
-//            }
-//        }
     }
 }
+
