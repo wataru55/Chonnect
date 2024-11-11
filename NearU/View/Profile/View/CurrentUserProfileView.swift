@@ -55,26 +55,34 @@ struct CurrentUserProfileView: View {
                                 .padding(.leading)
                             }
                             .overlay(alignment: .topTrailing){
-                                Button(action: {
+                                Button {
                                     showEditProfile.toggle()
-                                }, label: {
-                                    Text("Edit Profile")
-                                        .font(.system(size: 10, weight: .semibold, design: .default))
-                                        .foregroundColor(.black)
-                                        .padding()
-                                        .frame(width: 100, height: 32)
+                                } label: {
+//                                    Text("Edit Profile")
+//                                        .font(.system(size: 10, weight: .semibold, design: .default))
+//                                        .foregroundColor(.black)
+//                                        .padding()
+//                                        .frame(width: 100, height: 32)
+//                                        .background(
+//                                            RoundedRectangle(cornerRadius: 30)
+//                                                .foregroundStyle(.ultraThinMaterial)
+//                                                .shadow(color: .init(white: 0.4, opacity: 0.4), radius: 5, x: 0, y: 0)
+//                                        )
+//                                        .overlay(
+//                                            RoundedRectangle(cornerRadius: 30)
+//                                                .stroke(Color.black.opacity(0.5))
+//                                        )
+                                    Image(systemName: "pencil")
+                                        .font(.title3)
+                                        .foregroundColor(.white)
+                                        .padding(10)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 30)
-                                                .foregroundStyle(.ultraThinMaterial)
-                                                .shadow(color: .init(white: 0.4, opacity: 0.4), radius: 5, x: 0, y: 0)
+                                            Color.black.opacity(0.6)
+                                                .clipShape(Circle())
                                         )
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 30)
-                                                .stroke(Color.black.opacity(0.5))
-                                        )
-                                })
-                                .padding(.top, 50)
-                                .padding(.trailing)
+                                }
+                                .padding(.top, 60)
+                                .padding(.trailing, 20)
                             }
                         }//HStack
                         .padding(.bottom, 20)
