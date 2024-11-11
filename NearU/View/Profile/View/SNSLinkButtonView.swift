@@ -21,10 +21,7 @@ struct SNSLinkButtonView: View {
                     }
                 } label: {
                     VStack {
-                        Image(selectedSNS)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40, height: 40)
+                        customImageBuilder(name: selectedSNS)
                     }
                     .frame(width: 80, height: 80)
                     .font(.system(size: 25, weight: .semibold, design: .rounded))
@@ -67,6 +64,22 @@ struct SNSLinkButtonView: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    func customImageBuilder(name: String) -> some View {
+        if name == "link" {
+            Image(systemName: "link")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
+                .foregroundStyle(.black)
+        } else {
+            Image(selectedSNS)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
         }
     }
 }
