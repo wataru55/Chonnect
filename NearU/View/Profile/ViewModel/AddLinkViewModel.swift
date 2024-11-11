@@ -60,6 +60,14 @@ class AddLinkViewModel: ObservableObject {
         }
     }
 
+    func deleteSNSLink(serviceName: String, url: String) async throws {
+        do {
+            try await UserService.deleteSNSLink(serviceName: serviceName, url: url)
+        } catch {
+            print("Error deleteSNSLink: \(error)")
+        }
+    }
+
     @MainActor
     func loadSNSLinks() async {
         do {

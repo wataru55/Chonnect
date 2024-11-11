@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SNSLinkButtonView: View {
+    @EnvironmentObject var viewModel: AddLinkViewModel
     @State private var isShowAlert: Bool = false
     let selectedSNS: String
     let sns_url: String
@@ -54,6 +55,8 @@ struct SNSLinkButtonView: View {
                     .alert("確認", isPresented: $isShowAlert) {
                         Button("削除", role: .destructive) {
                             Task {
+                                try await viewModel.deleteSNSLink(serviceName: selectedSNS, url: sns_url)
+                                await viewModel.loadSNSLinks()
                                 await MainActor.run {
                                     isShowAlert.toggle()
                                 }
@@ -73,5 +76,6 @@ struct SNSLinkButtonView: View {
                       sns_url: "https://www.instagram.com/wataw.ataaa?igsh=MXEwNjhha2dwbHM2dQ%3D%3D&utm_source=qr",
                       isDisabled: true,
                       isShowDeleteButton: true)
+    .environmentObject(AddLinkViewModel())
 }
 

@@ -42,12 +42,22 @@ struct UserService {
         return connectedUsers
     }
 
-    static func saveSNSLink(serviceName: String, url: String) async throws{
+    static func saveSNSLink(serviceName: String, url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
 
         let data = ["snsLinks.\(serviceName)": url]
         do {
             try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+        } catch {
+            throw error
+        }
+    }
+
+    static func deleteSNSLink(serviceName: String, url: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(["snsLinks.\(serviceName)": FieldValue.delete()])
         } catch {
             throw error
         }
