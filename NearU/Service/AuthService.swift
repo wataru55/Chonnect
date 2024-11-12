@@ -61,7 +61,7 @@ class AuthService {
             } while !isUnique // 一意になるまで繰り返す
 
             // 一意なuserIdが確定したら、Firestoreにユーザーデータを保存
-            await uploadUserData(id: documentId, uid: result.user.uid, username: username, email: email, isPrivate: false)
+            await uploadUserData(id: documentId, uid: result.user.uid, username: username, email: email, isPrivate: true)
 
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
