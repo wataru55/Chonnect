@@ -63,7 +63,7 @@ struct EditAbstractView: View {
                                         .padding()
                                 } else {
                                     ForEach(viewModel.openGraphData) { openGraphData in
-                                        SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true, isOpenURL: true)
+                                        SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true)
                                             .environmentObject(viewModel)
                                     }
                                 }

@@ -13,7 +13,6 @@ struct SiteLinkButtonView: View {
     @State private var isShowAlert: Bool = false
     let ogpData: OpenGraphData
     var showDeleteButton: Bool
-    var isOpenURL: Bool = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -59,7 +58,6 @@ struct SiteLinkButtonView: View {
                 } //vstack
             } //button
             .buttonStyle(PlainButtonStyle())
-            .disabled(!isOpenURL)
 
             if showDeleteButton {
                 Button {
