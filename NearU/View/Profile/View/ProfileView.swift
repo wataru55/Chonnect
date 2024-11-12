@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @Environment(\.dismiss) var dismiss
 
     let date: Date
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
@@ -111,6 +112,15 @@ struct ProfileView: View {
             }
         } //zstack
         .ignoresSafeArea()
+        .navigationBarBackButtonHidden()
+        .overlay(alignment: .topLeading) {
+            Image(systemName: "chevron.backward")
+                .font(.title3)
+                .padding(20)
+                .onTapGesture {
+                    dismiss()
+                }
+        }
     }//body
 }//view
 

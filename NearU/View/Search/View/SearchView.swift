@@ -21,7 +21,7 @@ struct SearchView: View {
                     TopTabView(currentUser: currentUser)
 
                 }//vstack
-                .navigationTitle("Explore")
+                .navigationTitle("発見")
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
