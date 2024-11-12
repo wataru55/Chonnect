@@ -20,6 +20,10 @@ struct MainTabView: View {
 
     init(user: User) {
         self.user = user
+        let appearance: UITabBarAppearance = UITabBarAppearance()
+        appearance.backgroundColor = UIColor(Color(red: 0.96, green: 0.97, blue: 0.98))
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().standardAppearance = appearance
     }
 
     var body: some View {
