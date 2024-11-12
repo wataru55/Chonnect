@@ -22,11 +22,15 @@ class CurrentUserProfileViewModel: ObservableObject {
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
 
+    @Published var abstractUrls: [String] = []
+
     @Published var username = ""
     @Published var fullname = ""
     @Published var bio = ""
 
+    private var uiProfileImage: UIImage?
     private var uiBackgroundImage: UIImage?
+
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -96,10 +100,25 @@ class CurrentUserProfileViewModel: ObservableObject {
     }
 
     @MainActor
+    func loadAbstractLinks() async {
+        do {
+            let fetchedAbstractUrls = try await UserService.fetchAbstractLinks(withUid: user.id)
+            self.abstractUrls = fetchedAbstractUrls
+        } catch {
+            print("Failed to fetch abstract links: \(error)")
+        }
+    }
+
+    @MainActor
     //Firebase Databaseのユーザ情報を変更する関数
     func updateUserData() async throws {
         //update profile image if changed
         var data = [String: Any]() //keyがString型，valueがAnyの辞書を定義
+
+        if let uiImage = uiProfileImage {
+            let imageUrl = try await ImageUploader.uploadImage(image: uiImage) //String型の画像のダウンロードURLが返される．
+            data["profileImageUrl"] = imageUrl //辞書に格納
+        }
 
         if let uiImage = uiBackgroundImage {
             let imageUrl = try await ImageUploader.uploadImage(image: uiImage) //String型の画像のダウンロードURLが返される．
