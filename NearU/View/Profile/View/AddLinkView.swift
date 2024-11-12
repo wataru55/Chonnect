@@ -71,7 +71,7 @@ struct AddLinkView: View {
                                    } else {
                                        ForEach(Array(viewModel.snsUrls.keys), id: \.self) { key in
                                            if let url = viewModel.snsUrls[key] {
-                                               SNSLinkButtonView(selectedSNS: key, sns_url: url, isDisabled: true, isShowDeleteButton: true)
+                                               SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: true)
                                                    .environmentObject(viewModel)
                                            }
                                        }

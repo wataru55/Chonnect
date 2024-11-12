@@ -5,7 +5,6 @@ struct SNSLinkButtonView: View {
     @State private var isShowAlert: Bool = false
     let selectedSNS: String
     let sns_url: String
-    let isDisabled: Bool
     let isShowDeleteButton: Bool
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
     let grayColor = Color.init(white: 0.8, opacity: 1)
@@ -37,7 +36,6 @@ struct SNSLinkButtonView: View {
                             .stroke(.gray, lineWidth: 0)
                     )
                 }
-                .disabled(isDisabled)
                 .padding(.vertical, 15)
                 .padding(.horizontal, 8)
 
@@ -87,7 +85,6 @@ struct SNSLinkButtonView: View {
 #Preview {
     SNSLinkButtonView(selectedSNS: "Instagram",
                       sns_url: "https://www.instagram.com/wataw.ataaa?igsh=MXEwNjhha2dwbHM2dQ%3D%3D&utm_source=qr",
-                      isDisabled: true,
                       isShowDeleteButton: true)
     .environmentObject(AddLinkViewModel())
 }

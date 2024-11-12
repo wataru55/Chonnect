@@ -16,7 +16,7 @@ struct CurrentUserProfileView: View {
     @State private var showEditAbstract = false
     @State private var showEditProfile = false
 
-    var backgroundColor: Color = Color(red: 0.92, green: 0.93, blue: 0.94) // デフォルトの背景色
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
     let grayColor = Color.init(white: 0.8, opacity: 1)
 
@@ -24,27 +24,30 @@ struct CurrentUserProfileView: View {
 
     var body: some View {
         ZStack{
-            Color(red: 0.96, green: 0.97, blue: 0.98)
-                .ignoresSafeArea()
+            backgroundColor.ignoresSafeArea()
 
             VStack{
                 ScrollView(.vertical, showsIndicators: false){
+                    //MARK: - HEADER
                     VStack{
-                        //image and stats
                         BackgroundImageView(user: user, height: 500, isGradient: true)
                             .overlay(alignment: .bottomLeading) {
                                 VStack(alignment: .leading){
                                     TagsView(tags: viewModel.selectedLanguageTags)
+
                                     TagsView(tags: viewModel.selectedFrameworkTags)
+
                                     Text(user.username)
                                         .font(.system(size: 25, weight: .bold, design: .default))
                                         .padding(.bottom, 1)
                                         .padding(.top, 5)
+
                                     if let fullname = user.fullname{
                                         Text(fullname)
                                             .font(.system(size: 13, weight: .regular, design: .default))
                                             .padding(.bottom, 5)
                                     }
+
                                     if let bio = user.bio {
                                         Text(bio)
                                             .font(.callout)
@@ -67,12 +70,13 @@ struct CurrentUserProfileView: View {
                                                 .clipShape(Circle())
                                         )
                                 }
-                                .padding(.top, 60)
+                                .padding(.top, 50)
                                 .padding(.trailing, 20)
                             }
                     }//vstack
                     .padding(.bottom, 10)
 
+                    //MARK: - SNSLINKS
                     HStack {
                         Text("SNS")
                             .font(.footnote)
@@ -105,7 +109,7 @@ struct CurrentUserProfileView: View {
                             } else {
                                 ForEach(Array(addLinkViewModel.snsUrls.keys), id: \.self) { key in
                                     if let url = addLinkViewModel.snsUrls[key] {
-                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isDisabled: false, isShowDeleteButton: false)
+                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
                                     }
                                 }
 
@@ -130,6 +134,7 @@ struct CurrentUserProfileView: View {
                     .padding(.leading)
                     .padding(.bottom, 10)
 
+                    //MARK: - ARTICLES
                     HStack {
                         Text("記事")
                             .font(.footnote)
@@ -161,7 +166,7 @@ struct CurrentUserProfileView: View {
 
                         } else {
                             ForEach(articleLinksViewModel.openGraphData) { openGraphData in
-                                SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false, isOpenURL: true)
+                                SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
                                     .environmentObject(articleLinksViewModel)
                             }
 
@@ -185,9 +190,9 @@ struct CurrentUserProfileView: View {
                         }
                     }
 
-                    Spacer()
+                    //Spacer()
 
-                }//VStack
+                }//scrollview
                 .padding(.bottom, 100)
                 .fullScreenCover(isPresented: $showEditProfile) {
                     EditProfileView(user: viewModel.user)
@@ -201,8 +206,8 @@ struct CurrentUserProfileView: View {
                     EditAbstractView()
                         .environmentObject(articleLinksViewModel)
                 }
-            }//scrollView
-            .ignoresSafeArea(.all)
+            }//vstack
         }// zstack
+        .ignoresSafeArea()
     }// body
 }// view
