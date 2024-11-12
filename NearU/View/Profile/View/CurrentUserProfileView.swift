@@ -170,30 +170,24 @@ struct CurrentUserProfileView: View {
                                     .environmentObject(articleLinksViewModel)
                             }
 
-                            VStack{
-                                Button(action: {
-                                    showEditAbstract.toggle()
-                                }, label: {
-                                    Text("edit abstract")
-                                        .font(.footnote)
-                                        .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
-                                        .padding(10)
-                                        .background(Color(red: 0.96, green: 0.97, blue: 0.98))
-                                        .clipShape(Capsule())
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
+                            Button {
+                                showEditAbstract.toggle()
+                            } label: {
+                                Text("edit abstract")
+                                    .font(.footnote)
+                                    .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
+                                    .padding(10)
+                                    .background(Color(red: 0.96, green: 0.97, blue: 0.98))
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
                                         )
-                                })
                             }
-                            .padding(.bottom)
+                            .frame(height: 100, alignment: .top)
                         }
                     }
-
-                    //Spacer()
-
                 }//scrollview
-                .padding(.bottom, 100)
                 .fullScreenCover(isPresented: $showEditProfile) {
                     EditProfileView(user: viewModel.user)
                         .environmentObject(viewModel)
