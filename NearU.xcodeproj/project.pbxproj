@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */; };
 		3207D11D2CDD232F00A6E637 /* EditAbstractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */; };
+		32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */; };
 		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
 		630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA32CC344E9002F06AB /* TagsView.swift */; };
 		630B9EA62CC345B4002F06AB /* EditLanguageTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */; };
@@ -108,8 +108,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleLinksViewModel.swift; sourceTree = "<group>"; };
 		3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAbstractView.swift; sourceTree = "<group>"; };
+		32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleLinksViewModel.swift; sourceTree = "<group>"; };
 		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
 		630B9EA32CC344E9002F06AB /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
 		630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditLanguageTagsView.swift; sourceTree = "<group>"; };
