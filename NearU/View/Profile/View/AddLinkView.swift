@@ -25,7 +25,7 @@ struct AddLinkView: View {
                         .padding(.leading, 5)
                         .padding(.vertical, 10)
 
-                    ScrollView {
+                    ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 3) {
                             ForEach(snsUrls.indices, id: \.self) { index in
                                 TextField("URLを入力", text: $snsUrls[index])
@@ -38,9 +38,9 @@ struct AddLinkView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
 
-                            Button(action: {
+                            Button {
                                 snsUrls.append("")
-                            }) {
+                            } label: {
                                 HStack {
                                     Image(systemName: "plus.circle")
                                         .offset(y: 3)

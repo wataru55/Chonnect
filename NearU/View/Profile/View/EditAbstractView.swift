@@ -37,7 +37,7 @@ struct EditAbstractView: View {
                                 HStack {
                                     Image(systemName: "plus.circle")
                                         .offset(y: 3)
-                                    Text("URLを追加")
+                                    Text("入力欄を追加")
                                         .padding(.top, 5)
                                         .font(.system(size: 15, weight: .bold))
                                 }
