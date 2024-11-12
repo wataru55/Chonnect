@@ -28,8 +28,8 @@ struct CurrentUserProfileView: View {
 
             VStack{
                 ScrollView(.vertical, showsIndicators: false){
+                    //MARK: - HEADER
                     VStack{
-                        //image and stats
                         BackgroundImageView(user: user, height: 500, isGradient: true)
                             .overlay(alignment: .bottomLeading) {
                                 VStack(alignment: .leading){
@@ -70,12 +70,13 @@ struct CurrentUserProfileView: View {
                                                 .clipShape(Circle())
                                         )
                                 }
-                                .padding(.top, 60)
+                                .padding(.top, 50)
                                 .padding(.trailing, 20)
                             }
                     }//vstack
                     .padding(.bottom, 10)
 
+                    //MARK: - SNSLINKS
                     HStack {
                         Text("SNS")
                             .font(.footnote)
@@ -133,6 +134,7 @@ struct CurrentUserProfileView: View {
                     .padding(.leading)
                     .padding(.bottom, 10)
 
+                    //MARK: - ARTICLES
                     HStack {
                         Text("記事")
                             .font(.footnote)
@@ -188,9 +190,9 @@ struct CurrentUserProfileView: View {
                         }
                     }
 
-                    Spacer()
+                    //Spacer()
 
-                }//VStack
+                }//scrollview
                 .padding(.bottom, 100)
                 .fullScreenCover(isPresented: $showEditProfile) {
                     EditProfileView(user: viewModel.user)
@@ -204,8 +206,8 @@ struct CurrentUserProfileView: View {
                     EditAbstractView()
                         .environmentObject(articleLinksViewModel)
                 }
-            }//scrollView
-            .ignoresSafeArea(.all)
+            }//vstack
         }// zstack
+        .ignoresSafeArea()
     }// body
 }// view
