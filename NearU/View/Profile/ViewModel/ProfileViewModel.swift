@@ -7,15 +7,23 @@
 
 import Foundation
 import Firebase
+import OpenGraph
 
 class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
-    @Published var abstractLinks: [String: String] = [:]
+    @Published var selectedLanguageTags: [String] = []
+    @Published var selectedFrameworkTags: [String] = []
+    @Published var openGraphData: [OpenGraphData] = []
 
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
+        Task {
+            try await loadLanguageTags()
+            try await loadFrameworkTags()
+            await fetchArticleLinks()
+        }
     }
 
     @MainActor
@@ -34,33 +42,64 @@ class ProfileViewModel: ObservableObject {
             print("Error loading user data: \(error.localizedDescription)")
         }
     }
-    
-    func fetchAbstractLinks() {
-            Firestore.firestore()
-                .collection("users")
-                .document(user.id)
-                .collection("abstract")
-                .getDocuments { [weak self] (snapshot, error) in
-                    if let error = error {
-                        print("Error fetching abstract links: \(error)")
-                        return
-                    }
-                    
-                    guard let documents = snapshot?.documents else { return }
-                    
-                    // フェッチしたデータを辞書に保存
-                    var fetchedLinks: [String: String] = [:]
-                    
-                    for document in documents {
-                        if let title = document.data()["abstract_title"] as? String,
-                           let url = document.data()["abstract_url"] as? String {
-                            fetchedLinks[title] = url
-                        }
-                    }
-                    print("Fetched abstract links:", fetchedLinks)
-                    DispatchQueue.main.async {
-                        self?.abstractLinks = fetchedLinks
-                    }
-                }
+
+    @MainActor
+    func loadLanguageTags() async throws {
+        do {
+            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
+            self.selectedLanguageTags = fetchedLanguageTags.tags
+        } catch {
+            print("Failed to fetch tags: \(error)")
         }
+    }
+
+    @MainActor
+    func loadFrameworkTags() async throws {
+        do {
+            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
+            self.selectedFrameworkTags = fetchedFrameworkTags.tags
+        } catch {
+            print("Failed to fetch tags: \(error)")
+        }
+    }
+
+    @MainActor
+    func fetchArticleLinks() async {
+        do {
+            let urls = try await UserService.fetchAbstractLinks(withUid: user.id)
+            await getOpenGraphData(urls: urls)
+        } catch {
+            print("Error fetching article links: \(error)")
+        }
+    }
+
+    @MainActor
+    private func getOpenGraphData(urls: [String]) async {
+        self.openGraphData = []
+
+        for urlString in urls {
+            guard let url = URL(string: urlString) else {
+                let data = OpenGraphData(url: urlString, openGraph: nil)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
+                continue
+            }
+
+            do {
+                let og = try await OpenGraph.fetch(url: url)
+                let data = OpenGraphData(url: urlString, openGraph: og)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
+            } catch {
+                let data = OpenGraphData(url: urlString, openGraph: nil)
+                await MainActor.run {
+                    openGraphData.append(data)
+                }
+            }
+        }
+    }
+
+
 }

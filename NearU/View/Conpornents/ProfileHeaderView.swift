@@ -26,7 +26,7 @@ struct ProfileHeaderView: View {
                                     LinearGradient(
                                         gradient: Gradient(stops: [
                                             .init(color: Color.white.opacity(0), location: 0.5),
-                                            .init(color: Color(red: 0.92, green: 0.93, blue: 0.94).opacity(1), location: 1)
+                                            .init(color: Color(red: 0.96, green: 0.97, blue: 0.98).opacity(1), location: 1)
                                         ]),
                                         startPoint: .top,
                                         endPoint: .bottom
@@ -52,11 +52,16 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
+                    TagsView(tags: viewModel.selectedLanguageTags)
+
+                    TagsView(tags: viewModel.selectedFrameworkTags)
+
                     if let fullname = viewModel.user.fullname {
                         Text(fullname)
                             .font(.system(size: 25, weight: .bold, design: .default))
                             .padding(.bottom, 5)
                     }
+
                     if let bio = viewModel.user.bio {
                         Text(bio)
                             .font(.footnote)
@@ -67,7 +72,7 @@ struct ProfileHeaderView: View {
                 .padding(.leading)
             }
             .padding(.bottom)
-            
+
             //action button
             if viewModel.currentUser.connectList.contains(viewModel.user.id) == true {
                 Button(action: {
