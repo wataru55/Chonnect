@@ -12,13 +12,16 @@ struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
     @StateObject var addLinkViewModel = AddLinkViewModel()
+    @StateObject var followViewModel = FollowViewModel()
+    @StateObject var followerViewModel = FollowerViewModel()
+
     @State private var isAddingNewLink = false
     @State private var showEditAbstract = false
     @State private var showEditProfile = false
+    @State private var isShowFollowView = false
+    @State private var isShowFollowerView = false
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
-
-    let grayColor = Color.init(white: 0.8, opacity: 1)
 
     let user: User
 
@@ -37,16 +40,29 @@ struct CurrentUserProfileView: View {
 
                                     TagsView(tags: viewModel.selectedFrameworkTags)
 
-                                    Text(user.username)
-                                        .font(.system(size: 25, weight: .bold, design: .default))
-                                        .padding(.bottom, 1)
-                                        .padding(.top, 5)
+                                    HStack(spacing: 4) {
+                                        Text(user.username)
+                                            .font(.system(size: 35, weight: .bold, design: .default))
+                                            .padding(.bottom, 1)
+                                            .padding(.top, 5)
 
-                                    if let fullname = user.fullname{
-                                        Text(fullname)
-                                            .font(.system(size: 13, weight: .regular, design: .default))
-                                            .padding(.bottom, 5)
+                                        Image(systemName: user.isPrivate ? "lock.fill" : "lock.open.fill")
+                                            .font(.subheadline)
+                                            .offset(y: 7)
                                     }
+
+                                    HStack {
+                                        CountView(count: followViewModel.userDatePairs.count, text: "フォロー")
+                                            .onTapGesture {
+                                                isShowFollowView.toggle()
+                                            }
+
+                                        CountView(count: followerViewModel.followers.count, text: "フォロワー")
+                                            .onTapGesture {
+                                                isShowFollowerView.toggle()
+                                            }
+                                    }
+                                    .padding(.bottom, 5)
 
                                     if let bio = user.bio {
                                         Text(bio)
@@ -184,7 +200,7 @@ struct CurrentUserProfileView: View {
                                             .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
                                         )
                             }
-                            .frame(height: 100, alignment: .top)
+                            .frame(height: 150, alignment: .top)
                         }
                     }
                 }//scrollview
@@ -200,6 +216,17 @@ struct CurrentUserProfileView: View {
                     EditAbstractView()
                         .environmentObject(articleLinksViewModel)
                 }
+                .fullScreenCover(isPresented: $isShowFollowView) {
+                    FollowFollowerView(selectedTab: 0, currentUser: user)
+                        .environmentObject(followViewModel)
+                        .environmentObject(followerViewModel)
+                }
+                .fullScreenCover(isPresented: $isShowFollowerView) {
+                    FollowFollowerView(selectedTab: 1, currentUser: user)
+                        .environmentObject(followViewModel)
+                        .environmentObject(followerViewModel)
+                }
+
             }//vstack
         }// zstack
         .ignoresSafeArea()
