@@ -113,13 +113,15 @@ struct ProfileView: View {
         } //zstack
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
-        .overlay(alignment: .topLeading) {
-            Image(systemName: "chevron.backward")
-                .font(.title3)
-                .padding(20)
-                .onTapGesture {
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
                     dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(.black)
                 }
+            }
         }
     }//body
 }//view
