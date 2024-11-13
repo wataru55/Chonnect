@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct ConnectedSearchView: View {
+struct FollowView: View {
     //MARK: - property
     let currentUser: User
-    @StateObject var viewModel: ConnectedSearchViewModel
+    @StateObject var viewModel: FollowViewModel
 
     init(currentUser: User) {
         self.currentUser = currentUser
-        self._viewModel = StateObject(wrappedValue: ConnectedSearchViewModel(currentUser: currentUser))
+        self._viewModel = StateObject(wrappedValue: FollowViewModel(currentUser: currentUser))
     }
 
     var body: some View {
@@ -67,5 +67,5 @@ struct ConnectedSearchView: View {
 }
 
 #Preview {
-    ConnectedSearchView(currentUser: User.MOCK_USERS[0])
+    FollowView(currentUser: User.MOCK_USERS[0])
 }

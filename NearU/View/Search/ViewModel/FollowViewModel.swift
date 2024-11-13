@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import Firebase
 
-class ConnectedSearchViewModel: ObservableObject {
+class FollowViewModel: ObservableObject {
     //MARK: - property
     let currentUser: User
     @Published var userDatePairs = [UserDatePair]()
