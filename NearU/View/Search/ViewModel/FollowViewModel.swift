@@ -23,11 +23,10 @@ class FollowViewModel: ObservableObject {
 
     func fetchFollowedUsers() async {
         do {
-            let users = try await UserService.fetchfollowedUsers()
+            let users = try await UserService.fetchFollowedUsers()
             //メインスレッドで実行する必要がある
             await MainActor.run {
                 self.userDatePairs = users
-                print(userDatePairs)
             }
         } catch {
             print("Error fetching connected users: \(error)")

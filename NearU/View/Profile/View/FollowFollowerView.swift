@@ -9,9 +9,12 @@ import SwiftUI
 
 struct FollowFollowerView: View {
     @EnvironmentObject var followViewModel: FollowViewModel
+    @EnvironmentObject var followerViewModel: FollowerViewModel
     @State private var searchText: String = ""
     @State var selectedTab: Int
     @Environment(\.dismiss) var dismiss
+
+    let currentUser: User
 
     var body: some View {
         NavigationStack {
@@ -26,12 +29,19 @@ struct FollowFollowerView: View {
                 .padding()
 
                 if selectedTab == 0 {
-                    FollowView().tag(0)
+                    FollowView(currentUser: currentUser).tag(0)
                         .environmentObject(followViewModel)
                 } else {
-                    FollowerView().tag(1)
+                    FollowerView(currentUser: currentUser).tag(1)
+                        .environmentObject(followerViewModel)
                 }
             }
+            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
+                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date)
+            })
+            .navigationDestination(for: UserDatePair.self, destination: { pair in
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+            })
             .ignoresSafeArea(edges:.bottom)
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("ユーザー名")
@@ -48,5 +58,5 @@ struct FollowFollowerView: View {
 }
 
 #Preview {
-    FollowFollowerView(selectedTab: 0)
+    FollowFollowerView(selectedTab: 0, currentUser: User.MOCK_USERS[0])
 }

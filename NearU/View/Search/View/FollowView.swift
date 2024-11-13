@@ -9,7 +9,8 @@ import SwiftUI
 
 struct FollowView: View {
     @EnvironmentObject var viewModel: FollowViewModel
-    @Environment(\.dismiss) var dismiss
+
+    var currentUser: User
 
     var body: some View {
             ScrollView(.vertical, showsIndicators: false) {
@@ -52,16 +53,10 @@ struct FollowView: View {
             .refreshable {
                 print("refresh")
             }
-            .navigationDestination(for: UserDatePair.self, destination: { pair in
-                if let currentUser = AuthService.shared.currentUser {
-                    ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
-                }
-            })
-            .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    FollowView()
+    FollowView(currentUser: User.MOCK_USERS[0])
         .environmentObject(FollowViewModel())
 }
