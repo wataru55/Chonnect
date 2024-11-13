@@ -10,15 +10,10 @@ import Combine
 import Firebase
 
 class FollowViewModel: ObservableObject {
-    //MARK: - property
-    let currentUser: User
     @Published var userDatePairs = [UserDatePair]()
-    @Published var connectedUsers = [User]() // User型の空の配列を作成
     private var listener: ListenerRegistration?
 
-    //MARK: - init
-    init(currentUser: User) {
-        self.currentUser = currentUser
+    init() {
         listenForUpdates()
 
         Task {
@@ -26,13 +21,13 @@ class FollowViewModel: ObservableObject {
         }
     }
 
-    //MARK: - func
     func fetchFollowedUsers() async {
         do {
-            let users = try await UserService.fetchfollowedUsers(documentId: currentUser.id)
+            let users = try await UserService.fetchfollowedUsers()
             //メインスレッドで実行する必要がある
             await MainActor.run {
                 self.userDatePairs = users
+                print(userDatePairs)
             }
         } catch {
             print("Error fetching connected users: \(error)")
@@ -40,7 +35,8 @@ class FollowViewModel: ObservableObject {
     }
 
     func listenForUpdates() {
-        listener = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        listener = Firestore.firestore().collection("users").document(documentId).collection("follows")
             .addSnapshotListener { [weak self] querySnapshot, error in
                 guard let self = self else { return }
                 if let error = error {

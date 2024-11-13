@@ -8,28 +8,21 @@
 import SwiftUI
 
 struct FollowView: View {
-    //MARK: - property
-    let currentUser: User
-    @StateObject var viewModel: FollowViewModel
-
-    init(currentUser: User) {
-        self.currentUser = currentUser
-        self._viewModel = StateObject(wrappedValue: FollowViewModel(currentUser: currentUser))
-    }
+    @EnvironmentObject var viewModel: FollowViewModel
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVStack (spacing: 16){
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 16) {
                     if viewModel.userDatePairs.isEmpty {
-                        Text("承認したユーザーがいません")
+                        Text("フォローしているユーザーがいません")
                             .font(.footnote)
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
                             .padding()
                     } else {
                         ForEach(viewModel.userDatePairs, id: \.self) { pair in
-                            NavigationLink(value: pair ) {
+                            NavigationLink(value: pair) {
                                 HStack {
                                     CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
                                     VStack (alignment: .leading){
@@ -60,12 +53,15 @@ struct FollowView: View {
                 print("refresh")
             }
             .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+                if let currentUser = AuthService.shared.currentUser {
+                    ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+                }
             })
-        }//navigationstack
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    FollowView(currentUser: User.MOCK_USERS[0])
+    FollowView()
+        .environmentObject(FollowViewModel())
 }
