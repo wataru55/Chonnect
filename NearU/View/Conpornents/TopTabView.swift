@@ -31,37 +31,6 @@ struct TopTabView: View {
     }
 }
 
-struct CustomTabBarButtonView: View {
-    @Binding var selected: Int
-    private var title: String
-    var tag: Int
-
-    init(selected: Binding<Int>, title: String, tag: Int) {
-        self._selected = selected
-        self.title = title
-        self.tag = tag
-    }
-
-    var body: some View {
-        Button {
-            selected = tag
-
-        } label: {
-            VStack(spacing: 0) {
-                Text(title)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.gray)
-                    .padding(10)
-                Rectangle()
-                    .frame(height: 2)
-                    .foregroundColor(Color(.systemMint))
-                    .opacity(selected != tag ? 0.0 : 1.0)
-            }
-        }
-    }
-}
-
 #Preview {
     TopTabView(currentUser: User.MOCK_USERS[0])
 }
