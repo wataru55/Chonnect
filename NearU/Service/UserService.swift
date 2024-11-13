@@ -28,18 +28,19 @@ struct UserService {
         return users
     }
 
-    static func fetchfollowedUsers(documentId: String) async throws -> [UserDatePair] {
+    static func fetchfollowedUsers() async throws -> [UserDatePair] {
+        guard let documentId = AuthService.shared.currentUser?.id else { return [] }
         let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
 
-        var connectedUsers: [UserDatePair] = []
+        var followedUsers: [UserDatePair] = []
 
         for document in snapshot.documents {
             let data = try document.data(as: EncountDataStruct.self)
-            let connectedUser = try await fetchUser(withUid: data.userId)
-            let userDatePair = UserDatePair(user: connectedUser, date: data.date)
-            connectedUsers.append(userDatePair)
+            let followedUser = try await fetchUser(withUid: data.userId)
+            let userDatePair = UserDatePair(user: followedUser, date: data.date)
+            followedUsers.append(userDatePair)
         }
-        return connectedUsers
+        return followedUsers
     }
 
     static func saveSNSLink(serviceName: String, url: String) async throws {
