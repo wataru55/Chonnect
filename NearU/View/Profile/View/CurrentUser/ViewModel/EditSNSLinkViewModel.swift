@@ -9,7 +9,7 @@ import PhotosUI
 import SwiftUI
 import Firebase
 
-class AddLinkViewModel: ObservableObject {
+class EditSNSLinkViewModel: ObservableObject {
     @Published var snsUrls: [String: String] = [:] // SNSリンクを保存
 
     init() {

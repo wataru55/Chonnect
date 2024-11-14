@@ -11,7 +11,7 @@ import Kingfisher
 struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
-    @StateObject var addLinkViewModel = AddLinkViewModel()
+    @StateObject var addLinkViewModel = EditSNSLinkViewModel()
     @StateObject var followViewModel = FollowViewModel()
     @StateObject var followerViewModel = FollowerViewModel()
 
@@ -208,11 +208,11 @@ struct CurrentUserProfileView: View {
                         .environmentObject(viewModel)
                 }
                 .fullScreenCover(isPresented: $isAddingNewLink) {
-                    AddLinkView()
+                    EditSNSLinkView()
                         .environmentObject(addLinkViewModel)
                 }
                 .fullScreenCover(isPresented: $showEditAbstract) {
-                    EditAbstractView()
+                    EditArticleView()
                         .environmentObject(articleLinksViewModel)
                 }
                 .fullScreenCover(isPresented: $isShowFollowView) {

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct AddLinkView: View {
-    @EnvironmentObject var viewModel: AddLinkViewModel
+struct EditSNSLinkView: View {
+    @EnvironmentObject var viewModel: EditSNSLinkViewModel
     @State private var snsUrls: [String] = [""]
     @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
@@ -134,6 +134,6 @@ struct AddLinkView: View {
 }
 
 #Preview {
-    AddLinkView()
-        .environmentObject(AddLinkViewModel())
+    EditSNSLinkView()
+        .environmentObject(EditSNSLinkViewModel())
 }
