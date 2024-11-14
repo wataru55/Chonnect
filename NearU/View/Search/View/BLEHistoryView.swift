@@ -26,7 +26,7 @@ struct BLEHistoryView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 if viewModel.sortedUserHistoryRecords.isEmpty {
-                    Text("すれ違ったユーザーがいません")
+                    Text("すれちがったユーザーはいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)

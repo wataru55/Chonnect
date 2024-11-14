@@ -165,7 +165,7 @@ struct CurrentUserProfileView: View {
                     }
                     .padding(.bottom, 10)
 
-                    VStack(alignment: .trailing, spacing: 20) {
+                    VStack(alignment: .center, spacing: 10) {
                         if articleLinksViewModel.openGraphData.isEmpty {
                             Button {
                                 showEditAbstract.toggle()
@@ -186,21 +186,20 @@ struct CurrentUserProfileView: View {
                                     .environmentObject(articleLinksViewModel)
                             }
 
-                            Button {
+                            Button(action: {
                                 showEditAbstract.toggle()
-                            } label: {
-                                Text("edit abstract")
-                                    .font(.footnote)
+                            }, label: {
+                                Image(systemName: "plus")
                                     .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
-                                    .padding(10)
+                                    .frame(width: 30, height: 30)
                                     .background(Color(red: 0.96, green: 0.97, blue: 0.98))
-                                    .clipShape(Capsule())
+                                    .clipShape(Circle())
                                     .overlay(
-                                        Capsule()
+                                        Circle()
                                             .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
-                                        )
-                            }
-                            .frame(height: 150, alignment: .top)
+                                    )
+                            })
+                            .frame(height: 130, alignment: .top)
                         }
                     }
                 }//scrollview
