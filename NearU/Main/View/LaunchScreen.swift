@@ -19,9 +19,9 @@ struct LaunchScreen: View {
         } else {
             VStack {
                 VStack {
-                    Image("MainLogo")
+                    Image("Chonnect")
                         .resizable()
-                        .frame(width: 200, height: 200)
+                        .frame(width: 300, height: 50)
                         .scaleEffect(size)
                         .opacity(opacity)
                         .onAppear {
@@ -39,12 +39,11 @@ struct LaunchScreen: View {
                         }
                     
                     // テキストアニメーション
-                    if isTextVisible {
-                        Text("Chonnect")
-                            .font(.system(size: 36, weight: .semibold, design: .rounded))
-                            .foregroundColor(.black.opacity(0.80))
-                            .transition(.opacity)
-                    }
+//                    if isTextVisible {
+//                        Image("Chonnect_text")
+//                            .resizable()
+//                            .frame(width: 400, height: 150)
+//                    }
                 }
             }
             .onAppear {
