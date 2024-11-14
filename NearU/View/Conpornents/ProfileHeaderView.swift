@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileHeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
     @State private var isShowAlert: Bool = false
+    @State private var isShowFollowView = false
+    @State private var isShowFollowerView = false
     let date: Date
 
     var body: some View {
@@ -56,11 +58,28 @@ struct ProfileHeaderView: View {
 
                     TagsView(tags: viewModel.selectedFrameworkTags)
 
-                    if let fullname = viewModel.user.fullname {
-                        Text(fullname)
-                            .font(.system(size: 25, weight: .bold, design: .default))
-                            .padding(.bottom, 5)
+                    HStack(spacing: 4) {
+                        Text(viewModel.user.username)
+                            .font(.system(size: 35, weight: .bold, design: .default))
+                            .padding(.bottom, 1)
+                            .padding(.top, 5)
+
+                        Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
+                            .font(.subheadline)
+                            .offset(y: 7)
                     }
+
+                    HStack {
+                        CountView(count: viewModel.follows.count, text: "フォロー")
+                            .onTapGesture {
+                                isShowFollowView.toggle()
+                            }
+                        CountView(count: viewModel.followers.count, text: "フォロワー")
+                            .onTapGesture {
+                                isShowFollowerView.toggle()
+                            }
+                    }
+                    .padding(.bottom, 5)
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
@@ -114,6 +133,12 @@ struct ProfileHeaderView: View {
                 } //hstack
             }
         }//vstack
+        .fullScreenCover(isPresented: $isShowFollowView) {
+            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
+        }
+        .fullScreenCover(isPresented: $isShowFollowerView) {
+            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
+        }
         .alert("確認", isPresented: $isShowAlert) {
             Button("戻る", role: .cancel) {
                 isShowAlert.toggle()
