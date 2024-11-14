@@ -158,7 +158,8 @@ struct UserService {
 
         let followerData: [String: Any] = [
             "userId": documentId,
-            "date": date
+            "date": date,
+            "isRead": false
         ]
 
         let followData: [String: Any] = [
@@ -205,7 +206,7 @@ struct UserService {
             let snapshot = try await notificationsRef.getDocuments()
 
             for document in snapshot.documents {
-                if let data = try? document.data(as: NotificationData.self) {
+                if let data = try? document.data(as: HistoryDataStruct.self) {
                     // Realmに保存
                     await RealmManager.shared.storeData(data.userId, date: data.date)
                 }
