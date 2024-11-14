@@ -346,6 +346,68 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		639A0BDE2CE5C5CB00A769C6 /* CurrentUser */ = {
+			isa = PBXGroup;
+			children = (
+				63DFF8942BF8B7F500A6DFB8 /* ViewModel */,
+				639A0BE32CE5C80B00A769C6 /* View */,
+			);
+			path = CurrentUser;
+			sourceTree = "<group>";
+		};
+		639A0BDF2CE5C5EC00A769C6 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				639A0BE22CE5C7E700A769C6 /* ViewModel */,
+				639A0BE12CE5C7CD00A769C6 /* View */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		639A0BE02CE5C68E00A769C6 /* Compornents */ = {
+			isa = PBXGroup;
+			children = (
+				63DFF8982BFC9A8300A6DFB8 /* CircleImageView.swift */,
+				637BA05A2C43934600368566 /* SNSLinkButtonView.swift */,
+				3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */,
+				630B9EA32CC344E9002F06AB /* TagsView.swift */,
+				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
+			);
+			path = Compornents;
+			sourceTree = "<group>";
+		};
+		639A0BE12CE5C7CD00A769C6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				63B650062B8DDE9300289469 /* ProfileView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		639A0BE22CE5C7E700A769C6 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				637BA05E2C44ADE400368566 /* ProfileViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		639A0BE32CE5C80B00A769C6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				63DFF89A2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift */,
+				63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */,
+				63173DF72C37D77600F1FE82 /* AddLinkView.swift */,
+				630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */,
+				F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */,
+				3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */,
+				639A0BD42CE446CC00A769C6 /* FollowFollowerView.swift */,
+				639A0BD82CE4A86F00A769C6 /* FollowerView.swift */,
+				63AEF0FA2C0C4C6500DE196E /* FollowView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		63B64FCB2B8C763900289469 = {
 			isa = PBXGroup;
 			children = (
@@ -421,7 +483,6 @@
 			isa = PBXGroup;
 			children = (
 				63DFF88B2BF8760B00A6DFB8 /* SearchView.swift */,
-				63AEF0FA2C0C4C6500DE196E /* FollowView.swift */,
 				63AEF0FC2C0C507300DE196E /* BLEHistoryView.swift */,
 				6344BE472CDBA9F8009F404E /* BLERealtimeView.swift */,
 			);
@@ -431,7 +492,6 @@
 		63DFF8922BF8B7E000A6DFB8 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				63DFF8942BF8B7F500A6DFB8 /* ViewModel */,
 				63DFF8932BF8B7EA00A6DFB8 /* View */,
 			);
 			path = Profile;
@@ -440,20 +500,9 @@
 		63DFF8932BF8B7EA00A6DFB8 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				63B650062B8DDE9300289469 /* ProfileView.swift */,
-				63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */,
-				3207D11C2CDD232F00A6E637 /* EditAbstractView.swift */,
-				63DFF8982BFC9A8300A6DFB8 /* CircleImageView.swift */,
-				63DFF89A2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift */,
-				63173DF72C37D77600F1FE82 /* AddLinkView.swift */,
-				637BA05A2C43934600368566 /* SNSLinkButtonView.swift */,
-				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
-				3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */,
-				630B9EA32CC344E9002F06AB /* TagsView.swift */,
-				630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */,
-				F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */,
-				639A0BD42CE446CC00A769C6 /* FollowFollowerView.swift */,
-				639A0BD82CE4A86F00A769C6 /* FollowerView.swift */,
+				639A0BDF2CE5C5EC00A769C6 /* User */,
+				639A0BDE2CE5C5CB00A769C6 /* CurrentUser */,
+				639A0BE02CE5C68E00A769C6 /* Compornents */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -464,7 +513,6 @@
 				32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */,
 				63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */,
 				637BA0582C4252D200368566 /* AddLinkViewModel.swift */,
-				637BA05E2C44ADE400368566 /* ProfileViewModel.swift */,
 				639A0BDA2CE4B01200A769C6 /* FollowerViewModel.swift */,
 			);
 			path = ViewModel;
