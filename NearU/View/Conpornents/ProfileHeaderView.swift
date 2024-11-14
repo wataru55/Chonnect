@@ -133,6 +133,12 @@ struct ProfileHeaderView: View {
                 } //hstack
             }
         }//vstack
+        .fullScreenCover(isPresented: $isShowFollowView) {
+            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
+        }
+        .fullScreenCover(isPresented: $isShowFollowerView) {
+            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
+        }
         .alert("確認", isPresented: $isShowAlert) {
             Button("戻る", role: .cancel) {
                 isShowAlert.toggle()
