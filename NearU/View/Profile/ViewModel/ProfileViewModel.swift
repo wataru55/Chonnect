@@ -15,6 +15,8 @@ class ProfileViewModel: ObservableObject {
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
+    @Published var follows: [UserDatePair] = []
+    @Published var followers: [UserHistoryRecord] = []
 
     init(user: User, currentUser: User) {
         self.user = user
@@ -22,6 +24,8 @@ class ProfileViewModel: ObservableObject {
         Task {
             try await loadLanguageTags()
             try await loadFrameworkTags()
+            try await loadFollowUsers()
+            try await loadFollowers()
             await fetchArticleLinks()
         }
     }
@@ -64,6 +68,27 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
+    func loadFollowUsers() async throws {
+        do {
+            let users = try await UserService.fetchFollowedUsers(receivedId: user.id)
+            self.follows = users
+        } catch {
+            print("Error fetching follow users: \(error)")
+        }
+    }
+
+    @MainActor
+    func loadFollowers() async throws {
+        do {
+            let users = try await UserService.fetchFollowers(receivedId: user.id)
+            self.followers = users
+
+        } catch {
+            print("Error fetching followers: \(error)")
+        }
+    }
+
+    @MainActor
     func fetchArticleLinks() async {
         do {
             let urls = try await UserService.fetchAbstractLinks(withUid: user.id)
@@ -100,6 +125,4 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
-
-
 }
