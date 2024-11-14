@@ -24,7 +24,13 @@ class AddLinkViewModel: ObservableObject {
         "X": ["twitter.com", "x.com"],
         "Instagram": ["instagram.com"],
         "YouTube": ["youtube.com", "youtu.be"],
-        "Facebook": ["facebook.com"]
+        "Facebook": ["facebook.com"],
+        "TikTok": ["tiktok.com"],
+        "Qiita": ["qiita.com"],
+        "Zenn": ["zenn.dev"],
+        "Wantedly": ["wantedly.com"],
+        "Linkedin": ["linkedin.com"],
+        "Threads": ["threads.net"]
     ]
 
     private func getServiceName(urlString: String) -> Result<String, Error> {
