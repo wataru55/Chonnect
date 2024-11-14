@@ -28,9 +28,11 @@ struct UserService {
         return users
     }
 
-    static func fetchFollowedUsers() async throws -> [UserDatePair] {
+    static func fetchFollowedUsers(receivedId: String) async throws -> [UserDatePair] {
         guard let documentId = AuthService.shared.currentUser?.id else { return [] }
-        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
+        let snapshot = try await Firestore.firestore().collection("users")
+            .document(receivedId.isEmpty ? documentId : receivedId)
+            .collection("follows").getDocuments()
 
         var followedUsers: [UserDatePair] = []
 
@@ -43,9 +45,11 @@ struct UserService {
         return followedUsers
     }
 
-    static func fetchFollowers() async throws -> [UserHistoryRecord] {
+    static func fetchFollowers(receivedId: String) async throws -> [UserHistoryRecord] {
         guard let documentId = AuthService.shared.currentUser?.id else { return [] }
-        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("followers").getDocuments()
+        let snapshot = try await Firestore.firestore().collection("users")
+            .document(receivedId.isEmpty ? documentId : receivedId)
+            .collection("followers").getDocuments()
 
         var followers: [UserHistoryRecord] = []
 
