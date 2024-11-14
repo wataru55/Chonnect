@@ -861,6 +861,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Chonnect;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "このアプリはBLE通信を使用します。";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "アイコンにフォルダ内の写真を使用します";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -901,6 +902,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NearU/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Chonnect;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "このアプリはBLE通信を使用します。";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "アイコンにフォルダ内の写真を使用します";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
