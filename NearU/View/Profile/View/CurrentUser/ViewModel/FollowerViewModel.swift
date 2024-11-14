@@ -23,7 +23,7 @@ class FollowerViewModel: ObservableObject {
 
     func loadFollowers() async {
         do {
-            let users = try await UserService.fetchFollowers()
+            let users = try await UserService.fetchFollowers(receivedId: "")
 
             await MainActor.run {
                 self.followers = users
