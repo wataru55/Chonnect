@@ -44,7 +44,7 @@ struct FollowFollowerView: View {
             })
             .ignoresSafeArea(edges:.bottom)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("ユーザー名")
+            .navigationTitle("\(currentUser.username)")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Image(systemName: "chevron.backward")
