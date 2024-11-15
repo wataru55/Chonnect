@@ -37,10 +37,10 @@ struct FollowFollowerView: View {
                 }
             }
             .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
-                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date)
+                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date, isShowFollowButton: true)
             })
             .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
             })
             .ignoresSafeArea(edges:.bottom)
             .navigationBarTitleDisplayMode(.inline)
