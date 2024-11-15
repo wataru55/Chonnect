@@ -47,10 +47,12 @@ struct FollowFollowerView: View {
             .navigationTitle("\(currentUser.username)")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.backward")
-                        .onTapGesture {
-                            dismiss()
-                        }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
+                    }
                 }
             }
         }

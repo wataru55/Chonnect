@@ -42,10 +42,12 @@ struct UserFollowFollowerView: View {
             .navigationTitle("\(viewModel.user.username)")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.backward")
-                        .onTapGesture {
-                            dismiss()
-                        }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
+                    }
                 }
             }
         }
