@@ -13,7 +13,7 @@ struct CompleteSignUpView: View {
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Welcome to Chonnect! \(viewModel.username)")
+            Text("Welcome to Chonnect! \n\(viewModel.username)")
                 .multilineTextAlignment(.center)
                 .font(.system(size: 30, weight: .bold))
                 .fontWeight(.bold)
