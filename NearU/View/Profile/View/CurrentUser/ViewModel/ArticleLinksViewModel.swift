@@ -1,5 +1,5 @@
 //
-//  AbstractLinksViewModel.swift
+//  ArticleLinksLinksViewModel.swift
 //  NearU
 //
 //  Created by 谷口右京 on 2024/10/16.
@@ -23,10 +23,10 @@ class ArticleLinksViewModel: ObservableObject {
         guard let userId = AuthService.shared.currentUser?.id else { return }
 
         do {
-            let snapshot = try await Firestore.firestore().collection("users").document(userId).collection("abstract").getDocuments()
+            let snapshot = try await Firestore.firestore().collection("users").document(userId).collection("article").getDocuments()
 
             // Firestoreから取得した記事URLを配列として返す
-            let urls = snapshot.documents.compactMap { $0.data()["abstract_url"] as? String }
+            let urls = snapshot.documents.compactMap { $0.data()["article_url"] as? String }
 
             await getOpenGraphData(urls: urls)
 
@@ -44,7 +44,7 @@ class ArticleLinksViewModel: ObservableObject {
                 do {
                     try await UserService.seveArticleLink(userId: userId, url: url)
                 } catch {
-                    print("Error adding URL to abstract collection: \(error)")
+                    print("Error adding URL to article collection: \(error)")
                 }
             }
         }
