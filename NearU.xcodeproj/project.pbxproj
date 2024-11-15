@@ -482,7 +482,6 @@
 			isa = PBXGroup;
 			children = (
 				63DFF88F2BF876D100A6DFB8 /* BLEHistoryViewModel.swift */,
-				63AEF0FE2C0CC89F00DE196E /* FollowViewModel.swift */,
 				6344BE432CDBA93D009F404E /* BLERealtimeViewModel.swift */,
 			);
 			path = ViewModel;
@@ -523,6 +522,7 @@
 				63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */,
 				637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */,
 				639A0BDA2CE4B01200A769C6 /* FollowerViewModel.swift */,
+				63AEF0FE2C0CC89F00DE196E /* FollowViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
