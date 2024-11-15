@@ -84,36 +84,36 @@ struct UserService {
     }
 
     static func seveArticleLink(userId: String, url: String) async throws {
-        let data = ["abstract_url": url]
+        let data = ["article_url": url]
         do {
-            try await Firestore.firestore().collection("users").document(userId).collection("abstract").addDocument(data: data)
+            try await Firestore.firestore().collection("users").document(userId).collection("article").addDocument(data: data)
         } catch {
             throw error
         }
     }
 
     // 記事をフェッチする関数
-    static func fetchAbstractLinks(withUid userId: String) async throws -> [String] {
-        var abstractUrls: [String] = []
+    static func fetchArticleLinks(withUid userId: String) async throws -> [String] {
+        var articleUrls: [String] = []
 
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
-            .collection("abstract")
+            .collection("article")
             .getDocuments()
 
         for document in snapshot.documents {
-            if let abstractUrlString = document.data()["abstract_url"] as? String {
-                abstractUrls.append(abstractUrlString)
+            if let articleUrlString = document.data()["article_url"] as? String {
+                articleUrls.append(articleUrlString)
             }
         }
 
-        return abstractUrls
+        return articleUrls
     }
 
     static func deleteArticleLink(url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let query = Firestore.firestore().collection("users").document(documentId).collection("abstract").whereField("abstract_url", isEqualTo: url)
+        let query = Firestore.firestore().collection("users").document(documentId).collection("article").whereField("article_url", isEqualTo: url)
 
         // Firestoreから削除
         do {

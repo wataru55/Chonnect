@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct EditAbstractView: View {
+struct EditArticleView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
     @State private var articleUrls: [String] = [""]
     @Environment(\.dismiss) var dismiss
@@ -110,7 +110,7 @@ struct EditAbstractView: View {
 }
 
 #Preview {
-    EditAbstractView()
+    EditArticleView()
         .environmentObject(ArticleLinksViewModel())
 }
 

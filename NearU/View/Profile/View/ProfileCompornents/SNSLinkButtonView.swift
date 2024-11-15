@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SNSLinkButtonView: View {
-    @EnvironmentObject var viewModel: AddLinkViewModel
+    @EnvironmentObject var viewModel: EditSNSLinkViewModel
     @State private var isShowAlert: Bool = false
     let selectedSNS: String
     let sns_url: String
@@ -86,6 +86,6 @@ struct SNSLinkButtonView: View {
     SNSLinkButtonView(selectedSNS: "Instagram",
                       sns_url: "https://www.instagram.com/wataw.ataaa?igsh=MXEwNjhha2dwbHM2dQ%3D%3D&utm_source=qr",
                       isShowDeleteButton: true)
-    .environmentObject(AddLinkViewModel())
+    .environmentObject(EditSNSLinkViewModel())
 }
 

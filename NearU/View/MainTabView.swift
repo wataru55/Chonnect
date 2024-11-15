@@ -88,18 +88,9 @@ struct MainTabView: View {
                 if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
                     BLEPeripheralManager.shared.startAdvertising()
                 }
+            case .inactive, .background:
+                print("アプリが非アクティブになったが、BLEは継続")
 
-            case .inactive:
-                BLECentralManager.shared.stopScan()
-                BLEPeripheralManager.shared.stopAdvertising()
-            case .background:
-                if BLECentralManager.shared.centralManager.state == .poweredOn {
-                    BLECentralManager.shared.startScanning()
-                }
-
-                if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
-                    BLEPeripheralManager.shared.startAdvertising()
-                }
             @unknown default:
                 print("Unexpected new value.")
             }

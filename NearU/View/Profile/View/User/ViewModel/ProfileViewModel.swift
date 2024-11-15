@@ -91,7 +91,7 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func fetchArticleLinks() async {
         do {
-            let urls = try await UserService.fetchAbstractLinks(withUid: user.id)
+            let urls = try await UserService.fetchArticleLinks(withUid: user.id)
             await getOpenGraphData(urls: urls)
         } catch {
             print("Error fetching article links: \(error)")

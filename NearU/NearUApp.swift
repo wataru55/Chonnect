@@ -94,33 +94,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         completionHandler()
     }
 
-    // アプリケーションがバックグラウンドに移行する直前に呼ばれる
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        print("background")
-        BLECentralManager.shared.stopScan()
-        BLEPeripheralManager.shared.stopAdvertising()
-
-        if BLECentralManager.shared.centralManager.state == .poweredOn {
-            BLECentralManager.shared.startScanning()
-        }
-
-        if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
-            BLEPeripheralManager.shared.startAdvertising()
-        }
-    }
-
-    // アプリケーションがフォアグラウンドに移行する直前に呼ばれる
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        print("foreground")
-        if BLECentralManager.shared.centralManager.state == .poweredOn {
-            BLECentralManager.shared.startScanning()
-        }
-
-        if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
-            BLEPeripheralManager.shared.startAdvertising()
-        }
-    }
-
     // FCMトークンをFirestoreに保存するメソッド
     func setFCMToken(fcmToken: String) async {
         guard let documentId = AuthService.shared.currentUser?.id else {

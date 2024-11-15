@@ -11,12 +11,12 @@ import Kingfisher
 struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
-    @StateObject var addLinkViewModel = AddLinkViewModel()
+    @StateObject var addLinkViewModel = EditSNSLinkViewModel()
     @StateObject var followViewModel = FollowViewModel()
     @StateObject var followerViewModel = FollowerViewModel()
 
     @State private var isAddingNewLink = false
-    @State private var showEditAbstract = false
+    @State private var showEditArticle = false
     @State private var showEditProfile = false
     @State private var isShowFollowView = false
     @State private var isShowFollowerView = false
@@ -168,7 +168,7 @@ struct CurrentUserProfileView: View {
                     VStack(alignment: .center, spacing: 10) {
                         if articleLinksViewModel.openGraphData.isEmpty {
                             Button {
-                                showEditAbstract.toggle()
+                                showEditArticle.toggle()
                             } label: {
                                 HStack(spacing: 0) {
                                     Image(systemName: "plus.circle")
@@ -187,7 +187,7 @@ struct CurrentUserProfileView: View {
                             }
 
                             Button(action: {
-                                showEditAbstract.toggle()
+                                showEditArticle.toggle()
                             }, label: {
                                 Image(systemName: "plus")
                                     .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
@@ -208,11 +208,11 @@ struct CurrentUserProfileView: View {
                         .environmentObject(viewModel)
                 }
                 .fullScreenCover(isPresented: $isAddingNewLink) {
-                    AddLinkView()
+                    EditSNSLinkView()
                         .environmentObject(addLinkViewModel)
                 }
-                .fullScreenCover(isPresented: $showEditAbstract) {
-                    EditAbstractView()
+                .fullScreenCover(isPresented: $showEditArticle) {
+                    EditArticleView()
                         .environmentObject(articleLinksViewModel)
                 }
                 .fullScreenCover(isPresented: $isShowFollowView) {
