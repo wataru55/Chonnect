@@ -102,10 +102,12 @@ struct EditSNSLinkView: View {
                 .navigationTitle("SNSの追加・削除")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Image(systemName: "chevron.backward")
-                            .onTapGesture {
-                                dismiss()
-                            }
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                                .foregroundStyle(.black)
+                        }
                     }
                     
                     ToolbarItem(placement: .topBarTrailing) {

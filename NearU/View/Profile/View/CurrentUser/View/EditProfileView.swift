@@ -84,10 +84,12 @@ struct EditProfileView: View {
             .navigationTitle("プロフィール編集")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.backward")
-                        .onTapGesture {
-                            dismiss()
-                        }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
+                    }
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
