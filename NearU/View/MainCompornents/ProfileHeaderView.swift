@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct ProfileHeaderView: View {
+    @EnvironmentObject var loadingViewModel: LoadingViewModel
     @ObservedObject var viewModel: ProfileViewModel
     @State private var isShowAlert: Bool = false
+    @State private var isShowCheck: Bool = false
     @State private var isShowFollowView = false
     @State private var isShowFollowerView = false
     let date: Date
+    let isShowFollowButton: Bool
 
     var body: some View {
         VStack (spacing: 15){
@@ -78,8 +81,56 @@ struct ProfileHeaderView: View {
                             .onTapGesture {
                                 isShowFollowerView.toggle()
                             }
+
+                        if isShowFollowButton {
+                            Spacer()
+
+                            Group {
+                                if viewModel.isFollow {
+                                    Button {
+                                        isShowCheck.toggle()
+                                    } label: {
+                                        Text("フォロー中")
+                                        .font(.footnote)
+                                        .fontWeight(.bold)
+                                        .padding()
+                                        .frame(height: 30)
+                                        .foregroundStyle(.white)
+                                        .background(Color.black)
+                                        .clipShape(Capsule())
+                                    }
+                                } else {
+                                    Button {
+                                        Task {
+                                            loadingViewModel.isLoading = true
+                                            do {
+                                                try await viewModel.followUser(date: date)
+                                                await viewModel.checkFollow()
+                                                try await viewModel.loadFollowers()
+                                                loadingViewModel.isLoading = false
+                                            } catch {
+                                                loadingViewModel.isLoading = false
+                                                isShowAlert.toggle()
+                                            }
+                                        }
+                                    } label: {
+                                        Text("フォロー")
+                                            .font(.footnote)
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.white)
+                                            .padding()
+                                            .frame(height: 30)
+                                            .background(
+                                                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
+                                            )
+                                            .clipShape(Capsule())
+                                    }
+                                    .shadow(color: Color.black.opacity(0.5), radius: 2, x: 1, y: 3)
+                                }
+                            }
+                            .padding(.trailing, 20)
+                        }
                     }
-                    .padding(.bottom, 5)
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
@@ -91,47 +142,6 @@ struct ProfileHeaderView: View {
                 .padding(.leading)
             }
             .padding(.bottom)
-
-            //action button
-            if viewModel.currentUser.connectList.contains(viewModel.user.id) == true {
-                Button(action: {
-                    Task {
-                        try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
-                        RealmManager.shared.storeData(viewModel.user.id, date: date)
-                    }
-                }, label: {
-                    Image(systemName: "hand.wave.fill")
-                        .foregroundStyle(.white)
-                        .frame(width: 360, height: 35)
-                        .background(.gray)
-                        .cornerRadius(6)
-                })
-
-            } else {
-                HStack {
-                    Button(action: {
-                        isShowAlert.toggle()
-                    }, label: {
-                        Image(systemName: "figure.2")
-                            .foregroundStyle(.white)
-                            .frame(width: 180, height: 35)
-                            .background(
-                                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.mint]), startPoint: .leading, endPoint: .trailing)
-                            )
-                            .cornerRadius(6)
-                    })
-
-                    Button(action: {
-                        isShowAlert.toggle()
-                    }, label: {
-                        Image(systemName: "hand.wave.fill")
-                            .foregroundStyle(.white)
-                            .frame(width: 180, height: 35)
-                            .background(.gray)
-                            .cornerRadius(6)
-                    })
-                } //hstack
-            }
         }//vstack
         .fullScreenCover(isPresented: $isShowFollowView) {
             UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
@@ -139,22 +149,28 @@ struct ProfileHeaderView: View {
         .fullScreenCover(isPresented: $isShowFollowerView) {
             UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
         }
-        .alert("確認", isPresented: $isShowAlert) {
+        .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
-                isShowAlert.toggle()
+                isShowCheck.toggle()
             }
             Button("解除", role: .destructive) {
-                RealmManager.shared.storeData(viewModel.user.id, date: date)
                 Task {
                     try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
+                    await viewModel.checkFollow()
+                    try await viewModel.loadFollowers()
                 }
             }
         } message: {
             Text("本当にフォローを解除しますか？")
         }
+        .alert("エラー", isPresented: $isShowAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("予期せぬエラーが発生しました\nもう一度お試しください")
+        }
     }//body
 }//view
 
 #Preview {
-    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date())
+    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date(), isShowFollowButton: true)
 }
