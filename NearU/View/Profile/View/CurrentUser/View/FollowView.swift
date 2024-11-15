@@ -23,27 +23,8 @@ struct FollowView: View {
                             .padding()
                     } else {
                         ForEach(viewModel.userDatePairs, id: \.self) { pair in
-                            NavigationLink(value: pair) {
-                                HStack {
-                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
-                                    VStack (alignment: .leading){
-                                        Text(pair.user.username)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(Color.primary)
-
-                                        if let fullname = pair.user.fullname { //fullnameがnilじゃないなら
-                                            Text(fullname)
-                                                .foregroundStyle(Color.primary)
-                                        }
-
-                                    }//vstack
-                                    .font(.footnote)
-
-                                    Spacer()
-                                }//hstack
-                                .foregroundStyle(.black) //navigationlinkのデフォルトカラーを青から黒に
-                                .padding(.horizontal)
-                            }//navigationlink
+                            //TODO: isFollowerを動的に設定
+                            UserRowView(value: pair, user: pair.user, date: pair.date, isRead: nil, rssi: nil, isFollower: true)
                         }//foreach
                     }
                 }//lazyvstack
