@@ -247,7 +247,7 @@
 				63DFF88D2BF8769C00A6DFB8 /* Search */,
 				63DFF8BD2C0403CC00A6DFB8 /* Setting */,
 				63DFF87E2BF6EFF400A6DFB8 /* MainView */,
-				6367B7932BE149EB0065C1BD /* Conpornents */,
+				6367B7932BE149EB0065C1BD /* MainCompornents */,
 				6344BE372CD71678009F404E /* LoadingViewModel.swift */,
 			);
 			path = View;
@@ -262,7 +262,7 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
-		6367B7932BE149EB0065C1BD /* Conpornents */ = {
+		6367B7932BE149EB0065C1BD /* MainCompornents */ = {
 			isa = PBXGroup;
 			children = (
 				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
@@ -272,7 +272,7 @@
 				639A0BD62CE4A74300A769C6 /* CustomTabBarButtonView.swift */,
 				639A0BDC2CE4E1F700A769C6 /* CountView.swift */,
 			);
-			path = Conpornents;
+			path = MainCompornents;
 			sourceTree = "<group>";
 		};
 		638732042BF4AE0C0099F68A /* Model */ = {
@@ -370,7 +370,7 @@
 			path = User;
 			sourceTree = "<group>";
 		};
-		639A0BE02CE5C68E00A769C6 /* Compornents */ = {
+		639A0BE02CE5C68E00A769C6 /* ProfileCompornents */ = {
 			isa = PBXGroup;
 			children = (
 				63DFF8982BFC9A8300A6DFB8 /* CircleImageView.swift */,
@@ -379,7 +379,7 @@
 				630B9EA32CC344E9002F06AB /* TagsView.swift */,
 				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
 			);
-			path = Compornents;
+			path = ProfileCompornents;
 			sourceTree = "<group>";
 		};
 		639A0BE12CE5C7CD00A769C6 /* View */ = {
@@ -511,7 +511,7 @@
 			children = (
 				639A0BDF2CE5C5EC00A769C6 /* User */,
 				639A0BDE2CE5C5CB00A769C6 /* CurrentUser */,
-				639A0BE02CE5C68E00A769C6 /* Compornents */,
+				639A0BE02CE5C68E00A769C6 /* ProfileCompornents */,
 			);
 			path = View;
 			sourceTree = "<group>";
