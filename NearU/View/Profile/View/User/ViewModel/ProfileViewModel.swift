@@ -17,6 +17,7 @@ class ProfileViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [UserDatePair] = []
     @Published var followers: [UserHistoryRecord] = []
+    @Published var isFollow: Bool = false
 
     init(user: User, currentUser: User) {
         self.user = user
@@ -26,8 +27,21 @@ class ProfileViewModel: ObservableObject {
             try await loadFrameworkTags()
             try await loadFollowUsers()
             try await loadFollowers()
+            await checkFollow()
             await fetchArticleLinks()
         }
+    }
+
+    @MainActor
+    func checkFollow() async {
+        let followsRef = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
+        do {
+            let document = try await followsRef.document(user.id).getDocument()
+            self.isFollow = document.exists
+        } catch {
+            self.isFollow = false
+        }
+        print(isFollow)
     }
 
     @MainActor
@@ -123,6 +137,23 @@ class ProfileViewModel: ObservableObject {
                     openGraphData.append(data)
                 }
             }
+        }
+    }
+
+    func followUser(date: Date) async throws{
+        guard let fcmToken = user.fcmtoken else { return }
+        do {
+            // フォロー処理を実行
+            try await UserService.followUser(receivedId: user.id, date: date)
+            // プッシュ通知を送信
+            try await NotificationManager.shared.sendPushNotification(
+                fcmToken: fcmToken,
+                username: currentUser.username,
+                documentId: currentUser.id,
+                date: date
+            )
+        } catch {
+            throw error
         }
     }
 }

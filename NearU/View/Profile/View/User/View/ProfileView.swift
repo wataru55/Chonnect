@@ -12,12 +12,14 @@ struct ProfileView: View {
     @Environment(\.dismiss) var dismiss
 
     let date: Date
+    let isShowFollowButton: Bool
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    init(user: User, currentUser: User, date: Date) {
+    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
 
         self.date = date
+        self.isShowFollowButton = isShowFollowButton
     }
 
     var body: some View {
@@ -27,7 +29,7 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //MARK: - HEADER
-                    ProfileHeaderView(viewModel: viewModel, date: date)
+                    ProfileHeaderView(viewModel: viewModel, date: date, isShowFollowButton: isShowFollowButton)
 
                     //MARK: - SNSLINKS
                     HStack {

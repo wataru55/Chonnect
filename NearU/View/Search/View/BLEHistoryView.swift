@@ -32,7 +32,7 @@ struct BLEHistoryView: View {
             } // LazyVStack
             .padding(.top, 8)
             .navigationDestination(for: UserHistoryRecord.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
                     .onAppear {
                         viewModel.markAsRead(pair)
                     }

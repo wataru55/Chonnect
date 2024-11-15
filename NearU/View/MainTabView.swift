@@ -35,6 +35,7 @@ struct MainTabView: View {
                 }
 
             CurrentUserProfileView(user: user)
+                .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "person")
                 }
