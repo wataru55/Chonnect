@@ -23,19 +23,20 @@ struct UserRowView<T>: View where T: Hashable {
                 VStack(alignment: .leading) {
                     HStack {
                         Text(user.username)
+                            .font(.subheadline)
                             .fontWeight(.bold)
                             .foregroundStyle(.black)
 
 
                         Circle()
-                            .frame(width: 10, height: 10)
+                            .frame(width: 8, height: 8)
                             .foregroundColor(isRead ?? false ? .clear : .mint)
 
                     }
 
                     if (isFollower != nil && isFollower == true) {
                             Text("フォローされています")
-                                .font(.footnote)
+                                .font(.caption)
                                 .foregroundColor(.gray)
                     }
                 }
