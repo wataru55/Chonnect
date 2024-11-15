@@ -76,6 +76,9 @@ struct EditProfileView: View {
                 }
                 .padding(.top, 5)
             } //scrollview
+            .onTapGesture {
+                focusedField = nil
+            }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("プロフィール編集")
@@ -113,9 +116,6 @@ struct EditProfileView: View {
                 }
             }
         }//navigationstack
-        .onTapGesture {
-            focusedField = nil
-        }
     }//body
 }//view
 
