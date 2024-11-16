@@ -27,7 +27,6 @@ struct UserRowView<T>: View where T: Hashable {
                             .fontWeight(.bold)
                             .foregroundStyle(.black)
 
-
                         Circle()
                             .frame(width: 8, height: 8)
                             .foregroundColor(isRead ?? false ? .clear : .mint)
