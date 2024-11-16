@@ -28,6 +28,9 @@ struct FollowerView: View {
                 }
             } //lazyvstack
             .padding(.top, 8)
+            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
+                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date, isShowFollowButton: true)
+            })
 
         } //scrollview
         .refreshable {
