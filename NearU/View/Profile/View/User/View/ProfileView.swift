@@ -45,38 +45,33 @@ struct ProfileView: View {
                             .padding(.horizontal, 10)
                     }
 
-                    if !viewModel.user.isPrivate || viewModel.currentUser.connectList.contains(viewModel.user.id) && viewModel.user.connectList.contains(viewModel.currentUser.id){
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack() {
-                                if viewModel.user.snsLinks.isEmpty {
-                                    Text("リンクがありません")
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.gray)
-                                        .padding()
-                                } else {
-                                    ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
-                                        if let url = viewModel.user.snsLinks[key] {
-                                            SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
-                                        }
-                                    }
-                                }
-                            }//hstack
-                        }//scrollview
-                        .padding(.leading, 5)
-                        .padding(.bottom)
-
-                    } else {
-                        Spacer()
-                        Text("相互フォローではないためSNSリンクは表示されません")
+                    if viewModel.user.isPrivate && !viewModel.isMutualFollow {
+                        Text("非公開アカウントです")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
-
-                        Spacer()
+                            .foregroundStyle(.gray)
                     }
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack() {
+                            if viewModel.user.snsLinks.isEmpty {
+                                Text("リンクがありません")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            } else {
+                                ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
+                                    if let url = viewModel.user.snsLinks[key] {
+                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
+                                            .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow)
+                                    }
+                                }
+                            }
+                        }//hstack
+                    }//scrollview
+                    .padding(.leading, 5)
+                    .padding(.bottom)
 
                     //MARK: - ARTICLES
                     HStack {

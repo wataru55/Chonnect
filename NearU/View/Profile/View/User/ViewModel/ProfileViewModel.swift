@@ -18,6 +18,7 @@ class ProfileViewModel: ObservableObject {
     @Published var follows: [UserDatePair] = []
     @Published var followers: [UserHistoryRecord] = []
     @Published var isFollow: Bool = false
+    @Published var isMutualFollow: Bool = false
 
     init(user: User, currentUser: User) {
         self.user = user
@@ -28,6 +29,7 @@ class ProfileViewModel: ObservableObject {
             try await loadFollowUsers()
             try await loadFollowers()
             await checkFollow()
+            await checkMutualFollow()
             await fetchArticleLinks()
         }
     }
@@ -36,12 +38,26 @@ class ProfileViewModel: ObservableObject {
     func checkFollow() async {
         let followsRef = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
         do {
-            let document = try await followsRef.document(user.id).getDocument()
-            self.isFollow = document.exists
+            self.isFollow = try await followsRef.document(user.id).getDocument().exists
+
         } catch {
             self.isFollow = false
         }
-        print(isFollow)
+    }
+
+    @MainActor
+    func checkMutualFollow() async {
+        let followersRef = Firestore.firestore().collection("users").document(user.id).collection("follows")
+        do {
+            // 相手が自分をフォローしているかを確認
+            let isFollower = try await followersRef.document(currentUser.id).getDocument().exists
+            // 相互フォローを更新
+            self.isMutualFollow = isFollow && isFollower
+        } catch {
+            // エラーが発生した場合は相互フォローと判定しない
+            self.isMutualFollow = false
+        }
+        print("相互フォロー: \(isMutualFollow)")
     }
 
     @MainActor
