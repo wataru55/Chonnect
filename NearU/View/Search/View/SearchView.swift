@@ -37,6 +37,7 @@ struct SearchView: View {
             }
             .navigationBarHidden(true) // デフォルトのナビゲーションバーを非表示
         }
+        .tint(.black)
     }
 }
 
