@@ -11,10 +11,9 @@ struct UserFollowFollowerView: View {
     @ObservedObject var viewModel: ProfileViewModel
     @State private var searchText: String = ""
     @State var selectedTab: Int
-    @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationStack {
+        //NavigationStack {
             VStack {
                 EmptyView()
                     .searchable(text: $searchText, prompt: "Search...")
@@ -31,26 +30,10 @@ struct UserFollowFollowerView: View {
                     UserFollowerView(viewModel: viewModel)
                 }
             }
-            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
-                ProfileView(user: follower.user, currentUser: viewModel.currentUser, date: follower.date)
-            })
-            .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: viewModel.currentUser, date: pair.date)
-            })
             .ignoresSafeArea(edges:.bottom)
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("\(viewModel.user.username)")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
-                }
-            }
-        }
+        //}
     }
 }
 

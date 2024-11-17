@@ -12,8 +12,7 @@ struct ProfileHeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
     @State private var isShowAlert: Bool = false
     @State private var isShowCheck: Bool = false
-    @State private var isShowFollowView = false
-    @State private var isShowFollowerView = false
+
     let date: Date
     let isShowFollowButton: Bool
 
@@ -73,14 +72,13 @@ struct ProfileHeaderView: View {
                     }
 
                     HStack {
-                        CountView(count: viewModel.follows.count, text: "フォロー")
-                            .onTapGesture {
-                                isShowFollowView.toggle()
-                            }
-                        CountView(count: viewModel.followers.count, text: "フォロワー")
-                            .onTapGesture {
-                                isShowFollowerView.toggle()
-                            }
+                        NavigationLink(value: NavigationData(selectedTab: 0)) {
+                            CountView(count: viewModel.follows.count, text: "フォロー")
+                        }
+
+                        NavigationLink(value: NavigationData(selectedTab: 1)) {
+                            CountView(count: viewModel.followers.count, text: "フォロワー")
+                        }
 
                         if isShowFollowButton {
                             Spacer()
@@ -143,11 +141,8 @@ struct ProfileHeaderView: View {
             }
             .padding(.bottom)
         }//vstack
-        .fullScreenCover(isPresented: $isShowFollowView) {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
-        }
-        .fullScreenCover(isPresented: $isShowFollowerView) {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
+        .navigationDestination(for: NavigationData.self) { data in
+            UserFollowFollowerView(viewModel: viewModel, selectedTab: data.selectedTab)
         }
         .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
@@ -170,6 +165,10 @@ struct ProfileHeaderView: View {
         }
     }//body
 }//view
+
+struct NavigationData: Hashable {
+    let selectedTab: Int
+}
 
 #Preview {
     ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date(), isShowFollowButton: true)

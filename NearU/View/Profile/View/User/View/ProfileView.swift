@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
-    @Environment(\.dismiss) var dismiss
 
     let date: Date
     let isShowFollowButton: Bool
@@ -109,17 +108,7 @@ struct ProfileView: View {
             }
         } //zstack
         .ignoresSafeArea()
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .foregroundStyle(.black)
-                }
-            }
-        }
+
     }//body
 }//view
 
