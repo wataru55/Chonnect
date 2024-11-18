@@ -26,7 +26,7 @@ struct BLEHistoryView: View {
                 } else {
                     ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
                         // TODO: isFollowerを動的に設定
-                        UserRowView(value: data, user: data.record.user,
+                        UserRowView(value: data.record, user: data.record.user,
                                     date: data.record.date, isRead: data.record.isRead,
                                     rssi: nil, isFollower: data.isFollowed)
                     } // ForEach
