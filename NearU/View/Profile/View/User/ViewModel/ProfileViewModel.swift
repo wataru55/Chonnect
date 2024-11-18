@@ -15,8 +15,8 @@ class ProfileViewModel: ObservableObject {
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
-    @Published var follows: [UserDatePair] = []
-    @Published var followers: [UserHistoryRecord] = []
+    @Published var follows: [FollowUserRowData] = []
+    @Published var followers: [HistoryRowData] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
 
@@ -100,8 +100,16 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowUsers() async throws {
         do {
-            let users = try await UserService.fetchFollowedUsers(receivedId: user.id)
-            self.follows = users
+            let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
+            var followUserRowData: [FollowUserRowData] = []
+
+            for data in pairData {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
+                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                followUserRowData.append(addData)
+            }
+
+            self.follows = followUserRowData
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -110,9 +118,16 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async throws {
         do {
-            let users = try await UserService.fetchFollowers(receivedId: user.id)
-            self.followers = users
+            let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
+            var historyRowData: [HistoryRowData] = []
 
+            for record in userHistoryRecords {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
+                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
+                historyRowData.append(addData)
+            }
+
+            self.followers = historyRowData
         } catch {
             print("Error fetching followers: \(error)")
         }
