@@ -9,8 +9,8 @@ import SwiftUI
 
 @MainActor
 class BLEHistoryViewModel: ObservableObject {
-    @Published var userHistoryRecords: [UserHistoryRecord] = []
-    @Published var sortedUserHistoryRecords: [UserHistoryRecord] = []
+    @Published var historyRowData: [HistoryRowData] = []
+    @Published var sortedHistoryRowData: [HistoryRowData] = []
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -23,15 +23,24 @@ class BLEHistoryViewModel: ObservableObject {
 
     //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
     func fetchHistoryAllUsers(historyDataList: [HistoryDataStruct]) async {
+        var userHistoryRecords: [UserHistoryRecord] = []
+        var addData: [HistoryRowData] = []
         do {
             let userIds = historyDataList.map { $0.userId }
             let dates = historyDataList.map { $0.date }
             let isReads = historyDataList.map { $0.isRead }
             let users = try await UserService.fetchUsers(userIds)
             // すべての配列のインデックスを利用してUserHistoryRecordを作成
-            self.userHistoryRecords = (0..<users.count).map { index in
+            userHistoryRecords = (0..<users.count).map { index in
                 UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
             }
+
+            for record in userHistoryRecords {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
+                addData.append(HistoryRowData(record: record, isFollowed: isFollowed))
+            }
+            self.historyRowData = addData
+
         } catch {
             print("Error fetching users: \(error)")
         }
@@ -66,16 +75,17 @@ class BLEHistoryViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        $userHistoryRecords
+        $historyRowData
             .map { records in
-                records.sorted {
-                    if $0.isRead == $1.isRead {
-                        return $0.date > $1.date  // date が新しいもの順にソート
+                records.sorted { (a: HistoryRowData, b: HistoryRowData) -> Bool in
+                    if a.record.isRead == b.record.isRead {
+                        return a.record.date > b.record.date  // date が新しいもの順にソート
                     }
-                    return !$0.isRead && $1.isRead
+                    return !a.record.isRead && b.record.isRead
                 }
             }
-            .assign(to: &$sortedUserHistoryRecords)
+            .assign(to: &$sortedHistoryRowData)
+
     }
 }
 
