@@ -33,10 +33,10 @@ struct UserRowView<T>: View where T: Hashable {
 
                     }
 
-                    if (isFollower != nil && isFollower == true) {
-                            Text("フォローされています")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                    if isFollower == true {
+                        Text("フォローされています")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                 }
                 .padding(.leading, 5)
