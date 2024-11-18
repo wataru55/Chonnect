@@ -196,7 +196,7 @@ struct UserService {
         }
     }
 
-    func fetchNotifications() async {
+    static func fetchNotifications() async {
         guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
 
         let startTime = Date()

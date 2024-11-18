@@ -42,7 +42,7 @@ struct BLEHistoryView: View {
             loadingViewModel.isLoading = true
             Task {
                 // データのフェッチ
-                await UserService().fetchNotifications()
+                await UserService.fetchNotifications()
                 // ローディング終了
                 //isLoading = false
                 loadingViewModel.isLoading = false
