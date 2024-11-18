@@ -232,4 +232,14 @@ struct UserService {
         }
     }
 
+    static func checkIsFollowed(receivedId: String) async -> Bool {
+        guard let documentId = AuthService.shared.currentUser?.id else { return false }
+        let path = Firestore.firestore().collection("users").document(documentId).collection("followers").document(receivedId)
+
+        do {
+            return try await path.getDocument().exists
+        } catch {
+            return false
+        }
+    }
 }
