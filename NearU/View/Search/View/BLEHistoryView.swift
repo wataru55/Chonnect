@@ -17,16 +17,18 @@ struct BLEHistoryView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                if viewModel.sortedUserHistoryRecords.isEmpty {
+                if viewModel.sortedHistoryRowData.isEmpty {
                     Text("すれちがったユーザーはいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.sortedUserHistoryRecords, id: \.self) { pair in
+                    ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
                         // TODO: isFollowerを動的に設定
-                        UserRowView(value: pair, user: pair.user, date: pair.date, isRead: pair.isRead, rssi: nil, isFollower: false)
+                        UserRowView(value: data.record, user: data.record.user,
+                                    date: data.record.date, isRead: data.record.isRead,
+                                    rssi: nil, isFollower: data.isFollowed)
                     } // ForEach
                 }
             } // LazyVStack
@@ -42,7 +44,7 @@ struct BLEHistoryView: View {
             loadingViewModel.isLoading = true
             Task {
                 // データのフェッチ
-                await UserService().fetchNotifications()
+                await UserService.fetchNotifications()
                 // ローディング終了
                 //isLoading = false
                 loadingViewModel.isLoading = false
