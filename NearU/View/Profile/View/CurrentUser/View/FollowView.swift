@@ -15,16 +15,18 @@ struct FollowView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
-                if viewModel.userDatePairs.isEmpty {
+                if viewModel.followUsers.isEmpty {
                     Text("フォローしているユーザーがいません")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.userDatePairs, id: \.self) { pair in
+                    ForEach(viewModel.followUsers, id: \.self) { followUser in
                         //TODO: isFollowerを動的に設定
-                        UserRowView(value: pair, user: pair.user, date: pair.date, isRead: nil, rssi: nil, isFollower: true)
+                        UserRowView(value: followUser, user: followUser.pair.user,
+                                    date: followUser.pair.date, isRead: nil,
+                                    rssi: nil, isFollower: followUser.isFollowed)
                     }//foreach
                 }
             }//lazyvstack

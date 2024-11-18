@@ -52,7 +52,7 @@ struct CurrentUserProfileView: View {
 
                                         HStack {
                                             NavigationLink(value: FollowNavigationData(selectedTab: 0, currentUser: user)) {
-                                                CountView(count: followViewModel.userDatePairs.count, text: "フォロー")
+                                                CountView(count: followViewModel.followUsers.count, text: "フォロー")
                                             }
 
                                             NavigationLink(value: FollowNavigationData(selectedTab: 1, currentUser: user)) {
