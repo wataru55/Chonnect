@@ -11,32 +11,69 @@ struct EditSkillTagsView: View {
     @State private var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3", interest: "")
     ]
-    @State private var isShowTechTags: Bool = false
+    @Environment(\.dismiss) var dismiss
     private let availableLanguages = ["Swift", "Python", "C", "Java", "JavaScript"]
-    private let skillLevels = ["1", "2", "3"]
-    private let interestLevels = ["", "1", "2", "3"]
+    private let skillLevels = ["1", "2", "3", "4", "5"]
+    private let interestLevels = ["", "1", "2", "3", "4", "5"]
+
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
-        VStack {
-            ForEach($languages) { $language in
-                SkillTagRowView(language: $language,
-                                skillLevels: skillLevels,
-                                interestLevels: interestLevels,
-                                isShowTechTags: $isShowTechTags)
-            } //foreach
+        NavigationStack {
+            ZStack {
+                backgroundColor.ignoresSafeArea()
 
-            Button(action: {
-                languages.append(WordElement(id: UUID(), name: "", skill: "3", interest: ""))
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle")
-                    Text("追加する")
-                }
-                .padding()
-                .foregroundColor(.mint)
-            }
-        }// vstack
-        .padding()
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        ForEach($languages) { $language in
+                            SkillTagRowView(language: $language,
+                                            skillLevels: skillLevels,
+                                            interestLevels: interestLevels)
+                        } //foreach
+
+                        Button(action: {
+                            languages.append(WordElement(id: UUID(),
+                                                         name: "",
+                                                         skill: "3", interest: ""))
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle")
+                                Text("入力欄を追加")
+                            }
+                            .padding()
+                            .foregroundColor(.mint)
+                        }
+                    }// vstack
+                    .padding()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle("技術タグの追加・削除")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "chevron.backward")
+                                    .foregroundStyle(.black)
+                            }
+                        }
+
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+
+                            } label: {
+                                HStack(spacing: 2) {
+                                    Image(systemName: "plus.app")
+                                    Text("追加")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                }
+                                .foregroundStyle(Color.mint)
+                            }
+                        }
+                    } //toolbar
+                } //scrollview
+            } //zstack
+        } // NavigationStack
     }
 }
 
@@ -44,7 +81,7 @@ struct SkillTagRowView: View {
     @Binding var language: WordElement
     let skillLevels: [String]
     let interestLevels: [String]
-    @Binding var isShowTechTags: Bool
+    @State private var isShowTechTags: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -53,15 +90,15 @@ struct SkillTagRowView: View {
             } label: {
                 HStack {
                     Text(language.name.isEmpty ? "一覧" : language.name)
-                        .foregroundColor(language.name.isEmpty ? .mint : .black)
+                        .foregroundColor(.black)
+                        .font(.subheadline)
                         .fontWeight(.bold)
                     Image(systemName: "text.justify")
+                        .foregroundStyle(.mint)
                 }
                 .font(.footnote)
-                .foregroundColor(language.name.isEmpty ? .mint : .black)
             }
-            .frame(width: 100, height: 20)
-            .offset(x: -20)
+            .frame(width: 150, height: 20)
 
             Spacer()
 
@@ -92,6 +129,7 @@ struct SkillTagRowView: View {
         }
         .tint(.mint)
         .padding()
+        .frame(width: UIScreen.main.bounds.width - 40)
         .background(Color.white)
         .cornerRadius(8)
         .shadow(color: .black.opacity(0.7), radius: 2, x: 4, y: 4)
@@ -99,13 +137,19 @@ struct SkillTagRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 2)
         }
+        .sheet(isPresented: $isShowTechTags) {
+            TechTagPickerView(language: $language)
+        }
     }
 }
 
 
 struct TechTagPickerView: View {
-    let techTags: [String: [String]]
-    @Binding var selectedTechTag: String
+    let techTags: [String: [String]] = [
+            "プログラミング言語": ["Swift", "Kotlin", "JavaScript", "Python","Go"],
+            "フレームワーク": ["React", "Vue.js", "Angular", "Flutter", "SwiftUI", "tailwindcss"],
+        ]
+    @Binding var language: WordElement
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -115,13 +159,13 @@ struct TechTagPickerView: View {
                     Section(header: Text(category)) {
                         ForEach(techTags[category]!, id: \.self) { tech in
                             Button(action: {
-                                selectedTechTag = tech
+                                language.name = tech
                                 presentationMode.wrappedValue.dismiss()
                             }) {
                                 HStack {
                                     Text(tech)
                                     Spacer()
-                                    if tech == selectedTechTag {
+                                    if tech == language.name {
                                         Image(systemName: "checkmark")
                                             .foregroundColor(.blue)
                                     }
