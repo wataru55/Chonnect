@@ -60,11 +60,13 @@ struct EditSkillTagsView: View {
 
                         ToolbarItem(placement: .topBarTrailing) {
                             Button {
-
+                                Task {
+                                    await viewModel.saveSkillTags()
+                                }
                             } label: {
                                 HStack(spacing: 2) {
                                     Image(systemName: "plus.app")
-                                    Text("追加")
+                                    Text("保存")
                                         .font(.subheadline)
                                         .fontWeight(.bold)
                                 }

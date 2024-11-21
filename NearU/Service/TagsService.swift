@@ -12,7 +12,7 @@ struct TagsService {
 
     static func addTags(tagData: WordElement) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let ref = Firestore.firestore().collection("users").document(documentId).collection("electedTags")
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
         let id = tagData.id.uuidString
 
         let data: [String: String] = [
