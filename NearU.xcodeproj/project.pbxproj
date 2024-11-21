@@ -99,6 +99,8 @@
 		63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD22CECCC2900B90074 /* WordCloudView.swift */; };
 		63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD42CECCCE800B90074 /* WordElement.swift */; };
 		63FDDFD72CECD9C400B90074 /* EditSkillTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */; };
+		63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */; };
+		63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDA2CEF7A1800B90074 /* TagsService.swift */; };
 		F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */; };
 		F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */; };
 		F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25861692CCB245000715D20 /* PasswordResetView.swift */; };
@@ -206,6 +208,8 @@
 		63FDDFD22CECCC2900B90074 /* WordCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCloudView.swift; sourceTree = "<group>"; };
 		63FDDFD42CECCCE800B90074 /* WordElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordElement.swift; sourceTree = "<group>"; };
 		63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSkillTagsView.swift; sourceTree = "<group>"; };
+		63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSkillTagsViewModel.swift; sourceTree = "<group>"; };
+		63FDDFDA2CEF7A1800B90074 /* TagsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsService.swift; sourceTree = "<group>"; };
 		F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditFrameworkTagsView.swift; sourceTree = "<group>"; };
 		F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		F25861692CCB245000715D20 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -247,6 +251,7 @@
 				63135DA22CB7ABCC004137AF /* RealmManager.swift */,
 				63BEA4932CD0B46A006382AF /* NotificationManager.swift */,
 				6344BE312CD5F254009F404E /* ViewTransitionManager.swift */,
+				63FDDFDA2CEF7A1800B90074 /* TagsService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -541,6 +546,7 @@
 				637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */,
 				639A0BDA2CE4B01200A769C6 /* FollowerViewModel.swift */,
 				63AEF0FE2C0CC89F00DE196E /* FollowViewModel.swift */,
+				63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -663,6 +669,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */,
 				63AEF0FB2C0C4C6500DE196E /* FollowView.swift in Sources */,
 				63FDDFCF2CEB1D4500B90074 /* HistoryRowData.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
@@ -708,6 +715,7 @@
 				63135D9C2CB7A25A004137AF /* EncountData.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
+				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
 				6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */,
 				6344BE482CDBA9F8009F404E /* BLERealtimeView.swift in Sources */,
 				6387320D2BF4B3930099F68A /* AddEmailView.swift in Sources */,

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EditSkillTagsView: View {
+    @StateObject private var viewModel = EditSkillTagsViewModel()
     @State private var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3", interest: "")
     ]
@@ -25,14 +26,14 @@ struct EditSkillTagsView: View {
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
-                        ForEach($languages) { $language in
+                        ForEach($viewModel.languages) { $language in
                             SkillTagRowView(language: $language,
-                                            skillLevels: skillLevels,
-                                            interestLevels: interestLevels)
+                                            skillLevels: viewModel.skillLevels,
+                                            interestLevels: viewModel.interestLevels)
                         } //foreach
 
                         Button(action: {
-                            languages.append(WordElement(id: UUID(),
+                            viewModel.languages.append(WordElement(id: UUID(),
                                                          name: "",
                                                          skill: "3", interest: ""))
                         }) {
