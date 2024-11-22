@@ -18,6 +18,7 @@ struct CurrentUserProfileView: View {
     @State private var isAddingNewLink = false
     @State private var showEditArticle = false
     @State private var showEditProfile = false
+    @State private var showEditTags = false
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
@@ -71,20 +72,37 @@ struct CurrentUserProfileView: View {
                                     .padding(.leading)
                                 }
                                 .overlay(alignment: .topTrailing){
-                                    Button {
-                                        showEditProfile.toggle()
-                                    } label: {
-                                        Image(systemName: "pencil")
-                                            .font(.title3)
-                                            .foregroundColor(.white)
-                                            .padding(10)
-                                            .background(
-                                                Color.black.opacity(0.6)
-                                                    .clipShape(Circle())
-                                            )
+                                    VStack {
+                                        Button {
+                                            showEditProfile.toggle()
+                                        } label: {
+                                            Image(systemName: "pencil")
+                                                .font(.title3)
+                                                .foregroundColor(.white)
+                                                .padding(10)
+                                                .background(
+                                                    Color.black.opacity(0.6)
+                                                        .clipShape(Circle())
+                                                )
+                                        }
+                                        .padding(.top, 50)
+                                        .padding(.trailing, 20)
+
+                                        Button {
+                                            showEditTags.toggle()
+                                        } label: {
+                                            Image(systemName: "tag")
+                                                .font(.title3)
+                                                .foregroundColor(.white)
+                                                .padding(10)
+                                                .background(
+                                                    Color.black.opacity(0.6)
+                                                        .clipShape(Circle())
+                                                )
+                                        }
+                                        .padding(.top, 50)
+                                        .padding(.trailing, 20)
                                     }
-                                    .padding(.top, 50)
-                                    .padding(.trailing, 20)
                                 }
                         }//vstack
                         .padding(.bottom, 10)
@@ -212,6 +230,10 @@ struct CurrentUserProfileView: View {
                         EditArticleView()
                             .environmentObject(articleLinksViewModel)
                     }
+                    .fullScreenCover(isPresented: $showEditTags) {
+                        EditSkillTagsView()
+                    }
+
                 }//vstack
             }// zstack
             .ignoresSafeArea()
