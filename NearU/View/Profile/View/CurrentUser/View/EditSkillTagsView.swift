@@ -25,6 +25,13 @@ struct EditSkillTagsView: View {
                     VStack {
                         //MARK: - タグの新規追加
 
+                        Text("新規追加")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 5)
+                            .padding(.vertical, 5)
+
                         ForEach($languages) { language in
                             SkillTagRowView(language: language,
                                             skillLevels: viewModel.skillLevels,
@@ -87,7 +94,7 @@ struct EditSkillTagsView: View {
                     }// vstack
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
-                    .navigationTitle("技術タグの追加・削除")
+                    .navigationTitle("技術タグの編集")
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button {
