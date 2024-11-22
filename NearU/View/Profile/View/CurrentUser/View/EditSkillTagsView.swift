@@ -33,7 +33,8 @@ struct EditSkillTagsView: View {
                             .padding(.vertical, 5)
 
                         ForEach($languages) { language in
-                            SkillTagRowView(language: language,
+                            SkillTagRowView(viewModel: viewModel,
+                                            language: language,
                                             skillLevels: viewModel.skillLevels,
                                             interestLevels: viewModel.interestLevels,
                                             isShowDeleteButton: false)
@@ -69,24 +70,11 @@ struct EditSkillTagsView: View {
                         } else {
                             VStack(spacing: 20){
                                 ForEach($viewModel.languages) { $language in
-                                    SkillTagRowView(language: $language,
+                                    SkillTagRowView(viewModel: viewModel,
+                                                    language: $language,
                                                     skillLevels: viewModel.skillLevels,
                                                     interestLevels: viewModel.interestLevels,
                                                     isShowDeleteButton: true)
-                                    .overlay(alignment: .topTrailing) {
-                                        Button {
-                                            Task {
-                                                await viewModel.deleteSkillTag(id: language.id.uuidString)
-                                                await viewModel.loadSkillTags()
-
-                                            }
-                                        } label: {
-                                            Image(systemName: "minus.circle.fill")
-                                                .foregroundStyle(.black)
-                                                .font(.title2)
-                                        }
-                                        .offset(x: 12, y: -15)
-                                    }
                                 } //foreach
                             }
                         }
@@ -133,7 +121,9 @@ struct EditSkillTagsView: View {
 }
 
 struct SkillTagRowView: View {
+    @ObservedObject var viewModel: EditSkillTagsViewModel
     @State private var isShowTechTags: Bool = false
+    @State private var isShowAlert: Bool = false
     @Binding var language: WordElement
     let skillLevels: [String]
     let interestLevels: [String]
@@ -192,13 +182,23 @@ struct SkillTagRowView: View {
         .overlay(alignment: .topTrailing) {
             if isShowDeleteButton {
                 Button {
-
+                    isShowAlert.toggle()
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .foregroundStyle(.black)
                         .font(.title2)
                 }
                 .offset(x: 12, y: -15)
+                .alert("確認", isPresented: $isShowAlert) {
+                    Button("削除", role: .destructive) {
+                        Task {
+                            await viewModel.deleteSkillTag(id: $language.id.uuidString)
+                            await viewModel.loadSkillTags()
+                        }
+                    }
+                } message: {
+                    Text("このタグを削除しますか？")
+                }
             }
         }
         .sheet(isPresented: $isShowTechTags) {
