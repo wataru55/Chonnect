@@ -13,9 +13,6 @@ struct EditSkillTagsView: View {
         WordElement(id: UUID(), name: "", skill: "3", interest: "")
     ]
     @Environment(\.dismiss) var dismiss
-    private let availableLanguages = ["Swift", "Python", "C", "Java", "JavaScript"]
-    private let skillLevels = ["1", "2", "3", "4", "5"]
-    private let interestLevels = ["", "1", "2", "3", "4", "5"]
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
@@ -26,14 +23,16 @@ struct EditSkillTagsView: View {
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
-                        ForEach($viewModel.languages) { $language in
-                            SkillTagRowView(language: $language,
+                        //MARK: - タグの新規追加
+
+                        ForEach($languages) { language in
+                            SkillTagRowView(language: language,
                                             skillLevels: viewModel.skillLevels,
                                             interestLevels: viewModel.interestLevels)
                         } //foreach
 
                         Button(action: {
-                            viewModel.languages.append(WordElement(id: UUID(),
+                            languages.append(WordElement(id: UUID(),
                                                          name: "",
                                                          skill: "3", interest: ""))
                         }) {
@@ -44,6 +43,29 @@ struct EditSkillTagsView: View {
                             .padding()
                             .foregroundColor(.mint)
                         }
+                        //MARK: - 保存したタグ一覧
+
+                        Text("技術タグ一覧")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 5)
+                            .padding(.vertical, 10)
+
+                        if viewModel.languages.isEmpty {
+                            Text("保存された技術タグがありません")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.gray)
+                                .padding()
+                        } else {
+                            ForEach($viewModel.languages) { $language in
+                                SkillTagRowView(language: $language,
+                                                skillLevels: viewModel.skillLevels,
+                                                interestLevels: viewModel.interestLevels)
+                            } //foreach
+                        }
+
                     }// vstack
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
@@ -61,7 +83,12 @@ struct EditSkillTagsView: View {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button {
                                 Task {
-                                    await viewModel.saveSkillTags()
+                                    await viewModel.saveSkillTags(newlanguages: languages)
+                                    await MainActor.run {
+                                        languages = [WordElement(id: UUID(),
+                                                                 name: "",
+                                                                 skill: "3", interest: "")]
+                                    }
                                 }
                             } label: {
                                 HStack(spacing: 2) {
@@ -131,11 +158,11 @@ struct SkillTagRowView: View {
             .offset(x: -5)
         }
         .tint(.mint)
-        .padding()
+        .padding(.vertical, 15)
         .frame(width: UIScreen.main.bounds.width - 40)
         .background(Color.white)
-        .cornerRadius(8)
-        .shadow(color: .black.opacity(0.7), radius: 2, x: 4, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .shadow(color: .black.opacity(0.3), radius: 1, x: 4, y: 4)
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 2)
