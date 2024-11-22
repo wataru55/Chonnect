@@ -21,7 +21,7 @@ struct WordCloudView: View {
     var body: some View {
         let pos = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
 
-        return ZStack{
+        ZStack{
             ForEach(Array(words.enumerated()), id: \.offset) {idx, word in
                 NavigationLink(destination: Text("\(word.name)")) {
                     Text("\(word.name)")
