@@ -9,21 +9,35 @@ import SwiftUI
 import Firebase
 
 class EditSkillTagsViewModel: ObservableObject {
-    @Published var languages: [WordElement] = [
-        WordElement(id: UUID(), name: "", skill: "3", interest: "")
-    ]
+    @Published var languages: [WordElement] = []
     let skillLevels = ["1", "2", "3", "4", "5"]
     let interestLevels = ["", "1", "2", "3", "4", "5"]
 
-    func saveSkillTags() async {
-        for language in languages {
-            if !language.name.isEmpty {
+    init() {
+        Task {
+            await loadSkillTags()
+        }
+    }
+
+    func saveSkillTags(newlanguages: [WordElement]) async {
+        for newlanguage in newlanguages {
+            if !newlanguage.name.isEmpty {
                 do {
-                    try await TagsService.addTags(tagData: language)
+                    try await TagsService.addTags(tagData: newlanguage)
                 } catch {
                     print("DEBUG: Error adding tags \(error)")
                 }
             }
+        }
+    }
+
+    @MainActor
+    func loadSkillTags() async {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        do {
+            languages = try await TagsService.fetchTags(documentId: documentId)
+        } catch {
+            print("DEBUG: Error fetching tags \(error)")
         }
     }
 

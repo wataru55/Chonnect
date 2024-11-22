@@ -27,6 +27,25 @@ struct TagsService {
         } catch {
             throw error
         }
+    }
 
+    static func fetchTags(documentId: String) async throws -> [WordElement] {
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
+
+        do {
+            let snapshot = try await ref.getDocuments()
+            let tags = snapshot.documents.compactMap { document -> WordElement? in
+                let data = document.data()
+                let id = document.documentID
+                let name = data["name"] as? String ?? ""
+                let skill = data["skill"] as? String ?? ""
+                let interest = data["interest"] as? String ?? ""
+
+                return WordElement(id: UUID(uuidString: id) ?? UUID(), name: name, skill: skill, interest: interest)
+            }
+            return tags
+        } catch {
+            throw error
+        }
     }
 }
