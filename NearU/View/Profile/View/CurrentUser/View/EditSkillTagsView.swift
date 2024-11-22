@@ -28,7 +28,8 @@ struct EditSkillTagsView: View {
                         ForEach($languages) { language in
                             SkillTagRowView(language: language,
                                             skillLevels: viewModel.skillLevels,
-                                            interestLevels: viewModel.interestLevels)
+                                            interestLevels: viewModel.interestLevels,
+                                            isShowDeleteButton: false)
                         } //foreach
 
                         Button(action: {
@@ -59,11 +60,28 @@ struct EditSkillTagsView: View {
                                 .foregroundColor(.gray)
                                 .padding()
                         } else {
-                            ForEach($viewModel.languages) { $language in
-                                SkillTagRowView(language: $language,
-                                                skillLevels: viewModel.skillLevels,
-                                                interestLevels: viewModel.interestLevels)
-                            } //foreach
+                            VStack(spacing: 20){
+                                ForEach($viewModel.languages) { $language in
+                                    SkillTagRowView(language: $language,
+                                                    skillLevels: viewModel.skillLevels,
+                                                    interestLevels: viewModel.interestLevels,
+                                                    isShowDeleteButton: true)
+                                    .overlay(alignment: .topTrailing) {
+                                        Button {
+                                            Task {
+                                                await viewModel.deleteSkillTag(id: language.id.uuidString)
+                                                await viewModel.loadSkillTags()
+
+                                            }
+                                        } label: {
+                                            Image(systemName: "minus.circle.fill")
+                                                .foregroundStyle(.black)
+                                                .font(.title2)
+                                        }
+                                        .offset(x: 12, y: -15)
+                                    }
+                                } //foreach
+                            }
                         }
 
                     }// vstack
@@ -108,10 +126,11 @@ struct EditSkillTagsView: View {
 }
 
 struct SkillTagRowView: View {
+    @State private var isShowTechTags: Bool = false
     @Binding var language: WordElement
     let skillLevels: [String]
     let interestLevels: [String]
-    @State private var isShowTechTags: Bool = false
+    let isShowDeleteButton: Bool
 
     var body: some View {
         HStack(spacing: 0) {
@@ -162,10 +181,18 @@ struct SkillTagRowView: View {
         .frame(width: UIScreen.main.bounds.width - 40)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .shadow(color: .black.opacity(0.3), radius: 1, x: 4, y: 4)
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.gray, lineWidth: 2)
+        .shadow(color: .black.opacity(0.5), radius: 1, x: 4, y: 4)
+        .overlay(alignment: .topTrailing) {
+            if isShowDeleteButton {
+                Button {
+
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundStyle(.black)
+                        .font(.title2)
+                }
+                .offset(x: 12, y: -15)
+            }
         }
         .sheet(isPresented: $isShowTechTags) {
             TechTagPickerView(language: $language)
