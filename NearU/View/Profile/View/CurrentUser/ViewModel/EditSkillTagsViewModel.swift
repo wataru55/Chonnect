@@ -27,7 +27,7 @@ class EditSkillTagsViewModel: ObservableObject {
 
     func addSkillTags(newlanguages: [WordElement]) async {
         for newlanguage in newlanguages {
-            if !newlanguage.name.isEmpty {
+            if !newlanguage.name.isEmpty && !languages.contains(where: { $0.name == newlanguage.name }) {
                 do {
                     try await TagsService.addTags(tagData: newlanguage)
                 } catch {
