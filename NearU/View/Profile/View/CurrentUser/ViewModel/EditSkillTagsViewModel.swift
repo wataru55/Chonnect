@@ -20,6 +20,12 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     func saveSkillTags(newlanguages: [WordElement]) async {
+        await addSkillTags(newlanguages: newlanguages)
+        await updateSkillTags()
+        await loadSkillTags()
+    }
+
+    func addSkillTags(newlanguages: [WordElement]) async {
         for newlanguage in newlanguages {
             if !newlanguage.name.isEmpty {
                 do {
@@ -27,6 +33,16 @@ class EditSkillTagsViewModel: ObservableObject {
                 } catch {
                     print("DEBUG: Error adding tags \(error)")
                 }
+            }
+        }
+    }
+
+    func updateSkillTags() async {
+        for language in languages {
+            do {
+                try await TagsService.updateTags(tagData: language)
+            } catch {
+                print("DEBUG: Error updating tags \(error)")
             }
         }
     }

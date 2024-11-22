@@ -29,6 +29,25 @@ struct TagsService {
         }
     }
 
+    static func updateTags(tagData: WordElement) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
+        let id = tagData.id.uuidString
+
+        let data: [String: String] = [
+            "id": id,
+            "name": tagData.name,
+            "skill": tagData.skill,
+            "interest": tagData.interest
+        ]
+
+        do {
+            try await ref.document(id).updateData(data)
+        } catch {
+            throw error
+        }
+    }
+
     static func fetchTags(documentId: String) async throws -> [WordElement] {
         let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
 
