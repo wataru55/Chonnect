@@ -48,4 +48,15 @@ struct TagsService {
             throw error
         }
     }
+
+    static func deleteTag(id: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
+
+        do {
+            try await ref.document(id).delete()
+        } catch {
+            throw error
+        }
+    }
 }

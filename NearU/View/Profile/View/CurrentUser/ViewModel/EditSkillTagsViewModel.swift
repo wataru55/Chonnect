@@ -41,4 +41,13 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
+    func deleteSkillTag(id: String) async {
+        do {
+            try await TagsService.deleteTag(id: id)
+            await loadSkillTags()
+        } catch {
+            print("DEBUG: Error deleting tag \(error)")
+        }
+    }
+
 }
