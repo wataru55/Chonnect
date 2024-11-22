@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HistoryDataStruct {
+struct HistoryDataStruct: Codable {
     let userId: String
     var date: Date
     var isRead: Bool

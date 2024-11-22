@@ -18,7 +18,7 @@ struct SettingView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Bluetooth")) {
+                Section(header: Text("すれちがい通信を許可します")) {
                     Toggle(isOn: $isOnBluetooth) {
                         Text("Bluetooth")
                     }
@@ -34,9 +34,9 @@ struct SettingView: View {
                     }
                 }
 
-                Section(header: Text("Private mode")) {
+                Section(header: Text("SNSリンクへのアクセスを制限します")) {
                     Toggle(isOn: $viewModel.isPrivate) {
-                        Text("account private")
+                        Text("プライベートモード")
                     }
                     .onChange(of: viewModel.isPrivate) {
                         Task { try await viewModel.updateIsPrivate() }
@@ -58,7 +58,11 @@ struct SettingView: View {
                     HStack {
                       Text("Developer").foregroundStyle(Color.gray)
                       Spacer()
-                      Text("Wataru Takahashi")
+                        VStack(alignment: .trailing) {
+                            Text("Wataru Takahashi")
+                            Text("Tsubasa Watanabe")
+                            Text("Ukyo Taniguchi")
+                        }
                     }
                     HStack {
                       Text("Version").foregroundStyle(Color.gray)
@@ -84,7 +88,7 @@ struct SettingView: View {
                                     )
                             })
                             Spacer() // 右のスペーサー
-                    }
+                    }//hstack
                     .padding(.top)
                   }
             }

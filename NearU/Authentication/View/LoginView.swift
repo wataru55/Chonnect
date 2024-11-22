@@ -16,10 +16,10 @@ struct LoginView: View {
             VStack {
                 Spacer()
 
-                Image("Chonnect1")
+                Image("Chonnect")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 300, height: 150)
+                    .frame(width: 300, height: 100)
 
                 VStack (spacing: 15){
                     TextField("メールアドレス", text: $viewModel.email)

@@ -28,18 +28,38 @@ struct UserService {
         return users
     }
 
-    static func fetchfollowedUsers(documentId: String) async throws -> [UserDatePair] {
-        let snapshot = try await Firestore.firestore().collection("users").document(documentId).collection("follows").getDocuments()
+    static func fetchFollowedUsers(receivedId: String) async throws -> [UserDatePair] {
+        guard let documentId = AuthService.shared.currentUser?.id else { return [] }
+        let snapshot = try await Firestore.firestore().collection("users")
+            .document(receivedId.isEmpty ? documentId : receivedId)
+            .collection("follows").getDocuments()
 
-        var connectedUsers: [UserDatePair] = []
+        var followedUsers: [UserDatePair] = []
 
         for document in snapshot.documents {
-            let data = try document.data(as: EncountDataStruct.self)
-            let connectedUser = try await fetchUser(withUid: data.userId)
-            let userDatePair = UserDatePair(user: connectedUser, date: data.date)
-            connectedUsers.append(userDatePair)
+            let data = try document.data(as: NotificationData.self)
+            let followedUser = try await fetchUser(withUid: data.userId)
+            let userDatePair = UserDatePair(user: followedUser, date: data.date)
+            followedUsers.append(userDatePair)
         }
-        return connectedUsers
+        return followedUsers
+    }
+
+    static func fetchFollowers(receivedId: String) async throws -> [UserHistoryRecord] {
+        guard let documentId = AuthService.shared.currentUser?.id else { return [] }
+        let snapshot = try await Firestore.firestore().collection("users")
+            .document(receivedId.isEmpty ? documentId : receivedId)
+            .collection("followers").getDocuments()
+
+        var followers: [UserHistoryRecord] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: HistoryDataStruct.self)
+            let follower = try await fetchUser(withUid: data.userId)
+            let userHistoryRecord = UserHistoryRecord(user: follower, date: data.date, isRead: data.isRead)
+            followers.append(userHistoryRecord)
+        }
+        return followers
     }
 
     static func saveSNSLink(serviceName: String, url: String) async throws {
@@ -64,36 +84,36 @@ struct UserService {
     }
 
     static func seveArticleLink(userId: String, url: String) async throws {
-        let data = ["abstract_url": url]
+        let data = ["article_url": url]
         do {
-            try await Firestore.firestore().collection("users").document(userId).collection("abstract").addDocument(data: data)
+            try await Firestore.firestore().collection("users").document(userId).collection("article").addDocument(data: data)
         } catch {
             throw error
         }
     }
 
     // 記事をフェッチする関数
-    static func fetchAbstractLinks(withUid userId: String) async throws -> [String] {
-        var abstractUrls: [String] = []
+    static func fetchArticleLinks(withUid userId: String) async throws -> [String] {
+        var articleUrls: [String] = []
 
         let snapshot = try await Firestore.firestore()
             .collection("users")
             .document(userId)
-            .collection("abstract")
+            .collection("article")
             .getDocuments()
 
         for document in snapshot.documents {
-            if let abstractUrlString = document.data()["abstract_url"] as? String {
-                abstractUrls.append(abstractUrlString)
+            if let articleUrlString = document.data()["article_url"] as? String {
+                articleUrls.append(articleUrlString)
             }
         }
 
-        return abstractUrls
+        return articleUrls
     }
 
     static func deleteArticleLink(url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let query = Firestore.firestore().collection("users").document(documentId).collection("abstract").whereField("abstract_url", isEqualTo: url)
+        let query = Firestore.firestore().collection("users").document(documentId).collection("article").whereField("article_url", isEqualTo: url)
 
         // Firestoreから削除
         do {
@@ -138,7 +158,8 @@ struct UserService {
 
         let followerData: [String: Any] = [
             "userId": documentId,
-            "date": date
+            "date": date,
+            "isRead": false
         ]
 
         let followData: [String: Any] = [
@@ -175,7 +196,7 @@ struct UserService {
         }
     }
 
-    func fetchNotifications() async {
+    static func fetchNotifications() async {
         guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
 
         let startTime = Date()
@@ -185,7 +206,7 @@ struct UserService {
             let snapshot = try await notificationsRef.getDocuments()
 
             for document in snapshot.documents {
-                if let data = try? document.data(as: NotificationData.self) {
+                if let data = try? document.data(as: HistoryDataStruct.self) {
                     // Realmに保存
                     await RealmManager.shared.storeData(data.userId, date: data.date)
                 }
@@ -211,4 +232,14 @@ struct UserService {
         }
     }
 
+    static func checkIsFollowed(receivedId: String) async -> Bool {
+        guard let documentId = AuthService.shared.currentUser?.id else { return false }
+        let path = Firestore.firestore().collection("users").document(documentId).collection("followers").document(receivedId)
+
+        do {
+            return try await path.getDocument().exists
+        } catch {
+            return false
+        }
+    }
 }

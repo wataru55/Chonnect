@@ -20,6 +20,10 @@ struct MainTabView: View {
 
     init(user: User) {
         self.user = user
+        let appearance: UITabBarAppearance = UITabBarAppearance()
+        appearance.backgroundColor = UIColor(Color(red: 0.96, green: 0.97, blue: 0.98))
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().standardAppearance = appearance
     }
 
     var body: some View {
@@ -31,6 +35,7 @@ struct MainTabView: View {
                 }
 
             CurrentUserProfileView(user: user)
+                .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "person")
                 }
@@ -69,7 +74,7 @@ struct MainTabView: View {
             // 通知の確認
             Task {
                 // データのフェッチ
-                await UserService().fetchNotifications()
+                await UserService.fetchNotifications()
                 // ローディング終了
                 loadingViewModel.isLoading = false
             }
@@ -84,18 +89,9 @@ struct MainTabView: View {
                 if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
                     BLEPeripheralManager.shared.startAdvertising()
                 }
+            case .inactive, .background:
+                print("アプリが非アクティブになったが、BLEは継続")
 
-            case .inactive:
-                BLECentralManager.shared.stopScan()
-                BLEPeripheralManager.shared.stopAdvertising()
-            case .background:
-                if BLECentralManager.shared.centralManager.state == .poweredOn {
-                    BLECentralManager.shared.startScanning()
-                }
-
-                if BLEPeripheralManager.shared.peripheralManager.state == .poweredOn {
-                    BLEPeripheralManager.shared.startAdvertising()
-                }
             @unknown default:
                 print("Unexpected new value.")
             }
