@@ -61,7 +61,7 @@ struct EditSkillTagsView: View {
                             .padding(.leading, 5)
                             .padding(.vertical, 10)
 
-                        if viewModel.languages.isEmpty {
+                        if viewModel.Tags.isEmpty {
                             Text("保存された技術タグがありません")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -69,7 +69,7 @@ struct EditSkillTagsView: View {
                                 .padding()
                         } else {
                             VStack(spacing: 20){
-                                ForEach($viewModel.languages) { $language in
+                                ForEach($viewModel.Tags) { $language in
                                     SkillTagRowView(viewModel: viewModel,
                                                     language: $language,
                                                     skillLevels: viewModel.skillLevels,

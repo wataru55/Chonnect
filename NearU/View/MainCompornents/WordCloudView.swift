@@ -56,7 +56,7 @@ struct WordCloudView: View {
 
     init(viewModel: EditSkillTagsViewModel) {
         self._viewModel = ObservedObject(initialValue: viewModel)
-        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.languages.count))
+        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.Tags.count))
     }
 
     var body: some View {
@@ -71,7 +71,7 @@ struct WordCloudView: View {
 
             VStack {
                 ZStack{
-                    ForEach(Array(viewModel.languages.enumerated()), id: \.offset) {idx, word in
+                    ForEach(Array(viewModel.Tags.enumerated()), id: \.offset) {idx, word in
                         NavigationLink(destination: Text("\(word.name)")) {
                             Text("\(word.name)")
                                 .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
@@ -89,7 +89,7 @@ struct WordCloudView: View {
                 } //zstack
                 .background(RectGetter($canvasRect))
                 .onAppear {
-                    wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.languages.count)
+                    wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.Tags.count)
                 }
             }
         } // vstack
