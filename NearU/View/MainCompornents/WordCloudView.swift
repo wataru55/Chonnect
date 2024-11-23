@@ -40,6 +40,7 @@ struct WordCloudView: View {
         .background(RectGetter($canvasRect))
     }
 
+    // 矩形同士が重なっているかどうかを判定
     func checkIntersects(rect: CGRect, rects: [CGRect]) -> Bool {
         for r in rects {
             if rect.intersects(r) {
@@ -49,6 +50,7 @@ struct WordCloudView: View {
         return false
     }
 
+    // SwiftUIの微小な調整による誤差を無視する
     func simularWordSizes(a: [CGSize], b: [CGSize]) -> Bool {
         if a == b {
             return true
@@ -66,6 +68,7 @@ struct WordCloudView: View {
         return diff < 0.01
     }
 
+    // 矩形がキャンバスの境界外に出ているかどうかを判定
     func checkOutsideBoundry(canvasSize: CGSize, rect: CGRect) -> Bool {
         if rect.maxY > canvasRect.height/2 {
             return true
@@ -76,27 +79,32 @@ struct WordCloudView: View {
         return false
     }
 
+    // 単語の配置をスパイラルパスに基づいて計算する
     func calcPositions(canvasSize: CGSize, itemSizes: [CGSize]) -> [CGPoint] {
         var pos = [CGPoint](repeating: CGPoint.zero, count: itemSizes.count)
         if canvasSize.height == 0 {
             return pos
         }
 
+        // キャッシュが有効な場合はキャッシュを返す
         if positionCache.canvasSize == canvasSize
             && simularWordSizes(a: positionCache.wordSizes, b: wordSizes) {
             return positionCache.positions
         }
+
+        // deferによって関数の最後に実行され，キャッシュを更新する
         defer {
             positionCache.canvasSize = canvasSize
             positionCache.wordSizes = wordSizes
             positionCache.positions = pos
         }
-
+        // 各単語の配置済み矩形を格納する配列.他の単語との衝突判定に使用
         var rects = [CGRect]()
-
+        // スパイラル曲線をたどるためのステップ量（角度に相当）
         var step : CGFloat = 0
+        // キャンバスのアスペクト比をもとに、スパイラル曲線の形状を調整
         let ratio = canvasSize.width * 1.5 / canvasSize.height
-
+        // スパイラルの開始位置
         let startPos = CGPoint(x: CGFloat.random(in: 0...1) * canvasSize.width * 0.1,
                                y: CGFloat.random(in: 0...1) * canvasSize.height * 0.1)
 
@@ -104,7 +112,10 @@ struct WordCloudView: View {
             var nextRect = CGRect(origin: CGPoint(x: startPos.x - itemSize.width/2,
                                                   y: startPos.y - itemSize.height/2),
                                   size: itemSize)
+            // スパイラル探索ロジック
+            // stepがtに相当し，ratioが比率係数
             if index > 0 {
+                // ループ条件：矩形がキャンバス外に出ないかつ，他の矩形と重ならない
                 while checkOutsideBoundry(canvasSize: canvasSize,
                                           rect: nextRect)
                         || checkIntersects(rect: nextRect, rects: rects) {
@@ -116,11 +127,12 @@ struct WordCloudView: View {
             pos[index] = nextRect.center
             rects.append(nextRect)
         }
+
         return pos
     }
 }
 
-
+// 各単語のキャッシュ
 class WordCloudPositionCache {
     var canvasSize = CGSize.zero
     var wordSizes = [CGSize]()
@@ -134,6 +146,7 @@ extension CGRect {
     }
 }
 
+// GeometryReader内部に透明な矩形を描画することでViewの要素の大きさ(CGSize)を取得する
 struct WordSizeGetter: View {
     @Binding var sizeStorage: [CGSize]
     private var index: Int
@@ -158,6 +171,7 @@ struct WordSizeGetter: View {
     }
 }
 
+// GeometryReader内部に透明な矩形を描画することでViewの要素の位置(CGRect)を取得する
 struct RectGetter: View {
     @Binding var rect: CGRect
 
