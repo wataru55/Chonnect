@@ -160,8 +160,7 @@ struct WordCloudView: View {
         // キャンバスのアスペクト比をもとに、スパイラル曲線の形状を調整
         let ratio = canvasSize.width * 1.5 / canvasSize.height
         // スパイラルの開始位置
-        let startPos = CGPoint(x: CGFloat.random(in: 0...1) * canvasSize.width * 0.1,
-                               y: CGFloat.random(in: 0...1) * canvasSize.height * 0.1)
+        let startPos = CGPoint.zero
 
         for (index, itemSize) in itemSizes.enumerated() {
             var nextRect = CGRect(origin: CGPoint(x: startPos.x - itemSize.width/2,
