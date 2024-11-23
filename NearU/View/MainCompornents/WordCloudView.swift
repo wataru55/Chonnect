@@ -52,6 +52,8 @@ struct WordCloudView: View {
 
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
+    @State private var scale: CGFloat = 1
+    @State private var offset: CGSize = .zero
     @Environment(\.dismiss) var dismiss
 
     init(viewModel: EditSkillTagsViewModel) {
@@ -82,8 +84,7 @@ struct WordCloudView: View {
                                 .padding(3)
                                 .background(WordSizeGetter($wordSizes, idx))
                         }
-                        .position(x: canvasRect.width/2 + pos[idx].x,
-                                  y: canvasRect.height/2 + pos[idx].y)
+                        .position(x: canvasRect.width/2 + pos[idx].x, y: canvasRect.height/2 + pos[idx].y)
 
                     }
                 } //zstack
@@ -91,8 +92,27 @@ struct WordCloudView: View {
                 .onAppear {
                     wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count)
                 }
-            }
+            } // vstack
+            .offset(x: offset.width, y: offset.height)
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged({ value in
+                        offset = value.translation //ドラッグジェスチャーの移動量
+                    })
+                    .onEnded({ _ in
+                        if scale <= 1 {
+                            withAnimation(.spring){
+                                resetImageState()
+                            }
+                        }
+                    })
+            )
         } // vstack
+    }
+
+    func resetImageState(){
+        scale = 1
+        offset = .zero
     }
 
     // 矩形同士が重なっているかどうかを判定
