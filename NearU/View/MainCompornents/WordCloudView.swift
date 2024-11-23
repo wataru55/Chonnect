@@ -60,69 +60,86 @@ enum Style: String{
     }
 }
 
-
 struct WordCloudView: View {
     @ObservedObject private var viewModel: EditSkillTagsViewModel
     private var positionCache = WordCloudPositionCache()
 
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
+    @State private var wordVisibility: [Bool]
     @State private var scale: CGFloat = 1
     @State private var offset: CGSize = .zero
-    @Environment(\.dismiss) var dismiss
+    @State private var positionsReady = false
+    @State private var positions: [CGPoint] = []
 
     init(viewModel: EditSkillTagsViewModel) {
         self._viewModel = ObservedObject(initialValue: viewModel)
         self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count))
+        self._wordVisibility = State(initialValue: [Bool](repeating: false, count: viewModel.skillSortedTags.count))
     }
 
     var body: some View {
         let pos = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
 
         VStack {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-            }
-
-            VStack {
-                ZStack{
-                    ForEach(Array(viewModel.skillSortedTags.enumerated()), id: \.offset) {idx, word in
-                        NavigationLink(destination: Text("\(word.name)")) {
-                            Text("\(word.name)")
-                                .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
-                                .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
-                                .fontWeight(Style(rawValue: word.skill)?.fontWeight())
-                                .lineLimit(1)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(3)
-                                .background(WordSizeGetter($wordSizes, idx))
-                        }
+            ZStack{
+                ForEach(Array(viewModel.skillSortedTags.enumerated()), id: \.offset) {idx, word in
+                    Text("\(word.name)")
+                        .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
+                        .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
+                        .fontWeight(Style(rawValue: word.skill)?.fontWeight())
+                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(3)
+                        .background(WordSizeGetter($wordSizes, idx))
                         .position(x: canvasRect.width/2 + pos[idx].x, y: canvasRect.height/2 + pos[idx].y)
-
-                    }
-                } //zstack
-                .background(RectGetter($canvasRect))
-                .onAppear {
-                    wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count)
-                }
-            } // vstack
-            .offset(x: offset.width, y: offset.height)
-            .simultaneousGesture(
-                DragGesture()
-                    .onChanged({ value in
-                        offset = value.translation //ドラッグジェスチャーの移動量
-                    })
-                    .onEnded({ _ in
-                        if scale <= 1 {
-                            withAnimation(.spring){
-                                resetImageState()
+                        .opacity(wordVisibility[idx] ? 1 : 0)
+                        .onAppear {
+                            // positionsReady が true の場合のみ表示を開始
+                            if positionsReady {
+                                wordVisibility[idx] = true
                             }
                         }
-                    })
-            )
+                        .animation(.easeOut(duration: 0.5).delay(Double(idx) * 0.1), value: wordVisibility[idx])
+
+                }
+            } //zstack
+            .background(RectGetter($canvasRect))
+            .onAppear {
+                wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count)
+            }
+            .onChange(of: wordSizes) {
+                if wordSizes.allSatisfy({ $0 != CGSize.zero }) {
+                    // すべての単語のサイズが取得された
+                    positions = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
+                    positionsReady = true
+                }
+            }
+            .onChange(of: positionsReady) {
+                if positionsReady {
+                    // positionsReady が true になったときにアニメーションを開始
+                    for idx in wordVisibility.indices {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(idx) * 0.3) {
+                            wordVisibility[idx] = true
+                        }
+                    }
+                }
+            }
         } // vstack
+        .offset(x: offset.width, y: offset.height)
+        .simultaneousGesture(
+            DragGesture()
+                .onChanged({ value in
+                    offset = value.translation //ドラッグジェスチャーの移動量
+                })
+                .onEnded({ _ in
+                    if scale <= 1 {
+                        withAnimation(.spring){
+                            resetImageState()
+                        }
+                    }
+                })
+        )
     }
 
     func resetImageState(){
@@ -253,7 +270,7 @@ struct WordSizeGetter: View {
 
     func createView(proxy: GeometryProxy) -> some View {
         DispatchQueue.main.async {
-            self.sizeStorage[index] = proxy.frame(in: .global).size
+            self.sizeStorage[index] = proxy.frame(in: .local).size
         }
 
         return Rectangle().fill(Color.clear)
