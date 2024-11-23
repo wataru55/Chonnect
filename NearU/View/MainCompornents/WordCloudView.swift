@@ -7,37 +7,92 @@
 
 import SwiftUI
 
+enum Style: String{
+    case one = "1"
+    case two = "2"
+    case three = "3"
+    case four = "4"
+    case five = "5"
+
+    func color() -> Color {
+        switch self {
+        case .one:
+            return .black
+        case .two:
+            return .gray
+        case .three:
+            return .black.opacity(0.7)
+        case .four:
+            return .gray
+        case .five:
+            return .black
+        }
+    }
+
+    func fontWeight() -> Font.Weight {
+        switch self {
+        case .one:
+            return .black
+        case .two:
+            return .heavy
+        case .three:
+            return .bold
+        case .four:
+            return .heavy
+        case .five:
+            return .black
+        }
+    }
+}
+
+
 struct WordCloudView: View {
-    private let words: [WordElement] = [WordElement].generate(forSwiftUI: true)
+    @ObservedObject private var viewModel: EditSkillTagsViewModel
     private var positionCache = WordCloudPositionCache()
 
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
+    @Environment(\.dismiss) var dismiss
 
-    init() {
-        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: words.count))
+    init(viewModel: EditSkillTagsViewModel) {
+        self._viewModel = ObservedObject(initialValue: viewModel)
+        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.languages.count))
     }
 
     var body: some View {
         let pos = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
 
-        ZStack{
-            ForEach(Array(words.enumerated()), id: \.offset) {idx, word in
-                NavigationLink(destination: Text("\(word.name)")) {
-                    Text("\(word.name)")
-                        .foregroundStyle(.black)
-                        .font(.subheadline)
-                        .lineLimit(1)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(3)
-                        .background(WordSizeGetter($wordSizes, idx))
-                }
-                .position(x: canvasRect.width/2 + pos[idx].x,
-                          y: canvasRect.height/2 + pos[idx].y)
-
+        VStack {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
             }
-        }
-        .background(RectGetter($canvasRect))
+
+            VStack {
+                ZStack{
+                    ForEach(Array(viewModel.languages.enumerated()), id: \.offset) {idx, word in
+                        NavigationLink(destination: Text("\(word.name)")) {
+                            Text("\(word.name)")
+                                .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
+                                .font(.system(size: CGFloat(10 * (Int(word.skill) ?? 1))))
+                                .fontWeight(Style(rawValue: word.skill)?.fontWeight())
+                                .lineLimit(1)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(3)
+                                .background(WordSizeGetter($wordSizes, idx))
+                        }
+                        .position(x: canvasRect.width/2 + pos[idx].x,
+                                  y: canvasRect.height/2 + pos[idx].y)
+
+                    }
+                } //zstack
+                .background(RectGetter($canvasRect))
+                .onAppear {
+                    wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.languages.count)
+                }
+            }
+        } // vstack
     }
 
     // 矩形同士が重なっているかどうかを判定
@@ -194,6 +249,6 @@ struct RectGetter: View {
     }
 }
 
-#Preview {
-    WordCloudView()
-}
+//#Preview {
+//    WordCloudView()
+//}
