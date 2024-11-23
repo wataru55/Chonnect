@@ -14,6 +14,21 @@ enum Style: String{
     case four = "4"
     case five = "5"
 
+    func fontSize() -> Int {
+        switch self {
+        case .one:
+            return 15
+        case .two:
+            return 25
+        case .three:
+            return 35
+        case .four:
+            return 50
+        case .five:
+            return 60
+        }
+    }
+
     func color() -> Color {
         switch self {
         case .one:
@@ -77,7 +92,7 @@ struct WordCloudView: View {
                         NavigationLink(destination: Text("\(word.name)")) {
                             Text("\(word.name)")
                                 .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
-                                .font(.system(size: CGFloat(10 * (Int(word.skill) ?? 1))))
+                                .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
                                 .fontWeight(Style(rawValue: word.skill)?.fontWeight())
                                 .lineLimit(1)
                                 .fixedSize(horizontal: false, vertical: true)
