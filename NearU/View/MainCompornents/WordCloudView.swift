@@ -7,39 +7,147 @@
 
 import SwiftUI
 
+enum Style: String{
+    case one = "1"
+    case two = "2"
+    case three = "3"
+    case four = "4"
+    case five = "5"
+
+    func fontSize() -> Int {
+        switch self {
+        case .one:
+            return 15
+        case .two:
+            return 25
+        case .three:
+            return 35
+        case .four:
+            return 50
+        case .five:
+            return 60
+        }
+    }
+
+    func color() -> Color {
+        switch self {
+        case .one:
+            return .black
+        case .two:
+            return .gray
+        case .three:
+            return .black.opacity(0.7)
+        case .four:
+            return .gray
+        case .five:
+            return .black
+        }
+    }
+
+    func fontWeight() -> Font.Weight {
+        switch self {
+        case .one:
+            return .black
+        case .two:
+            return .heavy
+        case .three:
+            return .bold
+        case .four:
+            return .heavy
+        case .five:
+            return .black
+        }
+    }
+}
+
 struct WordCloudView: View {
-    private let words: [WordElement] = [WordElement].generate(forSwiftUI: true)
+    @ObservedObject private var viewModel: EditSkillTagsViewModel
     private var positionCache = WordCloudPositionCache()
 
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
+    @State private var wordVisibility: [Bool]
+    @State private var scale: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var positionsReady = false
+    @State private var positions: [CGPoint] = []
 
-    init() {
-        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: words.count))
+    init(viewModel: EditSkillTagsViewModel) {
+        self._viewModel = ObservedObject(initialValue: viewModel)
+        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count))
+        self._wordVisibility = State(initialValue: [Bool](repeating: false, count: viewModel.skillSortedTags.count))
     }
 
     var body: some View {
         let pos = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
 
-        ZStack{
-            ForEach(Array(words.enumerated()), id: \.offset) {idx, word in
-                NavigationLink(destination: Text("\(word.name)")) {
+        VStack {
+            ZStack{
+                ForEach(Array(viewModel.skillSortedTags.enumerated()), id: \.offset) {idx, word in
                     Text("\(word.name)")
-                        .foregroundStyle(.black)
-                        .font(.subheadline)
+                        .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
+                        .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
+                        .fontWeight(Style(rawValue: word.skill)?.fontWeight())
                         .lineLimit(1)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(3)
                         .background(WordSizeGetter($wordSizes, idx))
-                }
-                .position(x: canvasRect.width/2 + pos[idx].x,
-                          y: canvasRect.height/2 + pos[idx].y)
+                        .position(x: canvasRect.width/2 + pos[idx].x, y: canvasRect.height/2 + pos[idx].y)
+                        .opacity(wordVisibility[idx] ? 1 : 0)
+                        .onAppear {
+                            // positionsReady が true の場合のみ表示を開始
+                            if positionsReady {
+                                wordVisibility[idx] = true
+                            }
+                        }
+                        .animation(.easeOut(duration: 0.5).delay(Double(idx) * 0.1), value: wordVisibility[idx])
 
+                }
+            } //zstack
+            .background(RectGetter($canvasRect))
+            .onAppear {
+                wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count)
             }
-        }
-        .background(RectGetter($canvasRect))
+            .onChange(of: wordSizes) {
+                if wordSizes.allSatisfy({ $0 != CGSize.zero }) {
+                    // すべての単語のサイズが取得された
+                    positions = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
+                    positionsReady = true
+                }
+            }
+            .onChange(of: positionsReady) {
+                if positionsReady {
+                    // positionsReady が true になったときにアニメーションを開始
+                    for idx in wordVisibility.indices {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(idx) * 0.3) {
+                            wordVisibility[idx] = true
+                        }
+                    }
+                }
+            }
+        } // vstack
+        .offset(x: offset.width, y: offset.height)
+        .simultaneousGesture(
+            DragGesture()
+                .onChanged({ value in
+                    offset = value.translation //ドラッグジェスチャーの移動量
+                })
+                .onEnded({ _ in
+                    if scale <= 1 {
+                        withAnimation(.spring){
+                            resetImageState()
+                        }
+                    }
+                })
+        )
     }
 
+    func resetImageState(){
+        scale = 1
+        offset = .zero
+    }
+
+    // 矩形同士が重なっているかどうかを判定
     func checkIntersects(rect: CGRect, rects: [CGRect]) -> Bool {
         for r in rects {
             if rect.intersects(r) {
@@ -49,6 +157,7 @@ struct WordCloudView: View {
         return false
     }
 
+    // SwiftUIの微小な調整による誤差を無視する
     func simularWordSizes(a: [CGSize], b: [CGSize]) -> Bool {
         if a == b {
             return true
@@ -66,6 +175,7 @@ struct WordCloudView: View {
         return diff < 0.01
     }
 
+    // 矩形がキャンバスの境界外に出ているかどうかを判定
     func checkOutsideBoundry(canvasSize: CGSize, rect: CGRect) -> Bool {
         if rect.maxY > canvasRect.height/2 {
             return true
@@ -76,35 +186,42 @@ struct WordCloudView: View {
         return false
     }
 
+    // 単語の配置をスパイラルパスに基づいて計算する
     func calcPositions(canvasSize: CGSize, itemSizes: [CGSize]) -> [CGPoint] {
         var pos = [CGPoint](repeating: CGPoint.zero, count: itemSizes.count)
         if canvasSize.height == 0 {
             return pos
         }
 
+        // キャッシュが有効な場合はキャッシュを返す
         if positionCache.canvasSize == canvasSize
             && simularWordSizes(a: positionCache.wordSizes, b: wordSizes) {
             return positionCache.positions
         }
+
+        // deferによって関数の最後に実行され，キャッシュを更新する
         defer {
             positionCache.canvasSize = canvasSize
             positionCache.wordSizes = wordSizes
             positionCache.positions = pos
         }
-
+        // 各単語の配置済み矩形を格納する配列.他の単語との衝突判定に使用
         var rects = [CGRect]()
-
+        // スパイラル曲線をたどるためのステップ量（角度に相当）
         var step : CGFloat = 0
+        // キャンバスのアスペクト比をもとに、スパイラル曲線の形状を調整
         let ratio = canvasSize.width * 1.5 / canvasSize.height
-
-        let startPos = CGPoint(x: CGFloat.random(in: 0...1) * canvasSize.width * 0.1,
-                               y: CGFloat.random(in: 0...1) * canvasSize.height * 0.1)
+        // スパイラルの開始位置
+        let startPos = CGPoint.zero
 
         for (index, itemSize) in itemSizes.enumerated() {
             var nextRect = CGRect(origin: CGPoint(x: startPos.x - itemSize.width/2,
                                                   y: startPos.y - itemSize.height/2),
                                   size: itemSize)
+            // スパイラル探索ロジック
+            // stepがtに相当し，ratioが比率係数
             if index > 0 {
+                // ループ条件：矩形がキャンバス外に出ないかつ，他の矩形と重ならない
                 while checkOutsideBoundry(canvasSize: canvasSize,
                                           rect: nextRect)
                         || checkIntersects(rect: nextRect, rects: rects) {
@@ -116,11 +233,12 @@ struct WordCloudView: View {
             pos[index] = nextRect.center
             rects.append(nextRect)
         }
+
         return pos
     }
 }
 
-
+// 各単語のキャッシュ
 class WordCloudPositionCache {
     var canvasSize = CGSize.zero
     var wordSizes = [CGSize]()
@@ -134,6 +252,7 @@ extension CGRect {
     }
 }
 
+// GeometryReader内部に透明な矩形を描画することでViewの要素の大きさ(CGSize)を取得する
 struct WordSizeGetter: View {
     @Binding var sizeStorage: [CGSize]
     private var index: Int
@@ -151,13 +270,14 @@ struct WordSizeGetter: View {
 
     func createView(proxy: GeometryProxy) -> some View {
         DispatchQueue.main.async {
-            self.sizeStorage[index] = proxy.frame(in: .global).size
+            self.sizeStorage[index] = proxy.frame(in: .local).size
         }
 
         return Rectangle().fill(Color.clear)
     }
 }
 
+// GeometryReader内部に透明な矩形を描画することでViewの要素の位置(CGRect)を取得する
 struct RectGetter: View {
     @Binding var rect: CGRect
 
@@ -180,6 +300,6 @@ struct RectGetter: View {
     }
 }
 
-#Preview {
-    WordCloudView()
-}
+//#Preview {
+//    WordCloudView()
+//}

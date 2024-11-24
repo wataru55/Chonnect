@@ -101,6 +101,8 @@
 		63FDDFD72CECD9C400B90074 /* EditSkillTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */; };
 		63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */; };
 		63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDA2CEF7A1800B90074 /* TagsService.swift */; };
+		63FDDFDD2CF1DA5800B90074 /* TagIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */; };
+		63FDDFDF2CF2F5A900B90074 /* Top3TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDE2CF2F5A900B90074 /* Top3TabView.swift */; };
 		F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */; };
 		F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */; };
 		F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25861692CCB245000715D20 /* PasswordResetView.swift */; };
@@ -210,6 +212,8 @@
 		63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSkillTagsView.swift; sourceTree = "<group>"; };
 		63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSkillTagsViewModel.swift; sourceTree = "<group>"; };
 		63FDDFDA2CEF7A1800B90074 /* TagsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsService.swift; sourceTree = "<group>"; };
+		63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIndexView.swift; sourceTree = "<group>"; };
+		63FDDFDE2CF2F5A900B90074 /* Top3TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Top3TabView.swift; sourceTree = "<group>"; };
 		F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditFrameworkTagsView.swift; sourceTree = "<group>"; };
 		F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		F25861692CCB245000715D20 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -290,6 +294,7 @@
 				639A0BDC2CE4E1F700A769C6 /* CountView.swift */,
 				639A0BEA2CE739C400A769C6 /* UserRowView.swift */,
 				63FDDFD22CECCC2900B90074 /* WordCloudView.swift */,
+				63FDDFDE2CF2F5A900B90074 /* Top3TabView.swift */,
 			);
 			path = MainCompornents;
 			sourceTree = "<group>";
@@ -400,6 +405,7 @@
 				3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */,
 				630B9EA32CC344E9002F06AB /* TagsView.swift */,
 				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
+				63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */,
 			);
 			path = ProfileCompornents;
 			sourceTree = "<group>";
@@ -749,7 +755,9 @@
 				F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */,
 				6344BE422CDA81C3009F404E /* UserHistoryRecord.swift in Sources */,
 				6344BE382CD71678009F404E /* LoadingViewModel.swift in Sources */,
+				63FDDFDD2CF1DA5800B90074 /* TagIndexView.swift in Sources */,
 				639A0BE92CE5CB7F00A769C6 /* UserFollowerView.swift in Sources */,
+				63FDDFDF2CF2F5A900B90074 /* Top3TabView.swift in Sources */,
 				F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */,
 				6344BE3C2CD759CA009F404E /* HistoryDataStruct.swift in Sources */,
 				63FDDFD72CECD9C400B90074 /* EditSkillTagsView.swift in Sources */,

@@ -7,13 +7,20 @@
 
 import SwiftUI
 import Firebase
+import Combine
 
 class EditSkillTagsViewModel: ObservableObject {
-    @Published var languages: [WordElement] = []
+    @Published var Tags: [WordElement] = []
+    @Published var skillSortedTags: [WordElement] = []
+    @Published var interestSortedTags: [WordElement] = []
     let skillLevels = ["1", "2", "3", "4", "5"]
     let interestLevels = ["", "1", "2", "3", "4", "5"]
 
+    private var cancellables = Set<AnyCancellable>()
+
     init() {
+        setupSubscribers()
+
         Task {
             await loadSkillTags()
         }
@@ -27,7 +34,7 @@ class EditSkillTagsViewModel: ObservableObject {
 
     func addSkillTags(newlanguages: [WordElement]) async {
         for newlanguage in newlanguages {
-            if !newlanguage.name.isEmpty && !languages.contains(where: { $0.name == newlanguage.name }) {
+            if !newlanguage.name.isEmpty && !Tags.contains(where: { $0.name == newlanguage.name }) {
                 do {
                     try await TagsService.addTags(tagData: newlanguage)
                 } catch {
@@ -38,7 +45,7 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     func updateSkillTags() async {
-        for language in languages {
+        for language in Tags {
             do {
                 try await TagsService.updateTags(tagData: language)
             } catch {
@@ -51,7 +58,7 @@ class EditSkillTagsViewModel: ObservableObject {
     func loadSkillTags() async {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
         do {
-            languages = try await TagsService.fetchTags(documentId: documentId)
+            Tags = try await TagsService.fetchTags(documentId: documentId)
         } catch {
             print("DEBUG: Error fetching tags \(error)")
         }
@@ -64,6 +71,16 @@ class EditSkillTagsViewModel: ObservableObject {
         } catch {
             print("DEBUG: Error deleting tag \(error)")
         }
+    }
+
+    func setupSubscribers() {
+        $Tags
+            .sink { [weak self] tags in
+                guard let self = self else { return }
+                self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
+                self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
+            }
+            .store(in: &cancellables)
     }
 
 }

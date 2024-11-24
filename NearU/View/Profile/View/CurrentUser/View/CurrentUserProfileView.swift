@@ -14,11 +14,14 @@ struct CurrentUserProfileView: View {
     @StateObject var addLinkViewModel = EditSNSLinkViewModel()
     @StateObject var followViewModel = FollowViewModel()
     @StateObject var followerViewModel = FollowerViewModel()
+    @StateObject var tagsViewModel = EditSkillTagsViewModel()
 
     @State private var isAddingNewLink = false
     @State private var showEditArticle = false
     @State private var showEditProfile = false
     @State private var showEditTags = false
+
+    @State private var isShowWordCloud = false
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
@@ -36,9 +39,12 @@ struct CurrentUserProfileView: View {
                             BackgroundImageView(user: user, height: 500, isGradient: true)
                                 .overlay(alignment: .bottomLeading) {
                                     VStack(alignment: .leading){
-                                        TagsView(tags: viewModel.selectedLanguageTags)
-
-                                        TagsView(tags: viewModel.selectedFrameworkTags)
+                                        Top3TabView(tags: tagsViewModel.skillSortedTags)
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    isShowWordCloud.toggle()
+                                                }
+                                            }
 
                                         HStack(spacing: 4) {
                                             Text(user.username)
@@ -235,6 +241,15 @@ struct CurrentUserProfileView: View {
                     }
 
                 }//vstack
+
+                if isShowWordCloud {
+                    TagIndexView(viewModel: tagsViewModel)
+                        .background(Color.white.opacity(0.7))
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isShowWordCloud.toggle()
+                        }
+                }
             }// zstack
             .ignoresSafeArea()
             .navigationDestination(for: FollowNavigationData.self) { data in
