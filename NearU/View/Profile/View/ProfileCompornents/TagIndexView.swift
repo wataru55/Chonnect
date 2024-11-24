@@ -19,10 +19,10 @@ struct TagIndexView: View {
             VStack {
 
                 TabView(selection: $selectedTab) {
-                    WordCloudView(viewModel: viewModel)
+                    WordCloudView(viewModel: viewModel, selected: selectedTab)
                         .tag(0)
 
-                    WordCloudView(viewModel: viewModel)
+                    WordCloudView(viewModel: viewModel, selected: selectedTab)
                         .tag(1)
                 }
                 .tabViewStyle(PageTabViewStyle())
@@ -42,7 +42,13 @@ struct TagIndexView: View {
                         )
                 }
                 .padding(4)
-
+            }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(selectedTab == 0 ? "スキルレベル" : "興味度")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                }
             }
         }
     }

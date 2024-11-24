@@ -72,37 +72,22 @@ struct WordCloudView: View {
     @State private var positionsReady = false
     @State private var positions: [CGPoint] = []
 
-    init(viewModel: EditSkillTagsViewModel) {
+    var selected: Int
+
+    init(viewModel: EditSkillTagsViewModel, selected: Int) {
         self._viewModel = ObservedObject(initialValue: viewModel)
         self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count))
         self._wordVisibility = State(initialValue: [Bool](repeating: false, count: viewModel.skillSortedTags.count))
+        self.selected = selected
     }
 
     var body: some View {
+        // タグ名を配置する座標を格納する配列
         let pos = calcPositions(canvasSize: canvasRect.size, itemSizes: wordSizes)
 
         VStack {
             ZStack{
-                ForEach(Array(viewModel.skillSortedTags.enumerated()), id: \.offset) {idx, word in
-                    Text("\(word.name)")
-                        .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
-                        .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
-                        .fontWeight(Style(rawValue: word.skill)?.fontWeight())
-                        .lineLimit(1)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(3)
-                        .background(WordSizeGetter($wordSizes, idx))
-                        .position(x: canvasRect.width/2 + pos[idx].x, y: canvasRect.height/2 + pos[idx].y)
-                        .opacity(wordVisibility[idx] ? 1 : 0)
-                        .onAppear {
-                            // positionsReady が true の場合のみ表示を開始
-                            if positionsReady {
-                                wordVisibility[idx] = true
-                            }
-                        }
-                        .animation(.easeOut(duration: 0.5).delay(Double(idx) * 0.1), value: wordVisibility[idx])
-
-                }
+                selectedTagsView(tags: selected == 0 ? viewModel.skillSortedTags : viewModel.interestSortedTags, pos: pos)
             } //zstack
             .background(RectGetter($canvasRect))
             .onAppear {
@@ -140,6 +125,27 @@ struct WordCloudView: View {
                     }
                 })
         )
+    }
+    @ViewBuilder
+    private func selectedTagsView(tags: [WordElement], pos: [CGPoint]) -> some View {
+        ForEach(Array(tags.enumerated()), id: \.offset) { idx, word in
+            Text("\(word.name)")
+                .foregroundStyle(Style(rawValue: selected == 0 ? word.skill : word.interest)?.color() ?? .clear)
+                .font(.system(size: CGFloat(Style(rawValue: selected == 0 ? word.skill : word.interest)?.fontSize() ?? 15)))
+                .fontWeight(Style(rawValue: selected == 0 ? word.skill : word.interest)?.fontWeight())
+                .lineLimit(1)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(3)
+                .background(WordSizeGetter($wordSizes, idx))
+                .position(x: canvasRect.width / 2 + pos[idx].x, y: canvasRect.height / 2 + pos[idx].y)
+                .opacity(wordVisibility[idx] ? 1 : 0)
+                .onAppear {
+                    if positionsReady {
+                        wordVisibility[idx] = true
+                    }
+                }
+                .animation(.easeOut(duration: 0.5).delay(Double(idx) * 0.1), value: wordVisibility[idx])
+        }
     }
 
     func resetImageState(){
