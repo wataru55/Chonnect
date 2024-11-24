@@ -210,12 +210,46 @@ struct SkillTagRowView: View {
 
 struct TechTagPickerView: View {
     let techTags: [String: [String]] = [
-            "プログラミング言語": ["Swift", "Kotlin", "JavaScript", "Python","Go"],
-            "フレームワーク": ["React", "Vue.js", "Angular", "Flutter", "SwiftUI", "tailwindcss"],
-        ]
+        "プログラミング言語": ["Swift", "Kotlin", "JavaScript", "Python", "Go", "Java", "Ruby", "PHP", "TypeScript", "C", "C++", "C#", "HTML", "CSS", "Rust", "Dart", "Elixir"],
+        "フレームワーク": ["React", "Next.js", "Vue", "Nuxt.js", "Angular", "Node.js", "Django", "Flask", "Laravel", "CakePHP", "Flutter", "Rails", "Remix", "Tailwind CSS", "Spring"],
+    ]
+    private let iconMapping: [String: String] = [
+        "JavaScript": "JavaScript",
+        "Python": "Python",
+        "Java": "Java",
+        "Ruby": "Ruby",
+        "Swift": "Swift",
+        "PHP": "PHP",
+        "TypeScript": "TypeScript",
+        "Go": "Go",
+        "C": "C",
+        "C++": "C-plus",
+        "Kotlin": "Kotlin",
+        "C#": "C-sharp",
+        "HTML": "HTML",
+        "CSS": "CSS",
+        "Rust": "Rust",
+        "Dart": "Dart",
+        "Elixir": "Elixir",
+        "React": "React",
+        "Next.js": "Next-js",
+        "Vue": "Vue",
+        "Nuxt.js": "Nuxt-js",
+        "Angular": "Angular",
+        "Node.js": "Node-js",
+        "Django": "Django",
+        "Flask": "Flask",
+        "Laravel": "Laravel",
+        "CakePHP": "CakePHP",
+        "Flutter": "Flutter",
+        "Rails": "Rails",
+        "Remix": "Remix",
+        "Tailwind CSS": "Tailwind-CSS",
+        "Spring": "Spring"
+    ]
     @Binding var language: WordElement
     @Environment(\.presentationMode) var presentationMode
-
+    
     var body: some View {
         NavigationView {
             List {
@@ -227,6 +261,11 @@ struct TechTagPickerView: View {
                                 presentationMode.wrappedValue.dismiss()
                             }) {
                                 HStack {
+                                    if let iconName = iconMapping[tech] {
+                                        Image(iconName)
+                                            .resizable()
+                                            .frame(width: 16, height: 16)
+                                    }
                                     Text(tech)
                                     Spacer()
                                     if tech == language.name {
@@ -248,6 +287,7 @@ struct TechTagPickerView: View {
         }
     }
 }
+
 
 #Preview {
     EditSkillTagsView()
