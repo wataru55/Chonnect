@@ -19,9 +19,6 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var backgroundImage: Image?
 
-    @Published var selectedLanguageTags: [String] = []
-    @Published var selectedFrameworkTags: [String] = []
-
     @Published var username = ""
     @Published var fullname = ""
     @Published var bio = ""
@@ -36,10 +33,6 @@ class CurrentUserProfileViewModel: ObservableObject {
             self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
         }
         setupSubscribers()
-        Task {
-            try await loadLanguageTags()
-            try await loadFrameworkTags()
-        }
     }
 
     func setupSubscribers() {
@@ -65,34 +58,6 @@ class CurrentUserProfileViewModel: ObservableObject {
         self.uiBackgroundImage = uiImage
         //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
         self.backgroundImage = Image(uiImage: uiImage)
-    }
-
-    @MainActor
-    func loadLanguageTags() async throws {
-        do {
-            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
-            self.selectedLanguageTags = fetchedLanguageTags.tags
-        } catch {
-            print("Failed to fetch tags: \(error)")
-        }
-    }
-
-    func updateLanguageTags() async throws {
-        try await UserService.saveLanguageTags(userId: user.id, selectedTags: selectedLanguageTags)
-    }
-
-    @MainActor
-    func loadFrameworkTags() async throws {
-        do {
-            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
-            self.selectedFrameworkTags = fetchedFrameworkTags.tags
-        } catch {
-            print("Failed to fetch tags: \(error)")
-        }
-    }
-
-    func updateFrameworkTags() async throws {
-        try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
     }
 
     @MainActor

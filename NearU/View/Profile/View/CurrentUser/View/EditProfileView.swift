@@ -49,26 +49,7 @@ struct EditProfileView: View {
                 }//vstack
                 //edit profile info
                 VStack (spacing:0){
-                    Text("言語")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
-                        .foregroundColor(Color.gray)
-
-                    EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
-                    Text("フレームワーク・ライブラリ")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
-                        .foregroundColor(Color.gray)
-
-                    EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
-                        .padding(.bottom, 10)
-
                     EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
-                        .focused($focusedField, equals: .title)
-
-                    EditProfileRowView(title: "本名(公開したくない場合は空欄にしてください)", placeholder: "", text: $viewModel.fullname)
                         .focused($focusedField, equals: .title)
 
                     EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
@@ -96,11 +77,7 @@ struct EditProfileView: View {
                     Button {
                         Task {
                             try await viewModel.updateUserData()
-                            try await viewModel.updateLanguageTags()
-                            try await viewModel.updateFrameworkTags()
                             try await AuthService.shared.loadUserData()
-                            try await viewModel.loadLanguageTags()
-                            try await viewModel.loadFrameworkTags()
 
                             await MainActor.run {
                                 dismiss()

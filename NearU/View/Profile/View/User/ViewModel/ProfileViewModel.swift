@@ -12,8 +12,6 @@ import OpenGraph
 class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
-    @Published var selectedLanguageTags: [String] = []
-    @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [FollowUserRowData] = []
     @Published var followers: [HistoryRowData] = []
@@ -24,8 +22,6 @@ class ProfileViewModel: ObservableObject {
         self.user = user
         self.currentUser = currentUser
         Task {
-            try await loadLanguageTags()
-            try await loadFrameworkTags()
             try await loadFollowUsers()
             try await loadFollowers()
             await checkFollow()
@@ -74,26 +70,6 @@ class ProfileViewModel: ObservableObject {
             }
         } catch {
             print("Error loading user data: \(error.localizedDescription)")
-        }
-    }
-
-    @MainActor
-    func loadLanguageTags() async throws {
-        do {
-            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
-            self.selectedLanguageTags = fetchedLanguageTags.tags
-        } catch {
-            print("Failed to fetch tags: \(error)")
-        }
-    }
-
-    @MainActor
-    func loadFrameworkTags() async throws {
-        do {
-            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
-            self.selectedFrameworkTags = fetchedFrameworkTags.tags
-        } catch {
-            print("Failed to fetch tags: \(error)")
         }
     }
 

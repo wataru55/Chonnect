@@ -56,9 +56,7 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
-                    TagsView(tags: viewModel.selectedLanguageTags)
-
-                    TagsView(tags: viewModel.selectedFrameworkTags)
+                    // TODO: 技術タグ追加
 
                     HStack(spacing: 4) {
                         Text(viewModel.user.username)
