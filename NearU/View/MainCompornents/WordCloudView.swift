@@ -61,7 +61,6 @@ enum Style: String{
 }
 
 struct WordCloudView: View {
-    @ObservedObject private var viewModel: EditSkillTagsViewModel
     private var positionCache = WordCloudPositionCache()
 
     @State private var canvasRect = CGRect()
@@ -73,12 +72,15 @@ struct WordCloudView: View {
     @State private var positions: [CGPoint] = []
 
     var selected: Int
+    var skillSortedTags: [WordElement]
+    var interestSortedTags: [WordElement]
 
-    init(viewModel: EditSkillTagsViewModel, selected: Int) {
-        self._viewModel = ObservedObject(initialValue: viewModel)
-        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count))
-        self._wordVisibility = State(initialValue: [Bool](repeating: false, count: viewModel.skillSortedTags.count))
+    init(selected: Int, skillSortedTags: [WordElement], interestSortedTags: [WordElement]) {
         self.selected = selected
+        self.skillSortedTags = skillSortedTags
+        self.interestSortedTags = interestSortedTags
+        self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: skillSortedTags.count))
+        self._wordVisibility = State(initialValue: [Bool](repeating: false, count: skillSortedTags.count))
     }
 
     var body: some View {
@@ -87,11 +89,11 @@ struct WordCloudView: View {
 
         VStack {
             ZStack{
-                selectedTagsView(tags: selected == 0 ? viewModel.skillSortedTags : viewModel.interestSortedTags, pos: pos)
+                selectedTagsView(tags: selected == 0 ? skillSortedTags : interestSortedTags, pos: pos)
             } //zstack
             .background(RectGetter($canvasRect))
             .onAppear {
-                wordSizes = [CGSize](repeating: CGSize.zero, count: viewModel.skillSortedTags.count)
+                wordSizes = [CGSize](repeating: CGSize.zero, count: skillSortedTags.count)
             }
             .onChange(of: wordSizes) {
                 if wordSizes.allSatisfy({ $0 != CGSize.zero }) {

@@ -243,7 +243,7 @@ struct CurrentUserProfileView: View {
                 }//vstack
 
                 if isShowWordCloud {
-                    TagIndexView(viewModel: tagsViewModel)
+                    TagIndexView(skillSortedTags: tagsViewModel.skillSortedTags, interestSortedTags: tagsViewModel.interestSortedTags)
                         .background(Color.white.opacity(0.7))
                         .ignoresSafeArea()
                         .onTapGesture {

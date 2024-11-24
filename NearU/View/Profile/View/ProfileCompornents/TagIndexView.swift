@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct TagIndexView: View {
-    @ObservedObject var viewModel: EditSkillTagsViewModel
     @State private var selectedTab: Int = 0
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
+    let skillSortedTags: [WordElement]
+    let interestSortedTags: [WordElement]
 
     var body: some View {
         ZStack {
@@ -19,10 +20,10 @@ struct TagIndexView: View {
             VStack {
 
                 TabView(selection: $selectedTab) {
-                    WordCloudView(viewModel: viewModel, selected: selectedTab)
+                    WordCloudView(selected: selectedTab, skillSortedTags: skillSortedTags, interestSortedTags: interestSortedTags)
                         .tag(0)
 
-                    WordCloudView(viewModel: viewModel, selected: selectedTab)
+                    WordCloudView(selected: selectedTab, skillSortedTags: skillSortedTags, interestSortedTags: interestSortedTags)
                         .tag(1)
                 }
                 .tabViewStyle(PageTabViewStyle())
@@ -54,6 +55,6 @@ struct TagIndexView: View {
     }
 }
 
-#Preview {
-    TagIndexView(viewModel: EditSkillTagsViewModel())
-}
+//#Preview {
+//    TagIndexView()
+//}
