@@ -210,10 +210,88 @@ struct SkillTagRowView: View {
 
 struct TechTagPickerView: View {
     let techTags: [String: [String]] = [
-        "プログラミング言語": ["Swift", "Kotlin", "JavaScript", "Python", "Go", "Java", "Ruby", "PHP", "TypeScript", "C", "C++", "C#", "HTML", "CSS", "Rust", "Dart", "Elixir"],
+        "言語": ["Swift", "Kotlin", "JavaScript", "Python", "Go", "Java", "Ruby", "PHP", "TypeScript", "C", "C++", "C#", "HTML", "CSS", "Rust", "Dart", "Elixir"],
         "フレームワーク": ["React", "Next.js", "Vue", "Nuxt.js", "Angular", "Node.js", "Django", "Flask", "Laravel", "CakePHP", "Flutter", "Rails", "Remix", "Tailwind CSS", "Spring"],
+        "データベース": ["MySQL", "PostgreSQL", "MongoDB", "SQLite", "Redis", "MariaDB", "Oracle DB", "DynamoDB"],
+        "その他": ["AWS", "GCP", "Azure", "Cloudflare", "Vercel", "Firebase", "Supabase", "Unity", "Blender", "Docker", "ROS"],
     ]
+    
+    // 表示順を指定
+    let displayOrder: [String] = ["言語", "フレームワーク", "データベース", "その他"]
+    
+    @Binding var language: WordElement
+    @Environment(\.presentationMode) var presentationMode
+    @State private var expandedSections: [String: Bool] = [:] // セクションの開閉状態を管理
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(displayOrder, id: \.self) { category in
+                    if let techs = techTags[category] { // 安全に辞書から値を取得
+                        Section(header: HStack {
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    toggleSection(category)
+                                }
+                            }) {
+                                HStack {
+                                    Text(category)
+                                        .fontWeight(.bold)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .rotationEffect(.degrees(expandedSections[category] == true ? 90 : 0))
+                                        .animation(.easeInOut(duration: 0.3), value: expandedSections[category])
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }) {
+                            if expandedSections[category] == true {
+                                ForEach(techs, id: \.self) { tech in
+                                    Button(action: {
+                                        language.name = tech
+                                        presentationMode.wrappedValue.dismiss()
+                                    }) {
+                                        HStack {
+                                            if let iconName = iconMapping[tech] {
+                                                Image(iconName)
+                                                    .resizable()
+                                                    .frame(width: 16, height: 16)
+                                            }
+                                            Text(tech)
+                                            Spacer()
+                                            if tech == language.name {
+                                                Image(systemName: "checkmark")
+                                                    .foregroundColor(.blue)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .listStyle(GroupedListStyle())
+            .navigationTitle("技術タグを選択")
+            .navigationBarItems(trailing: Button("閉じる") {
+                presentationMode.wrappedValue.dismiss()
+            })
+            .tint(.black)
+        }
+        .onAppear {
+            // 初期状態で全セクションを閉じた状態に
+            for category in techTags.keys {
+                expandedSections[category] = false
+            }
+        }
+    }
+    
+    private func toggleSection(_ category: String) {
+        expandedSections[category]?.toggle()
+    }
+    
     private let iconMapping: [String: String] = [
+        // 言語
         "JavaScript": "JavaScript",
         "Python": "Python",
         "Java": "Java",
@@ -231,6 +309,7 @@ struct TechTagPickerView: View {
         "Rust": "Rust",
         "Dart": "Dart",
         "Elixir": "Elixir",
+        // フレームワーク
         "React": "React",
         "Next.js": "Next-js",
         "Vue": "Vue",
@@ -245,47 +324,30 @@ struct TechTagPickerView: View {
         "Rails": "Rails",
         "Remix": "Remix",
         "Tailwind CSS": "Tailwind-CSS",
-        "Spring": "Spring"
+        "Spring": "Spring",
+        // データベース
+        "MySQL": "MySQL",
+        "PostgreSQL": "PostgreSQL",
+        "MongoDB": "MongoDB",
+        "SQLite": "SQLite",
+        "Redis": "Redis",
+        "MariaDB": "MariaDB",
+        "Oracle DB": "Oracle-DB",
+        "DynamoDB": "DynamoDB",
+        // その他
+        "AWS": "AWS",
+        "GCP": "GCP",
+        "Azure": "Azure",
+        "Cloudflare": "Cloudflare",
+        "Vercel": "Vercel",
+        "Firebase": "Firebase",
+        "Supabase": "Supabase",
+        "Unity": "Unity",
+        "Blender": "Blender",
+        "Docker": "Docker",
+        "ROS": "ROS"
     ]
-    @Binding var language: WordElement
-    @Environment(\.presentationMode) var presentationMode
-    
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(techTags.keys.sorted(), id: \.self) { category in
-                    Section(header: Text(category)) {
-                        ForEach(techTags[category]!, id: \.self) { tech in
-                            Button(action: {
-                                language.name = tech
-                                presentationMode.wrappedValue.dismiss()
-                            }) {
-                                HStack {
-                                    if let iconName = iconMapping[tech] {
-                                        Image(iconName)
-                                            .resizable()
-                                            .frame(width: 16, height: 16)
-                                    }
-                                    Text(tech)
-                                    Spacer()
-                                    if tech == language.name {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.blue)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("技術タグを選択")
-            .navigationBarItems(trailing: Button("閉じる") {
-                presentationMode.wrappedValue.dismiss()
-            })
-            .tint(.black)
-        }
-    }
+
 }
 
 
