@@ -237,7 +237,7 @@ struct CurrentUserProfileView: View {
                             .environmentObject(articleLinksViewModel)
                     }
                     .fullScreenCover(isPresented: $showEditTags) {
-                        EditSkillTagsView()
+                        EditSkillTagsView(viewModel: tagsViewModel)
                     }
 
                 }//vstack

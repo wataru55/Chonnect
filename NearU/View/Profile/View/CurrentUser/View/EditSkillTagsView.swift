@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditSkillTagsView: View {
-    @StateObject private var viewModel = EditSkillTagsViewModel()
+    @ObservedObject var viewModel: EditSkillTagsViewModel
     @State private var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3", interest: "")
     ]
@@ -349,7 +349,6 @@ struct TechTagPickerView: View {
 
 }
 
-
 #Preview {
-    EditSkillTagsView()
+    EditSkillTagsView(viewModel: EditSkillTagsViewModel())
 }
