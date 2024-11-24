@@ -15,6 +15,8 @@ class ProfileViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [FollowUserRowData] = []
     @Published var followers: [HistoryRowData] = []
+    @Published var skillSortedTags: [WordElement] = []
+    @Published var interestSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
 
@@ -24,6 +26,7 @@ class ProfileViewModel: ObservableObject {
         Task {
             try await loadFollowUsers()
             try await loadFollowers()
+            await loadSkillTags()
             await checkFollow()
             await checkMutualFollow()
             await fetchArticleLinks()
@@ -70,6 +73,17 @@ class ProfileViewModel: ObservableObject {
             }
         } catch {
             print("Error loading user data: \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    func loadSkillTags() async {
+        do {
+            let tags = try await TagsService.fetchTags(documentId: user.id)
+            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
+            self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
+        } catch {
+            print("Error fetching tags: \(error)")
         }
     }
 

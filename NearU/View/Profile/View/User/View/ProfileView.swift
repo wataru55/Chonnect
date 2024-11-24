@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @State var isShowWordCloud: Bool = false
 
     let date: Date
     let isShowFollowButton: Bool
@@ -28,7 +29,8 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //MARK: - HEADER
-                    ProfileHeaderView(viewModel: viewModel, date: date, isShowFollowButton: isShowFollowButton)
+                    ProfileHeaderView(viewModel: viewModel, isShowWordCloud: $isShowWordCloud,
+                                      date: date, isShowFollowButton: isShowFollowButton)
 
                     //MARK: - SNSLINKS
                     HStack {
@@ -106,6 +108,16 @@ struct ProfileView: View {
             .refreshable {
                 await viewModel.loadUserData()
             }
+
+            if isShowWordCloud {
+                TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
+                    .background(Color.white.opacity(0.7))
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isShowWordCloud.toggle()
+                    }
+            }
+
         } //zstack
         .ignoresSafeArea()
 
