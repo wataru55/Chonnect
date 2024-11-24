@@ -212,8 +212,8 @@ struct TechTagPickerView: View {
     let techTags: [String: [String]] = [
         "言語": ["Swift", "Kotlin", "JavaScript", "Python", "Go", "Java", "Ruby", "PHP", "TypeScript", "C", "C++", "C#", "HTML", "CSS", "Rust", "Dart", "Elixir"],
         "フレームワーク": ["React", "Next.js", "Vue", "Nuxt.js", "Angular", "Node.js", "Django", "Flask", "Laravel", "CakePHP", "Flutter", "Rails", "Remix", "Tailwind CSS", "Spring"],
-        "データベース": ["MySQL", "PostgreSQL", "MongoDB", "SQLite", "Redis", "MariaDB", "Oracle DB", "DynamoDB"],
-        "その他": ["AWS", "GCP", "Azure", "Cloudflare", "Vercel", "Firebase", "Supabase", "Unity", "Blender", "Docker", "ROS"],
+        "データベース": ["MySQL", "PostgreSQL", "MongoDB", "Redis", "MariaDB", "DynamoDB"],
+        "その他": ["AWS", "GCP", "Azure", "Cloudflare", "Vercel", "Firebase", "Supabase", "Terraform", "Unity", "Blender", "Docker", "ROS"],
     ]
     
     // 表示順を指定
@@ -329,10 +329,8 @@ struct TechTagPickerView: View {
         "MySQL": "MySQL",
         "PostgreSQL": "PostgreSQL",
         "MongoDB": "MongoDB",
-        "SQLite": "SQLite",
         "Redis": "Redis",
         "MariaDB": "MariaDB",
-        "Oracle DB": "Oracle-DB",
         "DynamoDB": "DynamoDB",
         // その他
         "AWS": "AWS",
@@ -342,6 +340,7 @@ struct TechTagPickerView: View {
         "Vercel": "Vercel",
         "Firebase": "Firebase",
         "Supabase": "Supabase",
+        "Terraform": "Terraform",
         "Unity": "Unity",
         "Blender": "Blender",
         "Docker": "Docker",
