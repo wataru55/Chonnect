@@ -114,19 +114,6 @@ struct WordCloudView: View {
             }
         } // vstack
         .offset(x: offset.width, y: offset.height)
-        .simultaneousGesture(
-            DragGesture()
-                .onChanged({ value in
-                    offset = value.translation //ドラッグジェスチャーの移動量
-                })
-                .onEnded({ _ in
-                    if scale <= 1 {
-                        withAnimation(.spring){
-                            resetImageState()
-                        }
-                    }
-                })
-        )
     }
     @ViewBuilder
     private func selectedTagsView(tags: [WordElement], pos: [CGPoint]) -> some View {
@@ -149,12 +136,6 @@ struct WordCloudView: View {
                 .animation(.easeOut(duration: 0.5).delay(Double(idx) * 0.1), value: wordVisibility[idx])
         }
     }
-
-    func resetImageState(){
-        scale = 1
-        offset = .zero
-    }
-
     // 矩形同士が重なっているかどうかを判定
     func checkIntersects(rect: CGRect, rects: [CGRect]) -> Bool {
         for r in rects {
