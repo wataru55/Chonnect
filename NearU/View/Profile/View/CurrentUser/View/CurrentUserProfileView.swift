@@ -213,6 +213,7 @@ struct CurrentUserProfileView: View {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                                         .frame(width: 30, height: 30)
+
                                         .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                         .clipShape(Circle())
                                         .overlay(
