@@ -29,8 +29,7 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //MARK: - HEADER
-                    ProfileHeaderView(viewModel: viewModel, isShowWordCloud: $isShowWordCloud,
-                                      date: date, isShowFollowButton: isShowFollowButton)
+                    ProfileHeaderView(viewModel: viewModel, date: date, isShowFollowButton: isShowFollowButton)
 
                     //MARK: - SNSLINKS
                     HStack {
@@ -107,15 +106,6 @@ struct ProfileView: View {
             }//scrollView
             .refreshable {
                 await viewModel.loadUserData()
-            }
-
-            if isShowWordCloud {
-                TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
-                    .background(Color.white.opacity(0.7))
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        isShowWordCloud.toggle()
-                    }
             }
 
         } //zstack

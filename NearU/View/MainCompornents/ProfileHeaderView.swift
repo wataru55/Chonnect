@@ -12,7 +12,6 @@ struct ProfileHeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
     @State private var isShowAlert: Bool = false
     @State private var isShowCheck: Bool = false
-    @Binding var isShowWordCloud: Bool
 
     let date: Date
     let isShowFollowButton: Bool
@@ -57,13 +56,13 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
-                    // TODO: 技術タグ追加
-                    Top3TabView(tags: viewModel.skillSortedTags)
-                        .onTapGesture {
-                            withAnimation {
-                                isShowWordCloud.toggle()
-                            }
-                        }
+                    NavigationLink {
+                        TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
+                            .background(Color.white.opacity(0.7))
+                            .ignoresSafeArea()
+                    } label: {
+                        Top3TabView(tags: viewModel.skillSortedTags)
+                    }
 
                     HStack(spacing: 4) {
                         Text(viewModel.user.username)
@@ -177,6 +176,5 @@ struct NavigationData: Hashable {
 
 #Preview {
     ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
-                      isShowWordCloud: .constant(false),
                       date: Date(), isShowFollowButton: true)
 }
