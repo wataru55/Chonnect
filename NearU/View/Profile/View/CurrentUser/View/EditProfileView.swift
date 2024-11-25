@@ -56,7 +56,7 @@ struct EditProfileView: View {
                     EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
 
-                    EditInterestView(texts: $texts)
+                    EditInterestView(texts: $texts, interestTags: viewModel.interestTags)
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
@@ -132,6 +132,7 @@ struct EditProfileRowView: View {
 
 struct EditInterestView: View {
     @Binding var texts: [InterestTag]
+    let interestTags: [InterestTag]
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -171,7 +172,8 @@ struct EditInterestView: View {
                         .foregroundStyle(.gray)
                         .padding()
 
-                    InterestTagView(interestTag: ["iOSDC2024", "Ruby会議", "DoroidKaigi"], isShowDeleteButton: true)
+                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
+                        .padding(.horizontal, 15)
                 }
             }
         }
@@ -248,6 +250,6 @@ struct EditProfileBioRowView: View {
 }
 
 #Preview {
-    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]))
+    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]), interestTags: [InterestTag(id: UUID(), text: "SwiftUI")])
 }
 
