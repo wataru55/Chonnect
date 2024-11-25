@@ -14,6 +14,7 @@ enum Field: Hashable {
 
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
+    @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
 
@@ -55,7 +56,7 @@ struct EditProfileView: View {
                     EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
 
-                    EditInterestView()
+                    EditInterestView(texts: $texts)
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
@@ -80,6 +81,7 @@ struct EditProfileView: View {
                     Button {
                         Task {
                             try await viewModel.updateUserData()
+                            await viewModel.saveInterestTags(tags: texts)
                             try await AuthService.shared.loadUserData()
 
                             await MainActor.run {
@@ -129,7 +131,7 @@ struct EditProfileRowView: View {
 }//view
 
 struct EditInterestView: View {
-    @State private var texts: [String] = [""]
+    @Binding var texts: [InterestTag]
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -141,14 +143,16 @@ struct EditInterestView: View {
                     .padding(.vertical, 10)
 
                 ForEach(texts.indices, id: \.self) { index in
-                    TextField("興味のあること", text: $texts[index])
+                    TextField("興味のあること", text: $texts[index].text)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .textInputAutocapitalization(.never) // 自動で大文字にしない
+                            .disableAutocorrection(true) // スペルチェックを無効にする
                             .padding(.horizontal, 15)
                             .padding(.bottom, 5)
                 }
 
                 Button {
-                    texts.append("")
+                    texts.append(InterestTag(id: UUID(), text: ""))
                 } label: {
                     HStack {
                         Image(systemName: "plus.circle")
@@ -244,6 +248,6 @@ struct EditProfileBioRowView: View {
 }
 
 #Preview {
-    EditInterestView()
+    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]))
 }
 
