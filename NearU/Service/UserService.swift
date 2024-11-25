@@ -83,6 +83,20 @@ struct UserService {
         }
     }
 
+    static func fetchInterestTags(documentId: String) async throws -> [InterestTag] {
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        let snapshot = try await ref.getDocuments()
+
+        var interestTags: [InterestTag] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: InterestTag.self)
+            interestTags.append(data)
+        }
+
+        return interestTags
+    }
+
     static func saveSNSLink(serviceName: String, url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
 

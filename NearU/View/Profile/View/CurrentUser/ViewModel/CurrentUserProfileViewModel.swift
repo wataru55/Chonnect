@@ -32,7 +32,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         } else {
             self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
         }
+
         setupSubscribers()
+
+        Task {
+            await loadInterestTags()
+        }
     }
 
     func setupSubscribers() {
@@ -62,8 +67,19 @@ class CurrentUserProfileViewModel: ObservableObject {
     func saveInterestTags(tags: [InterestTag]) async {
         do {
             try await UserService.saveInterestTags(tags: tags)
+            await loadInterestTags()
         } catch {
             print("DEBUG: Error saving interest tags \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    func loadInterestTags() async {
+        do {
+            let data = try await UserService.fetchInterestTags(documentId: user.id)
+            self.interestTags = data
+        } catch {
+            print("error loading interest tags \(error.localizedDescription)")
         }
     }
 
