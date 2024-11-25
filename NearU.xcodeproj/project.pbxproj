@@ -104,6 +104,7 @@
 		63FDDFDD2CF1DA5800B90074 /* TagIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */; };
 		63FDDFDF2CF2F5A900B90074 /* Top3TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFDE2CF2F5A900B90074 /* Top3TabView.swift */; };
 		63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFE02CF4766A00B90074 /* InterestTagView.swift */; };
+		63FDDFE32CF4886600B90074 /* InterestTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFE22CF4886600B90074 /* InterestTag.swift */; };
 		F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */; };
 		F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */; };
 		F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25861692CCB245000715D20 /* PasswordResetView.swift */; };
@@ -216,6 +217,7 @@
 		63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIndexView.swift; sourceTree = "<group>"; };
 		63FDDFDE2CF2F5A900B90074 /* Top3TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Top3TabView.swift; sourceTree = "<group>"; };
 		63FDDFE02CF4766A00B90074 /* InterestTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestTagView.swift; sourceTree = "<group>"; };
+		63FDDFE22CF4886600B90074 /* InterestTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestTag.swift; sourceTree = "<group>"; };
 		F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditFrameworkTagsView.swift; sourceTree = "<group>"; };
 		F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		F25861692CCB245000715D20 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				63FDDFCE2CEB1D4500B90074 /* HistoryRowData.swift */,
 				63FDDFD02CEB2B1300B90074 /* FollowUserRowData.swift */,
 				63FDDFD42CECCCE800B90074 /* WordElement.swift */,
+				63FDDFE22CF4886600B90074 /* InterestTag.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -732,6 +735,7 @@
 				63DFF8902BF876D100A6DFB8 /* BLEHistoryViewModel.swift in Sources */,
 				63DFF8992BFC9A8300A6DFB8 /* CircleImageView.swift in Sources */,
 				63DFF8C32C05B60300A6DFB8 /* BLEPeripheralManager.swift in Sources */,
+				63FDDFE32CF4886600B90074 /* InterestTag.swift in Sources */,
 				63B64FD82B8C763900289469 /* NearUApp.swift in Sources */,
 				639A0BD52CE446CC00A769C6 /* FollowFollowerView.swift in Sources */,
 				F258616C2CCB260900715D20 /* PasswordResetViewModel.swift in Sources */,
