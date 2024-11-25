@@ -39,7 +39,7 @@ struct TagIndexView: View {
                         .foregroundStyle(.gray)
                         .background(
                             Circle()
-                                .stroke(style: StrokeStyle(lineWidth: 1))
+                                .stroke(Color(.gray), style: StrokeStyle(lineWidth: 1))
                         )
                 }
                 .padding(4)
