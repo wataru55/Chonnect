@@ -134,7 +134,7 @@ struct CurrentUserProfileView: View {
                                 }, label: {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
-                                        .frame(width: 80, height: 80)
+                                        .frame(width: 60, height: 60)
                                         .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                         .clipShape(Circle())
                                         .overlay(
@@ -142,7 +142,7 @@ struct CurrentUserProfileView: View {
                                                 .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
                                         )
                                 })
-                                .padding(.horizontal, 8)
+                                .padding(.horizontal, 5)
                             }
                         } // HStack
                         .padding(.vertical, 5)

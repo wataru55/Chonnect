@@ -22,22 +22,22 @@ struct SNSLinkButtonView: View {
                     VStack {
                         customImageBuilder(name: selectedSNS)
                     }
-                    .frame(width: 80, height: 80)
+                    .frame(width: 60, height: 60)
                     .font(.system(size: 25, weight: .semibold, design: .rounded))
                     .foregroundColor(.gray)
                     .background(
                         Circle()
                             .foregroundStyle(backgroundColor)
-                            .shadow(color: .white, radius: 5, x: -7, y: -7)
-                            .shadow(color: grayColor, radius: 5, x: 7, y: 7)
+                            .shadow(color: .white, radius: 2, x: -3, y: -3)
+                            .shadow(color: grayColor, radius: 2, x: 3, y: 3)
                     )
                     .overlay(
                         Circle()
                             .stroke(.gray, lineWidth: 0)
                     )
                 }
-                .padding(.vertical, 15)
-                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 5)
 
                 if isShowDeleteButton {
                     Button {
