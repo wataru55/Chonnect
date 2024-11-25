@@ -97,6 +97,16 @@ struct UserService {
         return interestTags
     }
 
+    static func deleteInterestTags(id: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        do {
+            try await ref.document(id).delete()
+        } catch {
+            print("error: \(error)")
+        }
+    }
+
     static func saveSNSLink(serviceName: String, url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
 

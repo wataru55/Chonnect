@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InterestTagView: View {
     @State private var isShowAlert: Bool = false
+    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     let interestTag: [InterestTag]
     let isShowDeleteButton: Bool
 
@@ -43,7 +44,8 @@ struct InterestTagView: View {
                             .alert("確認", isPresented: $isShowAlert) {
                                 Button("削除", role: .destructive) {
                                     Task {
-                                        // TODO: 削除処理
+                                        await UserService.deleteInterestTags(id: tag.id.uuidString)
+                                        await viewModel.loadInterestTags()
                                     }
                                 }
                             } message: {
