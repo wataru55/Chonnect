@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @State var isShowWordCloud: Bool = false
 
     let date: Date
     let isShowFollowButton: Bool
@@ -106,6 +107,7 @@ struct ProfileView: View {
             .refreshable {
                 await viewModel.loadUserData()
             }
+
         } //zstack
         .ignoresSafeArea()
 

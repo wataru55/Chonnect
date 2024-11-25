@@ -56,9 +56,13 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
-                    TagsView(tags: viewModel.selectedLanguageTags)
-
-                    TagsView(tags: viewModel.selectedFrameworkTags)
+                    NavigationLink {
+                        TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
+                            .background(Color.white.opacity(0.7))
+                            .ignoresSafeArea()
+                    } label: {
+                        Top3TabView(tags: viewModel.skillSortedTags)
+                    }
 
                     HStack(spacing: 4) {
                         Text(viewModel.user.username)
@@ -171,5 +175,6 @@ struct NavigationData: Hashable {
 }
 
 #Preview {
-    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date(), isShowFollowButton: true)
+    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
+                      date: Date(), isShowFollowButton: true)
 }

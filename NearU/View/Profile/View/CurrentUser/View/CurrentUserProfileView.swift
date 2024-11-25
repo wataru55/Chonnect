@@ -21,8 +21,6 @@ struct CurrentUserProfileView: View {
     @State private var showEditProfile = false
     @State private var showEditTags = false
 
-    @State private var isShowWordCloud = false
-
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
     let user: User
@@ -39,12 +37,13 @@ struct CurrentUserProfileView: View {
                             BackgroundImageView(user: user, height: 500, isGradient: true)
                                 .overlay(alignment: .bottomLeading) {
                                     VStack(alignment: .leading){
-                                        Top3TabView(tags: tagsViewModel.skillSortedTags)
-                                            .onTapGesture {
-                                                withAnimation {
-                                                    isShowWordCloud.toggle()
-                                                }
-                                            }
+                                        NavigationLink {
+                                            TagIndexView(skillSortedTags: tagsViewModel.skillSortedTags, interestSortedTags: tagsViewModel.interestSortedTags)
+                                                .background(Color.white.opacity(0.7))
+                                                .ignoresSafeArea()
+                                        } label: {
+                                            Top3TabView(tags: tagsViewModel.skillSortedTags)
+                                        }
 
                                         HStack(spacing: 4) {
                                             Text(user.username)
@@ -238,19 +237,11 @@ struct CurrentUserProfileView: View {
                             .environmentObject(articleLinksViewModel)
                     }
                     .fullScreenCover(isPresented: $showEditTags) {
-                        EditSkillTagsView()
+                        EditSkillTagsView(viewModel: tagsViewModel)
                     }
 
                 }//vstack
 
-                if isShowWordCloud {
-                    TagIndexView(viewModel: tagsViewModel)
-                        .background(Color.white.opacity(0.7))
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            isShowWordCloud.toggle()
-                        }
-                }
             }// zstack
             .ignoresSafeArea()
             .navigationDestination(for: FollowNavigationData.self) { data in

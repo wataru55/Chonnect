@@ -40,7 +40,7 @@ struct Top3TabView: View {
 
     var body: some View {
         HStack {
-            HStack(spacing: -5) {
+            HStack(alignment: .bottom, spacing: -5) {
                 ForEach(Array(tags.prefix(3).enumerated()), id: \.offset) { index, item in
                     Image("\(item.name)")
                         .resizable()
@@ -65,25 +65,27 @@ struct Top3TabView: View {
                         }
                 }
 
-                Image(systemName: "plus")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(10)
-                    .clipShape(Circle())
-                    .background(
-                        Circle()
-                            .foregroundStyle(.black.opacity(0.3))
-                    )
-                    .overlay {
-                        Circle()
-                            .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
-                    }
+                if tags.count > 3 {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(10)
+                        .clipShape(Circle())
+                        .background(
+                            Circle()
+                                .foregroundStyle(.black.opacity(0.3))
+                        )
+                        .overlay {
+                            Circle()
+                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
+                        }
+                }
             }
             .frame(height: 35) // HStack の高さを30に設定
         }
     }
 }
 
-//#Preview {
-//    Top3TabView()
-//}
+#Preview {
+    Top3TabView(tags: [WordElement(id: UUID(), name: "Swift", skill: "3", interest: "1")])
+}

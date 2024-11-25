@@ -12,11 +12,11 @@ import OpenGraph
 class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
-    @Published var selectedLanguageTags: [String] = []
-    @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [FollowUserRowData] = []
     @Published var followers: [HistoryRowData] = []
+    @Published var skillSortedTags: [WordElement] = []
+    @Published var interestSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
 
@@ -24,10 +24,9 @@ class ProfileViewModel: ObservableObject {
         self.user = user
         self.currentUser = currentUser
         Task {
-            try await loadLanguageTags()
-            try await loadFrameworkTags()
             try await loadFollowUsers()
             try await loadFollowers()
+            await loadSkillTags()
             await checkFollow()
             await checkMutualFollow()
             await fetchArticleLinks()
@@ -78,22 +77,13 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadLanguageTags() async throws {
+    func loadSkillTags() async {
         do {
-            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
-            self.selectedLanguageTags = fetchedLanguageTags.tags
+            let tags = try await TagsService.fetchTags(documentId: user.id)
+            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
+            self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
         } catch {
-            print("Failed to fetch tags: \(error)")
-        }
-    }
-
-    @MainActor
-    func loadFrameworkTags() async throws {
-        do {
-            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
-            self.selectedFrameworkTags = fetchedFrameworkTags.tags
-        } catch {
-            print("Failed to fetch tags: \(error)")
+            print("Error fetching tags: \(error)")
         }
     }
 
