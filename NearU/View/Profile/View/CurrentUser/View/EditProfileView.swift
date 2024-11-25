@@ -54,6 +54,9 @@ struct EditProfileView: View {
 
                     EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
+
+                    EditInterestView()
+                        .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
             } //scrollview
@@ -125,6 +128,52 @@ struct EditProfileRowView: View {
     }//body
 }//view
 
+struct EditInterestView: View {
+    @State private var texts: [String] = [""]
+
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                Text("興味タグ")
+                    .font(.footnote)
+                    .foregroundStyle(.gray)
+                    .frame(width: UIScreen.main.bounds.width - 20, alignment: .leading)
+                    .padding(.vertical, 10)
+
+                ForEach(texts.indices, id: \.self) { index in
+                    TextField("興味のあること", text: $texts[index])
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal, 15)
+                            .padding(.bottom, 5)
+                }
+
+                Button {
+                    texts.append("")
+                } label: {
+                    HStack {
+                        Image(systemName: "plus.circle")
+                            .offset(y: 3)
+                        Text("入力欄を追加")
+                            .padding(.top, 5)
+                            .font(.system(size: 15, weight: .bold))
+                    }
+                    .foregroundStyle(Color.mint)
+                }
+                .padding(.bottom, 5)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("一覧")
+                        .font(.footnote)
+                        .foregroundStyle(.gray)
+                        .padding()
+
+                    InterestTagView(interestTag: ["iOSDC2024", "Ruby会議", "DoroidKaigi"], isShowDeleteButton: true)
+                }
+            }
+        }
+    }
+}
+
 struct EditProfileBioRowView: View {
     let title: String
     let placeholder: String
@@ -192,5 +241,9 @@ struct EditProfileBioRowView: View {
             isOverCharacterLimit = false
         }
     }
+}
+
+#Preview {
+    EditInterestView()
 }
 
