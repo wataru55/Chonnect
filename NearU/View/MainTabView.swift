@@ -35,6 +35,7 @@ struct MainTabView: View {
                 }
 
             CurrentUserProfileView(user: user)
+                .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "person")
                 }
@@ -73,7 +74,7 @@ struct MainTabView: View {
             // 通知の確認
             Task {
                 // データのフェッチ
-                await UserService().fetchNotifications()
+                await UserService.fetchNotifications()
                 // ローディング終了
                 loadingViewModel.isLoading = false
             }

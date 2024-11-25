@@ -13,46 +13,32 @@ struct FollowView: View {
     var currentUser: User
 
     var body: some View {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 16) {
-                    if viewModel.userDatePairs.isEmpty {
-                        Text("フォローしているユーザーがいません")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
-                    } else {
-                        ForEach(viewModel.userDatePairs, id: \.self) { pair in
-                            NavigationLink(value: pair) {
-                                HStack {
-                                    CircleImageView(user: pair.user, size: .xsmall, borderColor: .clear)
-                                    VStack (alignment: .leading){
-                                        Text(pair.user.username)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(Color.primary)
-
-                                        if let fullname = pair.user.fullname { //fullnameがnilじゃないなら
-                                            Text(fullname)
-                                                .foregroundStyle(Color.primary)
-                                        }
-
-                                    }//vstack
-                                    .font(.footnote)
-
-                                    Spacer()
-                                }//hstack
-                                .foregroundStyle(.black) //navigationlinkのデフォルトカラーを青から黒に
-                                .padding(.horizontal)
-                            }//navigationlink
-                        }//foreach
-                    }
-                }//lazyvstack
-                .padding(.top, 8)
-
-            }//scrollview
-            .refreshable {
-                print("refresh")
-            }
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 16) {
+                if viewModel.followUsers.isEmpty {
+                    Text("フォローしているユーザーがいません")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    ForEach(viewModel.followUsers, id: \.self) { followUser in
+                        //TODO: isFollowerを動的に設定
+                        UserRowView(value: followUser.pair, user: followUser.pair.user,
+                                    date: followUser.pair.date, isRead: nil,
+                                    rssi: nil, isFollower: followUser.isFollowed)
+                    }//foreach
+                }
+            }//lazyvstack
+            .padding(.top, 8)
+            .navigationDestination(for: UserDatePair.self, destination: { pair in
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
+            })
+            
+        }//scrollview
+        .refreshable {
+            print("refresh")
+        }
     }
 }
 

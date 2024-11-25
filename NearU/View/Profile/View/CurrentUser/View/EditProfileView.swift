@@ -136,6 +136,9 @@ struct EditProfileRowView: View {
             VStack {
                 TextField(placeholder, text: $text)
                     .padding(.leading, 5)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .autocorrectionDisabled(true)
 
                 Divider()
             }//vstack
@@ -182,6 +185,9 @@ struct EditProfileBioRowView: View {
                     TextEditor(text: $text)
                         .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit))
                         .padding(.horizontal, 5)
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                        .autocorrectionDisabled(true)
                         .onChange(of: text) {
                             enforceTextLimit()
                         }

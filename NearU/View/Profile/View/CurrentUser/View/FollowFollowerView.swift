@@ -17,45 +17,27 @@ struct FollowFollowerView: View {
     let currentUser: User
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                EmptyView()
-                    .searchable(text: $searchText, prompt: "Search...")
+        VStack {
+            EmptyView()
+                .searchable(text: $searchText, prompt: "Search...")
 
-                HStack {
-                    CustomTabBarButtonView(selected: $selectedTab, title: "フォロー", tag: 0)
-                    CustomTabBarButtonView(selected: $selectedTab, title: "フォロワー", tag: 1)
-                }
-                .padding()
-
-                if selectedTab == 0 {
-                    FollowView(currentUser: currentUser).tag(0)
-                        .environmentObject(followViewModel)
-                } else {
-                    FollowerView(currentUser: currentUser).tag(1)
-                        .environmentObject(followerViewModel)
-                }
+            HStack {
+                CustomTabBarButtonView(selected: $selectedTab, title: "フォロー", tag: 0)
+                CustomTabBarButtonView(selected: $selectedTab, title: "フォロワー", tag: 1)
             }
-            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
-                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date)
-            })
-            .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date)
-            })
-            .ignoresSafeArea(edges:.bottom)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("\(currentUser.username)")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
-                }
+            .padding()
+
+            if selectedTab == 0 {
+                FollowView(currentUser: currentUser).tag(0)
+                    .environmentObject(followViewModel)
+            } else {
+                FollowerView(currentUser: currentUser).tag(1)
+                    .environmentObject(followerViewModel)
             }
         }
+        .ignoresSafeArea(edges:.bottom)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("\(currentUser.username)")
     }
 }
 

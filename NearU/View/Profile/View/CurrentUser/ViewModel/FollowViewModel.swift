@@ -10,7 +10,7 @@ import Combine
 import Firebase
 
 class FollowViewModel: ObservableObject {
-    @Published var userDatePairs = [UserDatePair]()
+    @Published var followUsers: [FollowUserRowData] = []
     private var listener: ListenerRegistration?
 
     init() {
@@ -21,13 +21,20 @@ class FollowViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func fetchFollowedUsers() async {
         do {
-            let users = try await UserService.fetchFollowedUsers(receivedId: "")
-            //メインスレッドで実行する必要がある
-            await MainActor.run {
-                self.userDatePairs = users
+            let pairData = try await UserService.fetchFollowedUsers(receivedId: "")
+            var followUserRowData: [FollowUserRowData] = []
+
+            for data in pairData {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
+                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                followUserRowData.append(addData)
             }
+
+            self.followUsers = followUserRowData
+
         } catch {
             print("Error fetching connected users: \(error)")
         }

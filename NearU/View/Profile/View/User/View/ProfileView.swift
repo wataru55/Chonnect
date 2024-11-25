@@ -9,15 +9,16 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
-    @Environment(\.dismiss) var dismiss
 
     let date: Date
+    let isShowFollowButton: Bool
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    init(user: User, currentUser: User, date: Date) {
+    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
 
         self.date = date
+        self.isShowFollowButton = isShowFollowButton
     }
 
     var body: some View {
@@ -27,7 +28,7 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //MARK: - HEADER
-                    ProfileHeaderView(viewModel: viewModel, date: date)
+                    ProfileHeaderView(viewModel: viewModel, date: date, isShowFollowButton: isShowFollowButton)
 
                     //MARK: - SNSLINKS
                     HStack {
@@ -43,38 +44,33 @@ struct ProfileView: View {
                             .padding(.horizontal, 10)
                     }
 
-                    if !viewModel.user.isPrivate || viewModel.currentUser.connectList.contains(viewModel.user.id) && viewModel.user.connectList.contains(viewModel.currentUser.id){
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack() {
-                                if viewModel.user.snsLinks.isEmpty {
-                                    Text("リンクがありません")
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.gray)
-                                        .padding()
-                                } else {
-                                    ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
-                                        if let url = viewModel.user.snsLinks[key] {
-                                            SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
-                                        }
-                                    }
-                                }
-                            }//hstack
-                        }//scrollview
-                        .padding(.leading, 5)
-                        .padding(.bottom)
-
-                    } else {
-                        Spacer()
-                        Text("相互フォローではないためSNSリンクは表示されません")
+                    if viewModel.user.isPrivate && !viewModel.isMutualFollow {
+                        Text("非公開アカウントです")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
-
-                        Spacer()
+                            .foregroundStyle(.gray)
                     }
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack() {
+                            if viewModel.user.snsLinks.isEmpty {
+                                Text("リンクがありません")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            } else {
+                                ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
+                                    if let url = viewModel.user.snsLinks[key] {
+                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
+                                            .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow)
+                                    }
+                                }
+                            }
+                        }//hstack
+                    }//scrollview
+                    .padding(.leading, 5)
+                    .padding(.bottom)
 
                     //MARK: - ARTICLES
                     HStack {
@@ -112,17 +108,7 @@ struct ProfileView: View {
             }
         } //zstack
         .ignoresSafeArea()
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .foregroundStyle(.black)
-                }
-            }
-        }
+
     }//body
 }//view
 

@@ -34,16 +34,20 @@ struct CircleImageView: View {
     let borderColor: Color
 
     var body: some View {
-        if let imageUrl = user.profileImageUrl {
-            KFImage(URL(string: imageUrl))
-                .resizable()
-                .scaledToFill()
-                .frame(width: size.dimension, height: size.dimension)
-                .clipShape(Circle())
-                .overlay {
-                    Circle()
-                        .stroke(Color(borderColor), lineWidth: 1)
-                }
+        if let imageUrl = user.backgroundImageUrl {
+            AsyncImage(url: URL(string: imageUrl)) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size.dimension, height: size.dimension)
+                    .clipShape(Circle())
+                    .overlay {
+                        Circle()
+                            .stroke(Color(borderColor), lineWidth: 1)
+                    }
+            } placeholder: {
+                ProgressView()
+            }
         } else {
             Image(systemName: "person.circle.fill")
                 .resizable()

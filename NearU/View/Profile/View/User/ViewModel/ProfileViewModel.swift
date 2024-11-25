@@ -15,8 +15,10 @@ class ProfileViewModel: ObservableObject {
     @Published var selectedLanguageTags: [String] = []
     @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
-    @Published var follows: [UserDatePair] = []
-    @Published var followers: [UserHistoryRecord] = []
+    @Published var follows: [FollowUserRowData] = []
+    @Published var followers: [HistoryRowData] = []
+    @Published var isFollow: Bool = false
+    @Published var isMutualFollow: Bool = false
 
     init(user: User, currentUser: User) {
         self.user = user
@@ -26,8 +28,36 @@ class ProfileViewModel: ObservableObject {
             try await loadFrameworkTags()
             try await loadFollowUsers()
             try await loadFollowers()
+            await checkFollow()
+            await checkMutualFollow()
             await fetchArticleLinks()
         }
+    }
+
+    @MainActor
+    func checkFollow() async {
+        let followsRef = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
+        do {
+            self.isFollow = try await followsRef.document(user.id).getDocument().exists
+
+        } catch {
+            self.isFollow = false
+        }
+    }
+
+    @MainActor
+    func checkMutualFollow() async {
+        let followersRef = Firestore.firestore().collection("users").document(user.id).collection("follows")
+        do {
+            // 相手が自分をフォローしているかを確認
+            let isFollower = try await followersRef.document(currentUser.id).getDocument().exists
+            // 相互フォローを更新
+            self.isMutualFollow = isFollow && isFollower
+        } catch {
+            // エラーが発生した場合は相互フォローと判定しない
+            self.isMutualFollow = false
+        }
+        print("相互フォロー: \(isMutualFollow)")
     }
 
     @MainActor
@@ -70,8 +100,16 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowUsers() async throws {
         do {
-            let users = try await UserService.fetchFollowedUsers(receivedId: user.id)
-            self.follows = users
+            let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
+            var followUserRowData: [FollowUserRowData] = []
+
+            for data in pairData {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
+                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                followUserRowData.append(addData)
+            }
+
+            self.follows = followUserRowData
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -80,9 +118,16 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async throws {
         do {
-            let users = try await UserService.fetchFollowers(receivedId: user.id)
-            self.followers = users
+            let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
+            var historyRowData: [HistoryRowData] = []
 
+            for record in userHistoryRecords {
+                let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
+                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
+                historyRowData.append(addData)
+            }
+
+            self.followers = historyRowData
         } catch {
             print("Error fetching followers: \(error)")
         }
@@ -123,6 +168,23 @@ class ProfileViewModel: ObservableObject {
                     openGraphData.append(data)
                 }
             }
+        }
+    }
+
+    func followUser(date: Date) async throws{
+        guard let fcmToken = user.fcmtoken else { return }
+        do {
+            // フォロー処理を実行
+            try await UserService.followUser(receivedId: user.id, date: date)
+            // プッシュ通知を送信
+            try await NotificationManager.shared.sendPushNotification(
+                fcmToken: fcmToken,
+                username: currentUser.username,
+                documentId: currentUser.id,
+                date: date
+            )
+        } catch {
+            throw error
         }
     }
 }

@@ -12,6 +12,7 @@ struct URLFieldModifier: ViewModifier {
         content
             .textInputAutocapitalization(.never) // 自動で大文字にしない
             .disableAutocorrection(true) // スペルチェックを無効にする
+            .autocorrectionDisabled(true) // オートコレクトを無効化する
             .font(.subheadline)
             .padding(10)
     }
