@@ -139,6 +139,8 @@ struct ProfileHeaderView: View {
                             .font(.footnote)
                             .frame(width: 250, alignment: .leading)
                     }
+
+                    InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
                 }//VStack
                 .padding(.bottom)
                 .padding(.leading)
