@@ -39,7 +39,9 @@ struct FollowerView: View {
 
         } //scrollview
         .refreshable {
-            print("refresh")
+            Task {
+                await viewModel.loadFollowers()
+            }
         }
     }
 }
