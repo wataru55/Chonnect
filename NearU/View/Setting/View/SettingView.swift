@@ -22,6 +22,7 @@ struct SettingView: View {
                     Toggle(isOn: $isOnBluetooth) {
                         Text("BLE通信")
                     }
+                    .tint(.mint)
                     .onChange(of: isOnBluetooth) {
                         UserDefaults.standard.set(isOnBluetooth, forKey: "isOnBluetooth")
                         if isOnBluetooth {
@@ -38,6 +39,7 @@ struct SettingView: View {
                     Toggle(isOn: $viewModel.isPrivate) {
                         Text("SNSのアクセス制限")
                     }
+                    .tint(.mint)
                     .onChange(of: viewModel.isPrivate) {
                         Task { try await viewModel.updateIsPrivate() }
                     }
