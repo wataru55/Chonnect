@@ -87,11 +87,11 @@ struct CurrentUserProfileView: View {
                                             showEditProfile.toggle()
                                         } label: {
                                             Image(systemName: "pencil")
-                                                .font(.title3)
+                                                .font(.system(size: 20))
                                                 .foregroundColor(.white)
                                                 .padding(10)
                                                 .background(
-                                                    Color.black.opacity(0.6)
+                                                    Color.black.opacity(0.8)
                                                         .clipShape(Circle())
                                                 )
                                         }
@@ -102,15 +102,15 @@ struct CurrentUserProfileView: View {
                                             showEditTags.toggle()
                                         } label: {
                                             Image(systemName: "tag")
-                                                .font(.title3)
+                                                .font(.system(size: 16))
                                                 .foregroundColor(.white)
                                                 .padding(10)
                                                 .background(
-                                                    Color.black.opacity(0.6)
+                                                    Color.black.opacity(0.8)
                                                         .clipShape(Circle())
                                                 )
                                         }
-                                        .padding(.top, 50)
+                                        .padding(.top, 10)
                                         .padding(.trailing, 20)
                                     }
                                 }
