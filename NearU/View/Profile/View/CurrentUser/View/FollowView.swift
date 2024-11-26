@@ -25,7 +25,7 @@ struct FollowView: View {
                     ForEach(viewModel.followUsers, id: \.self) { followUser in
                         //TODO: isFollowerを動的に設定
                         UserRowView(value: followUser.pair, user: followUser.pair.user,
-                                    date: followUser.pair.date, isRead: nil,
+                                    date: followUser.pair.date, isRead: true,
                                     rssi: nil, isFollower: followUser.isFollowed)
                     }//foreach
                 }

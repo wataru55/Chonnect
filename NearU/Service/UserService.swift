@@ -263,4 +263,15 @@ struct UserService {
             return false
         }
     }
+
+    static func updateRead(userId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("followers").document(userId)
+
+        do {
+            try await ref.updateData(["isRead": true])
+        } catch {
+            throw error
+        }
+    }
 }

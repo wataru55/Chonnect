@@ -30,6 +30,11 @@ struct FollowerView: View {
             .padding(.top, 8)
             .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
                 ProfileView(user: follower.user, currentUser: currentUser, date: follower.date, isShowFollowButton: true)
+                    .onAppear {
+                        Task {
+                            await viewModel.updateRead(userId: follower.user.id)
+                        }
+                    }
             })
 
         } //scrollview
