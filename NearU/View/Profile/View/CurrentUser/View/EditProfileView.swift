@@ -172,9 +172,18 @@ struct EditInterestView: View {
                         .foregroundStyle(.gray)
                         .padding()
 
-                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
-                        .padding(.horizontal, 15)
+                    if interestTags.isEmpty{
+                        Text("興味タグがありません")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
+                            .padding(.horizontal, 15)
+                    }
                 }
+                .frame(width: UIScreen.main.bounds.width, alignment: .leading)
             }
         }
     }
