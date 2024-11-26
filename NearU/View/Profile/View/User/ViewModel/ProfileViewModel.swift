@@ -17,6 +17,7 @@ class ProfileViewModel: ObservableObject {
     @Published var followers: [HistoryRowData] = []
     @Published var skillSortedTags: [WordElement] = []
     @Published var interestSortedTags: [WordElement] = []
+    @Published var interestTags: [InterestTag] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
 
@@ -29,6 +30,7 @@ class ProfileViewModel: ObservableObject {
             await loadSkillTags()
             await checkFollow()
             await checkMutualFollow()
+            await loadInterestTags()
             await fetchArticleLinks()
         }
     }
@@ -84,6 +86,16 @@ class ProfileViewModel: ObservableObject {
             self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
         } catch {
             print("Error fetching tags: \(error)")
+        }
+    }
+
+    @MainActor
+    func loadInterestTags() async {
+        do {
+            let data = try await UserService.fetchInterestTags(documentId: user.id)
+            self.interestTags = data
+        } catch {
+            print("error loading interest tags \(error.localizedDescription)")
         }
     }
 

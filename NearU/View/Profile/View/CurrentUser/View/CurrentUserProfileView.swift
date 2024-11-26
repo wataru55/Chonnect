@@ -72,6 +72,11 @@ struct CurrentUserProfileView: View {
                                                 .font(.callout)
                                                 .frame(alignment: .leading)
                                         }
+
+                                        if !viewModel.interestTags.isEmpty {
+                                            InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                                        }
+
                                     }//VStack
                                     .padding(.bottom)
                                     .padding(.leading)

@@ -20,8 +20,8 @@ class CurrentUserProfileViewModel: ObservableObject {
     @Published var backgroundImage: Image?
 
     @Published var username = ""
-    @Published var fullname = ""
     @Published var bio = ""
+    @Published var interestTags: [InterestTag] = []
 
     private var uiBackgroundImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
@@ -32,7 +32,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         } else {
             self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
         }
+
         setupSubscribers()
+
+        Task {
+            await loadInterestTags()
+        }
     }
 
     func setupSubscribers() {
@@ -42,7 +47,6 @@ class CurrentUserProfileViewModel: ObservableObject {
             .sink { [weak self] currentUser in
                 self?.user = currentUser
                 self?.username = currentUser.username
-                self?.fullname = currentUser.fullname ?? ""
                 self?.bio = currentUser.bio ?? ""
             }
             .store(in: &cancellables)
@@ -60,6 +64,25 @@ class CurrentUserProfileViewModel: ObservableObject {
         self.backgroundImage = Image(uiImage: uiImage)
     }
 
+    func saveInterestTags(tags: [InterestTag]) async {
+        do {
+            try await UserService.saveInterestTags(tags: tags)
+            await loadInterestTags()
+        } catch {
+            print("DEBUG: Error saving interest tags \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    func loadInterestTags() async {
+        do {
+            let data = try await UserService.fetchInterestTags(documentId: user.id)
+            self.interestTags = data
+        } catch {
+            print("error loading interest tags \(error.localizedDescription)")
+        }
+    }
+
     @MainActor
     //Firebase Databaseのユーザ情報を変更する関数
     func updateUserData() async throws {
@@ -74,11 +97,6 @@ class CurrentUserProfileViewModel: ObservableObject {
         if !username.isEmpty && user.username != username {
 
             data["username"] = username
-        }
-
-        //update name if changed
-        if !fullname.isEmpty && user.fullname != fullname {
-            data["fullname"] = fullname
         }
 
         //update bio if changed

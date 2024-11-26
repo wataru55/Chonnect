@@ -62,6 +62,51 @@ struct UserService {
         return followers
     }
 
+    static func saveInterestTags(tags: [InterestTag]) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+
+        for tag in tags {
+            if !tag.text.isEmpty {
+                let stringId = tag.id.uuidString
+                let data: [String: String] = [
+                    "id": stringId,
+                    "text": tag.text
+                ]
+
+                do {
+                    try await ref.document(stringId).setData(data)
+                } catch {
+                    throw error
+                }
+            }
+        }
+    }
+
+    static func fetchInterestTags(documentId: String) async throws -> [InterestTag] {
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        let snapshot = try await ref.getDocuments()
+
+        var interestTags: [InterestTag] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: InterestTag.self)
+            interestTags.append(data)
+        }
+
+        return interestTags
+    }
+
+    static func deleteInterestTags(id: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        do {
+            try await ref.document(id).delete()
+        } catch {
+            print("error: \(error)")
+        }
+    }
+
     static func saveSNSLink(serviceName: String, url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
 
