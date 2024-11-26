@@ -15,7 +15,7 @@ struct InterestTagView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 20) {
+            LazyHStack(spacing: 10) {
                 ForEach(interestTag, id: \.self) { tag in
                     HStack(spacing: 0) {
                         Image(systemName: "number")

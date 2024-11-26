@@ -140,7 +140,10 @@ struct ProfileHeaderView: View {
                             .frame(width: 250, alignment: .leading)
                     }
 
-                    InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                    if !viewModel.interestTags.isEmpty{
+                        InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                    }
+
                 }//VStack
                 .padding(.bottom)
                 .padding(.leading)

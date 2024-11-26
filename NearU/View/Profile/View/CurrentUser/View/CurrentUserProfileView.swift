@@ -73,7 +73,9 @@ struct CurrentUserProfileView: View {
                                                 .frame(alignment: .leading)
                                         }
 
-                                        InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                                        if !viewModel.interestTags.isEmpty {
+                                            InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                                        }
 
                                     }//VStack
                                     .padding(.bottom)

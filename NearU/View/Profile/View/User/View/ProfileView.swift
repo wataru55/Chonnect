@@ -53,7 +53,7 @@ struct ProfileView: View {
                     }
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack() {
+                        HStack {
                             if viewModel.user.snsLinks.isEmpty {
                                 Text("リンクがありません")
                                     .font(.subheadline)
@@ -69,9 +69,10 @@ struct ProfileView: View {
                                 }
                             }
                         }//hstack
+                        .padding(.vertical, 5)
                     }//scrollview
-                    .padding(.leading, 5)
-                    .padding(.bottom)
+                    .padding(.horizontal)
+                    .padding(.bottom, 10)
 
                     //MARK: - ARTICLES
                     HStack {
