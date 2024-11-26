@@ -22,7 +22,7 @@ struct EditSkillTagsView: View {
                 backgroundColor.ignoresSafeArea()
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
+                    VStack(spacing: 0) {
                         //MARK: - タグの新規追加
 
                         Text("新規追加")
@@ -30,7 +30,7 @@ struct EditSkillTagsView: View {
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 5)
-                            .padding(.vertical, 5)
+                            .padding(.vertical, 8)
 
                         ForEach($languages) { language in
                             SkillTagRowView(viewModel: viewModel,
@@ -41,13 +41,16 @@ struct EditSkillTagsView: View {
                         } //foreach
 
                         Button(action: {
-                            languages.append(WordElement(id: UUID(),
-                                                         name: "",
+                            languages.append(WordElement(id: UUID(), name: "",
                                                          skill: "3", interest: ""))
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle")
+                                    .offset(y: 3)
                                 Text("入力欄を追加")
+                                    .padding(.top, 5)
+                                    .font(.system(size: 15, weight: .bold))
+
                             }
                             .padding()
                             .foregroundColor(.mint)
@@ -98,8 +101,7 @@ struct EditSkillTagsView: View {
                                 Task {
                                     await viewModel.saveSkillTags(newlanguages: languages)
                                     await MainActor.run {
-                                        languages = [WordElement(id: UUID(),
-                                                                 name: "",
+                                        languages = [WordElement(id: UUID(),name: "",
                                                                  skill: "3", interest: "")]
                                     }
                                 }

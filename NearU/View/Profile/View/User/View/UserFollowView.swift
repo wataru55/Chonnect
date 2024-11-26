@@ -23,7 +23,7 @@ struct UserFollowView: View {
                 } else {
                     ForEach(viewModel.follows, id: \.self) { followUser in
                         //TODO: できたらdate, isFollowerを動的に設定
-                        UserRowView(value: followUser.pair, user: followUser.pair.user, date: nil, isRead: nil, rssi: nil, isFollower: followUser.isFollowed)
+                        UserRowView(value: followUser.pair, user: followUser.pair.user, date: nil, isRead: true, rssi: nil, isFollower: followUser.isFollowed)
                     }//foreach
                 }
             }//lazyvstack

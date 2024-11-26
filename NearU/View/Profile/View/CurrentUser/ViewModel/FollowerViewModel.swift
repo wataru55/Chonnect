@@ -52,6 +52,15 @@ class FollowerViewModel: ObservableObject {
             }
     }
 
+    func updateRead(userId: String) async {
+        do {
+            try await UserService.updateRead(userId: userId)
+            await loadFollowers()
+        } catch {
+            print("Error updating read status: \(error)")
+        }
+    }
+
     deinit {
         listener?.remove()
     }

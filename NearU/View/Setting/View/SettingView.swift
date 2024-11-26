@@ -18,10 +18,11 @@ struct SettingView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("すれちがい通信を許可します")) {
+                Section(header: Text("近くのユーザーがあなたのプロフィールを閲覧できます")) {
                     Toggle(isOn: $isOnBluetooth) {
-                        Text("Bluetooth")
+                        Text("BLE通信")
                     }
+                    .tint(.mint)
                     .onChange(of: isOnBluetooth) {
                         UserDefaults.standard.set(isOnBluetooth, forKey: "isOnBluetooth")
                         if isOnBluetooth {
@@ -34,10 +35,11 @@ struct SettingView: View {
                     }
                 }
 
-                Section(header: Text("SNSリンクへのアクセスを制限します")) {
+                Section(header: Text("SNSリンクへのアクセスを相互フォローに限定します")) {
                     Toggle(isOn: $viewModel.isPrivate) {
-                        Text("プライベートモード")
+                        Text("SNSのアクセス制限")
                     }
+                    .tint(.mint)
                     .onChange(of: viewModel.isPrivate) {
                         Task { try await viewModel.updateIsPrivate() }
                     }
