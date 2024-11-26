@@ -19,7 +19,7 @@ struct ProfileView: View {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
 
         self.date = date
-        self.isShowFollowButton = isShowFollowButton
+        self.isShowFollowButton = (user.id == currentUser.id) ? false : isShowFollowButton
     }
 
     var body: some View {
