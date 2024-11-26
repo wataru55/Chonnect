@@ -36,7 +36,7 @@ struct EditProfileView: View {
                                     .frame(width: UIScreen.main.bounds.width - 20, height: 250)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             } else {
-                                BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
+                                BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
                             }
 
                             Text("背景画像を変更する")
@@ -144,12 +144,13 @@ struct EditInterestView: View {
                     .padding(.vertical, 10)
 
                 ForEach(texts.indices, id: \.self) { index in
-                    TextField("興味のあること", text: $texts[index].text)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .textInputAutocapitalization(.never) // 自動で大文字にしない
-                            .disableAutocorrection(true) // スペルチェックを無効にする
-                            .padding(.horizontal, 15)
-                            .padding(.bottom, 5)
+                    TextField("興味・関心", text: $texts[index].text)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .textInputAutocapitalization(.never) // 自動で大文字にしない
+                        .disableAutocorrection(true) // スペルチェックを無効にする
+                        .font(.subheadline)
+                        .padding(.horizontal, 15)
+                        .padding(.bottom, 5)
                 }
 
                 Button {
@@ -178,6 +179,7 @@ struct EditInterestView: View {
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
                             .padding()
+                            .padding(.leading, 15)
                     } else {
                         InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
                             .padding(.horizontal, 15)
