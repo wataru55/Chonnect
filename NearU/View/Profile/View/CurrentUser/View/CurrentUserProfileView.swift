@@ -203,7 +203,7 @@ struct CurrentUserProfileView: View {
                                     }
                                     .foregroundColor(.mint)
                                 }
-                                .padding(.leading, 8)
+                                .frame(height: 100, alignment: .top)
 
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
