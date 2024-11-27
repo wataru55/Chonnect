@@ -50,11 +50,11 @@ struct MainTabView: View {
                 LoadingView()
             }
         }
-        .sheet(isPresented: $viewTransitionManager.showProfile) {
-            if let selectedUser = viewTransitionManager.selectedUser {
-                ProfileView(user: selectedUser, currentUser: user, date: Date())
-            }
-        }
+//        .sheet(isPresented: $viewTransitionManager.showProfile) {
+//            if let selectedUser = viewTransitionManager.selectedUser {
+//                ProfileView(user: selectedUser, currentUser: user, date: Date())
+//            }
+//        }
         .accentColor(Color(.systemMint))
         .onAppear {
             // 通知の許可をリクエスト

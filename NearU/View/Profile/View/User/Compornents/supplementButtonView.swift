@@ -18,9 +18,8 @@ struct supplementButtonView: View {
             } label: {
                 Image(systemName: "questionmark.circle")
             }
-            .font(.title)
-            .foregroundStyle(.gray)
-            //.fontWeight(.semibold)
+            .font(.system(size: 20))
+            .foregroundStyle(.black)
             .padding()
             .popover(isPresented: $isShowPopover) {
                 Tapover(date: date)

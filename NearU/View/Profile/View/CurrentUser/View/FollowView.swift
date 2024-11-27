@@ -32,7 +32,8 @@ struct FollowView: View {
             }//lazyvstack
             .padding(.top, 8)
             .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date,
+                            isShowFollowButton: true, isShowDateButton: true)
             })
             
         }//scrollview
