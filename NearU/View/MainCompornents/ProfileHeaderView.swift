@@ -82,11 +82,15 @@ struct ProfileHeaderView: View {
                     }
 
                     HStack {
-                        NavigationLink(value: NavigationData(selectedTab: 0)) {
+                        NavigationLink {
+                            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
+                        } label: {
                             CountView(count: viewModel.follows.count, text: "フォロー")
                         }
 
-                        NavigationLink(value: NavigationData(selectedTab: 1)) {
+                        NavigationLink {
+                            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
+                        } label: {
                             CountView(count: viewModel.followers.count, text: "フォロワー")
                         }
 
@@ -156,9 +160,6 @@ struct ProfileHeaderView: View {
             }
             .padding(.bottom)
         }//vstack
-        .navigationDestination(for: NavigationData.self) { data in
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: data.selectedTab)
-        }
         .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
                 isShowCheck.toggle()
@@ -180,10 +181,6 @@ struct ProfileHeaderView: View {
         }
     }//body
 }//view
-
-struct NavigationData: Hashable {
-    let selectedTab: Int
-}
 
 #Preview {
     ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),

@@ -23,20 +23,21 @@ struct FollowerView: View {
                         .padding()
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in
-                        UserRowView(value: follower, user: follower.user, date: follower.date, isRead: follower.isRead, rssi: nil, isFollower: false)
+                        NavigationLink {
+                            ProfileView(user: follower.user, currentUser: currentUser, date: follower.date,
+                                        isShowFollowButton: true, isShowDateButton: true)
+                                .onAppear {
+                                    Task {
+                                        await viewModel.updateRead(userId: follower.user.id)
+                                    }
+                                }
+                        } label: {
+                            UserRowView(user: follower.user, date: follower.date, isRead: follower.isRead, rssi: nil, isFollower: false)
+                        }
                     } //foreach
                 }
             } //lazyvstack
             .padding(.top, 8)
-            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
-                ProfileView(user: follower.user, currentUser: currentUser, date: follower.date,
-                            isShowFollowButton: true, isShowDateButton: true)
-                    .onAppear {
-                        Task {
-                            await viewModel.updateRead(userId: follower.user.id)
-                        }
-                    }
-            })
 
         } //scrollview
         .refreshable {

@@ -21,16 +21,16 @@ struct UserFollowerView: View {
                         .padding()
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in
-                        //TODO: できたらdate, isFollowerを動的に設定
-                        UserRowView(value: follower.record, user: follower.record.user, date: nil, isRead: true, rssi: nil, isFollower: follower.isFollowed)
+                        NavigationLink {
+                            ProfileView(user: follower.record.user, currentUser: viewModel.currentUser, date: follower.record.date,
+                                        isShowFollowButton: false, isShowDateButton: false)
+                        } label: {
+                            UserRowView(user: follower.record.user, date: nil, isRead: true, rssi: nil, isFollower: follower.isFollowed)
+                        }
                     } //foreach
                 }
             } //lazyvstack
             .padding(.top, 8)
-            .navigationDestination(for: UserHistoryRecord.self, destination: { follower in
-                ProfileView(user: follower.user, currentUser: viewModel.currentUser, date: follower.date,
-                            isShowFollowButton: false, isShowDateButton: false)
-            })
 
         } //scrollview
         .refreshable {

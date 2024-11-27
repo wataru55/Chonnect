@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-struct UserRowView<T>: View where T: Hashable {
-    let value: T
+struct UserRowView: View {
     let user: User
     let date: Date?
     let isRead: Bool?
@@ -16,62 +15,60 @@ struct UserRowView<T>: View where T: Hashable {
     let isFollower: Bool?
 
     var body: some View {
-        NavigationLink(value: value) {
-            HStack {
-                CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+        HStack {
+            CircleImageView(user: user, size: .xsmall, borderColor: .clear)
 
-                VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(user.username)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.black)
+
+                    Circle()
+                        .frame(width: 8, height: 8)
+                        .foregroundColor(isRead ?? false ? .clear : .mint)
+
+                }
+
+                if isFollower == true {
+                    Text("フォローされています")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.leading, 5)
+
+            Spacer()
+
+            VStack {
+                if let rssi = rssi {
                     HStack {
-                        Text(user.username)
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.black)
+                        Text("推定距離")
+                            .font(.caption)
+                            .foregroundColor(.gray)
 
-                        Circle()
-                            .frame(width: 8, height: 8)
-                            .foregroundColor(isRead ?? false ? .clear : .mint)
-
-                    }
-
-                    if isFollower == true {
-                        Text("フォローされています")
+                        Text(distance(fromRSSI: rssi))
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
                 }
-                .padding(.leading, 5)
 
-                Spacer()
+                if let date = date {
+                    HStack {
+                        Text("最後のすれちがい")
+                            .font(.caption)
+                            .foregroundColor(.gray)
 
-                VStack {
-                    if let rssi = rssi {
-                        HStack {
-                            Text("推定距離")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-
-                            Text(distance(fromRSSI: rssi))
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    if let date = date {
-                        HStack {
-                            Text("最後のすれちがい")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-
-                            Text(formattedDate(from: date))
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
+                        Text(formattedDate(from: date))
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                 }
-            } //hstack
-            .foregroundStyle(.black)
-            .padding(.horizontal)
-        }
+            }
+        } //hstack
+        .foregroundStyle(.black)
+        .padding(.horizontal)
     }
 
     // フォーマッターを追加
@@ -123,8 +120,7 @@ struct UserRowView<T>: View where T: Hashable {
 }
 
 #Preview {
-    UserRowView(value: UserHistoryRecord(user: User.MOCK_USERS[0], date: Date(), isRead: true),
-                user: User.MOCK_USERS[0],
+    UserRowView(user: User.MOCK_USERS[0],
                 date: Date(),
                 isRead: false,
                 rssi: -35,
