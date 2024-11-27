@@ -25,21 +25,22 @@ struct BLEHistoryView: View {
                         .padding()
                 } else {
                     ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
-                        // TODO: isFollowerを動的に設定
-                        UserRowView(value: data.record, user: data.record.user,
-                                    date: data.record.date, isRead: data.record.isRead,
-                                    rssi: nil, isFollower: data.isFollowed)
+                        NavigationLink {
+                            ProfileView(user: data.record.user, currentUser: currentUser, date: data.record.date,
+                                        isShowFollowButton: true, isShowDateButton: true)
+                                .onAppear {
+                                    viewModel.markAsRead(data.record)
+                                }
+                        } label: {
+                            UserRowView(user: data.record.user,
+                                        date: data.record.date, isRead: data.record.isRead,
+                                        rssi: nil, isFollower: data.isFollowed)
+                        }
                     } // ForEach
                 }
             } // LazyVStack
             .padding(.top, 8)
-            .navigationDestination(for: UserHistoryRecord.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date,
-                            isShowFollowButton: true, isShowDateButton: true)
-                    .onAppear {
-                        viewModel.markAsRead(pair)
-                    }
-            })
+
         } // ScrollView
         .refreshable {
             loadingViewModel.isLoading = true
