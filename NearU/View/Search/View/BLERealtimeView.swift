@@ -32,7 +32,8 @@ struct BLERealtimeView: View {
             } // LazyVStack
             .padding(.top, 8)
             .navigationDestination(for: UserRealtimeRecord.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
+                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date,
+                            isShowFollowButton: true, isShowDateButton: true)
             })
         } // ScrollView
         .alert("エラー", isPresented: $isShowAlert) {

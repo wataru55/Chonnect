@@ -15,6 +15,7 @@ struct ProfileHeaderView: View {
 
     let date: Date
     let isShowFollowButton: Bool
+    let isShowDateButton: Bool
 
     var body: some View {
         VStack (spacing: 15){
@@ -73,6 +74,11 @@ struct ProfileHeaderView: View {
                         Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                             .font(.subheadline)
                             .offset(y: 7)
+
+                        if isShowDateButton {
+                            supplementButtonView(date: date)
+                                .offset(x: -5, y: 4)
+                        }
                     }
 
                     HStack {
@@ -181,5 +187,5 @@ struct NavigationData: Hashable {
 
 #Preview {
     ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
-                      date: Date(), isShowFollowButton: true)
+                      date: Date(), isShowFollowButton: true, isShowDateButton: true)
 }

@@ -13,13 +13,15 @@ struct ProfileView: View {
 
     let date: Date
     let isShowFollowButton: Bool
+    let isShowDateButton: Bool
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false) {
+    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
 
         self.date = date
         self.isShowFollowButton = (user.id == currentUser.id) ? false : isShowFollowButton
+        self.isShowDateButton = isShowDateButton
     }
 
     var body: some View {
@@ -29,7 +31,9 @@ struct ProfileView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     //MARK: - HEADER
-                    ProfileHeaderView(viewModel: viewModel, date: date, isShowFollowButton: isShowFollowButton)
+                    ProfileHeaderView(viewModel: viewModel, date: date,
+                                      isShowFollowButton: isShowFollowButton,
+                                      isShowDateButton: isShowDateButton)
 
                     //MARK: - SNSLINKS
                     HStack {
@@ -116,5 +120,5 @@ struct ProfileView: View {
 }//view
 
 #Preview {
-    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1], date: Date())
+    ProfileView(user: User.MOCK_USERS[0], currentUser: User.MOCK_USERS[1], date: Date(), isShowDateButton: true)
 }
