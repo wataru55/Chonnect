@@ -107,7 +107,8 @@ class ProfileViewModel: ObservableObject {
 
             for data in pairData {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.user.id)
+                let addData = FollowUserRowData(pair: data, tags: interestTags, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
 
@@ -125,7 +126,8 @@ class ProfileViewModel: ObservableObject {
 
             for record in userHistoryRecords {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
-                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
+                let addData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
                 historyRowData.append(addData)
             }
 

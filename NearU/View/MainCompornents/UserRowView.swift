@@ -9,66 +9,77 @@ import SwiftUI
 
 struct UserRowView: View {
     let user: User
+    let tags: [InterestTag]
     let date: Date?
     let isRead: Bool?
     let rssi: Int?
     let isFollower: Bool?
 
     var body: some View {
-        HStack {
-            CircleImageView(user: user, size: .xsmall, borderColor: .clear)
+        HStack(alignment: .center) {
+            CircleImageView(user: user, size: .medium, borderColor: .clear)
 
-            VStack(alignment: .leading) {
+            VStack(alignment: .center, spacing: 0) {
                 HStack {
-                    Text(user.username)
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.black)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(user.username)
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.black)
 
-                    Circle()
-                        .frame(width: 8, height: 8)
-                        .foregroundColor(isRead ?? false ? .clear : .mint)
+                            Circle()
+                                .frame(width: 8, height: 8)
+                                .foregroundColor(isRead ?? false ? .clear : .mint)
+                        }
 
+                        if isFollower == true {
+                            Text("フォローされています")
+                                .font(.caption2)
+                                .foregroundStyle(.gray)
+                        }
+                    } //vstack
+                    .padding(.leading, 5)
+
+                    Spacer()
+
+                    VStack {
+                        if let rssi = rssi {
+                            HStack {
+                                Text("推定距離")
+
+                                Text(distance(fromRSSI: rssi))
+                            }
+                        }
+
+                        if let date = date {
+                            HStack {
+                                Text("最後のすれちがい")
+
+                                Text(formattedDate(from: date))
+                            }
+                        }
+                    } //vstack
+                    .font(.caption2)
+                    .foregroundStyle(.gray)
+                } //hstack
+                .padding(.top, 10)
+
+                if !tags.isEmpty {
+                    InterestTagView(interestTag: tags, isShowDeleteButton: false)
                 }
 
-                if isFollower == true {
-                    Text("フォローされています")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-            }
-            .padding(.leading, 5)
-
-            Spacer()
-
-            VStack {
-                if let rssi = rssi {
-                    HStack {
-                        Text("推定距離")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-
-                        Text(distance(fromRSSI: rssi))
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                }
-
-                if let date = date {
-                    HStack {
-                        Text("最後のすれちがい")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-
-                        Text(formattedDate(from: date))
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                }
-            }
+            }// vstack
         } //hstack
         .foregroundStyle(.black)
         .padding(.horizontal)
+        .frame(height: 80)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .padding(.horizontal, 5)
+                .foregroundStyle(.white)
+                .shadow(color: .gray.opacity(0.5), radius: 2, x: 2, y: 2)
+        )
     }
 
     // フォーマッターを追加
@@ -121,9 +132,12 @@ struct UserRowView: View {
 
 #Preview {
     UserRowView(user: User.MOCK_USERS[0],
+                tags: [InterestTag(id: UUID(), text: "SwiftUI"),
+                       InterestTag(id: UUID(), text: "UIKit"),
+                       InterestTag(id: UUID(), text: "iOSDC")],
                 date: Date(),
                 isRead: false,
-                rssi: -35,
+                rssi: nil,
                 isFollower: true
     )
 }

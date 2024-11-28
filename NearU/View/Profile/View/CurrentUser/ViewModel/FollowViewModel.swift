@@ -29,7 +29,8 @@ class FollowViewModel: ObservableObject {
 
             for data in pairData {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.user.id)
+                let addData = FollowUserRowData(pair: data, tags: interestTags, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
 

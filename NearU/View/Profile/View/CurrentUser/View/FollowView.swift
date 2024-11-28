@@ -27,7 +27,7 @@ struct FollowView: View {
                             ProfileView(user: followUser.pair.user, currentUser: currentUser, date: followUser.pair.date,
                                         isShowFollowButton: true, isShowDateButton: true)
                         } label: {
-                            UserRowView(user: followUser.pair.user,
+                            UserRowView(user: followUser.pair.user, tags: followUser.tags,
                                         date: followUser.pair.date, isRead: true,
                                         rssi: nil, isFollower: followUser.isFollowed)
                         }

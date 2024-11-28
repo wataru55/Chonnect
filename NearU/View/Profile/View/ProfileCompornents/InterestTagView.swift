@@ -23,7 +23,7 @@ struct InterestTagView: View {
                         Text(tag.text)
                             .fontWeight(.bold)
                     }
-                    .font(.footnote)
+                    .font(.caption2)
                     .foregroundStyle(.black)
                     .padding(4)
                     .background(

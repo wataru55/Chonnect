@@ -24,15 +24,17 @@ struct FollowerView: View {
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in
                         NavigationLink {
-                            ProfileView(user: follower.user, currentUser: currentUser, date: follower.date,
+                            ProfileView(user: follower.record.user, currentUser: currentUser, date: follower.record.date,
                                         isShowFollowButton: true, isShowDateButton: true)
                                 .onAppear {
                                     Task {
-                                        await viewModel.updateRead(userId: follower.user.id)
+                                        await viewModel.updateRead(userId: follower.record.user.id)
                                     }
                                 }
                         } label: {
-                            UserRowView(user: follower.user, date: follower.date, isRead: follower.isRead, rssi: nil, isFollower: false)
+                            UserRowView(user: follower.record.user, tags: follower.tags,
+                                        date: follower.record.date, isRead: follower.record.isRead,
+                                        rssi: nil, isFollower: false)
                         }
                     } //foreach
                 }
