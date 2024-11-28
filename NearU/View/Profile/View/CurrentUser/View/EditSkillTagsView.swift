@@ -10,7 +10,7 @@ import SwiftUI
 struct EditSkillTagsView: View {
     @ObservedObject var viewModel: EditSkillTagsViewModel
     @State private var languages: [WordElement] = [
-        WordElement(id: UUID(), name: "", skill: "3", interest: "")
+        WordElement(id: UUID(), name: "", skill: "3")
     ]
     @Environment(\.dismiss) var dismiss
 
@@ -36,13 +36,12 @@ struct EditSkillTagsView: View {
                             SkillTagRowView(viewModel: viewModel,
                                             language: language,
                                             skillLevels: viewModel.skillLevels,
-                                            interestLevels: viewModel.interestLevels,
                                             isShowDeleteButton: false)
+                            .padding(.top, 10)
                         } //foreach
 
                         Button(action: {
-                            languages.append(WordElement(id: UUID(), name: "",
-                                                         skill: "3", interest: ""))
+                            languages.append(WordElement(id: UUID(), name: "", skill: "3"))
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle")
@@ -76,7 +75,6 @@ struct EditSkillTagsView: View {
                                     SkillTagRowView(viewModel: viewModel,
                                                     language: $language,
                                                     skillLevels: viewModel.skillLevels,
-                                                    interestLevels: viewModel.interestLevels,
                                                     isShowDeleteButton: true)
                                 } //foreach
                             }
@@ -102,7 +100,7 @@ struct EditSkillTagsView: View {
                                     await viewModel.saveSkillTags(newlanguages: languages)
                                     await MainActor.run {
                                         languages = [WordElement(id: UUID(),name: "",
-                                                                 skill: "3", interest: "")]
+                                                                 skill: "3")]
                                     }
                                 }
                             } label: {
@@ -128,7 +126,6 @@ struct SkillTagRowView: View {
     @State private var isShowAlert: Bool = false
     @Binding var language: WordElement
     let skillLevels: [String]
-    let interestLevels: [String]
     let isShowDeleteButton: Bool
 
     var body: some View {
@@ -150,7 +147,7 @@ struct SkillTagRowView: View {
 
             Spacer()
 
-            Text("レベル")
+            Text("技術レベル")
                 .font(.footnote)
                 .fontWeight(.bold)
                 .foregroundStyle(.black)
@@ -160,19 +157,7 @@ struct SkillTagRowView: View {
                 }
             }
             .pickerStyle(MenuPickerStyle())
-            .offset(x: -5)
-
-            Text("興味度")
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
-
-            Picker("興味度", selection: $language.interest) {
-                ForEach(interestLevels, id: \.self) {
-                    Text($0)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
+            .padding(.trailing, 15)
             .offset(x: -5)
         }
         .tint(.mint)

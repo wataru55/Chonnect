@@ -58,7 +58,7 @@ struct ProfileHeaderView: View {
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
                     NavigationLink {
-                        TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
+                        WordCloudView(skillSortedTags: viewModel.skillSortedTags)
                             .background(Color.white.opacity(0.7))
                             .ignoresSafeArea()
                     } label: {

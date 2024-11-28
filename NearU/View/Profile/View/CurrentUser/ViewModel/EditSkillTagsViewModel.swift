@@ -78,7 +78,6 @@ class EditSkillTagsViewModel: ObservableObject {
             .sink { [weak self] tags in
                 guard let self = self else { return }
                 self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
-                self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
             }
             .store(in: &cancellables)
     }

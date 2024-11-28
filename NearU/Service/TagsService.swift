@@ -19,7 +19,6 @@ struct TagsService {
             "id": id,
             "name": tagData.name,
             "skill": tagData.skill,
-            "interest": tagData.interest
         ]
 
         do {
@@ -38,7 +37,6 @@ struct TagsService {
             "id": id,
             "name": tagData.name,
             "skill": tagData.skill,
-            "interest": tagData.interest
         ]
 
         do {
@@ -58,9 +56,8 @@ struct TagsService {
                 let id = document.documentID
                 let name = data["name"] as? String ?? ""
                 let skill = data["skill"] as? String ?? ""
-                let interest = data["interest"] as? String ?? ""
 
-                return WordElement(id: UUID(uuidString: id) ?? UUID(), name: name, skill: skill, interest: interest)
+                return WordElement(id: UUID(uuidString: id) ?? UUID(), name: name, skill: skill)
             }
             return tags
         } catch {
