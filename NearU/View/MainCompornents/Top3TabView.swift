@@ -39,19 +39,19 @@ struct Top3TabView: View {
     let tags: [WordElement]
     
     // 技術名とアイコン画像名の対応を定義
-    let iconMapping: [String: String] = [
+    private let iconMapping: [String: String] = [
         // 言語
-        "Swift": "Swift",
-        "Kotlin": "Kotlin",
         "JavaScript": "JavaScript",
         "Python": "Python",
-        "Go": "Go",
         "Java": "Java",
         "Ruby": "Ruby",
+        "Swift": "Swift",
         "PHP": "PHP",
         "TypeScript": "TypeScript",
+        "Go": "Go",
         "C": "C",
         "C++": "C-plus",
+        "Kotlin": "Kotlin",
         "C#": "C-sharp",
         "HTML": "HTML",
         "CSS": "CSS",
@@ -68,17 +68,32 @@ struct Top3TabView: View {
         "Django": "Django",
         "Flask": "Flask",
         "Laravel": "Laravel",
+        "CakePHP": "CakePHP",
         "Flutter": "Flutter",
+        "Rails": "Rails",
+        "Remix": "Remix",
+        "Tailwind CSS": "Tailwind-CSS",
+        "Spring": "Spring",
         // データベース
         "MySQL": "MySQL",
         "PostgreSQL": "PostgreSQL",
         "MongoDB": "MongoDB",
+        "Redis": "Redis",
+        "MariaDB": "MariaDB",
+        "DynamoDB": "DynamoDB",
         // その他
         "AWS": "AWS",
         "GCP": "GCP",
         "Azure": "Azure",
+        "Cloudflare": "Cloudflare",
+        "Vercel": "Vercel",
         "Firebase": "Firebase",
-        "Docker": "Docker"
+        "Supabase": "Supabase",
+        "Terraform": "Terraform",
+        "Unity": "Unity",
+        "Blender": "Blender",
+        "Docker": "Docker",
+        "ROS": "ROS"
     ]
     
     var body: some View {
