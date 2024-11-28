@@ -9,5 +9,6 @@ import Foundation
 
 struct FollowUserRowData: Hashable {
     let pair: UserDatePair
+    let tags: [InterestTag]
     let isFollowed: Bool
 }
