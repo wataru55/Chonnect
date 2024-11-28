@@ -37,6 +37,7 @@ struct EditSkillTagsView: View {
                                             language: language,
                                             skillLevels: viewModel.skillLevels,
                                             isShowDeleteButton: false)
+                            .padding(.top, 10)
                         } //foreach
 
                         Button(action: {
