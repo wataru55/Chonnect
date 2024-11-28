@@ -21,15 +21,27 @@ class BLERealtimeViewModel: ObservableObject {
         setupSubscribers()
     }
 
+    @MainActor
     func fetchRealtimeAllUsers(realtimeDataList: [EncountDataStruct]) async {
         do {
-            let userIds = realtimeDataList.map { $0.userId }
-            let dates = realtimeDataList.map { $0.date }
-            let rssis = realtimeDataList.map { $0.rssi }
-            let users = try await UserService.fetchUsers(userIds)
-            self.userRealtimeRecords = (0..<users.count).map { index in
-                UserRealtimeRecord(user: users[index], date: dates[index], rssi: rssis[index])
+            var addData: [UserRealtimeRecord] = []
+
+            for data in realtimeDataList {
+                let user = try await UserService.fetchUser(withUid: data.userId)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
+
+                addData.append(UserRealtimeRecord(user: user, tags: interestTags, date: data.date, rssi: data.rssi))
             }
+
+            self.userRealtimeRecords = addData
+//            let userIds = realtimeDataList.map { $0.userId }
+//            let dates = realtimeDataList.map { $0.date }
+//            let rssis = realtimeDataList.map { $0.rssi }
+//            let users = try await UserService.fetchUsers(userIds)
+//
+//            self.userRealtimeRecords = (0..<users.count).map { index in
+//                UserRealtimeRecord(user: users[index], date: dates[index], rssi: rssis[index])
+//            }
         } catch {
             print("Error fetching users: \(error)")
         }

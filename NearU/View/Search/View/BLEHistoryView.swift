@@ -32,7 +32,7 @@ struct BLEHistoryView: View {
                                     viewModel.markAsRead(data.record)
                                 }
                         } label: {
-                            UserRowView(user: data.record.user,
+                            UserRowView(user: data.record.user, tags: data.tags,
                                         date: data.record.date, isRead: data.record.isRead,
                                         rssi: nil, isFollower: data.isFollowed)
                         }

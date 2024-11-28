@@ -36,8 +36,9 @@ class BLEHistoryViewModel: ObservableObject {
             }
 
             for record in userHistoryRecords {
+                let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
                 let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
-                addData.append(HistoryRowData(record: record, isFollowed: isFollowed))
+                addData.append(HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed))
             }
             self.historyRowData = addData
 

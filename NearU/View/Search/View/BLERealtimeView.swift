@@ -25,12 +25,13 @@ struct BLERealtimeView: View {
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { pair in
+                    ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { data in
                         NavigationLink {
-                            ProfileView(user: pair.user, currentUser: currentUser, date: pair.date,
+                            ProfileView(user: data.user, currentUser: currentUser, date: data.date,
                                         isShowFollowButton: true, isShowDateButton: true)
                         } label: {
-                            UserRowView(user: pair.user, date: nil, isRead: nil, rssi: pair.rssi, isFollower: false)
+                            UserRowView(user: data.user, tags: data.tags, date: nil,
+                                        isRead: nil, rssi: data.rssi, isFollower: false)
                         }
                     } // ForEach
                 }
