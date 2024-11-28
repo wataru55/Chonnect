@@ -142,8 +142,8 @@ struct Top3TabView: View {
 
 #Preview {
     Top3TabView(tags: [
-        WordElement(id: UUID(), name: "Swift", skill: "3", interest: "1"),
-        WordElement(id: UUID(), name: "Python", skill: "3", interest: "2"),
-        WordElement(id: UUID(), name: "AWS", skill: "2", interest: "3")
+        WordElement(id: UUID(), name: "Swift", skill: "3"),
+        WordElement(id: UUID(), name: "Python", skill: "3"),
+        WordElement(id: UUID(), name: "AWS", skill: "2")
     ])
 }

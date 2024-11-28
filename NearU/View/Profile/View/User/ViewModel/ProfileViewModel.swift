@@ -83,7 +83,6 @@ class ProfileViewModel: ObservableObject {
         do {
             let tags = try await TagsService.fetchTags(documentId: user.id)
             self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
-            self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
         } catch {
             print("Error fetching tags: \(error)")
         }
