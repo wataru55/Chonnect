@@ -75,7 +75,6 @@ struct ProfileView: View {
                         }//hstack
                         .padding(.vertical, 5)
                     }//scrollview
-                    .padding(.horizontal)
                     .padding(.bottom, 10)
 
                     //MARK: - ARTICLES

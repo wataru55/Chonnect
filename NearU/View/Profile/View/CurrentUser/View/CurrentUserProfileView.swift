@@ -172,7 +172,7 @@ struct CurrentUserProfileView: View {
                             } // HStack
                             .padding(.vertical, 5)
                         } // ScrollView
-                        .padding(.leading)
+                    
                         .padding(.bottom, 10)
 
                         //MARK: - ARTICLES
