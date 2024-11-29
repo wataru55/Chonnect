@@ -146,7 +146,7 @@ struct ProfileHeaderView: View {
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
-                            .font(.footnote)
+                            .font(.subheadline)
                             .frame(width: 250, alignment: .leading)
                     }
 

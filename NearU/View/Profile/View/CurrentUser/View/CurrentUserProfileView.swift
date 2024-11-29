@@ -69,7 +69,7 @@ struct CurrentUserProfileView: View {
 
                                         if let bio = user.bio {
                                             Text(bio)
-                                                .font(.callout)
+                                                .font(.subheadline)
                                                 .frame(alignment: .leading)
                                         }
 
@@ -171,8 +171,8 @@ struct CurrentUserProfileView: View {
                                 }
                             } // HStack
                             .padding(.vertical, 5)
+                            .padding(.horizontal, 10)
                         } // ScrollView
-                    
                         .padding(.bottom, 10)
 
                         //MARK: - ARTICLES

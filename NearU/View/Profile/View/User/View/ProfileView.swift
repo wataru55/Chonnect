@@ -31,7 +31,7 @@ struct ProfileView: View {
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
+                    VStack(spacing: 0) {
                         //MARK: - HEADER
                         ProfileHeaderView(viewModel: viewModel, date: date,
                                           isShowFollowButton: isShowFollowButton,
@@ -76,6 +76,7 @@ struct ProfileView: View {
                                 }
                             }//hstack
                             .padding(.vertical, 5)
+                            .padding(.horizontal, 10)
                         }//scrollview
                         .padding(.bottom, 10)
 

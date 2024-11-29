@@ -10,16 +10,15 @@ import SwiftUI
 struct CountView: View {
     let count: Int
     let text: String
-    
+
     var body: some View {
         HStack(spacing: 3) {
             Text("\(count)")
-                .fontWeight(.bold)
+                .fontWeight(.heavy)
 
             Text(text)
-                .font(.footnote)
-                .fontWeight(.semibold)
-                .foregroundColor(.gray)
+                .font(.caption)
+                .foregroundStyle(.black)
         }
     }
 }
