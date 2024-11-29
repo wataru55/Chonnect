@@ -118,7 +118,7 @@ struct ProfileHeaderView: View {
                                             do {
                                                 try await viewModel.followUser(date: date)
                                                 await viewModel.checkFollow()
-                                                try await viewModel.loadFollowers()
+                                                await viewModel.loadFollowers()
                                                 loadingViewModel.isLoading = false
                                             } catch {
                                                 loadingViewModel.isLoading = false
@@ -168,7 +168,7 @@ struct ProfileHeaderView: View {
                 Task {
                     try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
                     await viewModel.checkFollow()
-                    try await viewModel.loadFollowers()
+                    await viewModel.loadFollowers()
                 }
             }
         } message: {
