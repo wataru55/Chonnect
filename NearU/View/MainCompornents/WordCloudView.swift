@@ -47,11 +47,11 @@ enum Style: String{
     func fontWeight() -> Font.Weight {
         switch self {
         case .one:
-            return .black
-        case .two:
-            return .heavy
-        case .three:
             return .bold
+        case .two:
+            return .bold
+        case .three:
+            return .regular
         case .four:
             return .heavy
         case .five:
@@ -66,7 +66,6 @@ struct WordCloudView: View {
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
     @State private var wordVisibility: [Bool]
-    @State private var scale: CGFloat = 1
     @State private var offset: CGSize = .zero
     @State private var positionsReady = false
     @State private var positions: [CGPoint] = []
@@ -110,13 +109,24 @@ struct WordCloudView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("スキルレベル")
+                    Text("開発スキル")
                         .font(.headline)
                         .fontWeight(.bold)
                 }
             }
         } // vstack
         .offset(x: offset.width, y: offset.height)
+        .gesture(
+            DragGesture()
+                .onChanged({ value in
+                    offset = value.translation //ドラッグジェスチャーの移動量
+                })
+                .onEnded({ _ in
+                    withAnimation(.spring){
+                        offset = .zero
+                    }
+                })
+        )
     }
     @ViewBuilder
     private func selectedTagsView(tags: [WordElement], pos: [CGPoint]) -> some View {
