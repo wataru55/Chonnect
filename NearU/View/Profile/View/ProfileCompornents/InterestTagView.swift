@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InterestTagView: View {
+    @State private var isShowAlert: Bool = false
     @State private var tagToDelete: InterestTag?
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     let interestTag: [InterestTag]
@@ -34,7 +35,8 @@ struct InterestTagView: View {
                     .overlay(alignment: .topTrailing) {
                         if isShowDeleteButton {
                             Button {
-                                tagToDelete = tag // 削除対象のタグを設定
+                                tagToDelete = tag
+                                isShowAlert = true
                             } label: {
                                 Image(systemName: "minus.circle.fill")
                                     .font(.footnote)
@@ -47,18 +49,16 @@ struct InterestTagView: View {
             }
         }
         .frame(height: 40)
-        .alert(item: $tagToDelete) { tag in
-            Alert(
-                title: Text("確認"),
-                message: Text("このタグを削除しますか？"),
-                primaryButton: .destructive(Text("削除")) {
-                    Task {
-                        await UserService.deleteInterestTags(id: tag.id.uuidString)
-                        await viewModel.loadInterestTags()
-                    }
-                },
-                secondaryButton: .cancel()
-            )
+        .alert("確認", isPresented: $isShowAlert, presenting: tagToDelete) { tag in
+            Button("削除", role: .destructive) {
+                Task {
+                    await UserService.deleteInterestTags(id: tag.id.uuidString)
+                    await viewModel.loadInterestTags()
+                    tagToDelete = nil // 削除後にリセット
+                }
+            }
+        } message: { tag in
+            Text("このタグを削除しますか？")
         }
     }
 }
