@@ -12,9 +12,7 @@ import Combine
 class EditSkillTagsViewModel: ObservableObject {
     @Published var Tags: [WordElement] = []
     @Published var skillSortedTags: [WordElement] = []
-    @Published var interestSortedTags: [WordElement] = []
     let skillLevels = ["1", "2", "3", "4", "5"]
-    let interestLevels = ["", "1", "2", "3", "4", "5"]
 
     private var cancellables = Set<AnyCancellable>()
 
