@@ -32,6 +32,16 @@ struct EditSkillTagsView: View {
                             .padding(.leading, 5)
                             .padding(.vertical, 8)
 
+                        Text("""
+                        1：基本的な文法を学んだことがある程度
+                        2：他者のサポートを受けつつ、小規模なタスクを実装できる
+                        3：参考書やインターネットで調べながら、自身で実装を進められる
+                        4：実装が複雑なアプリケーションを開発できる
+                        5：テックリードとしてエンジニアを指導し、開発を進められる
+                        """)
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+
                         ForEach($languages) { language in
                             SkillTagRowView(viewModel: viewModel,
                                             language: language,
@@ -63,7 +73,7 @@ struct EditSkillTagsView: View {
                             .padding(.leading, 5)
                             .padding(.vertical, 10)
 
-                        if viewModel.Tags.isEmpty {
+                        if viewModel.skillSortedTags.isEmpty {
                             Text("保存された技術タグがありません")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -71,7 +81,7 @@ struct EditSkillTagsView: View {
                                 .padding()
                         } else {
                             VStack(spacing: 20){
-                                ForEach($viewModel.Tags) { $language in
+                                ForEach($viewModel.skillSortedTags) { $language in
                                     SkillTagRowView(viewModel: viewModel,
                                                     language: $language,
                                                     skillLevels: viewModel.skillLevels,
@@ -105,7 +115,7 @@ struct EditSkillTagsView: View {
                                 }
                             } label: {
                                 HStack(spacing: 2) {
-                                    Image(systemName: "plus.app")
+                                    Image(systemName: "checkmark.circle")
                                     Text("保存")
                                         .font(.subheadline)
                                         .fontWeight(.bold)
@@ -202,14 +212,14 @@ struct TechTagPickerView: View {
         "データベース": ["MySQL", "PostgreSQL", "MongoDB", "Redis", "MariaDB", "DynamoDB"],
         "その他": ["AWS", "GCP", "Azure", "Cloudflare", "Vercel", "Firebase", "Supabase", "Terraform", "Unity", "Blender", "Docker", "ROS"],
     ]
-    
+
     // 表示順を指定
     let displayOrder: [String] = ["言語", "フレームワーク", "データベース", "その他"]
-    
+
     @Binding var language: WordElement
     @Environment(\.presentationMode) var presentationMode
     @State private var expandedSections: [String: Bool] = [:] // セクションの開閉状態を管理
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -272,11 +282,11 @@ struct TechTagPickerView: View {
             }
         }
     }
-    
+
     private func toggleSection(_ category: String) {
         expandedSections[category]?.toggle()
     }
-    
+
     private let iconMapping: [String: String] = [
         // 言語
         "JavaScript": "JavaScript",
