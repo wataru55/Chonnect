@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InterestTagView: View {
     @State private var isShowAlert: Bool = false
+    @State private var tagToDelete: InterestTag?
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     let interestTag: [InterestTag]
     let isShowDeleteButton: Bool
@@ -34,22 +35,13 @@ struct InterestTagView: View {
                     .overlay(alignment: .topTrailing) {
                         if isShowDeleteButton {
                             Button {
-                                isShowAlert.toggle()
+                                tagToDelete = tag
+                                isShowAlert = true
                             } label: {
                                 Image(systemName: "minus.circle.fill")
                                     .font(.footnote)
                                     .foregroundStyle(.black)
                                     .offset(x: 8, y: -5)
-                            }
-                            .alert("確認", isPresented: $isShowAlert) {
-                                Button("削除", role: .destructive) {
-                                    Task {
-                                        await UserService.deleteInterestTags(id: tag.id.uuidString)
-                                        await viewModel.loadInterestTags()
-                                    }
-                                }
-                            } message: {
-                                Text("このタグを削除しますか？")
                             }
                         }
                     }
@@ -57,6 +49,17 @@ struct InterestTagView: View {
             }
         }
         .frame(height: 40)
+        .alert("確認", isPresented: $isShowAlert, presenting: tagToDelete) { tag in
+            Button("削除", role: .destructive) {
+                Task {
+                    await UserService.deleteInterestTags(id: tag.id.uuidString)
+                    await viewModel.loadInterestTags()
+                    tagToDelete = nil // 削除後にリセット
+                }
+            }
+        } message: { tag in
+            Text("このタグを削除しますか？")
+        }
     }
 }
 
