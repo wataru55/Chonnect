@@ -24,13 +24,7 @@ struct InterestTagView: View {
                             .fontWeight(.bold)
                     }
                     .font(.caption2)
-                    .foregroundStyle(.black)
-                    .padding(4)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .foregroundStyle(.ultraThinMaterial)
-                            .shadow(color: .black.opacity(0.5), radius: 2, x: 2, y: 2)
-                    )
+                    .foregroundStyle(.blue)
                     .overlay(alignment: .topTrailing) {
                         if isShowDeleteButton {
                             Button {
@@ -56,7 +50,7 @@ struct InterestTagView: View {
                 }
             }
         }
-        .frame(height: 40)
+        .frame(height: 20)
     }
 }
 
