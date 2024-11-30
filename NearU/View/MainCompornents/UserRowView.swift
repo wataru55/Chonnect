@@ -63,10 +63,10 @@ struct UserRowView: View {
                     .font(.caption2)
                     .foregroundStyle(.gray)
                 } //hstack
-                .padding(.top, 10)
 
                 if !tags.isEmpty {
                     InterestTagView(interestTag: tags, isShowDeleteButton: false)
+                        .padding(.leading, 5)
                 }
 
             }// vstack
