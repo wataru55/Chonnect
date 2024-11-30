@@ -158,7 +158,6 @@ struct ProfileHeaderView: View {
                 .padding(.bottom)
                 .padding(.leading)
             }
-            .padding(.bottom)
         }//vstack
         .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
