@@ -135,58 +135,56 @@ struct EditInterestView: View {
     let interestTags: [InterestTag]
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                Text("興味タグ")
+        VStack(spacing: 0) {
+            Text("興味タグ")
+                .font(.footnote)
+                .foregroundStyle(.gray)
+                .frame(width: UIScreen.main.bounds.width - 20, alignment: .leading)
+                .padding(.vertical, 10)
+
+            ForEach(texts.indices, id: \.self) { index in
+                TextField("興味・関心", text: $texts[index].text)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .textInputAutocapitalization(.never) // 自動で大文字にしない
+                    .disableAutocorrection(true) // スペルチェックを無効にする
+                    .font(.subheadline)
+                    .padding(.horizontal, 15)
+                    .padding(.bottom, 5)
+            }
+
+            Button {
+                texts.append(InterestTag(id: UUID(), text: ""))
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle")
+                        .offset(y: 3)
+                    Text("入力欄を追加")
+                        .padding(.top, 5)
+                        .font(.system(size: 15, weight: .bold))
+                }
+                .foregroundStyle(Color.mint)
+            }
+            .padding(.bottom, 5)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text("一覧")
                     .font(.footnote)
                     .foregroundStyle(.gray)
-                    .frame(width: UIScreen.main.bounds.width - 20, alignment: .leading)
-                    .padding(.vertical, 10)
+                    .padding()
 
-                ForEach(texts.indices, id: \.self) { index in
-                    TextField("興味・関心", text: $texts[index].text)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .textInputAutocapitalization(.never) // 自動で大文字にしない
-                        .disableAutocorrection(true) // スペルチェックを無効にする
+                if interestTags.isEmpty{
+                    Text("興味タグがありません")
                         .font(.subheadline)
-                        .padding(.horizontal, 15)
-                        .padding(.bottom, 5)
-                }
-
-                Button {
-                    texts.append(InterestTag(id: UUID(), text: ""))
-                } label: {
-                    HStack {
-                        Image(systemName: "plus.circle")
-                            .offset(y: 3)
-                        Text("入力欄を追加")
-                            .padding(.top, 5)
-                            .font(.system(size: 15, weight: .bold))
-                    }
-                    .foregroundStyle(Color.mint)
-                }
-                .padding(.bottom, 5)
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("一覧")
-                        .font(.footnote)
-                        .foregroundStyle(.gray)
+                        .fontWeight(.bold)
+                        .foregroundColor(.gray)
                         .padding()
-
-                    if interestTags.isEmpty{
-                        Text("興味タグがありません")
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
-                            .padding(.leading, 15)
-                    } else {
-                        InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
-                            .padding(.horizontal, 15)
-                    }
+                        .padding(.leading, 15)
+                } else {
+                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
+                        .padding(.horizontal, 15)
                 }
-                .frame(width: UIScreen.main.bounds.width, alignment: .leading)
             }
+            .frame(width: UIScreen.main.bounds.width, alignment: .leading)
         }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct EditSkillTagsView: View {
     @ObservedObject var viewModel: EditSkillTagsViewModel
     @State private var languages: [WordElement] = [
-        WordElement(id: UUID(), name: "", skill: "3", interest: "")
+        WordElement(id: UUID(), name: "", skill: "3")
     ]
     @Environment(\.dismiss) var dismiss
 
@@ -32,17 +32,26 @@ struct EditSkillTagsView: View {
                             .padding(.leading, 5)
                             .padding(.vertical, 8)
 
+                        Text("""
+                        1：基本的な文法を学んだことがある程度
+                        2：他者のサポートを受けつつ、小規模なタスクを実装できる
+                        3：参考書やインターネットで調べながら、自身で実装を進められる
+                        4：実装が複雑なアプリケーションを開発できる
+                        5：テックリードとしてエンジニアを指導し、開発を進められる
+                        """)
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+
                         ForEach($languages) { language in
                             SkillTagRowView(viewModel: viewModel,
                                             language: language,
                                             skillLevels: viewModel.skillLevels,
-                                            interestLevels: viewModel.interestLevels,
                                             isShowDeleteButton: false)
+                            .padding(.top, 10)
                         } //foreach
 
                         Button(action: {
-                            languages.append(WordElement(id: UUID(), name: "",
-                                                         skill: "3", interest: ""))
+                            languages.append(WordElement(id: UUID(), name: "", skill: "3"))
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle")
@@ -64,7 +73,7 @@ struct EditSkillTagsView: View {
                             .padding(.leading, 5)
                             .padding(.vertical, 10)
 
-                        if viewModel.Tags.isEmpty {
+                        if viewModel.skillSortedTags.isEmpty {
                             Text("保存された技術タグがありません")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -72,11 +81,10 @@ struct EditSkillTagsView: View {
                                 .padding()
                         } else {
                             VStack(spacing: 20){
-                                ForEach($viewModel.Tags) { $language in
+                                ForEach($viewModel.skillSortedTags) { $language in
                                     SkillTagRowView(viewModel: viewModel,
                                                     language: $language,
                                                     skillLevels: viewModel.skillLevels,
-                                                    interestLevels: viewModel.interestLevels,
                                                     isShowDeleteButton: true)
                                 } //foreach
                             }
@@ -102,12 +110,12 @@ struct EditSkillTagsView: View {
                                     await viewModel.saveSkillTags(newlanguages: languages)
                                     await MainActor.run {
                                         languages = [WordElement(id: UUID(),name: "",
-                                                                 skill: "3", interest: "")]
+                                                                 skill: "3")]
                                     }
                                 }
                             } label: {
                                 HStack(spacing: 2) {
-                                    Image(systemName: "plus.app")
+                                    Image(systemName: "checkmark.circle")
                                     Text("保存")
                                         .font(.subheadline)
                                         .fontWeight(.bold)
@@ -128,7 +136,6 @@ struct SkillTagRowView: View {
     @State private var isShowAlert: Bool = false
     @Binding var language: WordElement
     let skillLevels: [String]
-    let interestLevels: [String]
     let isShowDeleteButton: Bool
 
     var body: some View {
@@ -150,7 +157,7 @@ struct SkillTagRowView: View {
 
             Spacer()
 
-            Text("レベル")
+            Text("技術レベル")
                 .font(.footnote)
                 .fontWeight(.bold)
                 .foregroundStyle(.black)
@@ -160,19 +167,7 @@ struct SkillTagRowView: View {
                 }
             }
             .pickerStyle(MenuPickerStyle())
-            .offset(x: -5)
-
-            Text("興味度")
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
-
-            Picker("興味度", selection: $language.interest) {
-                ForEach(interestLevels, id: \.self) {
-                    Text($0)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
+            .padding(.trailing, 15)
             .offset(x: -5)
         }
         .tint(.mint)
@@ -217,14 +212,14 @@ struct TechTagPickerView: View {
         "データベース": ["MySQL", "PostgreSQL", "MongoDB", "Redis", "MariaDB", "DynamoDB"],
         "その他": ["AWS", "GCP", "Azure", "Cloudflare", "Vercel", "Firebase", "Supabase", "Terraform", "Unity", "Blender", "Docker", "ROS"],
     ]
-    
+
     // 表示順を指定
     let displayOrder: [String] = ["言語", "フレームワーク", "データベース", "その他"]
-    
+
     @Binding var language: WordElement
     @Environment(\.presentationMode) var presentationMode
     @State private var expandedSections: [String: Bool] = [:] // セクションの開閉状態を管理
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -287,11 +282,11 @@ struct TechTagPickerView: View {
             }
         }
     }
-    
+
     private func toggleSection(_ category: String) {
         expandedSections[category]?.toggle()
     }
-    
+
     private let iconMapping: [String: String] = [
         // 言語
         "JavaScript": "JavaScript",

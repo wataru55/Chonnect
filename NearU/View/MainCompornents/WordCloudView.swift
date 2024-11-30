@@ -47,11 +47,11 @@ enum Style: String{
     func fontWeight() -> Font.Weight {
         switch self {
         case .one:
-            return .black
-        case .two:
-            return .heavy
-        case .three:
             return .bold
+        case .two:
+            return .bold
+        case .three:
+            return .regular
         case .four:
             return .heavy
         case .five:
@@ -66,19 +66,14 @@ struct WordCloudView: View {
     @State private var canvasRect = CGRect()
     @State private var wordSizes: [CGSize]
     @State private var wordVisibility: [Bool]
-    @State private var scale: CGFloat = 1
     @State private var offset: CGSize = .zero
     @State private var positionsReady = false
     @State private var positions: [CGPoint] = []
 
-    var selected: Int
     var skillSortedTags: [WordElement]
-    var interestSortedTags: [WordElement]
 
-    init(selected: Int, skillSortedTags: [WordElement], interestSortedTags: [WordElement]) {
-        self.selected = selected
+    init(skillSortedTags: [WordElement]) {
         self.skillSortedTags = skillSortedTags
-        self.interestSortedTags = interestSortedTags
         self._wordSizes = State(initialValue:[CGSize](repeating: CGSize.zero, count: skillSortedTags.count))
         self._wordVisibility = State(initialValue: [Bool](repeating: false, count: skillSortedTags.count))
     }
@@ -89,7 +84,7 @@ struct WordCloudView: View {
 
         VStack {
             ZStack{
-                selectedTagsView(tags: selected == 0 ? skillSortedTags : interestSortedTags, pos: pos)
+                selectedTagsView(tags: skillSortedTags, pos: pos)
             } //zstack
             .background(RectGetter($canvasRect))
             .onAppear {
@@ -112,16 +107,34 @@ struct WordCloudView: View {
                     }
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("開発スキル")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                }
+            }
         } // vstack
         .offset(x: offset.width, y: offset.height)
+        .gesture(
+            DragGesture()
+                .onChanged({ value in
+                    offset = value.translation //ドラッグジェスチャーの移動量
+                })
+                .onEnded({ _ in
+                    withAnimation(.spring){
+                        offset = .zero
+                    }
+                })
+        )
     }
     @ViewBuilder
     private func selectedTagsView(tags: [WordElement], pos: [CGPoint]) -> some View {
         ForEach(Array(tags.enumerated()), id: \.offset) { idx, word in
             Text("\(word.name)")
-                .foregroundStyle(Style(rawValue: selected == 0 ? word.skill : word.interest)?.color() ?? .clear)
-                .font(.system(size: CGFloat(Style(rawValue: selected == 0 ? word.skill : word.interest)?.fontSize() ?? 15)))
-                .fontWeight(Style(rawValue: selected == 0 ? word.skill : word.interest)?.fontWeight())
+                .foregroundStyle(Style(rawValue: word.skill)?.color() ?? .clear)
+                .font(.system(size: CGFloat(Style(rawValue: word.skill)?.fontSize() ?? 15)))
+                .fontWeight(Style(rawValue: word.skill)?.fontWeight())
                 .lineLimit(1)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(3)

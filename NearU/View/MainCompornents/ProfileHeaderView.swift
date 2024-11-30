@@ -58,7 +58,7 @@ struct ProfileHeaderView: View {
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
                     NavigationLink {
-                        TagIndexView(skillSortedTags: viewModel.skillSortedTags, interestSortedTags: viewModel.interestSortedTags)
+                        WordCloudView(skillSortedTags: viewModel.skillSortedTags)
                             .background(Color.white.opacity(0.7))
                             .ignoresSafeArea()
                     } label: {
@@ -118,7 +118,7 @@ struct ProfileHeaderView: View {
                                             do {
                                                 try await viewModel.followUser(date: date)
                                                 await viewModel.checkFollow()
-                                                try await viewModel.loadFollowers()
+                                                await viewModel.loadFollowers()
                                                 loadingViewModel.isLoading = false
                                             } catch {
                                                 loadingViewModel.isLoading = false
@@ -146,7 +146,7 @@ struct ProfileHeaderView: View {
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
-                            .font(.footnote)
+                            .font(.subheadline)
                             .frame(width: 250, alignment: .leading)
                     }
 
@@ -167,7 +167,7 @@ struct ProfileHeaderView: View {
                 Task {
                     try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
                     await viewModel.checkFollow()
-                    try await viewModel.loadFollowers()
+                    await viewModel.loadFollowers()
                 }
             }
         } message: {

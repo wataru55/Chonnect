@@ -20,18 +20,41 @@ class ProfileViewModel: ObservableObject {
     @Published var interestTags: [InterestTag] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
+    @Published var isLoading: Bool = true
 
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
+    }
+
+    func loadData() {
         Task {
-            try await loadFollowUsers()
-            try await loadFollowers()
-            await loadSkillTags()
-            await checkFollow()
-            await checkMutualFollow()
-            await loadInterestTags()
-            await fetchArticleLinks()
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    await self.loadFollowUsers()
+                }
+                group.addTask {
+                    await self.loadFollowers()
+                }
+                group.addTask {
+                    await self.loadSkillTags()
+                }
+                group.addTask {
+                    await self.checkFollow()
+                }
+                group.addTask {
+                    await self.checkMutualFollow()
+                }
+                group.addTask {
+                    await self.loadInterestTags()
+                }
+                group.addTask {
+                    await self.fetchArticleLinks()
+                }
+            }
+            await MainActor.run {
+                self.isLoading = false
+            }
         }
     }
 
@@ -83,7 +106,6 @@ class ProfileViewModel: ObservableObject {
         do {
             let tags = try await TagsService.fetchTags(documentId: user.id)
             self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
-            self.interestSortedTags = tags.sorted { $0.interest > $1.interest }
         } catch {
             print("Error fetching tags: \(error)")
         }
@@ -100,7 +122,7 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadFollowUsers() async throws {
+    func loadFollowUsers() async {
         do {
             let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
             var followUserRowData: [FollowUserRowData] = []
@@ -119,7 +141,7 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadFollowers() async throws {
+    func loadFollowers() async {
         do {
             let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
             var historyRowData: [HistoryRowData] = []

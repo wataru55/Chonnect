@@ -38,7 +38,7 @@ struct CurrentUserProfileView: View {
                                 .overlay(alignment: .bottomLeading) {
                                     VStack(alignment: .leading){
                                         NavigationLink {
-                                            TagIndexView(skillSortedTags: tagsViewModel.skillSortedTags, interestSortedTags: tagsViewModel.interestSortedTags)
+                                            WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
                                                 .background(Color.white.opacity(0.7))
                                                 .ignoresSafeArea()
                                         } label: {
@@ -69,7 +69,7 @@ struct CurrentUserProfileView: View {
 
                                         if let bio = user.bio {
                                             Text(bio)
-                                                .font(.callout)
+                                                .font(.subheadline)
                                                 .frame(alignment: .leading)
                                         }
 
@@ -171,8 +171,8 @@ struct CurrentUserProfileView: View {
                                 }
                             } // HStack
                             .padding(.vertical, 5)
+                            .padding(.horizontal, 10)
                         } // ScrollView
-                    
                         .padding(.bottom, 10)
 
                         //MARK: - ARTICLES
