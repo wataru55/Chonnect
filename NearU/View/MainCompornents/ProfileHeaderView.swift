@@ -15,6 +15,7 @@ struct ProfileHeaderView: View {
 
     let date: Date
     let isShowFollowButton: Bool
+    let isShowDateButton: Bool
 
     var body: some View {
         VStack (spacing: 15){
@@ -56,9 +57,13 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
-                    TagsView(tags: viewModel.selectedLanguageTags)
-
-                    TagsView(tags: viewModel.selectedFrameworkTags)
+                    NavigationLink {
+                        WordCloudView(skillSortedTags: viewModel.skillSortedTags)
+                            .background(Color.white.opacity(0.7))
+                            .ignoresSafeArea()
+                    } label: {
+                        Top3TabView(tags: viewModel.skillSortedTags)
+                    }
 
                     HStack(spacing: 4) {
                         Text(viewModel.user.username)
@@ -69,14 +74,24 @@ struct ProfileHeaderView: View {
                         Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                             .font(.subheadline)
                             .offset(y: 7)
+
+                        if isShowDateButton {
+                            supplementButtonView(date: date)
+                                .padding(.leading, 10)
+                                .offset(x: -5, y: 4)
+                        }
                     }
 
                     HStack {
-                        NavigationLink(value: NavigationData(selectedTab: 0)) {
+                        NavigationLink {
+                            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
+                        } label: {
                             CountView(count: viewModel.follows.count, text: "フォロー")
                         }
 
-                        NavigationLink(value: NavigationData(selectedTab: 1)) {
+                        NavigationLink {
+                            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
+                        } label: {
                             CountView(count: viewModel.followers.count, text: "フォロワー")
                         }
 
@@ -104,7 +119,7 @@ struct ProfileHeaderView: View {
                                             do {
                                                 try await viewModel.followUser(date: date)
                                                 await viewModel.checkFollow()
-                                                try await viewModel.loadFollowers()
+                                                await viewModel.loadFollowers()
                                                 loadingViewModel.isLoading = false
                                             } catch {
                                                 loadingViewModel.isLoading = false
@@ -132,18 +147,19 @@ struct ProfileHeaderView: View {
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
-                            .font(.footnote)
+                            .font(.subheadline)
                             .frame(width: 250, alignment: .leading)
                     }
+
+                    if !viewModel.interestTags.isEmpty{
+                        InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false, textFont: .footnote)
+                    }
+
                 }//VStack
                 .padding(.bottom)
                 .padding(.leading)
             }
-            .padding(.bottom)
         }//vstack
-        .navigationDestination(for: NavigationData.self) { data in
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: data.selectedTab)
-        }
         .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
                 isShowCheck.toggle()
@@ -152,7 +168,7 @@ struct ProfileHeaderView: View {
                 Task {
                     try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
                     await viewModel.checkFollow()
-                    try await viewModel.loadFollowers()
+                    await viewModel.loadFollowers()
                 }
             }
         } message: {
@@ -166,10 +182,7 @@ struct ProfileHeaderView: View {
     }//body
 }//view
 
-struct NavigationData: Hashable {
-    let selectedTab: Int
-}
-
 #Preview {
-    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]), date: Date(), isShowFollowButton: true)
+    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
+                      date: Date(), isShowFollowButton: true, isShowDateButton: true)
 }

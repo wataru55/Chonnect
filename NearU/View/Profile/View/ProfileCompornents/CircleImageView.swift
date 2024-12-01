@@ -46,7 +46,12 @@ struct CircleImageView: View {
                             .stroke(Color(borderColor), lineWidth: 1)
                     }
             } placeholder: {
-                ProgressView()
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size.dimension, height: size.dimension)
+                    .clipShape(Circle())
+                    .foregroundColor(Color(.systemGray4))
             }
         } else {
             Image(systemName: "person.circle.fill")

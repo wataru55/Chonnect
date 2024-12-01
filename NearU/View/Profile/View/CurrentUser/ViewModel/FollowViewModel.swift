@@ -17,19 +17,20 @@ class FollowViewModel: ObservableObject {
         listenForUpdates()
 
         Task {
-            await fetchFollowedUsers()
+            await loadFollowedUsers()
         }
     }
 
     @MainActor
-    func fetchFollowedUsers() async {
+    func loadFollowedUsers() async {
         do {
             let pairData = try await UserService.fetchFollowedUsers(receivedId: "")
             var followUserRowData: [FollowUserRowData] = []
 
             for data in pairData {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.user.id)
+                let addData = FollowUserRowData(pair: data, tags: interestTags, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
 
@@ -55,7 +56,7 @@ class FollowViewModel: ObservableObject {
                 }
                 // ドキュメントに変更があれば fetchfollowedUsers() を実行
                 Task {
-                    await self.fetchFollowedUsers()
+                    await self.loadFollowedUsers()
                 }
             }
     }

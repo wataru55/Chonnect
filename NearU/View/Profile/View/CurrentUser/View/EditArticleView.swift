@@ -26,9 +26,9 @@ struct EditArticleView: View {
                                     .disableAutocorrection(true) // スペルチェックを無効にする
                                     .font(.subheadline)
                                     .padding(12)
-                                    .padding(.horizontal, 10)
                                     .background(Color(.systemGray5))
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.horizontal, 10)
                             }
 
                             Button {
@@ -53,7 +53,7 @@ struct EditArticleView: View {
                                 .padding(.leading, 5)
                                 .padding(.vertical, 10)
 
-                            VStack(spacing: 20) {
+                            VStack(alignment: .center, spacing: 20) {
                                 if viewModel.openGraphData.isEmpty {
                                     Text("記事のリンクがありません")
                                         .font(.subheadline)
@@ -65,10 +65,10 @@ struct EditArticleView: View {
                                     ForEach(viewModel.openGraphData) { openGraphData in
                                         SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true)
                                             .environmentObject(viewModel)
+                                            .padding(.horizontal, 10)
                                     }
                                 }
                             } //vstack
-                            .padding(.leading)
                             .padding(.bottom, 10)
                         } // vstack
                     } // scrollview
@@ -92,7 +92,7 @@ struct EditArticleView: View {
                                 try await viewModel.addLink(urls: articleUrls)
                                 await viewModel.fetchArticleUrls()
                                 await MainActor.run {
-                                    articleUrls = [""]
+                                    dismiss()
                                 }
                             }
                         } label: {

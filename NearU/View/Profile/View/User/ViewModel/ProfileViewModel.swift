@@ -12,25 +12,49 @@ import OpenGraph
 class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
-    @Published var selectedLanguageTags: [String] = []
-    @Published var selectedFrameworkTags: [String] = []
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [FollowUserRowData] = []
     @Published var followers: [HistoryRowData] = []
+    @Published var skillSortedTags: [WordElement] = []
+    @Published var interestSortedTags: [WordElement] = []
+    @Published var interestTags: [InterestTag] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
+    @Published var isLoading: Bool = true
 
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
+    }
+
+    func loadData() {
         Task {
-            try await loadLanguageTags()
-            try await loadFrameworkTags()
-            try await loadFollowUsers()
-            try await loadFollowers()
-            await checkFollow()
-            await checkMutualFollow()
-            await fetchArticleLinks()
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    await self.loadFollowUsers()
+                }
+                group.addTask {
+                    await self.loadFollowers()
+                }
+                group.addTask {
+                    await self.loadSkillTags()
+                }
+                group.addTask {
+                    await self.checkFollow()
+                }
+                group.addTask {
+                    await self.checkMutualFollow()
+                }
+                group.addTask {
+                    await self.loadInterestTags()
+                }
+                group.addTask {
+                    await self.fetchArticleLinks()
+                }
+            }
+            await MainActor.run {
+                self.isLoading = false
+            }
         }
     }
 
@@ -78,34 +102,35 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadLanguageTags() async throws {
+    func loadSkillTags() async {
         do {
-            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
-            self.selectedLanguageTags = fetchedLanguageTags.tags
+            let tags = try await TagsService.fetchTags(documentId: user.id)
+            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
         } catch {
-            print("Failed to fetch tags: \(error)")
+            print("Error fetching tags: \(error)")
         }
     }
 
     @MainActor
-    func loadFrameworkTags() async throws {
+    func loadInterestTags() async {
         do {
-            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
-            self.selectedFrameworkTags = fetchedFrameworkTags.tags
+            let data = try await UserService.fetchInterestTags(documentId: user.id)
+            self.interestTags = data
         } catch {
-            print("Failed to fetch tags: \(error)")
+            print("error loading interest tags \(error.localizedDescription)")
         }
     }
 
     @MainActor
-    func loadFollowUsers() async throws {
+    func loadFollowUsers() async {
         do {
             let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
             var followUserRowData: [FollowUserRowData] = []
 
             for data in pairData {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.user.id)
+                let addData = FollowUserRowData(pair: data, tags: interestTags, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
 
@@ -116,14 +141,15 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadFollowers() async throws {
+    func loadFollowers() async {
         do {
             let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
             var historyRowData: [HistoryRowData] = []
 
             for record in userHistoryRecords {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
-                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
+                let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
+                let addData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
                 historyRowData.append(addData)
             }
 

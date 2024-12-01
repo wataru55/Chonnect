@@ -19,12 +19,9 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var backgroundImage: Image?
 
-    @Published var selectedLanguageTags: [String] = []
-    @Published var selectedFrameworkTags: [String] = []
-
     @Published var username = ""
-    @Published var fullname = ""
     @Published var bio = ""
+    @Published var interestTags: [InterestTag] = []
 
     private var uiBackgroundImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
@@ -35,10 +32,11 @@ class CurrentUserProfileViewModel: ObservableObject {
         } else {
             self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
         }
+
         setupSubscribers()
+
         Task {
-            try await loadLanguageTags()
-            try await loadFrameworkTags()
+            await loadInterestTags()
         }
     }
 
@@ -49,7 +47,6 @@ class CurrentUserProfileViewModel: ObservableObject {
             .sink { [weak self] currentUser in
                 self?.user = currentUser
                 self?.username = currentUser.username
-                self?.fullname = currentUser.fullname ?? ""
                 self?.bio = currentUser.bio ?? ""
             }
             .store(in: &cancellables)
@@ -67,32 +64,23 @@ class CurrentUserProfileViewModel: ObservableObject {
         self.backgroundImage = Image(uiImage: uiImage)
     }
 
-    @MainActor
-    func loadLanguageTags() async throws {
+    func saveInterestTags(tags: [InterestTag]) async {
         do {
-            let fetchedLanguageTags = try await UserService.fetchLanguageTags(withUid: user.id)
-            self.selectedLanguageTags = fetchedLanguageTags.tags
+            try await UserService.saveInterestTags(tags: tags)
+            await loadInterestTags()
         } catch {
-            print("Failed to fetch tags: \(error)")
+            print("DEBUG: Error saving interest tags \(error.localizedDescription)")
         }
     }
 
-    func updateLanguageTags() async throws {
-        try await UserService.saveLanguageTags(userId: user.id, selectedTags: selectedLanguageTags)
-    }
-
     @MainActor
-    func loadFrameworkTags() async throws {
+    func loadInterestTags() async {
         do {
-            let fetchedFrameworkTags = try await UserService.fetchFrameworkTags(withUid: user.id)
-            self.selectedFrameworkTags = fetchedFrameworkTags.tags
+            let data = try await UserService.fetchInterestTags(documentId: user.id)
+            self.interestTags = data
         } catch {
-            print("Failed to fetch tags: \(error)")
+            print("error loading interest tags \(error.localizedDescription)")
         }
-    }
-
-    func updateFrameworkTags() async throws {
-        try await UserService.saveFrameworkTags(userId: user.id, selectedTags: selectedFrameworkTags)
     }
 
     @MainActor
@@ -109,11 +97,6 @@ class CurrentUserProfileViewModel: ObservableObject {
         if !username.isEmpty && user.username != username {
 
             data["username"] = username
-        }
-
-        //update name if changed
-        if !fullname.isEmpty && user.fullname != fullname {
-            data["fullname"] = fullname
         }
 
         //update bio if changed

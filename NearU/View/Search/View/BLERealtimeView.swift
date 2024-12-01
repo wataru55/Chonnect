@@ -25,15 +25,19 @@ struct BLERealtimeView: View {
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { pair in
-                        UserRowView(value: pair, user: pair.user, date: nil, isRead: nil, rssi: pair.rssi, isFollower: false)
+                    ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { data in
+                        NavigationLink {
+                            ProfileView(user: data.user, currentUser: currentUser, date: data.date,
+                                        isShowFollowButton: true, isShowDateButton: true)
+                        } label: {
+                            UserRowView(user: data.user, tags: data.tags, date: nil,
+                                        isRead: nil, rssi: data.rssi, isFollower: false)
+                        }
                     } // ForEach
                 }
             } // LazyVStack
             .padding(.top, 8)
-            .navigationDestination(for: UserRealtimeRecord.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
-            })
+            
         } // ScrollView
         .alert("エラー", isPresented: $isShowAlert) {
             Button("OK", role: .cancel) { }

@@ -14,6 +14,7 @@ enum Field: Hashable {
 
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
+    @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
 
@@ -35,7 +36,7 @@ struct EditProfileView: View {
                                     .frame(width: UIScreen.main.bounds.width - 20, height: 250)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             } else {
-                                BackgroundImageView(user: viewModel.user, height: 200, isGradient: false)
+                                BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
                             }
 
                             Text("背景画像を変更する")
@@ -49,29 +50,13 @@ struct EditProfileView: View {
                 }//vstack
                 //edit profile info
                 VStack (spacing:0){
-                    Text("言語")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
-                        .foregroundColor(Color.gray)
-
-                    EditLanguageTagsView(selectedLanguageTags: $viewModel.selectedLanguageTags, userId: viewModel.user.id)
-                    Text("フレームワーク・ライブラリ")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
-                        .foregroundColor(Color.gray)
-
-                    EditFrameworkTagsView(selectedFrameworkTags: $viewModel.selectedFrameworkTags, userId: viewModel.user.id)
-                        .padding(.bottom, 10)
-
                     EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
                         .focused($focusedField, equals: .title)
 
-                    EditProfileRowView(title: "本名(公開したくない場合は空欄にしてください)", placeholder: "", text: $viewModel.fullname)
+                    EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
                         .focused($focusedField, equals: .title)
 
-                    EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
+                    EditInterestView(texts: $texts, interestTags: viewModel.interestTags)
                         .focused($focusedField, equals: .title)
                 }
                 .padding(.top, 5)
@@ -96,11 +81,8 @@ struct EditProfileView: View {
                     Button {
                         Task {
                             try await viewModel.updateUserData()
-                            try await viewModel.updateLanguageTags()
-                            try await viewModel.updateFrameworkTags()
+                            await viewModel.saveInterestTags(tags: texts)
                             try await AuthService.shared.loadUserData()
-                            try await viewModel.loadLanguageTags()
-                            try await viewModel.loadFrameworkTags()
 
                             await MainActor.run {
                                 dismiss()
@@ -147,6 +129,65 @@ struct EditProfileRowView: View {
         .padding(5)
     }//body
 }//view
+
+struct EditInterestView: View {
+    @Binding var texts: [InterestTag]
+    let interestTags: [InterestTag]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("興味タグ")
+                .font(.footnote)
+                .foregroundStyle(.gray)
+                .frame(width: UIScreen.main.bounds.width - 20, alignment: .leading)
+                .padding(.vertical, 10)
+
+            ForEach(texts.indices, id: \.self) { index in
+                TextField("興味・関心", text: $texts[index].text)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .textInputAutocapitalization(.never) // 自動で大文字にしない
+                    .disableAutocorrection(true) // スペルチェックを無効にする
+                    .font(.subheadline)
+                    .padding(.horizontal, 15)
+                    .padding(.bottom, 5)
+            }
+
+            Button {
+                texts.append(InterestTag(id: UUID(), text: ""))
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle")
+                        .offset(y: 3)
+                    Text("入力欄を追加")
+                        .padding(.top, 5)
+                        .font(.system(size: 15, weight: .bold))
+                }
+                .foregroundStyle(Color.mint)
+            }
+            .padding(.bottom, 5)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text("一覧")
+                    .font(.footnote)
+                    .foregroundStyle(.gray)
+                    .padding()
+
+                if interestTags.isEmpty{
+                    Text("興味タグがありません")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.gray)
+                        .padding()
+                        .padding(.leading, 15)
+                } else {
+                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true, textFont: .footnote)
+                        .padding(.horizontal, 15)
+                }
+            }
+            .frame(width: UIScreen.main.bounds.width, alignment: .leading)
+        }
+    }
+}
 
 struct EditProfileBioRowView: View {
     let title: String
@@ -215,5 +256,9 @@ struct EditProfileBioRowView: View {
             isOverCharacterLimit = false
         }
     }
+}
+
+#Preview {
+    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]), interestTags: [InterestTag(id: UUID(), text: "SwiftUI")])
 }
 

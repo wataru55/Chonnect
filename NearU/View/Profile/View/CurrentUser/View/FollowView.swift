@@ -23,21 +23,24 @@ struct FollowView: View {
                         .padding()
                 } else {
                     ForEach(viewModel.followUsers, id: \.self) { followUser in
-                        //TODO: isFollowerを動的に設定
-                        UserRowView(value: followUser.pair, user: followUser.pair.user,
-                                    date: followUser.pair.date, isRead: nil,
-                                    rssi: nil, isFollower: followUser.isFollowed)
+                        NavigationLink {
+                            ProfileView(user: followUser.pair.user, currentUser: currentUser, date: followUser.pair.date,
+                                        isShowFollowButton: true, isShowDateButton: true)
+                        } label: {
+                            UserRowView(user: followUser.pair.user, tags: followUser.tags,
+                                        date: followUser.pair.date, isRead: true,
+                                        rssi: nil, isFollower: followUser.isFollowed)
+                        }
                     }//foreach
                 }
             }//lazyvstack
             .padding(.top, 8)
-            .navigationDestination(for: UserDatePair.self, destination: { pair in
-                ProfileView(user: pair.user, currentUser: currentUser, date: pair.date, isShowFollowButton: true)
-            })
             
         }//scrollview
         .refreshable {
-            print("refresh")
+            Task {
+                await viewModel.loadFollowedUsers()
+            }
         }
     }
 }

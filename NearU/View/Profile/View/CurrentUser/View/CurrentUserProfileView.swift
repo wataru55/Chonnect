@@ -14,6 +14,7 @@ struct CurrentUserProfileView: View {
     @StateObject var addLinkViewModel = EditSNSLinkViewModel()
     @StateObject var followViewModel = FollowViewModel()
     @StateObject var followerViewModel = FollowerViewModel()
+    @StateObject var tagsViewModel = EditSkillTagsViewModel()
 
     @State private var isAddingNewLink = false
     @State private var showEditArticle = false
@@ -36,9 +37,13 @@ struct CurrentUserProfileView: View {
                             BackgroundImageView(user: user, height: 500, isGradient: true)
                                 .overlay(alignment: .bottomLeading) {
                                     VStack(alignment: .leading){
-                                        TagsView(tags: viewModel.selectedLanguageTags)
-
-                                        TagsView(tags: viewModel.selectedFrameworkTags)
+                                        NavigationLink {
+                                            WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
+                                                .background(Color.white.opacity(0.7))
+                                                .ignoresSafeArea()
+                                        } label: {
+                                            Top3TabView(tags: tagsViewModel.skillSortedTags)
+                                        }
 
                                         HStack(spacing: 4) {
                                             Text(user.username)
@@ -64,9 +69,14 @@ struct CurrentUserProfileView: View {
 
                                         if let bio = user.bio {
                                             Text(bio)
-                                                .font(.callout)
+                                                .font(.subheadline)
                                                 .frame(alignment: .leading)
                                         }
+
+                                        if !viewModel.interestTags.isEmpty {
+                                            InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false, textFont: .footnote)
+                                        }
+
                                     }//VStack
                                     .padding(.bottom)
                                     .padding(.leading)
@@ -77,11 +87,11 @@ struct CurrentUserProfileView: View {
                                             showEditProfile.toggle()
                                         } label: {
                                             Image(systemName: "pencil")
-                                                .font(.title3)
+                                                .font(.system(size: 20))
                                                 .foregroundColor(.white)
                                                 .padding(10)
                                                 .background(
-                                                    Color.black.opacity(0.6)
+                                                    Color.black.opacity(0.8)
                                                         .clipShape(Circle())
                                                 )
                                         }
@@ -92,15 +102,15 @@ struct CurrentUserProfileView: View {
                                             showEditTags.toggle()
                                         } label: {
                                             Image(systemName: "tag")
-                                                .font(.title3)
+                                                .font(.system(size: 16))
                                                 .foregroundColor(.white)
                                                 .padding(10)
                                                 .background(
-                                                    Color.black.opacity(0.6)
+                                                    Color.black.opacity(0.8)
                                                         .clipShape(Circle())
                                                 )
                                         }
-                                        .padding(.top, 50)
+                                        .padding(.top, 10)
                                         .padding(.trailing, 20)
                                     }
                                 }
@@ -149,7 +159,7 @@ struct CurrentUserProfileView: View {
                                     }, label: {
                                         Image(systemName: "plus")
                                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
-                                            .frame(width: 80, height: 80)
+                                            .frame(width: 60, height: 60)
                                             .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                             .clipShape(Circle())
                                             .overlay(
@@ -161,8 +171,8 @@ struct CurrentUserProfileView: View {
                                 }
                             } // HStack
                             .padding(.vertical, 5)
+                            .padding(.horizontal, 10)
                         } // ScrollView
-                        .padding(.leading)
                         .padding(.bottom, 10)
 
                         //MARK: - ARTICLES
@@ -193,7 +203,7 @@ struct CurrentUserProfileView: View {
                                     }
                                     .foregroundColor(.mint)
                                 }
-                                .padding(.leading, 8)
+                                .frame(height: 100, alignment: .top)
 
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
@@ -207,6 +217,7 @@ struct CurrentUserProfileView: View {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                                         .frame(width: 30, height: 30)
+
                                         .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                         .clipShape(Circle())
                                         .overlay(
@@ -231,10 +242,11 @@ struct CurrentUserProfileView: View {
                             .environmentObject(articleLinksViewModel)
                     }
                     .fullScreenCover(isPresented: $showEditTags) {
-                        EditSkillTagsView()
+                        EditSkillTagsView(viewModel: tagsViewModel)
                     }
 
                 }//vstack
+
             }// zstack
             .ignoresSafeArea()
             .navigationDestination(for: FollowNavigationData.self) { data in

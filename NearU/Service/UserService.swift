@@ -62,6 +62,51 @@ struct UserService {
         return followers
     }
 
+    static func saveInterestTags(tags: [InterestTag]) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+
+        for tag in tags {
+            if !tag.text.isEmpty {
+                let stringId = tag.id.uuidString
+                let data: [String: String] = [
+                    "id": stringId,
+                    "text": tag.text
+                ]
+
+                do {
+                    try await ref.document(stringId).setData(data)
+                } catch {
+                    throw error
+                }
+            }
+        }
+    }
+
+    static func fetchInterestTags(documentId: String) async throws -> [InterestTag] {
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        let snapshot = try await ref.getDocuments()
+
+        var interestTags: [InterestTag] = []
+
+        for document in snapshot.documents {
+            let data = try document.data(as: InterestTag.self)
+            interestTags.append(data)
+        }
+
+        return interestTags
+    }
+
+    static func deleteInterestTags(id: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("interestTags")
+        do {
+            try await ref.document(id).delete()
+        } catch {
+            print("error: \(error)")
+        }
+    }
+
     static func saveSNSLink(serviceName: String, url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
 
@@ -125,30 +170,6 @@ struct UserService {
         } catch {
             throw error
         }
-    }
-
-    // ユーザーの選択されたタグをFirestoreに保存する関数(言語)
-    static func saveLanguageTags(userId: String, selectedTags: [String]) async throws {
-        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("languageTags")
-        try await ref.setData(["tags": selectedTags])
-    }
-
-    // ユーザーの選択されたタグをFirestoreに保存する関数(ライブラリ、フレームワーク)
-    static func saveFrameworkTags(userId: String, selectedTags: [String]) async throws {
-        let ref = Firestore.firestore().collection("users").document(userId).collection("selectedTags").document("frameworkTags")
-        try await ref.setData(["tags": selectedTags])
-    }
-
-    // 選択したタグをフェッチする関数(言語)
-    static func fetchLanguageTags(withUid id: String) async throws -> Tags {
-        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("languageTags").getDocument()
-        return try snapshot.data(as: Tags.self)
-    }
-
-    // 選択したタグをフェッチする関数(ライブラリ、フレームワーク)
-    static func fetchFrameworkTags(withUid id: String) async throws -> Tags {
-        let snapshot = try await Firestore.firestore().collection("users").document(id).collection("selectedTags").document("frameworkTags").getDocument()
-        return try snapshot.data(as: Tags.self)
     }
 
     static func followUser(receivedId: String, date: Date) async throws {
@@ -240,6 +261,17 @@ struct UserService {
             return try await path.getDocument().exists
         } catch {
             return false
+        }
+    }
+
+    static func updateRead(userId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("followers").document(userId)
+
+        do {
+            try await ref.updateData(["isRead": true])
+        } catch {
+            throw error
         }
     }
 }

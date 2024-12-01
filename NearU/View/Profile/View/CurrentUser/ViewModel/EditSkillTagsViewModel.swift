@@ -7,11 +7,13 @@
 
 import SwiftUI
 import Firebase
+import Combine
 
 class EditSkillTagsViewModel: ObservableObject {
-    @Published var languages: [WordElement] = []
+    @Published var skillSortedTags: [WordElement] = []
     let skillLevels = ["1", "2", "3", "4", "5"]
-    let interestLevels = ["", "1", "2", "3", "4", "5"]
+
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         Task {
@@ -27,7 +29,7 @@ class EditSkillTagsViewModel: ObservableObject {
 
     func addSkillTags(newlanguages: [WordElement]) async {
         for newlanguage in newlanguages {
-            if !newlanguage.name.isEmpty && !languages.contains(where: { $0.name == newlanguage.name }) {
+            if !newlanguage.name.isEmpty && !skillSortedTags.contains(where: { $0.name == newlanguage.name }) {
                 do {
                     try await TagsService.addTags(tagData: newlanguage)
                 } catch {
@@ -38,9 +40,9 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     func updateSkillTags() async {
-        for language in languages {
+        for tag in skillSortedTags {
             do {
-                try await TagsService.updateTags(tagData: language)
+                try await TagsService.updateTags(tagData: tag)
             } catch {
                 print("DEBUG: Error updating tags \(error)")
             }
@@ -51,7 +53,8 @@ class EditSkillTagsViewModel: ObservableObject {
     func loadSkillTags() async {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
         do {
-            languages = try await TagsService.fetchTags(documentId: documentId)
+            let tags = try await TagsService.fetchTags(documentId: documentId)
+            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
         } catch {
             print("DEBUG: Error fetching tags \(error)")
         }
