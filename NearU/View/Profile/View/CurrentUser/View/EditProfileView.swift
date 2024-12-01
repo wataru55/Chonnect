@@ -180,7 +180,7 @@ struct EditInterestView: View {
                         .padding()
                         .padding(.leading, 15)
                 } else {
-                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true)
+                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true, textFont: .footnote)
                         .padding(.horizontal, 15)
                 }
             }

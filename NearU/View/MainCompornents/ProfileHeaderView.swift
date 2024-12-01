@@ -151,7 +151,7 @@ struct ProfileHeaderView: View {
                     }
 
                     if !viewModel.interestTags.isEmpty{
-                        InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false)
+                        InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false, textFont: .footnote)
                     }
 
                 }//VStack
