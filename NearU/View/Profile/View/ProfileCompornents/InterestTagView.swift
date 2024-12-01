@@ -7,12 +7,27 @@
 
 import SwiftUI
 
+enum TextFont {
+    case caption
+    case footnote
+
+    var font: Font {
+        switch self {
+        case .caption:
+            return .caption2
+        case .footnote:
+            return .footnote
+        }
+    }
+}
+
 struct InterestTagView: View {
     @State private var isShowAlert: Bool = false
     @State private var tagToDelete: InterestTag?
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     let interestTag: [InterestTag]
     let isShowDeleteButton: Bool
+    let textFont: TextFont
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -24,7 +39,7 @@ struct InterestTagView: View {
                         Text(tag.text)
                             .fontWeight(.bold)
                     }
-                    .font(.caption2)
+                    .font(textFont.font)
                     .foregroundStyle(.blue)
                     .overlay(alignment: .topTrailing) {
                         if isShowDeleteButton {
@@ -35,14 +50,14 @@ struct InterestTagView: View {
                                 Image(systemName: "minus.circle.fill")
                                     .font(.footnote)
                                     .foregroundStyle(.black)
-                                    .offset(x: 8, y: -5)
+                                    .offset(x: 10, y: -8)
                             }
                         }
                     }
                 }
             }
         }
-        .frame(height: 20)
+        .frame(height: isShowDeleteButton ? 40 : 20)
         .alert("確認", isPresented: $isShowAlert, presenting: tagToDelete) { tag in
             Button("削除", role: .destructive) {
                 Task {
@@ -58,5 +73,5 @@ struct InterestTagView: View {
 }
 
 #Preview {
-    InterestTagView(interestTag: [InterestTag(id: UUID(), text: "SwiftUI"), InterestTag(id: UUID(), text: "UIKit")], isShowDeleteButton: true)
+    InterestTagView(interestTag: [InterestTag(id: UUID(), text: "SwiftUI"), InterestTag(id: UUID(), text: "UIKit")], isShowDeleteButton: false, textFont: .footnote)
 }

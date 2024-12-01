@@ -17,7 +17,9 @@ struct BLEHistoryView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                if viewModel.sortedHistoryRowData.isEmpty {
+                if viewModel.isLoading {
+                    ProgressView()
+                } else if viewModel.sortedHistoryRowData.isEmpty {
                     Text("すれちがったユーザーはいません")
                         .font(.footnote)
                         .fontWeight(.bold)

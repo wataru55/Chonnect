@@ -36,15 +36,15 @@ struct SiteLinkButtonView: View {
                                     Color.gray.frame(height: 100).cornerRadius(10)
                                 }
                             }
-                            // タイトルがない場合はurlを表示
                             if let title = data[.title], !title.isEmpty {
                                 Text(title)
                                     .font(.headline)
                                     .lineLimit(1)
                             } else {
-                                Text(ogpData.url.count > 35 ? String(ogpData.url.prefix(35)) + "..." : ogpData.url)
+                                Text(ogpData.url)
                                     .font(.headline)
-                                    .lineLimit(1)
+                                    .foregroundStyle(.blue)
+                                    .lineLimit(3)
                                     .padding(.bottom, 2)
                             }
                             //.padding(.leading, 15)
