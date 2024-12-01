@@ -53,7 +53,7 @@ struct EditArticleView: View {
                                 .padding(.leading, 5)
                                 .padding(.vertical, 10)
 
-                            VStack(spacing: 20) {
+                            VStack(alignment: .center, spacing: 20) {
                                 if viewModel.openGraphData.isEmpty {
                                     Text("記事のリンクがありません")
                                         .font(.subheadline)
@@ -68,7 +68,6 @@ struct EditArticleView: View {
                                     }
                                 }
                             } //vstack
-                            .padding(.leading)
                             .padding(.bottom, 10)
                         } // vstack
                     } // scrollview

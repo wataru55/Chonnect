@@ -77,6 +77,7 @@ struct ProfileHeaderView: View {
 
                         if isShowDateButton {
                             supplementButtonView(date: date)
+                                .padding(.leading, 10)
                                 .offset(x: -5, y: 4)
                         }
                     }

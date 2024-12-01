@@ -20,7 +20,6 @@ struct supplementButtonView: View {
             }
             .font(.system(size: 20))
             .foregroundStyle(.black)
-            .padding()
             .popover(isPresented: $isShowPopover) {
                 Tapover(date: date)
                     .presentationCompactAdaptation(PresentationAdaptation.popover)
