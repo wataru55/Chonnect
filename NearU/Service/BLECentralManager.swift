@@ -33,6 +33,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        centralManager.delegate = self // デリゲートを再設定
         if central.state == .poweredOn {
             let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
             if isOnBluetooth {

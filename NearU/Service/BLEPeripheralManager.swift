@@ -28,6 +28,7 @@ class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDeleg
     }
 
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+        peripheralManager.delegate = self // デリゲートを再設定
         if peripheral.state == .poweredOn {
             let isOnBluetooth = UserDefaults.standard.bool(forKey: "isOnBluetooth")
             if isOnBluetooth {
