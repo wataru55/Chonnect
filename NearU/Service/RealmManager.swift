@@ -8,6 +8,7 @@
 import SwiftUI
 import RealmSwift
 import FirebaseFirestore
+import Combine
 
 @MainActor
 class RealmManager: ObservableObject {
@@ -16,10 +17,21 @@ class RealmManager: ObservableObject {
     @Published var historyData: [HistoryDataStruct] = []
     @Published var realtimeData: [EncountDataStruct] = []
 
+    private var pendingHistoryUpdates: [String: Date] = [:]
+    private var pendingRealtimeUpdates: [(String, Date, Int)] = []
+    private var historyUpdateTimer: Timer?
+    private var realtimeUpdateTimer: Timer?
+    private let historyUpdateInterval: TimeInterval = 60.0
+    private let realtimeUpdateInterval: TimeInterval = 10.0
+    private var cancellables = Set<AnyCancellable>()
+
+    // 初回更新フラグ
+    private var shouldImmediatelyUpdateHistory = true
+    private var shouldImmediatelyUpdateRealtime = true
+
     private init() {
         // 初期化時にRealmからデータを読み込む
         loadHistoryDataFromRealm()
-        loadRealtimeDataFromRealm()
     }
 
     // Realmからデータを読み込む
@@ -52,77 +64,114 @@ class RealmManager: ObservableObject {
         }
     }
 
-    // すれ違ったユーザーIDと日付を履歴に保存または更新
     func storeData(_ receivedUserId: String, date: Date) {
-        do {
-            let realm = try Realm()
-            // 既存のユーザーIDがRealmにあるか確認
-            if let existingHistoryData = realm.objects(HistoryData.self).filter("userId == %@", receivedUserId).first {
-                // 既存データがあれば、日付を更新
-                try realm.write {
-                    existingHistoryData.date = date
-                }
-                print("User ID \(receivedUserId) already exists, date updated in Realm.")
-                // メモリ上のencountData配列も更新
-                if let index = self.historyData.firstIndex(where: { $0.userId == receivedUserId }) {
-                    self.historyData[index].date = existingHistoryData.date
-                }
-            } else {
-                // 新規データの作成
-                let newHistoryData = HistoryData()
-                newHistoryData.userId = receivedUserId
-                newHistoryData.date = date
-                newHistoryData.isRead = false
+        // 重複する更新を避ける
+        if let existingDate = pendingHistoryUpdates[receivedUserId], existingDate == date {
+            return
+        }
 
-                // Realmに保存
-                try realm.write {
-                    realm.add(newHistoryData)
-                }
-                print("User ID \(receivedUserId) has been stored in Realm.")
-                // メモリ上の配列に追加
-                let newHistoryDataStruct = HistoryDataStruct(from: newHistoryData)
-                self.historyData.append(newHistoryDataStruct)
+        pendingHistoryUpdates[receivedUserId] = date
+
+        // 初回は即時更新
+        if shouldImmediatelyUpdateHistory {
+            shouldImmediatelyUpdateHistory = false // フラグをリセット
+            Task { @MainActor in
+                self.processPendingHistoryUpdates()
             }
-        } catch {
-            print("Error storing Realm data: \(error)")
+            return
+        }
+
+        if historyUpdateTimer == nil {
+            historyUpdateTimer = Timer.scheduledTimer(withTimeInterval: historyUpdateInterval, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
+
+                // メインアクターに切り替えて処理
+                Task { @MainActor in
+                    self.processPendingHistoryUpdates()
+                }
+            }
         }
     }
 
-    // すれ違ったユーザーIDと日付をリアルタイム用のデータに保存または更新
-    func storeRealtimeData (receivedUserId: String, date: Date, rssi: Int) {
+    private func processPendingHistoryUpdates() {
+        let updatesToProcess = pendingHistoryUpdates
+        pendingHistoryUpdates.removeAll()
+        historyUpdateTimer = nil
+
         do {
             let realm = try Realm()
-            // 既存のユーザーIDがRealmにあるか確認
-            if let existingRealtimeData = realm.objects(EncountData.self).filter("userId == %@", receivedUserId).first {
-                // 既存データがあれば、日付を更新
-                try realm.write {
-                    existingRealtimeData.date = date
-                    existingRealtimeData.rssi = rssi
+            try realm.write {
+                for (userId, date) in updatesToProcess {
+                    if let existingHistoryData = realm.objects(HistoryData.self).filter("userId == %@", userId).first {
+                        existingHistoryData.date = date
+                    } else {
+                        let newHistoryData = HistoryData()
+                        newHistoryData.userId = userId
+                        newHistoryData.date = date
+                        newHistoryData.isRead = false
+                        realm.add(newHistoryData)
+                    }
                 }
-                print("User ID \(receivedUserId) already exists, rssiupdated in Realm.")
-                // メモリ上のencountData配列も更新
-                if let index = self.realtimeData.firstIndex(where: { $0.userId == receivedUserId }) {
-                    self.realtimeData[index].date = existingRealtimeData.date
-                    self.realtimeData[index].rssi = existingRealtimeData.rssi
-                }
-            } else {
-                // 新規データの作成
-                let newRealtimeData = EncountData()
-                newRealtimeData.userId = receivedUserId
-                newRealtimeData.date = date
-                newRealtimeData.rssi = rssi
-
-                // Realmに保存
-                try realm.write {
-                    realm.add(newRealtimeData)
-                }
-                print("User ID \(receivedUserId) has been stored in Realm.")
-                // メモリ上の配列に追加
-                let newRealtimeDataStruct = EncountDataStruct(from: newRealtimeData)
-                self.realtimeData.append(newRealtimeDataStruct)
             }
+            // UIの更新
+            loadHistoryDataFromRealm()
+            print("Processed \(updatesToProcess.count) history updates in Realm.")
         } catch {
-            print("Error storing Realm data: \(error)")
+            print("Error processing history updates: \(error)")
+        }
+    }
+
+    // バッチ処理用のstoreRealtimeDataメソッド
+    func storeRealtimeData(receivedUserId: String, date: Date, rssi: Int) {
+        pendingRealtimeUpdates.append((receivedUserId, date, rssi))
+
+        // 初回は即時更新
+        if shouldImmediatelyUpdateRealtime {
+            shouldImmediatelyUpdateRealtime = false // フラグをリセット
+            Task { @MainActor in
+                self.processPendingRealtimeUpdates()
+            }
+            return
+        }
+
+        if realtimeUpdateTimer == nil {
+            realtimeUpdateTimer = Timer.scheduledTimer(withTimeInterval: realtimeUpdateInterval, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
+
+                // メインアクターに切り替えて処理
+                Task { @MainActor in
+                    self.processPendingRealtimeUpdates()
+                }
+            }
+        }
+    }
+
+    private func processPendingRealtimeUpdates() {
+        let updatesToProcess = pendingRealtimeUpdates
+        pendingRealtimeUpdates.removeAll()
+        realtimeUpdateTimer = nil
+
+        do {
+            let realm = try Realm()
+            try realm.write {
+                for (userId, date, rssi) in updatesToProcess {
+                    if let existingRealtimeData = realm.objects(EncountData.self).filter("userId == %@", userId).first {
+                        existingRealtimeData.date = date
+                        existingRealtimeData.rssi = rssi
+                    } else {
+                        let newRealtimeData = EncountData()
+                        newRealtimeData.userId = userId
+                        newRealtimeData.date = date
+                        newRealtimeData.rssi = rssi
+                        realm.add(newRealtimeData)
+                    }
+                }
+            }
+            // UIの更新
+            loadRealtimeDataFromRealm()
+            print("Processed \(updatesToProcess.count) realtime updates in Realm.")
+        } catch {
+            print("Error processing realtime updates: \(error)")
         }
     }
 
@@ -179,7 +228,8 @@ class RealmManager: ObservableObject {
     }
 
     // 古いリアルタイムデータを削除するメソッド
-    func removeRealtimeData(interval: TimeInterval = 5.0) {
+    func removeRealtimeData(interval: TimeInterval = 15.0) {
+        guard !realtimeData.isEmpty else { return }
         do {
             let realm = try Realm()
             let removeDate = Date().addingTimeInterval(-interval)

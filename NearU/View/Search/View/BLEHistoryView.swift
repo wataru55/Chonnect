@@ -47,6 +47,7 @@ struct BLEHistoryView: View {
             Task {
                 // データのフェッチ
                 await UserService.fetchNotifications()
+                RealmManager.shared.loadHistoryDataFromRealm()
                 // ローディング終了
                 //isLoading = false
                 loadingViewModel.isLoading = false
