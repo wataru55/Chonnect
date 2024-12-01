@@ -11,11 +11,13 @@ import SwiftUI
 class BLEHistoryViewModel: ObservableObject {
     @Published var historyRowData: [HistoryRowData] = []
     @Published var sortedHistoryRowData: [HistoryRowData] = []
+    @Published var isLoading: Bool = true
     private var cancellables = Set<AnyCancellable>()
 
     init() {
         Task {
             await fetchHistoryAllUsers(historyDataList: RealmManager.shared.historyData)
+            isLoading = false
         }
 
         setupSubscribers()
@@ -23,6 +25,7 @@ class BLEHistoryViewModel: ObservableObject {
 
     //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
     func fetchHistoryAllUsers(historyDataList: [HistoryDataStruct]) async {
+        isLoading = true
         var userHistoryRecords: [UserHistoryRecord] = []
         var addData: [HistoryRowData] = []
         do {
@@ -45,6 +48,7 @@ class BLEHistoryViewModel: ObservableObject {
         } catch {
             print("Error fetching users: \(error)")
         }
+        isLoading = false
     }
 
     func markAsRead(_ pair: UserHistoryRecord) {
