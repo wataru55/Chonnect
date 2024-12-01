@@ -116,7 +116,7 @@ struct EditSNSLinkView: View {
                                 try await viewModel.updateSNSLink(urls: snsUrls)
                                 await viewModel.loadSNSLinks()
                                 await MainActor.run {
-                                    snsUrls = [""]
+                                    dismiss()
                                 }
                             }
                         } label: {

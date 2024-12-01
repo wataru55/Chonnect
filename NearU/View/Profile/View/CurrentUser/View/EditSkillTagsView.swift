@@ -109,7 +109,7 @@ struct EditSkillTagsView: View {
                                 Task {
                                     await viewModel.saveSkillTags(newlanguages: languages)
                                     await MainActor.run {
-                                        languages = [WordElement(id: UUID(), name: "", skill: "3")]
+                                        dismiss()
                                     }
                                 }
                             } label: {
