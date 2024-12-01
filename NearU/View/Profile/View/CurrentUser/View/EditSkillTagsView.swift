@@ -109,8 +109,7 @@ struct EditSkillTagsView: View {
                                 Task {
                                     await viewModel.saveSkillTags(newlanguages: languages)
                                     await MainActor.run {
-                                        languages = [WordElement(id: UUID(),name: "",
-                                                                 skill: "3")]
+                                        languages = [WordElement(id: UUID(), name: "", skill: "3")]
                                     }
                                 }
                             } label: {
@@ -199,13 +198,14 @@ struct SkillTagRowView: View {
             }
         }
         .sheet(isPresented: $isShowTechTags) {
-            TechTagPickerView(language: $language)
+            TechTagPickerView(tags: viewModel.skillSortedTags, language: $language)
         }
     }
 }
 
 
 struct TechTagPickerView: View {
+    let tags: [WordElement]
     let techTags: [String: [String]] = [
         "言語": ["Swift", "Kotlin", "JavaScript", "Python", "Go", "Java", "Ruby", "PHP", "TypeScript", "C", "C++", "C#", "HTML", "CSS", "Rust", "Dart", "Elixir"],
         "フレームワーク": ["React", "Next.js", "Vue", "Nuxt.js", "Angular", "Node.js", "Django", "Flask", "Laravel", "CakePHP", "Flutter", "Rails", "Remix", "Tailwind CSS", "Spring"],
@@ -244,10 +244,10 @@ struct TechTagPickerView: View {
                         }) {
                             if expandedSections[category] == true {
                                 ForEach(techs, id: \.self) { tech in
-                                    Button(action: {
+                                    Button {
                                         language.name = tech
                                         presentationMode.wrappedValue.dismiss()
-                                    }) {
+                                    } label: {
                                         HStack {
                                             if let iconName = iconMapping[tech] {
                                                 Image(iconName)
@@ -256,12 +256,13 @@ struct TechTagPickerView: View {
                                             }
                                             Text(tech)
                                             Spacer()
-                                            if tech == language.name {
+                                            if tags.map({ $0.name }).contains(tech) {
                                                 Image(systemName: "checkmark")
                                                     .foregroundColor(.blue)
                                             }
                                         }
                                     }
+                                    .disabled(tags.map({ $0.name }).contains(tech))
                                 }
                             }
                         }
