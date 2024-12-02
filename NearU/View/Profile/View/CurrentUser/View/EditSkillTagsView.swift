@@ -125,6 +125,7 @@ struct EditSkillTagsView: View {
                     } //toolbar
                 } //scrollview
             } //zstack
+            .modifier(EdgeSwipe())
         } // NavigationStack
     }
 }

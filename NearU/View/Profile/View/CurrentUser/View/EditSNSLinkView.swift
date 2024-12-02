@@ -131,6 +131,7 @@ struct EditSNSLinkView: View {
                     }
                 }
             } // ZStack
+            .modifier(EdgeSwipe())
         } // NavigationStack
     }
 }

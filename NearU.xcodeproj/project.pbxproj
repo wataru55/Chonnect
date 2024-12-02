@@ -107,6 +107,7 @@
 		63FDDFE32CF4886600B90074 /* InterestTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFE22CF4886600B90074 /* InterestTag.swift */; };
 		63FDDFE62CF6B44D00B90074 /* supplementButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFE52CF6B44D00B90074 /* supplementButtonView.swift */; };
 		63FDDFEC2CF8378100B90074 /* FollowerUserRowData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFEB2CF8378100B90074 /* FollowerUserRowData.swift */; };
+		63FDDFEE2CFD458A00B90074 /* EdgeSwipeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFED2CFD458A00B90074 /* EdgeSwipeModifier.swift */; };
 		F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */; };
 		F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */; };
 		F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25861692CCB245000715D20 /* PasswordResetView.swift */; };
@@ -222,6 +223,7 @@
 		63FDDFE22CF4886600B90074 /* InterestTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestTag.swift; sourceTree = "<group>"; };
 		63FDDFE52CF6B44D00B90074 /* supplementButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = supplementButtonView.swift; sourceTree = "<group>"; };
 		63FDDFEB2CF8378100B90074 /* FollowerUserRowData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerUserRowData.swift; sourceTree = "<group>"; };
+		63FDDFED2CFD458A00B90074 /* EdgeSwipeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeSwipeModifier.swift; sourceTree = "<group>"; };
 		F20F20602CD36574007E85C2 /* EditFrameworkTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditFrameworkTagsView.swift; sourceTree = "<group>"; };
 		F21D2E712CD5F21E00BBDE37 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		F25861692CCB245000715D20 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -368,6 +370,7 @@
 			children = (
 				F27521B92CDEF36A00B00ABC /* URLFieldModifier.swift */,
 				6387321B2BF4B6B50099F68A /* IGTextFieldModifier.swift */,
+				63FDDFED2CFD458A00B90074 /* EdgeSwipeModifier.swift */,
 			);
 			path = Modifier;
 			sourceTree = "<group>";
@@ -766,6 +769,7 @@
 				639A0BDD2CE4E1F700A769C6 /* CountView.swift in Sources */,
 				638732132BF4B3E90099F68A /* CompleteSignUpView.swift in Sources */,
 				63AEF0FF2C0CC89F00DE196E /* FollowViewModel.swift in Sources */,
+				63FDDFEE2CFD458A00B90074 /* EdgeSwipeModifier.swift in Sources */,
 				63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */,
 				6344BE322CD5F254009F404E /* ViewTransitionManager.swift in Sources */,
 				639A0BEB2CE739C400A769C6 /* UserRowView.swift in Sources */,
