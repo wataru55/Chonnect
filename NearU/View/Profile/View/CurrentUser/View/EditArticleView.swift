@@ -107,6 +107,7 @@ struct EditArticleView: View {
                     }
                 }
             } //zstach
+            .modifier(EdgeSwipe())
         } // navigationstack
     }
 }
