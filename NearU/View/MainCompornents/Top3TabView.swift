@@ -11,7 +11,7 @@ enum Ranking: Int {
     case first = 0
     case second = 1
     case third = 2
-    
+
     func color() -> Color {
         switch self {
         case .first:
@@ -22,7 +22,7 @@ enum Ranking: Int {
             return .brown
         }
     }
-    
+
     func index() -> Int {
         switch self {
         case .first:
@@ -37,7 +37,7 @@ enum Ranking: Int {
 
 struct Top3TabView: View {
     let tags: [WordElement]
-    
+
     // 技術名とアイコン画像名の対応を定義
     private let iconMapping: [String: String] = [
         // 言語
@@ -95,33 +95,35 @@ struct Top3TabView: View {
         "Docker": "Docker",
         "ROS": "ROS"
     ]
-    
+
     var body: some View {
         HStack {
             HStack(alignment: .bottom, spacing: -5) {
                 ForEach(Array(tags.prefix(3).enumerated()), id: \.offset) { index, item in
                     if let iconName = iconMapping[item.name] {
-                        Image(iconName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 15)
-                            .padding(10)
-                            .clipShape(Circle())
-                            .zIndex(Double(Ranking(rawValue: index)?.index() ?? 0))
-                            .background(
-                                Circle()
-                                    .foregroundStyle(.black.opacity(0.3))
-                            )
-                            .overlay {
-                                Circle()
-                                    .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
-                            }
-                            .overlay(alignment: .top) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 8))
-                                    .foregroundStyle(Ranking(rawValue: index)?.color() ?? .clear)
-                                    .offset(y: -8)
-                            }
+                        ZStack {
+                            Circle()
+                                .frame(width: 35, height: 35) // 固定サイズ
+                                .foregroundStyle(.white)
+                                .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 2)
+//                                .overlay(
+//                                    Circle()
+//                                        .stroke(Color(white: 1, opacity: 0.5), lineWidth: 1)
+//                                )
+
+                            Image(iconName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 25, height: 25) // `Circle` 内に収まるようサイズを調整
+                                .clipShape(Circle())
+                        }
+                        .overlay(alignment: .top) {
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 8))
+                                .foregroundStyle(Ranking(rawValue: index)?.color() ?? .clear)
+                                .offset(y: -8)
+                        }
+                        .zIndex(Double(Ranking(rawValue: index)?.index() ?? 0))
                     } else {
                         // アイコンが見つからない場合のデフォルト
                         Image(systemName: "questionmark.circle")
@@ -133,21 +135,25 @@ struct Top3TabView: View {
                             .foregroundStyle(.gray)
                     }
                 }
-                
+
                 if tags.count > 3 {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(10)
-                        .clipShape(Circle())
-                        .background(
-                            Circle()
-                                .foregroundStyle(.black.opacity(0.3))
-                        )
-                        .overlay {
-                            Circle()
-                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
-                        }
+                    Text("... 一覧を表示")
+                        .font(.footnote)
+                        .foregroundStyle(.gray)
+                        .padding(.leading, 10)
+//                    Image(systemName: "ellipsis")
+//                        .font(.system(size: 15, weight: .bold))
+//                        .foregroundStyle(.black)
+//                        .padding(10)
+//                        .clipShape(Circle())
+//                        .background(
+//                            Circle()
+//                                .foregroundStyle(.black.opacity(0.3))
+//                        )
+//                        .overlay {
+//                            Circle()
+//                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
+//                        }
                 }
             }
             .frame(height: 35)
@@ -159,6 +165,7 @@ struct Top3TabView: View {
     Top3TabView(tags: [
         WordElement(id: UUID(), name: "Swift", skill: "3"),
         WordElement(id: UUID(), name: "Python", skill: "3"),
-        WordElement(id: UUID(), name: "AWS", skill: "2")
+        WordElement(id: UUID(), name: "AWS", skill: "2"),
+        WordElement(id: UUID(), name: "AWS", skill: "2"),
     ])
 }
