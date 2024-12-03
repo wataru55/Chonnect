@@ -36,6 +36,7 @@ struct ProfileView: View {
                         ProfileHeaderView(viewModel: viewModel, date: date,
                                           isShowFollowButton: isShowFollowButton,
                                           isShowDateButton: isShowDateButton)
+                        .padding(.bottom, 10)
 
                         //MARK: - SNSLINKS
                         HStack {
