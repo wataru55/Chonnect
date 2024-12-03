@@ -106,10 +106,6 @@ struct Top3TabView: View {
                                 .frame(width: 35, height: 35) // 固定サイズ
                                 .foregroundStyle(.white)
                                 .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 2)
-//                                .overlay(
-//                                    Circle()
-//                                        .stroke(Color(white: 1, opacity: 0.5), lineWidth: 1)
-//                                )
 
                             Image(iconName)
                                 .resizable()
@@ -141,19 +137,6 @@ struct Top3TabView: View {
                         .font(.footnote)
                         .foregroundStyle(.gray)
                         .padding(.leading, 10)
-//                    Image(systemName: "ellipsis")
-//                        .font(.system(size: 15, weight: .bold))
-//                        .foregroundStyle(.black)
-//                        .padding(10)
-//                        .clipShape(Circle())
-//                        .background(
-//                            Circle()
-//                                .foregroundStyle(.black.opacity(0.3))
-//                        )
-//                        .overlay {
-//                            Circle()
-//                                .stroke(Color.init(white: 1, opacity: 0.5), lineWidth: 1)
-//                        }
                 }
             }
             .frame(height: 35)
