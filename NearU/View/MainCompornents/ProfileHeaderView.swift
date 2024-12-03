@@ -57,14 +57,6 @@ struct ProfileHeaderView: View {
             //name and info
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading){
-                    NavigationLink {
-                        WordCloudView(skillSortedTags: viewModel.skillSortedTags)
-                            .background(Color.white.opacity(0.7))
-                            .ignoresSafeArea()
-                    } label: {
-                        Top3TabView(tags: viewModel.skillSortedTags)
-                    }
-
                     HStack(spacing: 4) {
                         Text(viewModel.user.username)
                             .font(.system(size: 35, weight: .bold, design: .default))
@@ -81,6 +73,7 @@ struct ProfileHeaderView: View {
                                 .offset(x: -5, y: 4)
                         }
                     }
+                    .offset(y: isShowFollowButton ? 5 : 0)
 
                     HStack {
                         NavigationLink {
@@ -144,19 +137,32 @@ struct ProfileHeaderView: View {
                             .padding(.trailing, 20)
                         }
                     }
+                    .padding(.bottom, isShowFollowButton ? 0 : 5)
 
                     if let bio = viewModel.user.bio {
                         Text(bio)
                             .font(.subheadline)
-                            .frame(width: 250, alignment: .leading)
+                            .frame(alignment: .leading)
+                            .padding(.trailing, 8)
                     }
 
                     if !viewModel.interestTags.isEmpty{
                         InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false, textFont: .footnote)
+                            .padding(.bottom, 5)
+                    }
+
+                    if !viewModel.skillSortedTags.isEmpty {
+                        NavigationLink {
+                            WordCloudView(skillSortedTags: viewModel.skillSortedTags)
+                                .background(Color.white.opacity(0.7))
+                                .ignoresSafeArea()
+                        } label: {
+                            Top3TabView(tags: viewModel.skillSortedTags)
+                        }
                     }
 
                 }//VStack
-                .padding(.bottom)
+                .padding(.bottom, 5)
                 .padding(.leading)
             }
         }//vstack

@@ -17,88 +17,93 @@ struct EditProfileView: View {
     @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @FocusState private var focusedField: Field?
 
     let user: User
-
-    @FocusState private var focusedField: Field?
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
         NavigationStack {
-            //edit profile picture
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
-                        VStack {
-                            if let image = viewModel.backgroundImage {
-                                image
-                                    .resizable()
-                                    .foregroundStyle(.white)
-                                    .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                            } else {
-                                BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
-                            }
 
-                            Text("背景画像を変更する")
-                                .font(.footnote)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.mint)
-                                .padding(.bottom, 10)
-                        }//vstack
-                    }
-                    .disabled(focusedField != nil)
-                }//vstack
-                //edit profile info
-                VStack (spacing:0){
-                    EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
-                        .focused($focusedField, equals: .title)
+            ZStack {
+                backgroundColor.ignoresSafeArea()
 
-                    EditProfileBioRowView(title: "自己紹介", placeholder: "自己紹介を入力してください", text: $viewModel.bio)
-                        .focused($focusedField, equals: .title)
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+                            VStack {
+                                if let image = viewModel.backgroundImage {
+                                    image
+                                        .resizable()
+                                        .foregroundStyle(.white)
+                                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                } else {
+                                    BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
+                                }
 
-                    EditInterestView(texts: $texts, interestTags: viewModel.interestTags)
-                        .focused($focusedField, equals: .title)
-                }
-                .padding(.top, 5)
-            } //scrollview
-            .onTapGesture {
-                focusedField = nil
-            }
-            .padding()
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("プロフィール編集")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task {
-                            try await viewModel.updateUserData()
-                            await viewModel.saveInterestTags(tags: texts)
-                            try await AuthService.shared.loadUserData()
-
-                            await MainActor.run {
-                                dismiss()
-                            }
+                                Text("背景画像を変更する")
+                                    .font(.footnote)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.mint)
+                                    .padding(.bottom, 10)
+                            }//vstack
                         }
-                    } label: {
-                        HStack(spacing: 2) {
-                            Image(systemName: "checkmark.circle")
-                            Text("保存")
-                                .fontWeight(.bold)
+                        .disabled(focusedField != nil)
+                    }//vstack
+                    //edit profile info
+                    VStack (spacing:0){
+                        EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
+                            .focused($focusedField, equals: .title)
+
+                        EditProfileBioRowView( text: $viewModel.bio, title: "自己紹介", placeholder: "")
+                            .focused($focusedField, equals: .title)
+
+                        EditInterestView(texts: $texts, interestTags: viewModel.interestTags)
+                            .focused($focusedField, equals: .title)
+                    }
+                    .padding(.top, 5)
+                } //scrollview
+                .onTapGesture {
+                    focusedField = nil
+                }
+                .padding()
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("プロフィール編集")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                                .foregroundStyle(.black)
                         }
-                        .font(.subheadline)
-                        .foregroundStyle(Color.mint)
+                    }
+
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            Task {
+                                try await viewModel.updateUserData()
+                                await viewModel.saveInterestTags(tags: texts)
+                                try await AuthService.shared.loadUserData()
+
+                                await MainActor.run {
+                                    dismiss()
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 2) {
+                                Image(systemName: "checkmark.circle")
+                                Text("保存")
+                                    .fontWeight(.bold)
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(Color.mint)
+                        }
                     }
                 }
-            }
+            }// zstack
+            .modifier(EdgeSwipe())
         }//navigationstack
     }//body
 }//view
@@ -190,13 +195,14 @@ struct EditInterestView: View {
 }
 
 struct EditProfileBioRowView: View {
+    @State private var isOverCharacterLimit = false // 文字制限を超えたかどうか
+    @Binding var text: String
     let title: String
     let placeholder: String
-    @Binding var text: String
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
     private let characterLimit = 100 // 文字制限
     private let lineLimit = 4 // 行数制限
     private let lineHeight: CGFloat = 20 // 1行の高さ
-    @State private var isOverCharacterLimit = false // 文字制限を超えたかどうか
 
     var body: some View {
         VStack {
@@ -229,6 +235,8 @@ struct EditProfileBioRowView: View {
                         .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
                         .autocorrectionDisabled(true)
+                        .scrollContentBackground(.hidden)
+                        .background(backgroundColor)
                         .onChange(of: text) {
                             enforceTextLimit()
                         }
