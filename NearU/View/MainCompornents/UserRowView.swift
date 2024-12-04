@@ -27,6 +27,8 @@ struct UserRowView: View {
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.black)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
 
                             Circle()
                                 .frame(width: 8, height: 8)

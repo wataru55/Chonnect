@@ -208,6 +208,7 @@ struct CurrentUserProfileView: View {
                                     .foregroundColor(.mint)
                                 }
                                 .frame(height: 100, alignment: .top)
+                                .offset(x: -43)
 
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
