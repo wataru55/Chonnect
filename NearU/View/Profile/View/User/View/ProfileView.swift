@@ -52,34 +52,35 @@ struct ProfileView: View {
                                 .padding(.horizontal, 10)
                         }
 
-                        if viewModel.user.isPrivate && !viewModel.isMutualFollow {
+                        if !viewModel.user.snsLinks.isEmpty && viewModel.user.isPrivate && !viewModel.isMutualFollow {
                             Text("非公開アカウントです")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.gray)
                         }
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                if viewModel.user.snsLinks.isEmpty {
-                                    Text("リンクがありません")
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.gray)
-                                        .padding()
-                                } else {
+                        if viewModel.user.snsLinks.isEmpty {
+                            Text("リンクがありません")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.gray)
+                                .padding()
+                                .padding(.bottom, 10)
+                        } else {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
                                     ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
                                         if let url = viewModel.user.snsLinks[key] {
                                             SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
                                                 .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow)
                                         }
                                     }
-                                }
-                            }//hstack
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 10)
-                        }//scrollview
-                        .padding(.bottom, 10)
+                                }//hstack
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 10)
+                            }//scrollview
+                            .padding(.bottom, 10)
+                        }
 
                         //MARK: - ARTICLES
                         HStack {

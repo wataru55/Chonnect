@@ -42,6 +42,7 @@ struct BLEHistoryView: View {
                 }
             } // LazyVStack
             .padding(.top, 8)
+            .padding(.bottom, 100)
 
         } // ScrollView
         .refreshable {
