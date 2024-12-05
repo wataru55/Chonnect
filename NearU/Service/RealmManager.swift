@@ -21,7 +21,7 @@ class RealmManager: ObservableObject {
     private var pendingRealtimeUpdates: [(String, Date, Int)] = []
     private var historyUpdateTimer: Timer?
     private var realtimeUpdateTimer: Timer?
-    private let historyUpdateInterval: TimeInterval = 60.0
+    private let historyUpdateInterval: TimeInterval = 30.0
     private let realtimeUpdateInterval: TimeInterval = 10.0
     private var cancellables = Set<AnyCancellable>()
 
