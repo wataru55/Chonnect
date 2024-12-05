@@ -33,6 +33,7 @@ struct UserFollowView: View {
                 }
             }//lazyvstack
             .padding(.top, 8)
+            .padding(.bottom, 100)
 
         }//scrollview
         .refreshable {
