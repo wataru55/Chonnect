@@ -33,8 +33,9 @@ class FollowerViewModel: ObservableObject {
                 let addData = FollowerUserRowData(record: user, tags: interestTags)
                 followers.append(addData)
             }
+            let sortedFollowers = followers.sorted { !$0.record.isRead && $1.record.isRead }
 
-            self.followers = followers
+            self.followers = sortedFollowers
         } catch {
             print("Error fetching followers: \(error)")
         }

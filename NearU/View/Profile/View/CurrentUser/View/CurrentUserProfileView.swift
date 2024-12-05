@@ -127,13 +127,14 @@ struct CurrentUserProfileView: View {
                                 .font(.footnote)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.gray)
-                                .padding(.leading, 10)
 
                             Rectangle()
                                 .fill(Color.gray.opacity(0.1))
                                 .frame(height: 1)
                                 .padding(.horizontal, 10)
                         }
+                        .frame(width: UIScreen.main.bounds.width)
+                        .padding(.leading)
 
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
@@ -185,13 +186,14 @@ struct CurrentUserProfileView: View {
                                 .font(.footnote)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.gray)
-                                .padding(.leading, 10)
 
                             Rectangle()
                                 .fill(Color.gray.opacity(0.1))
                                 .frame(height: 1)
                                 .padding(.horizontal, 10)
                         }
+                        .frame(width: UIScreen.main.bounds.width)
+                        .padding(.leading)
                         .padding(.bottom, 10)
 
                         VStack(alignment: .center, spacing: 10) {
@@ -207,7 +209,8 @@ struct CurrentUserProfileView: View {
                                     }
                                     .foregroundColor(.mint)
                                 }
-                                .frame(height: 100, alignment: .top)
+                                .frame(width: UIScreen.main.bounds.width, height: 100, alignment: .topLeading)
+                                .padding(.leading)
 
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
