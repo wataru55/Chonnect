@@ -176,7 +176,7 @@ struct CurrentUserProfileView: View {
                                 }
                             } // HStack
                             .padding(.vertical, 5)
-                            .padding(.horizontal, 10)
+                            .padding(.horizontal, 15)
                         } // ScrollView
                         .padding(.bottom, 10)
 
