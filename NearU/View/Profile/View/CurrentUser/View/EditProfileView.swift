@@ -73,6 +73,7 @@ struct EditProfileView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
+                            viewModel.resetSelectedImage()
                             dismiss()
                         } label: {
                             Image(systemName: "chevron.backward")
@@ -88,6 +89,7 @@ struct EditProfileView: View {
                                 try await AuthService.shared.loadUserData()
 
                                 await MainActor.run {
+                                    viewModel.resetSelectedImage()
                                     dismiss()
                                 }
                             }
