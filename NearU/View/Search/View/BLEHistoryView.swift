@@ -15,7 +15,7 @@ struct BLEHistoryView: View {
     let currentUser: User
 
     var body: some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
                 if viewModel.isLoading {
                     ProgressView()

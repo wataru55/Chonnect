@@ -110,4 +110,9 @@ class CurrentUserProfileViewModel: ObservableObject {
             print("complete")
         }
     }
+
+    @MainActor
+    func resetSelectedImage() {
+        backgroundImage = nil
+    }
 }

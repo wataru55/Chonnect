@@ -15,7 +15,7 @@ struct BLERealtimeView: View {
     let currentUser: User
 
     var body: some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
                 // TODO: 毎回一瞬だけ表示されるから関数で渡すべきかも
                 if viewModel.sortedUserRealtimeRecords.isEmpty {
