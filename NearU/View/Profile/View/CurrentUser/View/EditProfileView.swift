@@ -35,6 +35,7 @@ struct EditProfileView: View {
                                 if let image = viewModel.backgroundImage {
                                     image
                                         .resizable()
+                                        .scaledToFit()
                                         .foregroundStyle(.white)
                                         .frame(width: UIScreen.main.bounds.width - 20, height: 250)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
