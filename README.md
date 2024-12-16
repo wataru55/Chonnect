@@ -1,18 +1,23 @@
 # Chonnect
 「ちょっとした繋がり」を増やしたいエンジニアのための非接触型プロフィール交換アプリ
 
-<img width="100" alt="Chonnect" src="https://github.com/user-attachments/assets/77f66312-777d-4ba6-913c-2cfa1ac3f5e8">
-<br>
-<img width="393" alt="Chonnect" src="https://github.com/user-attachments/assets/7469d75a-c291-4b50-9ced-79aa8fc6807b">
+<img width="780" alt="スクリーンショット 2024-12-16 18 53 05" src="https://github.com/user-attachments/assets/9d8d9372-e719-4306-9651-e7663c79f8ee" />
+<img width="1325" alt="スクリーンショット 2024-12-16 18 55 05" src="https://github.com/user-attachments/assets/ddb332ae-4b66-4f47-adc2-b8700524151a" />
 
 <br>
+
+## 受賞歴
+2024年12月7日に行われたチャレキャラのコンテストで最優秀賞とビジネス賞を受賞することができました。
+<br>
+ビジネス賞に選ばれたため、「福岡県ITスタートアップビジネス大賞2025公開審査会」に出場予定です。
+
+<img src="https://github.com/user-attachments/assets/64026419-3ab6-4e45-8dfe-ef62664daa7f" alt="IMG_3041" width="600">
 
 ## 開発の経緯
 ハッカソンやインターン、カンファレンスなどのエンジニアが集まる場は、技術交流によって知識やアイデアを共有する絶好の場です。
 しかし、初対面の人に話しかけるのは難しく、誰とも関わらないまま終わったり、連絡先を聞かずにイベントで築いた関係がその場限りで終わってしまった経験があります。
 また、SNSの交換をしようとしても自分のIDを教えたり、検索したりするのは面倒です。
-「このような経験をした人は自分だけではないはず」という思いから、小学生のときに夢中になった任天堂3DSのすれちがい通信からインスピレーションを受け、直接話しかけなくても相手がどんなエンジニアなのかが分かる
-アプリを開発しようと思いました。
+「このような経験をした人は自分だけではないはず」という思いから、小学生のときに夢中になった任天堂3DSのすれちがい通信からインスピレーションを受け、直接話しかけなくても相手がどんなエンジニアなのかが分かるアプリを開発しようと思いました。
 
 ## Chonnectが提供する価値
 ### １. 直接話しかけずに他のエンジニアと交流ができる
@@ -45,7 +50,7 @@
 * Realm
 * Bluetooth(BLE)
 
-<img src="https://github.com/user-attachments/assets/bd0c8653-cc1d-447d-8dac-c75298d0fe3d">
+<img width="500" alt="スクリーンショット 2024-12-16 18 57 25" src="https://github.com/user-attachments/assets/047f4931-3745-4901-b0b5-59eb75c1bf65" />
 
 <br>
 
@@ -78,9 +83,9 @@ Chonnectでは、ユーザーの情報を安全に管理するため、３段階
 * SNSリンクへのアクセス制限<br>
   相手のユーザーと相互フォローの状態でない場合、SNSリンクへのアクセスを制限しています。
 
-![図1](https://github.com/user-attachments/assets/1a1333bf-8a2f-4bf3-a214-918cf5063daf)
+<img width="700" alt="スクリーンショット 2024-12-16 18 59 42" src="https://github.com/user-attachments/assets/e12f2674-4533-4a6d-8833-cbca5368f1d3" />
 
-### 洗練されたUI
+### 5. 洗練されたUI
 チープに見えないよう、UIの実装にこだわっています。第三者にテストしてもらい、客観的なフィードバックをもとに改善を行いました。
 
 | スクリーンショット | 説明 |
@@ -89,10 +94,14 @@ Chonnectでは、ユーザーの情報を安全に管理するため、３段階
 | <img src="https://github.com/user-attachments/assets/c44a117e-d5b0-4d3b-a531-9a73c4205c83" width="200"> | マイプロフィール画面(上):  |
 | <img src="https://github.com/user-attachments/assets/4e523e80-cd59-40bf-902d-648c74a0d692" width="200"> | マイプロフィール画面(下): |
 | <img src="https://github.com/user-attachments/assets/4df9d565-59ff-4d97-833a-0b58a49a88e1" width="200"> | プロフィール編集画面:  |
+| <img src="https://github.com/user-attachments/assets/0261595b-bc72-46c3-abe1-3707c877a589" width="200"> | すれちがい履歴表示画面:  |
+| <img src="https://github.com/user-attachments/assets/6b6d11e8-0ef8-41cf-b229-80c12131bd88" width="200"> | 技術スタック一覧画面:  |
 | <img src="https://github.com/user-attachments/assets/eac8684f-b1d7-4ab9-a9e7-779af78432ca" width="200"> | 技術タグ編集画面:  |
 | <img src="https://github.com/user-attachments/assets/30bf858f-d152-4009-b2b9-15e0838bb640" width="200"> | 技術タグ編集画面: |
 | <img src="https://github.com/user-attachments/assets/a8c64171-dec2-4e5e-86f9-4c9d5d452585" width="200"> | SNSリンク編集画面:  |
 | <img src="https://github.com/user-attachments/assets/435214fc-1269-4877-8601-f707580a75e9" width="200"> | 記事編集画面: |
 | <img src="https://github.com/user-attachments/assets/bf12a2f7-4318-48d0-b20e-b1d4b7ba8fc0" width="200"> | 設定画面: |
+
+
 
 
