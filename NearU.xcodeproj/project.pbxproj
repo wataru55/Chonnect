@@ -74,7 +74,6 @@
 		63B6500B2B8DDF0200289469 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B6500A2B8DDF0200289469 /* SettingView.swift */; };
 		63BEA4942CD0B46A006382AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4932CD0B46A006382AF /* NotificationManager.swift */; };
 		63BEA4962CD1CE3C006382AF /* FCMMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEA4952CD1CE3C006382AF /* FCMMessage.swift */; };
-		63BEA49A2CD21E04006382AF /* Private.json in Resources */ = {isa = PBXBuildFile; fileRef = 63BEA4992CD21E04006382AF /* Private.json */; };
 		63BEA49D2CD2211A006382AF /* JWTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 63BEA49C2CD2211A006382AF /* JWTKit */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
@@ -94,6 +93,7 @@
 		63E4CC8C2BED30EA009E0C9B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8B2BED30EA009E0C9B /* FirebaseFirestore */; };
 		63E4CC8E2BED30EA009E0C9B /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8D2BED30EA009E0C9B /* FirebaseFirestoreSwift */; };
 		63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8F2BED30EA009E0C9B /* FirebaseStorage */; };
+		63F84BB12D1C3B82009FE5DD /* Private.json in Resources */ = {isa = PBXBuildFile; fileRef = 63F84BB02D1C3B82009FE5DD /* Private.json */; };
 		63FDDFCF2CEB1D4500B90074 /* HistoryRowData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFCE2CEB1D4500B90074 /* HistoryRowData.swift */; };
 		63FDDFD12CEB2B1300B90074 /* FollowUserRowData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD02CEB2B1300B90074 /* FollowUserRowData.swift */; };
 		63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD22CECCC2900B90074 /* WordCloudView.swift */; };
@@ -197,7 +197,6 @@
 		63B6500A2B8DDF0200289469 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		63BEA4932CD0B46A006382AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		63BEA4952CD1CE3C006382AF /* FCMMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCMMessage.swift; sourceTree = "<group>"; };
-		63BEA4992CD21E04006382AF /* Private.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Private.json; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -210,6 +209,7 @@
 		63DFF8C02C04040B00A6DFB8 /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEPeripheralManager.swift; sourceTree = "<group>"; };
 		63E4CC862BED3037009E0C9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		63F84BB02D1C3B82009FE5DD /* Private.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Private.json; sourceTree = "<group>"; };
 		63FDDFCE2CEB1D4500B90074 /* HistoryRowData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRowData.swift; sourceTree = "<group>"; };
 		63FDDFD02CEB2B1300B90074 /* FollowUserRowData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUserRowData.swift; sourceTree = "<group>"; };
 		63FDDFD22CECCC2900B90074 /* WordCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCloudView.swift; sourceTree = "<group>"; };
@@ -480,7 +480,7 @@
 		63B64FD62B8C763900289469 /* NearU */ = {
 			isa = PBXGroup;
 			children = (
-				63BEA4992CD21E04006382AF /* Private.json */,
+				63F84BB02D1C3B82009FE5DD /* Private.json */,
 				6375622A2CCC83C900137B27 /* NearU.entitlements */,
 				63B64FE72B8C7BF200289469 /* Info.plist */,
 				63B64FD72B8C763900289469 /* NearUApp.swift */,
@@ -687,7 +687,7 @@
 				63B64FDF2B8C763A00289469 /* Preview Assets.xcassets in Resources */,
 				63B64FDC2B8C763A00289469 /* Assets.xcassets in Resources */,
 				63E4CC872BED3037009E0C9B /* GoogleService-Info.plist in Resources */,
-				63BEA49A2CD21E04006382AF /* Private.json in Resources */,
+				63F84BB12D1C3B82009FE5DD /* Private.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
