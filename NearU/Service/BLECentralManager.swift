@@ -66,7 +66,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
                 // リアルタイムデータ
                 RealmManager.shared.storeRealtimeData(receivedUserId: receivedDocumentId, date: Date(), rssi: RSSI.intValue)
                 // 履歴データ
-                RealmManager.shared.storeData(receivedDocumentId, date: Date())
+                RealmManager.shared.storeHistoryData(receivedDocumentId, date: Date())
             }
         }
     }
