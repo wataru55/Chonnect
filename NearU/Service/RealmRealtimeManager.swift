@@ -24,6 +24,10 @@ class RealmRealtimeManager: ObservableObject {
     
     private var shouldImmediatelyUpdateRealtime = true
     
+    deinit {
+        realtimeUpdateTimer?.invalidate()
+    }
+    
     // Realmからリアルタイムデータを読み込む
     func loadRealtimeDataFromRealm() {
         do {

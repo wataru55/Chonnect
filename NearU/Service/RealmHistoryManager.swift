@@ -35,6 +35,27 @@ class RealmHistoryManager: ObservableObject {
     private init() {
         // 初期化時にRealmからデータを読み込む
         loadHistoryDataFromRealm()
+        
+        // --- 10秒おきのバッチ処理 (Realm書き込み) ---
+        historyBatchTimer = Timer.scheduledTimer(withTimeInterval: historyBatchInterval,
+                                                 repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.saveHistoryDataToRealm()  // 10秒に1回、メモリ→Realm
+            }
+        }
+        
+        // --- 30秒おきのFirestore同期＆Realm削除 ---
+        firestoreSyncTimer = Timer.scheduledTimer(withTimeInterval: firestoreSyncInterval,
+                                                  repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.syncHistoryDataToFireStore()  // 30秒に1回、Realm→Firestore→削除
+            }
+        }
+    }
+    
+    deinit {
+        historyBatchTimer?.invalidate()
+        firestoreSyncTimer?.invalidate()
     }
 
     // Realmから履歴データを読み込む
@@ -67,7 +88,7 @@ class RealmHistoryManager: ObservableObject {
             pendingHistoryData.append((receivedUserId, date, false))
         }
     }
-
+    
     // pendingHistoryDataをRealmに書き込むメソッド
     private func saveHistoryDataToRealm() {
         guard !pendingHistoryData.isEmpty else { return }
@@ -100,6 +121,7 @@ class RealmHistoryManager: ObservableObject {
     
     // Realm上の履歴データをFirestoreに保存し、成功したものをRealmから削除するメソッド
     private func syncHistoryDataToFireStore() {
+        print("--------------syncHistoryDataToFireStore------------------")
         do {
             let realm = try Realm()
             let allHistoryData = realm.objects(HistoryData.self)
@@ -124,19 +146,19 @@ class RealmHistoryManager: ObservableObject {
                 }
             }
             
-            if !deleteUserIds.isEmpty {
-                do {
-                    try realm.write {
-                        let objectsToDelete = realm.objects(HistoryData.self).filter("userId IN %@", deleteUserIds)
-                        realm.delete(objectsToDelete)
-                    }
-                    print("Successfully synced & removed \(deleteUserIds.count) HistoryData from Realm.")
-                } catch {
-                    print("Error removing synced data from Realm: \(error)")
-                }
-            } else {
-                print("No HistoryData was successfully synced this time.")
-            }
+//            if !deleteUserIds.isEmpty {
+//                do {
+//                    try realm.write {
+//                        let objectsToDelete = realm.objects(HistoryData.self).filter("userId IN %@", deleteUserIds)
+//                        realm.delete(objectsToDelete)
+//                    }
+//                    print("Successfully synced & removed \(deleteUserIds.count) HistoryData from Realm.")
+//                } catch {
+//                    print("Error removing synced data from Realm: \(error)")
+//                }
+//            } else {
+//                print("No HistoryData was successfully synced this time.")
+//            }
             
         } catch {
             print("Error reading HistoryData from Realm for syncing: \(error)")
