@@ -27,4 +27,28 @@ struct HistoryService {
         }
             
     }
+    
+    static func fetchHistoryUser() async throws -> [HistoryDataStruct] {
+        guard let documentId = AuthService.shared.currentUser?.id else { return [] }
+        
+        let path = Firestore.firestore().collection("users").document(documentId).collection("history")
+        let snapshot = try await path.getDocuments()
+        
+        var historyData: [HistoryDataStruct] = []
+        
+        for document in snapshot.documents {
+            let data = try document.data(as: HistoryDataStruct.self)
+            historyData.append(data)
+        }
+        
+        return historyData
+    }
+    
+    static func changeIsRead(userId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        
+        let path = Firestore.firestore().collection("users").document(documentId).collection("history").document(userId)
+        
+        try await path.updateData(["isRead" : true])
+    }
 }
