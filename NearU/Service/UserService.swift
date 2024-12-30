@@ -229,7 +229,7 @@ struct UserService {
             for document in snapshot.documents {
                 if let data = try? document.data(as: HistoryDataStruct.self) {
                     // Realmに保存
-                    await RealmManager.shared.storeData(data.userId, date: data.date)
+                    await RealmHistoryManager.shared.storeHistoryData(data.userId, date: data.date)
                 }
                 // 通知を削除
                 do {

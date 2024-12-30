@@ -11,8 +11,8 @@ import FirebaseFirestore
 import Combine
 
 @MainActor
-class RealmManager: ObservableObject {
-    static let shared = RealmManager()
+class RealmHistoryManager: ObservableObject {
+    static let shared = RealmHistoryManager()
 
     @Published var historyData: [HistoryDataStruct] = []
 

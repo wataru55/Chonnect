@@ -16,7 +16,7 @@ class BLEHistoryViewModel: ObservableObject {
 
     init() {
         Task {
-            await fetchHistoryAllUsers(historyDataList: RealmManager.shared.historyData)
+            await fetchHistoryAllUsers(historyDataList: RealmHistoryManager.shared.historyData)
             isLoading = false
         }
 
@@ -52,11 +52,11 @@ class BLEHistoryViewModel: ObservableObject {
     }
 
     func markAsRead(_ pair: UserHistoryRecord) {
-        RealmManager.shared.updateRead(pair.user.id)
+        RealmHistoryManager.shared.updateRead(pair.user.id)
     }
 
     func setupSubscribers() {
-        RealmManager.shared.$historyData
+        RealmHistoryManager.shared.$historyData
             .sink { [weak self] historyDataList in
                 guard let self = self else { return }
                 Task {
