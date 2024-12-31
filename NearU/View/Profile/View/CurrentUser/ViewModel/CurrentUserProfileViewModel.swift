@@ -30,7 +30,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, connectList: [], snsLinks: [:])
+            self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, snsLinks: [:])
         }
 
         setupSubscribers()

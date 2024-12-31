@@ -29,13 +29,13 @@ class ViewTransitionManager: ObservableObject {
             }
     }
 
+    @MainActor
     func loadUser(userId: String) async {
         do {
             let user = try await UserService.fetchUser(withUid: userId)
-            DispatchQueue.main.async {
-                self.selectedUser = user
-                self.showProfile = true
-            }
+            self.selectedUser = user
+            self.showProfile = true
+            
         } catch {
             print("Error fetching user: \(error.localizedDescription)")
         }
