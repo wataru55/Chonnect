@@ -42,7 +42,6 @@ class BLEHistoryViewModel: ObservableObject {
     //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
     func makeHistoryRowData() async {
         isLoading = true
-        var userHistoryRecords: [UserHistoryRecord] = []
         var addData: [HistoryRowData] = []
         
         let historyDataList = await loadHistoryData()
@@ -56,18 +55,36 @@ class BLEHistoryViewModel: ObservableObject {
             let dates = historyDataList.map { $0.date }
             let isReads = historyDataList.map { $0.isRead }
             let users = try await UserService.fetchUsers(userIds)
-            // すべての配列のインデックスを利用してUserHistoryRecordを作成
-            userHistoryRecords = (0..<users.count).map { index in
+            
+            // UserHistoryRecordを作成
+            let userHistoryRecords = (0..<users.count).map { index in
                 UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
             }
-
-            for record in userHistoryRecords {
-                let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
-                let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
-                addData.append(HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed))
+            
+            // 並列処理でデータを取得
+            addData = try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
+                for record in userHistoryRecords {
+                    group.addTask {
+                        async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
+                        async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
+                        
+                        return HistoryRowData(
+                            record: record,
+                            tags: try await interestTags,
+                            isFollowed: await isFollowed
+                        )
+                    }
+                }
+                
+                var results: [HistoryRowData] = []
+                for try await data in group {
+                    results.append(data)
+                }
+                return results
             }
+            
             self.historyRowData = addData
-
+            
         } catch {
             print("Error fetching users: \(error)")
         }
@@ -93,20 +110,76 @@ class BLEHistoryViewModel: ObservableObject {
         listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
             guard let snapshot = snapshot else {
-                // エラー処理など
                 print("Error listening to Firestore collection: \(error?.localizedDescription ?? "")")
                 return
             }
             
-            // 変更のあったドキュメントのみを参照し、更新がある場合はデータをリロード
-            if !snapshot.documentChanges.isEmpty {
-                Task {
-                    // Firestore 側で何かしらの変更があったので最新データを取り直す
-                    await self.makeHistoryRowData()
+            for change in snapshot.documentChanges {
+                switch change.type {
+                case .added:
+                    self.handleAddedDocument(document: change.document)
+                case .modified:
+                    self.handleModifiedDocument(document: change.document)
+                case .removed:
+                    self.handleRemovedDocument(document: change.document)
                 }
             }
         }
     }
+
+    // ドキュメントが追加されたときの処理
+    private func handleAddedDocument(document: QueryDocumentSnapshot) {
+        let newHistoryData = try? document.data(as: HistoryDataStruct.self)
+        if let data = newHistoryData {
+            Task {
+                // 必要な追加データをフェッチし、`historyRowData` に追加
+                let user = try await UserService.fetchUser(withUid: data.userId)
+                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
+                let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
+                let record = UserHistoryRecord(user: user, date: data.date, isRead: data.isRead)
+                let rowData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
+                
+                // メインスレッドで更新
+                await MainActor.run {
+                    self.historyRowData.append(rowData)
+                }
+            }
+        }
+    }
+
+    // ドキュメントが変更されたときの処理
+    private func handleModifiedDocument(document: QueryDocumentSnapshot) {
+        let modifiedHistoryData = try? document.data(as: HistoryDataStruct.self)
+        if let data = modifiedHistoryData {
+            Task {
+                if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == data.userId }) {
+                    let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
+                    let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
+                    let updatedRecord = UserHistoryRecord(user: self.historyRowData[index].record.user, date: data.date, isRead: data.isRead)
+                    let updatedRowData = HistoryRowData(record: updatedRecord, tags: interestTags, isFollowed: isFollowed)
+                    
+                    // メインスレッドで更新
+                    await MainActor.run {
+                        self.historyRowData[index] = updatedRowData
+                    }
+                }
+            }
+        }
+    }
+
+    // ドキュメントが削除されたときの処理
+    private func handleRemovedDocument(document: QueryDocumentSnapshot) {
+        let removedUserId = document.documentID
+        if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == removedUserId }) {
+            // メインスレッドで削除
+            Task {
+                await MainActor.run {
+                    self.historyRowData.remove(at: index)
+                }
+            }
+        }
+    }
+
 
     func setupSubscribers() {
         $historyRowData
