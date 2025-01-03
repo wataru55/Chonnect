@@ -54,6 +54,7 @@
   * Storage
   * App Check
   * Cloud Message
+  * Cloud Functions
 * Realm
 * Bluetooth(BLE)
 
