@@ -50,11 +50,6 @@ struct MainTabView: View {
                 LoadingView()
             }
         }
-//        .sheet(isPresented: $viewTransitionManager.showProfile) {
-//            if let selectedUser = viewTransitionManager.selectedUser {
-//                ProfileView(user: selectedUser, currentUser: user, date: Date())
-//            }
-//        }
         .accentColor(Color(.systemMint))
         .onAppear {
             // 通知の許可をリクエスト
@@ -68,15 +63,6 @@ struct MainTabView: View {
 
             if peripheralManager.peripheralManager.state == .poweredOn {
                 peripheralManager.startAdvertising()
-            }
-            // ローディング開始
-            loadingViewModel.isLoading = true
-            // 通知の確認
-            Task {
-                // データのフェッチ
-                await UserService.fetchNotifications()
-                // ローディング終了
-                loadingViewModel.isLoading = false
             }
         }
         .onChange(of: scenePhase) {
