@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             if let error = error {
                 print("Error fetching FCM registration token: \(error)")
             } else if let token = token {
-                Task { await self.setFCMToken(fcmToken: token)}
+                Task { await UserService.setFCMToken(fcmToken: token)}
             }
         }
     }
@@ -78,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         guard let fcmToken = fcmToken else { return }
         print("messaging(_:didReceiveRegistrationToken:) called with token: \(fcmToken)")
 
-        Task { await setFCMToken(fcmToken: fcmToken)}
+        Task { await UserService.setFCMToken(fcmToken: fcmToken)}
     }
 
     // アプリがForeground時にPush通知を受信する処理
@@ -92,25 +92,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // NotificationCenterを使用して通知を投稿
         NotificationCenter.default.post(name: Notification.Name("didReceiveRemoteNotification"), object: nil, userInfo: userInfo)
         completionHandler()
-    }
-
-    // FCMトークンをFirestoreに保存するメソッド
-    func setFCMToken(fcmToken: String) async {
-        guard let documentId = AuthService.shared.currentUser?.id else {
-            print("ユーザーがログインしていません")
-            return
-        }
-
-        let data: [String: Any] = [
-            "fcmtoken": fcmToken
-        ]
-
-        do {
-            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
-            print("Document successfully updated with FCM token")
-        } catch {
-            print("Error updating document: \(error)")
-        }
     }
 }
 

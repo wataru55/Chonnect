@@ -274,4 +274,23 @@ struct UserService {
             throw error
         }
     }
+    
+    // FCMトークンをFirestoreに保存するメソッド
+    static func setFCMToken(fcmToken: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            print("ユーザーがログインしていません")
+            return
+        }
+
+        let data: [String: Any] = [
+            "fcmtoken": fcmToken
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+            print("Document successfully updated with FCM token")
+        } catch {
+            print("Error updating document: \(error)")
+        }
+    }
 }
