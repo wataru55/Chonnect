@@ -50,11 +50,8 @@ struct BLEHistoryView: View {
         .refreshable {
             loadingViewModel.isLoading = true
             Task {
-                // データのフェッチ
-                await UserService.fetchNotifications()
                 await viewModel.makeHistoryRowData()
                 // ローディング終了
-                //isLoading = false
                 loadingViewModel.isLoading = false
             }
         }
