@@ -47,7 +47,7 @@ struct UserRowView: View {
 
                     VStack {
                         if let rssi = rssi {
-                            HStack {
+                            HStack(spacing: 4) {
                                 Text("推定距離")
 
                                 Text(distance(fromRSSI: rssi))
@@ -55,7 +55,7 @@ struct UserRowView: View {
                         }
 
                         if let date = date {
-                            HStack {
+                            HStack(spacing: 4) {
                                 Text("最後のすれちがい")
 
                                 Text(formattedDate(from: date))
@@ -88,7 +88,7 @@ struct UserRowView: View {
     private var standardDateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.timeStyle = .short
+        formatter.timeStyle = .none
         formatter.locale = Locale(identifier: "ja_JP")
         return formatter
     }
