@@ -31,6 +31,10 @@ class RealmHistoryManager: ObservableObject {
 
     // 初回更新フラグ
     private var shouldImmediatelyUpdateHistory = true
+    
+    private var isInForeground: Bool {
+        return UIApplication.shared.applicationState == .active
+    }
 
     init() {
         // --- 10秒おきのバッチ処理 (Realm書き込み) ---
@@ -57,17 +61,39 @@ class RealmHistoryManager: ObservableObject {
 
     // BLE通信でデータを受信したら呼ばれるメソッド
     func storeHistoryData(_ receivedUserId: String, date: Date) {
-        // pendingに同じIdのデータがあれば更新し、なければ追加
-        if let index = pendingHistoryData.firstIndex(where: {$0.userId == receivedUserId}) {
-            // dateが同じ場合の処理
-            if pendingHistoryData[index].date == date {
-                return
+        // フォアグラウンドならバッチ処理のためにメモリに保存
+        if isInForeground {
+            // pendingに同じIdのデータがあれば更新し、なければ追加
+            if let index = pendingHistoryData.firstIndex(where: {$0.userId == receivedUserId}) {
+                // dateが同じ場合の処理
+                if pendingHistoryData[index].date == date {
+                    return
+                }
+                
+                //更新
+                pendingHistoryData[index] = (receivedUserId, date, false)
+            } else {
+                pendingHistoryData.append((receivedUserId, date, false))
             }
-            
-            //更新
-            pendingHistoryData[index] = (receivedUserId, date, false)
         } else {
-            pendingHistoryData.append((receivedUserId, date, false))
+            //バックグラウンドならそのままRealmに書き込み
+            do {
+                let realm = try Realm()
+                try realm.write {
+                    // Realmに同じIdのデータがあればdateを更新し、なければ追加
+                    if let existingHistoryData = realm.objects(HistoryData.self).filter("userId == %@", receivedUserId).first {
+                        existingHistoryData.date = date
+                    } else {
+                        let newHistoryData = HistoryData()
+                        newHistoryData.userId = receivedUserId
+                        newHistoryData.date = date
+                        newHistoryData.isRead = false
+                        realm.add(newHistoryData)
+                    }
+                }
+            } catch {
+                print("can not save history data to realm: \(error)")
+            }
         }
     }
     
@@ -81,7 +107,6 @@ class RealmHistoryManager: ObservableObject {
         
         let updatesToProcess = pendingHistoryData
         pendingHistoryData.removeAll()
-        historyBatchTimer = nil
 
         do {
             let realm = try Realm()
