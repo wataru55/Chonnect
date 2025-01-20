@@ -9,15 +9,12 @@ import Foundation
 
 class KalmanFilter {
     private var currentEstimate: Double // 現在の推定値
-    private var processNoise: Double // プロセスノイズ（システムの変動）
-    private var measurementNoise: Double // 観測ノイズ
-    private var estimatedError: Double // 推定誤差
+    private var processNoise: Double = 1.0 // プロセスノイズ（システムの変動）
+    private var measurementNoise: Double = 6.0 // 観測ノイズ
+    private var estimatedError: Double =  5.0 // 推定誤差
     
-    init(initialEstimate: Double, processNoise: Double, measurementNoise: Double, initialError: Double) {
+    init(initialEstimate: Double) {
         self.currentEstimate = initialEstimate
-        self.processNoise = processNoise
-        self.measurementNoise = measurementNoise
-        self.estimatedError = initialError
     }
     
     func smoothing(measurement: Double) -> Double {
