@@ -19,9 +19,10 @@ class RealtimeDataManager: ObservableObject {
     private var realtimeUpdateTimer: Timer?
     private let realtimeUpdateInterval: TimeInterval = 10.0
     
-    private var cancellables = Set<AnyCancellable>()
-    
     private var shouldImmediatelyUpdateRealtime = true
+    
+    // ユーザーごとにKalmanFilterを管理する辞書
+    private var kalmanFilters: [String: KalmanFilter] = [:]
     
     deinit {
         realtimeUpdateTimer?.invalidate()
@@ -48,13 +49,27 @@ class RealtimeDataManager: ObservableObject {
     
     private func processPendingRealtimeUpdates() {
         for (userId, date, rssi) in pendingRealtimeData {
+            // ユーザーに対応するカルマンフィルタを取得または作成
+            let kalmanFilter = kalmanFilters[userId] ?? KalmanFilter(
+                initialEstimate: Double(rssi)
+            )
+            
+            kalmanFilters[userId] = kalmanFilter
+            
+            // RSSI値をスムージング
+            let smoothedRSSI = kalmanFilter.smoothing(measurement: Double(rssi))
+            
             if let index = realtimeData.firstIndex(where: { $0.userId == userId }) {
                 // 既存データを更新
                 realtimeData[index].date = date
-                realtimeData[index].rssi = rssi
+                // realtimeData[index].rssi = rssi
+                // カルマンフィルタによってスムージングされた値を格納
+                realtimeData[index].rssi = Int(smoothedRSSI)
             } else {
                 // 新しいデータを追加
                 realtimeData.append(EncountDataStruct(userId: userId, date: date, rssi: rssi))
+                // カルマンフィルタによってスムージングされた値を格納
+                realtimeData.append(EncountDataStruct(userId: userId, date: date, rssi: Int(smoothedRSSI)))
             }
         }
         pendingRealtimeData.removeAll()
