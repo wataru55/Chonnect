@@ -62,12 +62,9 @@ class RealtimeDataManager: ObservableObject {
             if let index = realtimeData.firstIndex(where: { $0.userId == userId }) {
                 // 既存データを更新
                 realtimeData[index].date = date
-                // realtimeData[index].rssi = rssi
                 // カルマンフィルタによってスムージングされた値を格納
                 realtimeData[index].rssi = Int(smoothedRSSI)
             } else {
-                // 新しいデータを追加
-                realtimeData.append(EncountDataStruct(userId: userId, date: date, rssi: rssi))
                 // カルマンフィルタによってスムージングされた値を格納
                 realtimeData.append(EncountDataStruct(userId: userId, date: date, rssi: Int(smoothedRSSI)))
             }
