@@ -64,7 +64,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
             DispatchQueue.main.async {
                 // 受信したuserIdをRealmに保存
                 // リアルタイムデータ
-                RealmRealtimeManager.shared.storeRealtimeData(receivedUserId: receivedDocumentId, date: Date(), rssi: RSSI.intValue)
+                RealtimeDataManager.shared.storeRealtimeData(receivedUserId: receivedDocumentId, date: Date(), rssi: RSSI.intValue)
                 // 履歴データ
                 RealmHistoryManager.shared.storeHistoryData(receivedDocumentId, date: Date())
             }
@@ -87,7 +87,7 @@ class BLECentralManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     func startCleanupTimer() {
         cleanupTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             Task { @MainActor in
-                RealmRealtimeManager.shared.removeRealtimeData()
+                RealtimeDataManager.shared.removeOutdatedData()
             }
         }
     }

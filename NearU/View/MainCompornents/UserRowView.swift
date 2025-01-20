@@ -115,7 +115,7 @@ struct UserRowView: View {
 
     // RSSI値を基に距離を計算する関数
     func distance(fromRSSI rssi: Int) -> String {
-        let txPower = -59 // デバイスの送信電力（RSSI値が1メートルの距離における理論的な値）。環境により調整が必要。
+        let txPower = -60 // デバイスの送信電力（RSSI値が1メートルの距離における理論的な値）。環境により調整が必要。
         let n = 2.0 // 環境による減衰係数（例：屋内では2.0、屋外では3.0）
 
         if rssi == 0 {

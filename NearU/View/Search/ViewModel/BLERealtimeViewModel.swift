@@ -16,7 +16,7 @@ class BLERealtimeViewModel: ObservableObject {
 
     init() {
         Task {
-            await fetchRealtimeAllUsers(realtimeDataList: RealmRealtimeManager.shared.realtimeData)
+            await fetchRealtimeAllUsers(realtimeDataList: RealtimeDataManager.shared.realtimeData)
         }
         setupSubscribers()
     }
@@ -41,7 +41,7 @@ class BLERealtimeViewModel: ObservableObject {
     }
 
     func setupSubscribers() {
-        RealmRealtimeManager.shared.$realtimeData
+        RealtimeDataManager.shared.$realtimeData
             .sink { [weak self] realtimeDataList in
                 guard let self = self else { return }
                 Task {
