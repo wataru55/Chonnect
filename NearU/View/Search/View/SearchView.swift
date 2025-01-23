@@ -7,9 +7,10 @@
 import SwiftUI
 
 struct SearchView: View {
-    //MARK: - property
+    @StateObject var historyManager = RealmHistoryManager()
     let currentUser: User
     @State private var searchText: String = ""
+    
 
     var body: some View {
         NavigationStack {

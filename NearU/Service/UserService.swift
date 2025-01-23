@@ -229,7 +229,7 @@ struct UserService {
             for document in snapshot.documents {
                 if let data = try? document.data(as: HistoryDataStruct.self) {
                     // Realmに保存
-                    await RealmManager.shared.storeData(data.userId, date: data.date)
+                    await RealmHistoryManager.shared.storeHistoryData(data.userId, date: data.date)
                 }
                 // 通知を削除
                 do {
@@ -272,6 +272,25 @@ struct UserService {
             try await ref.updateData(["isRead": true])
         } catch {
             throw error
+        }
+    }
+    
+    // FCMトークンをFirestoreに保存するメソッド
+    static func setFCMToken(fcmToken: String) async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            print("ユーザーがログインしていません")
+            return
+        }
+
+        let data: [String: Any] = [
+            "fcmtoken": fcmToken
+        ]
+
+        do {
+            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
+            print("Document successfully updated with FCM token")
+        } catch {
+            print("Error updating document: \(error)")
         }
     }
 }

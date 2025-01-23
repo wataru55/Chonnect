@@ -31,7 +31,9 @@ struct BLEHistoryView: View {
                             ProfileView(user: data.record.user, currentUser: currentUser, date: data.record.date,
                                         isShowFollowButton: true, isShowDateButton: true)
                                 .onAppear {
-                                    viewModel.markAsRead(data.record)
+                                    Task {
+                                        await viewModel.markAsRead(data.record)
+                                    }
                                 }
                         } label: {
                             UserRowView(user: data.record.user, tags: data.tags,
@@ -48,11 +50,8 @@ struct BLEHistoryView: View {
         .refreshable {
             loadingViewModel.isLoading = true
             Task {
-                // データのフェッチ
-                await UserService.fetchNotifications()
-                RealmManager.shared.loadHistoryDataFromRealm()
+                await viewModel.makeHistoryRowData()
                 // ローディング終了
-                //isLoading = false
                 loadingViewModel.isLoading = false
             }
         }
