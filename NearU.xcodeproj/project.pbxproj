@@ -16,6 +16,7 @@
 		63135D8E2CA90523004137AF /* BackgroundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135D8D2CA90523004137AF /* BackgroundImageView.swift */; };
 		63135DA32CB7ABCC004137AF /* RealmHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135DA22CB7ABCC004137AF /* RealmHistoryManager.swift */; };
 		631591BA2D361E8B00E16DE3 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591B92D361E8B00E16DE3 /* KalmanFilter.swift */; };
+		631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591CB2D44E14C00E16DE3 /* RealmService.swift */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
 		63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */; };
 		6344BE322CD5F254009F404E /* ViewTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE312CD5F254009F404E /* ViewTransitionManager.swift */; };
@@ -141,6 +142,7 @@
 		63135D8D2CA90523004137AF /* BackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageView.swift; sourceTree = "<group>"; };
 		63135DA22CB7ABCC004137AF /* RealmHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmHistoryManager.swift; sourceTree = "<group>"; };
 		631591B92D361E8B00E16DE3 /* KalmanFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
+		631591CB2D44E14C00E16DE3 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkView.swift; sourceTree = "<group>"; };
 		6344BE312CD5F254009F404E /* ViewTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTransitionManager.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				63F84BB62D1E6D47009FE5DD /* HistoryService.swift */,
 				639A09522D22252500494DC5 /* RealtimeDataManager.swift */,
 				631591B92D361E8B00E16DE3 /* KalmanFilter.swift */,
+				631591CB2D44E14C00E16DE3 /* RealmService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -749,6 +752,7 @@
 				637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */,
 				63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */,
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
+				631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */,
 				63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63FDDFEC2CF8378100B90074 /* FollowerUserRowData.swift in Sources */,
