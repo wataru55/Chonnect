@@ -11,8 +11,8 @@ import FirebaseFirestore
 import Combine
 
 @MainActor
-class RealmHistoryManager: ObservableObject {
-    static let shared = RealmHistoryManager()
+class HistoryManager: ObservableObject {
+    static let shared = HistoryManager()
 
     private var pendingHistoryData: [(userId: String, date: Date, isRead: Bool)] = []
     // 10秒ごとにpendingHistoryDataを Realm に書き込むタイマー

@@ -14,7 +14,7 @@
 		630B9EA62CC345B4002F06AB /* EditLanguageTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */; };
 		63135D8B2CA6643F004137AF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 63135D8A2CA6643F004137AF /* FirebaseAppCheck */; };
 		63135D8E2CA90523004137AF /* BackgroundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135D8D2CA90523004137AF /* BackgroundImageView.swift */; };
-		63135DA32CB7ABCC004137AF /* RealmHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135DA22CB7ABCC004137AF /* RealmHistoryManager.swift */; };
+		63135DA32CB7ABCC004137AF /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63135DA22CB7ABCC004137AF /* HistoryManager.swift */; };
 		631591BA2D361E8B00E16DE3 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591B92D361E8B00E16DE3 /* KalmanFilter.swift */; };
 		631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591CB2D44E14C00E16DE3 /* RealmService.swift */; };
 		63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */; };
@@ -140,7 +140,7 @@
 		630B9EA32CC344E9002F06AB /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
 		630B9EA52CC345B4002F06AB /* EditLanguageTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditLanguageTagsView.swift; sourceTree = "<group>"; };
 		63135D8D2CA90523004137AF /* BackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageView.swift; sourceTree = "<group>"; };
-		63135DA22CB7ABCC004137AF /* RealmHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmHistoryManager.swift; sourceTree = "<group>"; };
+		63135DA22CB7ABCC004137AF /* HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
 		631591B92D361E8B00E16DE3 /* KalmanFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
 		631591CB2D44E14C00E16DE3 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
@@ -268,7 +268,7 @@
 				63B64FE52B8C797400289469 /* BLECentralManager.swift */,
 				63DFF8C22C05B60300A6DFB8 /* BLEPeripheralManager.swift */,
 				63173DF52C36BEC700F1FE82 /* UserDefaultsManager.swift */,
-				63135DA22CB7ABCC004137AF /* RealmHistoryManager.swift */,
+				63135DA22CB7ABCC004137AF /* HistoryManager.swift */,
 				63BEA4932CD0B46A006382AF /* NotificationManager.swift */,
 				6344BE312CD5F254009F404E /* ViewTransitionManager.swift */,
 				63FDDFDA2CEF7A1800B90074 /* TagsService.swift */,
@@ -718,7 +718,7 @@
 				639A0BE52CE5C93B00A769C6 /* UserFollowFollowerView.swift in Sources */,
 				638732232BF4BC770099F68A /* ContentViewModel.swift in Sources */,
 				6344BE362CD708D5009F404E /* LoadingView.swift in Sources */,
-				63135DA32CB7ABCC004137AF /* RealmHistoryManager.swift in Sources */,
+				63135DA32CB7ABCC004137AF /* HistoryManager.swift in Sources */,
 				63AEA5CD2CC66B18009A22A2 /* UserDatePair.swift in Sources */,
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
