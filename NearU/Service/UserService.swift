@@ -217,42 +217,6 @@ struct UserService {
         }
     }
 
-    static func fetchNotifications() async {
-        guard let myDocumentId = AuthService.shared.currentUser?.id else { return }
-
-        let startTime = Date()
-        let notificationsRef = Firestore.firestore().collection("users").document(myDocumentId).collection("notifications")
-
-        do {
-            let snapshot = try await notificationsRef.getDocuments()
-
-            for document in snapshot.documents {
-                if let data = try? document.data(as: HistoryDataStruct.self) {
-                    // Realmに保存
-                    await HistoryManager.shared.storeHistoryData(data.userId, date: data.date)
-                }
-                // 通知を削除
-                do {
-                    try await document.reference.delete()
-                    print("Notification deleted successfully.")
-                } catch {
-                    print("Error deleting notification: \(error)")
-                }
-            }
-        } catch {
-            print("Error fetching notifications: \(error)")
-        }
-        // 経過時間の計算
-        let elapsed = Date().timeIntervalSince(startTime)
-        let minimumLoadingTime: TimeInterval = 2.0 // 2秒
-
-        if elapsed < minimumLoadingTime {
-            let remainingTime = minimumLoadingTime - elapsed
-            // Task.sleepで待機
-            try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
-        }
-    }
-
     static func checkIsFollowed(receivedId: String) async -> Bool {
         guard let documentId = AuthService.shared.currentUser?.id else { return false }
         let path = Firestore.firestore().collection("users").document(documentId).collection("followers").document(receivedId)
