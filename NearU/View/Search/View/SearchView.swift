@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct SearchView: View {
-    @StateObject var historyManager = RealmHistoryManager()
+    @StateObject var historyManager = HistoryManager()
     let currentUser: User
     @State private var searchText: String = ""
     
