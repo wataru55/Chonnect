@@ -8,13 +8,16 @@
 import SwiftUI
 import RealmSwift
 
-class RealmService {
-    static let shared = RealmService()
+actor RealmService {
+    var realm: Realm!
     
-    func saveHistoryData(userId: String, date: Date, isRead: Bool) {
+    init() async throws {
+        realm = try await Realm(actor: self)
+    }
+    
+    func saveHistoryData(userId: String, date: Date, isRead: Bool) async {
         do {
-            let realm = try Realm()
-            try realm.write {
+            try await realm.asyncWrite {
                 if let existingData = realm.objects(HistoryData.self).filter("userId == %@", userId).first {
                     existingData.date = date
                 } else {
@@ -31,21 +34,14 @@ class RealmService {
     }
     
     func fetchAllHistoryData() -> [HistoryDataStruct] {
-        do {
-            let realm = try Realm()
-            let data = realm.objects(HistoryData.self)
-            let historyDataStruct = Array(data.map { HistoryDataStruct(from: $0) })
-            return historyDataStruct
-        } catch {
-            print("Error fetching history data: \(error)")
-            return []
-        }
+        let data = realm.objects(HistoryData.self)
+        let historyDataStruct = Array(data.map { HistoryDataStruct(from: $0) })
+        return historyDataStruct
     }
     
-    func deleteHistoryData(for userIds: [String]) {
+    func deleteHistoryData(for userIds: [String]) async {
         do {
-            let realm = try Realm()
-            try realm.write {
+            try await realm.asyncWrite {
                 let objectsToDelete = realm.objects(HistoryData.self).filter("userId IN %@", userIds)
                 realm.delete(objectsToDelete)
             }

@@ -10,9 +10,10 @@ import RealmSwift
 import FirebaseFirestore
 import Combine
 
-@MainActor
 class HistoryManager: ObservableObject {
     static let shared = HistoryManager()
+    
+    private var realmService: RealmService?
 
     private var pendingHistoryData: [(userId: String, date: Date, isRead: Bool)] = []
     // 10秒ごとにpendingHistoryDataを Realm に書き込むタイマー
@@ -30,10 +31,18 @@ class HistoryManager: ObservableObject {
     }
 
     init() {
+        Task {
+            do {
+                let service = try await RealmService()
+                self.realmService = service
+            } catch {
+                print("Failed to initialize RealmService: \(error)")
+            }
+        }
         // --- 10秒おきのバッチ処理 (Realm書き込み) ---
         historyBatchTimer = Timer.scheduledTimer(withTimeInterval: historyBatchInterval,
                                                  repeats: true) { [weak self] _ in
-            Task { @MainActor in
+            Task {
                 self?.saveHistoryDataToRealm()  // 10秒に1回、メモリ→Realm
             }
         }
@@ -41,7 +50,7 @@ class HistoryManager: ObservableObject {
         // --- 30秒おきのFirestore同期＆Realm削除 ---
         firestoreSyncTimer = Timer.scheduledTimer(withTimeInterval: firestoreSyncInterval,
                                                   repeats: true) { [weak self] _ in
-            Task { @MainActor in
+            Task {
                 await self?.syncHistoryDataToFireStore()  // 30秒に1回、Realm→Firestore→削除
             }
         }
@@ -69,7 +78,9 @@ class HistoryManager: ObservableObject {
                 pendingHistoryData.append((receivedUserId, date, false))
             }
         } else {
-            RealmService.shared.saveHistoryData(userId: receivedUserId, date: date, isRead: false)
+            Task {
+                await realmService?.saveHistoryData(userId: receivedUserId, date: date, isRead: false)
+            }
         }
     }
     
@@ -84,15 +95,26 @@ class HistoryManager: ObservableObject {
         let updatesToProcess = pendingHistoryData
         pendingHistoryData.removeAll()
         
-        for (userId, date, isRead) in updatesToProcess {
-            RealmService.shared.saveHistoryData(userId: userId, date: date, isRead: isRead)
+        Task {
+            guard let service = realmService else {
+                return
+            }
+            
+            for (userId, date, isRead) in updatesToProcess {
+                await service.saveHistoryData(userId: userId, date: date, isRead: isRead)
+            }
         }
     }
     
     // Realm上の履歴データをFirestoreに保存し、成功したものをRealmから削除するメソッド
     private func syncHistoryDataToFireStore() async {
         print("--------------syncHistoryDataToFireStore------------------")
-        let historyDataList = RealmService.shared.fetchAllHistoryData()
+        
+        guard let service = realmService else {
+            return
+        }
+        
+        let historyDataList = await service.fetchAllHistoryData()
         
         guard !historyDataList.isEmpty else { return }
             
@@ -115,7 +137,7 @@ class HistoryManager: ObservableObject {
         // ここまで来た時点で deleteUserIds には保存に成功した ID が入っている
         print("-------------\(deleteUserIds)--------------")
         if !deleteUserIds.isEmpty {
-            RealmService.shared.deleteHistoryData(for: deleteUserIds)
+            await service.deleteHistoryData(for: deleteUserIds)
         } else {
             print("No HistoryData was successfully synced this time.")
         }
