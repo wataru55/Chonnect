@@ -7,32 +7,29 @@
 
 import SwiftUI
 
-struct supplementButtonView: View {
-    @State private var isShowPopover = false
+struct SupplementButtonView: View {
+    @StateObject private var viewModel = SupplementButtonViewModel()
     let date: Date
+    let userId: String
 
     var body: some View {
         VStack {
             Button {
-                isShowPopover = true
+                viewModel.isShowPopover = true
             } label: {
                 Image(systemName: "info.circle")
             }
             .font(.system(size: 20))
             .foregroundStyle(.black)
-            .popover(isPresented: $isShowPopover) {
-                Tapover(date: date)
+            .popover(isPresented: $viewModel.isShowPopover) {
+                tapOver(date: date)
                     .presentationCompactAdaptation(PresentationAdaptation.popover)
             }
 
         }
     }
-}
-
-struct Tapover: View {
-    let date: Date
-
-    var body: some View {
+    
+    private func tapOver(date: Date) -> some View {
         VStack(spacing: 0) {
             Text("最後にすれちがった日時：\(formattedDate(date))")
                 .font(.footnote)
@@ -55,7 +52,9 @@ struct Tapover: View {
                     .frame(width: 1)
                 
                 Button {
-                    print("ブロック")
+                    Task {
+                        await viewModel.addBlockList(id: userId)
+                    }
                 } label: {
                     Text("ブロック")
                         .foregroundStyle(.red)
@@ -64,9 +63,9 @@ struct Tapover: View {
                 .frame(maxWidth: .infinity)
             }
             .font(.footnote)
+        }
     }
-
-    }
+    
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP") // 日本語ロケール
@@ -76,5 +75,5 @@ struct Tapover: View {
 }
 
 #Preview {
-    supplementButtonView(date: Date())
+    SupplementButtonView(date: Date(), userId: "")
 }
