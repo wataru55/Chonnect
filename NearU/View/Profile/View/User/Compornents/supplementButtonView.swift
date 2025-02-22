@@ -16,7 +16,7 @@ struct supplementButtonView: View {
             Button {
                 isShowPopover = true
             } label: {
-                Image(systemName: "questionmark.circle")
+                Image(systemName: "info.circle")
             }
             .font(.system(size: 20))
             .foregroundStyle(.black)
@@ -33,11 +33,39 @@ struct Tapover: View {
     let date: Date
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Text("最後にすれちがった日時：\(formattedDate(date))")
                 .font(.footnote)
                 .padding()
-        }
+            
+            Divider()
+            
+            HStack(spacing: 0) {
+                Button {
+                    print("報告")
+                } label: {
+                    Text("報告")
+                        .foregroundStyle(.black)
+                        .padding()
+                }
+                .frame(maxWidth: .infinity)
+                
+                Rectangle()
+                    .foregroundStyle(.gray.opacity(0.5))
+                    .frame(width: 1)
+                
+                Button {
+                    print("ブロック")
+                } label: {
+                    Text("ブロック")
+                        .foregroundStyle(.red)
+                        .padding()
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .font(.footnote)
+    }
+
     }
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
