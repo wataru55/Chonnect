@@ -306,7 +306,6 @@
 		6367B7932BE149EB0065C1BD /* MainCompornents */ = {
 			isa = PBXGroup;
 			children = (
-				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
 				63AEF0F82C0C4C2A00DE196E /* TopTabView.swift */,
 				637BA0642C4970A800368566 /* MenuView.swift */,
 				6344BE352CD708D5009F404E /* LoadingView.swift */,
@@ -609,6 +608,7 @@
 		63FDDFE42CF6B41A00B90074 /* Compornents */ = {
 			isa = PBXGroup;
 			children = (
+				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
 				63FDDFE52CF6B44D00B90074 /* supplementButtonView.swift */,
 			);
 			path = Compornents;
