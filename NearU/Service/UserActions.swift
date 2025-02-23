@@ -10,19 +10,20 @@ import Firebase
 
 struct UserActions {
     
-    static func blockUser(blockUserId: String) async throws {
+    static func blockUser(targetUserId: String) async throws {
         guard let currentUserId = AuthService.shared.currentUser?.id else { return }
-        let ref = Firestore.firestore().collection("users").document(currentUserId).collection("blocks")
+        let db = Firestore.firestore()
         
-        let addData: [String: Any] = [
-            "id": blockUserId,
-            "timeStamp": FieldValue.serverTimestamp()
-        ]
+        // 自分のblocksへのパス
+        let myBlockRef = db.collection("users").document(currentUserId).collection("blocks").document(targetUserId)
+        // 相手のblocksへのパス
+        let targetBlockRef = db.collection("users").document(targetUserId).collection("blockedBy").document(currentUserId)
         
-        do {
-            try await ref.document(blockUserId).setData(addData)
-        } catch {
-            throw error
-        }
+        // バッチ処理でユーザーをブロック
+        let batch = db.batch()
+        batch.setData(["timeStamp": Timestamp()], forDocument: myBlockRef)
+        batch.setData(["timeStamp": Timestamp()], forDocument: targetBlockRef)
+        
+        try await batch.commit()
     }
 }
