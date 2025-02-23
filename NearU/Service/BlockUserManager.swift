@@ -13,11 +13,7 @@ final class BlockUserManager: ObservableObject {
     
     static let shared = BlockUserManager()
     
-    private init() {
-        Task {
-            try await loadBlockUserIds()
-        }
-    }
+    private init() {}
     
     /// ブロックした全ユーザーのidをフェッチ
     func loadBlockUserIds() async throws {
