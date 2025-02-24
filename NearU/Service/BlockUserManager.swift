@@ -10,6 +10,7 @@ import Firebase
 
 final class BlockUserManager: ObservableObject {
     @Published var blockUserIds: [String] = []
+    var blockedByUserIds: [String] = []
     
     static let shared = BlockUserManager()
     
@@ -20,19 +21,40 @@ final class BlockUserManager: ObservableObject {
         guard let currentUserIds = AuthService.shared.currentUser?.id else { return }
         let ref = Firestore.firestore().collection("users").document(currentUserIds).collection("blocks")
         
-        do {
-            let snapshot = try await ref.getDocuments()
-            let ids = snapshot.documents.map { $0.documentID }
-            await MainActor.run {
-                self.blockUserIds = ids
-            }
-        } catch {
-            throw error
+        let snapshot = try await ref.getDocuments()
+        let ids = snapshot.documents.map { $0.documentID }
+        await MainActor.run {
+            self.blockUserIds = ids
         }
     }
     
+    func loadBlockedByUserIds() async throws {
+        guard let currentUserIds = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(currentUserIds).collection("blockedBy")
+        
+        let snapshot = try await ref.getDocuments()
+        let ids = snapshot.documents.map { $0.documentID }
+        await MainActor.run {
+            self.blockedByUserIds = ids
+        }
+        
+    }
+
+    func loadAllBlockData() async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                try await self.loadBlockUserIds()
+            }
+            group.addTask {
+                try await self.loadBlockedByUserIds()
+            }
+            // すべてのタスクの完了を待機
+            try await group.waitForAll()
+        }
+    }
+
     /// ブロックされたユーザーであるか確認
     func isUserBlocked(id: String) -> Bool {
-        return blockUserIds.contains(id)
+        return blockUserIds.contains(id) || blockedByUserIds.contains(id)
     }
 }

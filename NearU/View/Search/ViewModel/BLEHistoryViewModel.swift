@@ -24,7 +24,8 @@ class BLEHistoryViewModel: ObservableObject {
         }
 
         setupSubscribers()
-        observeFirestoreChanges()
+        //ユーザーブロックのフィルタリングに支障を来たすから一旦コメントアウト
+        //observeFirestoreChanges()
     }
     
     deinit {
@@ -44,12 +45,13 @@ class BLEHistoryViewModel: ObservableObject {
         isLoading = true
         
         do {
-            try await BlockUserManager.shared.loadBlockUserIds()
+            try await BlockUserManager.shared.loadAllBlockData()
             
             let historyDataList = await loadHistoryData()
             let filteredHistoryData = filterBlockedUsers(historyDataList: historyDataList)
             
             guard !filteredHistoryData.isEmpty else {
+                self.historyRowData = []
                 isLoading = false
                 return
             }
@@ -154,7 +156,6 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
 
-
     func setupSubscribers() {
         $historyRowData
             .map { records in
@@ -171,7 +172,12 @@ class BLEHistoryViewModel: ObservableObject {
     // ヘルパー関数
     /// ブロックユーザーのフィルタリング
     private func filterBlockedUsers(historyDataList: [HistoryDataStruct]) -> [HistoryDataStruct] {
-        return historyDataList.filter { !BlockUserManager.shared.blockUserIds.contains($0.userId) }
+        print("blockUserIds: \(BlockUserManager.shared.blockUserIds)")
+        print("blockedByUserIds: \(BlockUserManager.shared.blockedByUserIds)")
+        return historyDataList.filter { historyData in
+            !BlockUserManager.shared.blockUserIds.contains(historyData.userId) &&
+            !BlockUserManager.shared.blockedByUserIds.contains(historyData.userId)
+        }
     }
     
     /// UserHistoryRecordの作成
