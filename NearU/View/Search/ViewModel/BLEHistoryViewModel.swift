@@ -48,7 +48,7 @@ class BLEHistoryViewModel: ObservableObject {
             try await BlockUserManager.shared.loadAllBlockData()
             
             let historyDataList = await loadHistoryData()
-            let filteredHistoryData = filterBlockedUsers(historyDataList: historyDataList)
+            let filteredHistoryData = BlockUserManager.shared.filterBlockedUsers(dataList: historyDataList)
             
             guard !filteredHistoryData.isEmpty else {
                 self.historyRowData = []
@@ -170,16 +170,6 @@ class BLEHistoryViewModel: ObservableObject {
     }
     
     // ヘルパー関数
-    /// ブロックユーザーのフィルタリング
-    private func filterBlockedUsers(historyDataList: [HistoryDataStruct]) -> [HistoryDataStruct] {
-        print("blockUserIds: \(BlockUserManager.shared.blockUserIds)")
-        print("blockedByUserIds: \(BlockUserManager.shared.blockedByUserIds)")
-        return historyDataList.filter { historyData in
-            !BlockUserManager.shared.blockUserIds.contains(historyData.userId) &&
-            !BlockUserManager.shared.blockedByUserIds.contains(historyData.userId)
-        }
-    }
-    
     /// UserHistoryRecordの作成
     private func createUserHistoryRecords(historyDataList: [HistoryDataStruct]) async throws -> [UserHistoryRecord] {
         let userIds = historyDataList.map { $0.userId }

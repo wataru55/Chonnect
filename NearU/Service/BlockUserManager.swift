@@ -52,6 +52,14 @@ final class BlockUserManager: ObservableObject {
             try await group.waitForAll()
         }
     }
+    
+    /// ブロックユーザーのフィルタリング関数
+    func filterBlockedUsers<T: UserIdentifiable>(dataList: [T]) -> [T] {
+        return dataList.filter { historyData in
+            !BlockUserManager.shared.blockUserIds.contains(historyData.userIdentifier) &&
+            !BlockUserManager.shared.blockedByUserIds.contains(historyData.userIdentifier)
+        }
+    }
 
     /// ブロックされたユーザーであるか確認
     func isUserBlocked(id: String) -> Bool {
