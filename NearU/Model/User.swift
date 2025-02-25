@@ -9,7 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestoreSwift
 
-struct User: Identifiable, Hashable, Codable {
+struct User: Identifiable, Hashable, Codable, UserIdentifiable {
     var id: String
     let uid: String
     var username: String
@@ -24,6 +24,8 @@ struct User: Identifiable, Hashable, Codable {
         guard let currentUid = Auth.auth().currentUser?.uid else { return false } //現在のユーザ情報があればそれをcurrentUidに格納
         return currentUid == uid
     }
+    
+    var userIdentifier: String { id }
 }
 
 extension User {

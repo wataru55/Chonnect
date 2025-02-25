@@ -7,10 +7,12 @@
 
 import SwiftUI
 
-struct HistoryDataStruct: Codable {
+struct HistoryDataStruct: Codable, UserIdentifiable {
     let userId: String
     var date: Date
     var isRead: Bool
+    
+    var userIdentifier: String { userId }
     
     init(from object: HistoryData) {
         self.userId = object.userId

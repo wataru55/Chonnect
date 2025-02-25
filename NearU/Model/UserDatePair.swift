@@ -11,3 +11,7 @@ struct UserDatePair: Hashable, Codable {
     let user: User
     let date: Date
 }
+
+extension UserDatePair: UserIdentifiable {
+    var userIdentifier: String { user.id }
+}
