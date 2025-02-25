@@ -25,10 +25,16 @@ class FollowerViewModel: ObservableObject {
     func loadFollowers() async {
         do {
             let users = try await UserService.fetchFollowers(receivedId: "")
+            let filteredUsers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
+            
+            guard !filteredUsers.isEmpty else {
+                self.followers = []
+                return
+            }
 
             var followers: [FollowerUserRowData] = []
 
-            for user in users {
+            for user in filteredUsers {
                 let interestTags = try await UserService.fetchInterestTags(documentId: user.user.id)
                 let addData = FollowerUserRowData(record: user, tags: interestTags)
                 followers.append(addData)
