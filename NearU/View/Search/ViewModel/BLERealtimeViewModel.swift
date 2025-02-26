@@ -55,6 +55,16 @@ class BLERealtimeViewModel: ObservableObject {
                 records.sorted { $0.rssi > $1.rssi }
             }
             .assign(to: &$sortedUserRealtimeRecords)
+        
+        BlockUserManager.shared.$blockUserIds
+            .sink { [weak self] newBlockUserIds in
+                guard let self = self else { return }
+                
+                self.userRealtimeRecords = self.userRealtimeRecords.filter { record in
+                    !newBlockUserIds.contains(record.user.userIdentifier)
+                }
+            }
+            .store(in: &cancellables)
     }
 
 }

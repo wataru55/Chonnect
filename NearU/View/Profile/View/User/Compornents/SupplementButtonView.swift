@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SupplementButtonView: View {
     @StateObject private var viewModel = SupplementButtonViewModel()
+    @Environment(\.dismiss) var dismiss
     let date: Date
     let userId: String
 
@@ -33,6 +34,9 @@ struct SupplementButtonView: View {
                 Button("ブロック", role: .destructive) {
                     Task {
                         await viewModel.addBlockList(id: userId)
+                        await MainActor.run {
+                            dismiss()
+                        }
                     }
                 }
             } message: {

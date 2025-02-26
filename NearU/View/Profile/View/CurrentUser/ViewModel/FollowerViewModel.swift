@@ -12,9 +12,11 @@ import Firebase
 class FollowerViewModel: ObservableObject {
     @Published var followers: [FollowerUserRowData] = []
     private var listener: ListenerRegistration?
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         listenForUpdates()
+        setupSubscribers()
 
         Task {
             await loadFollowers()
@@ -64,6 +66,19 @@ class FollowerViewModel: ObservableObject {
                     await self.loadFollowers()
                 }
             }
+    }
+    
+    private func setupSubscribers() {
+        BlockUserManager.shared.$blockUserIds
+            .sink { [weak self] blockUserIds in
+                guard let self = self else { return }
+                
+                // blockUserIdsに含まれるユーザーを除外
+                self.followers = self.followers.filter { follower in
+                    !blockUserIds.contains(follower.record.userIdentifier)
+                }
+            }
+            .store(in: &cancellables)
     }
 
     func updateRead(userId: String) async {

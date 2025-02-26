@@ -167,6 +167,16 @@ class BLEHistoryViewModel: ObservableObject {
                 }
             }
             .assign(to: &$sortedHistoryRowData)
+        
+        BlockUserManager.shared.$blockUserIds
+            .sink { [weak self] newBlockUserIds in
+                guard let self = self else { return }
+                
+                self.historyRowData = self.historyRowData.filter { historyData in
+                    !newBlockUserIds.contains(historyData.record.userIdentifier)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     // ヘルパー関数

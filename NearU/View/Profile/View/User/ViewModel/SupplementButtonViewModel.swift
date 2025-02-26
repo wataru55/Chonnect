@@ -13,7 +13,7 @@ class SupplementButtonViewModel: ObservableObject {
     
     func addBlockList(id: String) async {
         do {
-            try await UserActions.blockUser(targetUserId: id)
+            try await BlockUserManager.shared.blockUser(targetUserId: id)
         } catch {
             print("error: \(error)")
         }
