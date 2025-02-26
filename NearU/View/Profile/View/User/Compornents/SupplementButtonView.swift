@@ -25,6 +25,19 @@ struct SupplementButtonView: View {
                 tapOver(date: date)
                     .presentationCompactAdaptation(PresentationAdaptation.popover)
             }
+            .alert("確認", isPresented: $viewModel.isShowAlert) {
+                Button("戻る", role: .cancel) {
+                    viewModel.isShowAlert = false
+                }
+                
+                Button("ブロック", role: .destructive) {
+                    Task {
+                        await viewModel.addBlockList(id: userId)
+                    }
+                }
+            } message: {
+                Text("このユーザーをブロックしますか？")
+            }
 
         }
     }
@@ -52,9 +65,7 @@ struct SupplementButtonView: View {
                     .frame(width: 1)
                 
                 Button {
-                    Task {
-                        await viewModel.addBlockList(id: userId)
-                    }
+                    viewModel.isShowAlert = true
                 } label: {
                     Text("ブロック")
                         .foregroundStyle(.red)

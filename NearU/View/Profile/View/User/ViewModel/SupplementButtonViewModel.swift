@@ -9,6 +9,7 @@ import Foundation
 
 class SupplementButtonViewModel: ObservableObject {
     @Published var isShowPopover = false
+    @Published var isShowAlert = false
     
     func addBlockList(id: String) async {
         do {
