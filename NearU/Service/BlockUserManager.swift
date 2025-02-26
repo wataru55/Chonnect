@@ -53,6 +53,17 @@ final class BlockUserManager: ObservableObject {
         }
     }
     
+    func unblockUser(id: String) async throws {
+        guard let currentUserIds = AuthService.shared.currentUser?.id else { return }
+        let ref = Firestore.firestore().collection("users").document(currentUserIds).collection("blocks").document(id)
+        
+        try await ref.delete()
+        
+        await MainActor.run {
+            self.blockUserIds.removeAll { $0 == id }
+        }
+    }
+    
     /// ブロックユーザーのフィルタリング関数
     func filterBlockedUsers<T: UserIdentifiable>(dataList: [T]) -> [T] {
         return dataList.filter { historyData in
