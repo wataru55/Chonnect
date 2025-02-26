@@ -24,7 +24,8 @@ class BLEHistoryViewModel: ObservableObject {
         }
 
         setupSubscribers()
-        observeFirestoreChanges()
+        //ユーザーブロックのフィルタリングに支障を来たすから一旦コメントアウト
+        //observeFirestoreChanges()
     }
     
     deinit {
@@ -42,52 +43,27 @@ class BLEHistoryViewModel: ObservableObject {
     //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
     func makeHistoryRowData() async {
         isLoading = true
-        var addData: [HistoryRowData] = []
-        
-        let historyDataList = await loadHistoryData()
-        guard !historyDataList.isEmpty else {
-            isLoading = false
-            return
-        }
         
         do {
-            let userIds = historyDataList.map { $0.userId }
-            let dates = historyDataList.map { $0.date }
-            let isReads = historyDataList.map { $0.isRead }
-            let users = try await UserService.fetchUsers(userIds)
+            try await BlockUserManager.shared.loadAllBlockData()
             
-            // UserHistoryRecordを作成
-            let userHistoryRecords = (0..<users.count).map { index in
-                UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
+            let historyDataList = await loadHistoryData()
+            let filteredHistoryData = BlockUserManager.shared.filterBlockedUsers(dataList: historyDataList)
+            
+            guard !filteredHistoryData.isEmpty else {
+                self.historyRowData = []
+                isLoading = false
+                return
             }
             
-            // 並列処理でデータを取得
-            addData = try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
-                for record in userHistoryRecords {
-                    group.addTask {
-                        async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
-                        async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
-                        
-                        return HistoryRowData(
-                            record: record,
-                            tags: try await interestTags,
-                            isFollowed: await isFollowed
-                        )
-                    }
-                }
-                
-                var results: [HistoryRowData] = []
-                for try await data in group {
-                    results.append(data)
-                }
-                return results
-            }
+            let userHistoryRecords = try await createUserHistoryRecords(historyDataList: filteredHistoryData)
+            let historyRowDataList = try await fetchHistoryRowData(records: userHistoryRecords)
             
-            self.historyRowData = addData
-            
+            self.historyRowData = historyRowDataList
         } catch {
-            print("Error fetching users: \(error)")
+            print("error: \(error)")
         }
+        
         isLoading = false
     }
 
@@ -180,7 +156,6 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
 
-
     func setupSubscribers() {
         $historyRowData
             .map { records in
@@ -192,6 +167,54 @@ class BLEHistoryViewModel: ObservableObject {
                 }
             }
             .assign(to: &$sortedHistoryRowData)
+        
+        BlockUserManager.shared.$blockUserIds
+            .sink { [weak self] newBlockUserIds in
+                guard let self = self else { return }
+                
+                self.historyRowData = self.historyRowData.filter { historyData in
+                    !newBlockUserIds.contains(historyData.record.userIdentifier)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // ヘルパー関数
+    /// UserHistoryRecordの作成
+    private func createUserHistoryRecords(historyDataList: [HistoryDataStruct]) async throws -> [UserHistoryRecord] {
+        let userIds = historyDataList.map { $0.userId }
+        let dates = historyDataList.map { $0.date }
+        let isReads = historyDataList.map { $0.isRead }
+        
+        let users = try await UserService.fetchUsers(userIds)
+        
+        return (0..<users.count).map { index in
+            UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
+        }
+    }
+    
+    /// HistoryRowDataの作成（並列処理）
+    private func fetchHistoryRowData(records: [UserHistoryRecord]) async throws -> [HistoryRowData] {
+        return try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
+            for record in records {
+                group.addTask {
+                    async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
+                    async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
+                    
+                    return HistoryRowData(
+                        record: record,
+                        tags: try await interestTags,
+                        isFollowed: await isFollowed
+                    )
+                }
+            }
+            
+            var results: [HistoryRowData] = []
+            for try await data in group {
+                results.append(data)
+            }
+            return results
+        }
     }
 }
 
