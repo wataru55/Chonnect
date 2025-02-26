@@ -18,7 +18,7 @@ struct SettingView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("近くのユーザーがあなたのプロフィールを閲覧できます")) {
+                Section(header: Text("近くのユーザーとのプロフィール交換を可能にする")) {
                     Toggle(isOn: $isOnBluetooth) {
                         Text("BLE通信")
                     }
@@ -35,7 +35,7 @@ struct SettingView: View {
                     }
                 }
 
-                Section(header: Text("SNSリンクへのアクセスを相互フォローに限定します")) {
+                Section(header: Text("SNSリンクへのアクセスを相互フォローに限定")) {
                     Toggle(isOn: $viewModel.isPrivate) {
                         Text("SNSのアクセス制限")
                     }
@@ -44,59 +44,72 @@ struct SettingView: View {
                         Task { try await viewModel.updateIsPrivate() }
                     }
                 }
+                
+                Section(header: Text("ブロックしたユーザーの確認および解除")) {
+                    NavigationLink {
+                        BlockListView()
+                    } label: {
+                        Text("ブロック一覧")
+                    }
+                }
+                
+                AppInfo()
 
-
-                Section(header: Text("Application")) {
-                    HStack {
-                      Text("Product").foregroundStyle(Color.gray)
-                      Spacer()
-                      Text("Chonnect")
-                    }
-                    HStack {
-                      Text("Compatibility").foregroundStyle(Color.gray)
-                      Spacer()
-                        Text("iPhone")
-                    }
-                    HStack {
-                      Text("Developer").foregroundStyle(Color.gray)
-                      Spacer()
-                        VStack(alignment: .trailing) {
-                            Text("Wataru Takahashi")
-                            Text("Tsubasa Watanabe")
-                            Text("Ukyo Taniguchi")
-                        }
-                    }
-                    HStack {
-                      Text("Version").foregroundStyle(Color.gray)
-                      Spacer()
-                      Text("1.0.0")
-                    }
-                    
-                    HStack {
-                            Spacer() // 左のスペーサー
-                            Button(action: {
-                                AuthService.shared.signout()
-                            }, label: {
-                                Text("Log out")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.black)
-                                    .frame(width: 200, height: 44)
-                                    .background(.white)
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .stroke(.gray)
-                                    )
-                            })
-                            Spacer() // 右のスペーサー
-                    }//hstack
-                    .padding(.top)
-                  }
             }
-            .navigationTitle("Setting")
+            .navigationTitle("設定")
+            .toolbarBackground(Color.mint, for: .navigationBar)
         }//navigaiton
     }//body
+    
+    private func AppInfo() -> some View {
+        Section(header: Text("Application")) {
+            HStack {
+                Text("Product").foregroundStyle(Color.gray)
+                Spacer()
+                Text("Chonnect")
+            }
+            HStack {
+                Text("Compatibility").foregroundStyle(Color.gray)
+                Spacer()
+                Text("iPhone")
+            }
+            HStack {
+                Text("Developer").foregroundStyle(Color.gray)
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text("Wataru Takahashi")
+                    Text("Tsubasa Watanabe")
+                    Text("Ukyo Taniguchi")
+                }
+            }
+            HStack {
+                Text("Version").foregroundStyle(Color.gray)
+                Spacer()
+                Text("1.0.0")
+            }
+            
+            HStack {
+                Spacer()
+                Button(action: {
+                    AuthService.shared.signout()
+                }, label: {
+                    Text("Log out")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.black)
+                        .frame(width: 200, height: 44)
+                        .background(.white)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.gray)
+                        )
+                })
+                Spacer()
+            }//hstack
+            .padding(.top)
+        }
+    }
 }//view
 
 #Preview {

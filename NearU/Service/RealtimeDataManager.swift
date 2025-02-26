@@ -30,6 +30,11 @@ class RealtimeDataManager: ObservableObject {
     
     // データをメモリ上で管理
     func storeRealtimeData(receivedUserId: String, date: Date, rssi: Int) {
+        guard !BlockUserManager.shared.isUserBlocked(id: receivedUserId) else {
+            print("This user is blocked.")
+            return
+        }
+        
         pendingRealtimeData.append((receivedUserId, date, rssi))
         
         // 初回は即時更新

@@ -12,3 +12,9 @@ struct UserHistoryRecord: Hashable, Codable {
     var date: Date
     var isRead: Bool
 }
+
+extension UserHistoryRecord: UserIdentifiable {
+    var userIdentifier: String { user.id }
+}
+
+

@@ -125,6 +125,13 @@ class ProfileViewModel: ObservableObject {
     func loadFollowUsers() async {
         do {
             let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
+            let filteredData = BlockUserManager.shared.filterBlockedUsers(dataList: pairData)
+            
+            guard !filteredData.isEmpty else {
+                self.follows = []
+                return
+            }
+                
             var followUserRowData: [FollowUserRowData] = []
 
             for data in pairData {
@@ -144,9 +151,16 @@ class ProfileViewModel: ObservableObject {
     func loadFollowers() async {
         do {
             let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
+            let filteredRecords = BlockUserManager.shared.filterBlockedUsers(dataList: userHistoryRecords)
+            
+            guard !filteredRecords.isEmpty else {
+                self.followers = []
+                return
+            }
+            
             var historyRowData: [HistoryRowData] = []
 
-            for record in userHistoryRecords {
+            for record in filteredRecords {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
                 let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
                 let addData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
