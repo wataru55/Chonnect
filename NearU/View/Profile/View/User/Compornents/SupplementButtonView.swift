@@ -66,7 +66,7 @@ struct SupplementButtonView: View {
                 
                 Rectangle()
                     .foregroundStyle(.gray.opacity(0.5))
-                    .frame(width: 1)
+                    .frame(width: 0.5)
                 
                 Button {
                     viewModel.isShowAlert = true
