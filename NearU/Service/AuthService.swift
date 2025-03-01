@@ -33,7 +33,13 @@ class AuthService {
         }
     }
     
-    @MainActor
+    func reAuthenticate(password: String) async throws {
+        guard let userSession = self.userSession, let email = userSession.email else { return }
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        
+        try await Auth.auth().currentUser?.reauthenticate(with: credential)
+    }
+    
     func resetPassword(withEmail email: String) async throws { //パスワードリセット
         do {
             try await Auth.auth().sendPasswordReset(withEmail: email)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditEmailView: View {
     @ObservedObject var viewModel: SettingViewModel
+    @FocusState var focus: Bool
     
     var body: some View {
         VStack (spacing: 10) {
@@ -17,7 +18,7 @@ struct EditEmailView: View {
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("新しいメールアドレスを入力してください。\n確認メールが送信されます。")
+            Text("新しいメールアドレスを入力してください\n確認メールが送信されます。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -33,6 +34,17 @@ struct EditEmailView: View {
 
             TextField("メールアドレス", text: $viewModel.newEmail)
                 .modifier(IGTextFieldModifier())
+                .focused(self.$focus)
+                .toolbar{
+                    ToolbarItem(placement: .keyboard){
+                        HStack{
+                            Spacer()
+                            Button("閉じる"){
+                                self.focus = false
+                            }
+                        }
+                    }
+                }
 
             Button {
                 Task {
@@ -48,18 +60,36 @@ struct EditEmailView: View {
                     .cornerRadius(12)
                     .padding(.top)
             }
+            .alert("再認証が必要です", isPresented: $viewModel.isShowAlert) {
+                SecureField("パスワード", text: $viewModel.password)
+                
+                Button("キャンセル") {
+                    viewModel.isShowAlert = false
+                }
+                Button("完了") {
+                    viewModel.isShowAlert = false
+                    Task {
+                        await viewModel.reAuthAndEditEmail()
+                    }
+                }
+            } message: {
+                Text(
+                    "最後にログインしてから長時間経過しています\nログイン時のパスワードを入力してください。"
+                )
+            }
             
-            if viewModel.isShowMessage {
-                Text("アドレスに確認メールが送信されました。")
+            if let message = viewModel.message {
+                Text(message)
+                    .padding(.top, 10)
                     .onAppear {
                         Task {
                             try? await Task.sleep(nanoseconds: 3_000_000_000)
-                            viewModel.isShowMessage = false
+                            viewModel.message = nil
                         }
                     }
             }
 
-            Spacer() //上に押し上げるため
+            Spacer()
         }//vstack
     }
 }

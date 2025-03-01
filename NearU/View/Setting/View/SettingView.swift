@@ -59,7 +59,6 @@ struct SettingView: View {
                     } label: {
                         Text("メールアドレス変更")
                     }
-
                 }
                 
                 AppInfo()
