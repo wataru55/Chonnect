@@ -16,6 +16,7 @@ class SettingViewModel: ObservableObject {
     @Published var isPrivate: Bool
     @Published var isShowAlert: Bool = false
     @Published var isShowCheck: Bool = false
+    @Published var isShowResend: Bool = false
     @Published var message: String? = nil
     
     var currentEmail: String {
@@ -46,6 +47,23 @@ class SettingViewModel: ObservableObject {
             try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: newEmail)
             
             self.isShowCheck = true
+            
+        } catch {
+            print("error: \(error)")
+            self.message = "予期せぬエラーです。もう一度お試しください。"
+            self.password = ""
+        }
+    }
+    
+    @MainActor
+    func reAuthAndEditPassword() async {
+        do {
+            try await AuthService.shared.reAuthenticate(email: currentEmail, password: password)
+            
+            try await AuthService.shared.resetPassword(withEmail: newEmail)
+            
+            self.message = "メールが送信されました"
+            self.isShowResend = true
             
         } catch {
             print("error: \(error)")
