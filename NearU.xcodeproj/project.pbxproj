@@ -26,6 +26,7 @@
 		63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */; };
 		63226E302D6F645B006EBCCF /* BlockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */; };
 		63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E312D71A2A5006EBCCF /* EditEmailView.swift */; };
+		63226E342D7374D5006EBCCF /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E332D7374D5006EBCCF /* CheckView.swift */; };
 		6344BE322CD5F254009F404E /* ViewTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE312CD5F254009F404E /* ViewTransitionManager.swift */; };
 		6344BE362CD708D5009F404E /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE352CD708D5009F404E /* LoadingView.swift */; };
 		6344BE382CD71678009F404E /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE372CD71678009F404E /* LoadingViewModel.swift */; };
@@ -159,6 +160,7 @@
 		63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListView.swift; sourceTree = "<group>"; };
 		63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListViewModel.swift; sourceTree = "<group>"; };
 		63226E312D71A2A5006EBCCF /* EditEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEmailView.swift; sourceTree = "<group>"; };
+		63226E332D7374D5006EBCCF /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
 		6344BE312CD5F254009F404E /* ViewTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTransitionManager.swift; sourceTree = "<group>"; };
 		6344BE352CD708D5009F404E /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		6344BE372CD71678009F404E /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
@@ -621,6 +623,7 @@
 				63B6500A2B8DDF0200289469 /* SettingView.swift */,
 				63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */,
 				63226E312D71A2A5006EBCCF /* EditEmailView.swift */,
+				63226E332D7374D5006EBCCF /* CheckView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -753,6 +756,7 @@
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
 				63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */,
+				63226E342D7374D5006EBCCF /* CheckView.swift in Sources */,
 				6387321E2BF4B7F80099F68A /* RegistrationViewModel.swift in Sources */,
 				F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */,
 				63B650052B8DDDF700289469 /* HomeView.swift in Sources */,

@@ -33,8 +33,11 @@ class AuthService {
         }
     }
     
-    func reAuthenticate(password: String) async throws {
-        guard let userSession = self.userSession, let email = userSession.email else { return }
+    func refreshUserSession() async throws {
+        try await Auth.auth().currentUser?.reload()
+    }
+    
+    func reAuthenticate(email: String, password: String) async throws {
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
         
         try await Auth.auth().currentUser?.reauthenticate(with: credential)

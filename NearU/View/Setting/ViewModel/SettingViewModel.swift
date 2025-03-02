@@ -15,6 +15,7 @@ class SettingViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var isPrivate: Bool
     @Published var isShowAlert: Bool = false
+    @Published var isShowCheck: Bool = false
     @Published var message: String? = nil
     
     var currentEmail: String {
@@ -24,7 +25,6 @@ class SettingViewModel: ObservableObject {
     init(user: User) {
         self.user = user
         self.isPrivate = user.isPrivate
-        //self.currentEmail = self.currentEmail = Auth.auth().currentUser!.email ?? ""
     }
 
     func updateIsPrivate() async throws {
@@ -38,45 +38,37 @@ class SettingViewModel: ObservableObject {
     }
     
     @MainActor
-    func editEmail() async {
+    func reAuthAndEditEmail() async {
         do {
+            // 再認証
+            try await AuthService.shared.reAuthenticate(email: currentEmail, password: password)
+            
             try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: newEmail)
-            self.newEmail = ""
-            self.message = "確認メールが送信されました"
-        } catch let error as NSError {
-            // FirebaseAuthErrorの場合
-            if let code = AuthErrorCode.Code(rawValue: error.code) {
-                switch code {
-                case .requiresRecentLogin:
-                    // 再認証が必要
-                    self.isShowAlert = true
-                default:
-                    // その他のエラー
-                    print("error: \(error.localizedDescription)")
-                }
-            } else {
-                // AuthErrorCodeに該当しないエラーの場合
-                print("error: \(error.localizedDescription)")
-            }
+            
+            self.isShowCheck = true
+            
+        } catch {
+            print("error: \(error)")
+            self.message = "予期せぬエラーです。もう一度お試しください。"
+            self.password = ""
         }
     }
     
     @MainActor
-    func reAuthAndEditEmail() async {
+    func checkComplete() async {
         do {
             // 再認証
-            try await AuthService.shared.reAuthenticate(password: password)
+            try await AuthService.shared.reAuthenticate(email: newEmail, password: password)
             
-            try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: newEmail)
+            try await AuthService.shared.refreshUserSession()
             
-            self.password = ""
             self.newEmail = ""
-            self.message = "確認メールが送信されました"
+            self.password = ""
+            self.isShowCheck = false
             
         } catch {
             print("error: \(error)")
-            self.message = "再認証に失敗しました"
-            self.password = ""
+            self.message = "予期せぬエラーです。もう一度お試しください。"
         }
     }
 }

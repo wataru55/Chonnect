@@ -32,11 +32,11 @@ struct EditEmailView: View {
                 .padding(.bottom)
 
 
-            TextField("メールアドレス", text: $viewModel.newEmail)
+            TextField("新しいメールアドレス", text: $viewModel.newEmail)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
-                .toolbar{
-                    ToolbarItem(placement: .keyboard){
+                .toolbar {
+                    ToolbarItem(placement: .keyboard) {
                         HStack{
                             Spacer()
                             Button("閉じる"){
@@ -47,9 +47,7 @@ struct EditEmailView: View {
                 }
 
             Button {
-                Task {
-                    await viewModel.editEmail()
-                }
+                viewModel.isShowAlert = true
             } label: {
                 Text("送信")
                     .font(.subheadline)
@@ -60,7 +58,7 @@ struct EditEmailView: View {
                     .cornerRadius(12)
                     .padding(.top)
             }
-            .alert("再認証が必要です", isPresented: $viewModel.isShowAlert) {
+            .alert("確認", isPresented: $viewModel.isShowAlert) {
                 SecureField("パスワード", text: $viewModel.password)
                 
                 Button("キャンセル") {
@@ -70,11 +68,12 @@ struct EditEmailView: View {
                     viewModel.isShowAlert = false
                     Task {
                         await viewModel.reAuthAndEditEmail()
+                        self.focus = false
                     }
                 }
             } message: {
                 Text(
-                    "最後にログインしてから長時間経過しています\nログイン時のパスワードを入力してください。"
+                    "ログイン時のパスワードを入力してください。"
                 )
             }
             
@@ -91,6 +90,9 @@ struct EditEmailView: View {
 
             Spacer()
         }//vstack
+        .fullScreenCover(isPresented: $viewModel.isShowCheck) {
+            CheckView(viewModel: viewModel)
+        }
     }
 }
 
