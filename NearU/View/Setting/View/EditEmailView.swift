@@ -90,6 +90,10 @@ struct EditEmailView: View {
 
             Spacer()
         }//vstack
+        .onDisappear {
+            viewModel.password = ""
+            viewModel.newEmail = ""
+        }
         .fullScreenCover(isPresented: $viewModel.isShowCheck) {
             CheckView(viewModel: viewModel)
         }

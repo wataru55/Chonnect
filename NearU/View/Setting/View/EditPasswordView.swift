@@ -85,6 +85,11 @@ struct EditPasswordView: View {
 
             Spacer()
         }//vstack
+        .onDisappear {
+            viewModel.password = ""
+            viewModel.newEmail = ""
+            viewModel.isShowResend = false
+        }
     }
 }
 
