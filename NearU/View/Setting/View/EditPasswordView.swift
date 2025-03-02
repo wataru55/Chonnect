@@ -1,38 +1,31 @@
 //
-//  EditEmailView.swift
+//  EditPasswordView.swift
 //  NearU
 //
-//  Created by 高橋和 on 2025/02/28.
+//  Created by 高橋和 on 2025/03/02.
 //
 
 import SwiftUI
 
-struct EditEmailView: View {
+struct EditPasswordView: View {
     @ObservedObject var viewModel: SettingViewModel
     @FocusState var focus: Bool
     
     var body: some View {
         VStack (spacing: 10) {
-            Text("メールアドレスの変更")
+            Text("パスワードの変更")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("新しいメールアドレスを入力してください\n確認メールが送信されます。")
+            Text("パスワードを変更するためのリンクをメールで送信します。\nメールアドレスを入力してください。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.bottom)
-            
-            Text("現在のメールアドレス：\(viewModel.currentEmail)")
-                .font(.footnote)
-                .foregroundStyle(.gray)
-                .padding(.horizontal, 24)
-                .padding(.bottom)
 
-
-            TextField("新しいメールアドレス", text: $viewModel.newEmail)
+            TextField("メールアドレス", text: $viewModel.newEmail)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
                 .toolbar {
@@ -45,11 +38,24 @@ struct EditEmailView: View {
                         }
                     }
                 }
+            
+            if let message = viewModel.message {
+                Text(message)
+                    .padding(.top, 10)
+                    .foregroundColor(.black)
+                    .font(.footnote)
+                    .onAppear {
+                        Task {
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            viewModel.message = nil
+                        }
+                    }
+            }
 
             Button {
                 viewModel.isShowAlert = true
             } label: {
-                Text("送信")
+                Text(viewModel.isShowResend ? "再送信" : "送信")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
@@ -67,25 +73,14 @@ struct EditEmailView: View {
                 Button("完了") {
                     viewModel.isShowAlert = false
                     Task {
-                        await viewModel.reAuthAndEditEmail()
+                        await viewModel.reAuthAndEditPassword()
                         self.focus = false
                     }
                 }
             } message: {
                 Text(
-                    "ログイン時のパスワードを入力してください。"
+                    "現在のパスワードを入力してください。"
                 )
-            }
-            
-            if let message = viewModel.message {
-                Text(message)
-                    .padding(.top, 10)
-                    .onAppear {
-                        Task {
-                            try? await Task.sleep(nanoseconds: 3_000_000_000)
-                            viewModel.message = nil
-                        }
-                    }
             }
 
             Spacer()
@@ -93,13 +88,11 @@ struct EditEmailView: View {
         .onDisappear {
             viewModel.password = ""
             viewModel.newEmail = ""
-        }
-        .fullScreenCover(isPresented: $viewModel.isShowCheck) {
-            CheckView(viewModel: viewModel)
+            viewModel.isShowResend = false
         }
     }
 }
 
 #Preview {
-    EditEmailView(viewModel: SettingViewModel(user: User.MOCK_USERS[0]))
+    EditPasswordView(viewModel: SettingViewModel(user: User.MOCK_USERS[0]))
 }

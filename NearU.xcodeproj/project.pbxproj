@@ -27,6 +27,7 @@
 		63226E302D6F645B006EBCCF /* BlockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */; };
 		63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E312D71A2A5006EBCCF /* EditEmailView.swift */; };
 		63226E342D7374D5006EBCCF /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E332D7374D5006EBCCF /* CheckView.swift */; };
+		63226E362D74A171006EBCCF /* EditPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E352D74A171006EBCCF /* EditPasswordView.swift */; };
 		6344BE322CD5F254009F404E /* ViewTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE312CD5F254009F404E /* ViewTransitionManager.swift */; };
 		6344BE362CD708D5009F404E /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE352CD708D5009F404E /* LoadingView.swift */; };
 		6344BE382CD71678009F404E /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE372CD71678009F404E /* LoadingViewModel.swift */; };
@@ -161,6 +162,7 @@
 		63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListViewModel.swift; sourceTree = "<group>"; };
 		63226E312D71A2A5006EBCCF /* EditEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEmailView.swift; sourceTree = "<group>"; };
 		63226E332D7374D5006EBCCF /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		63226E352D74A171006EBCCF /* EditPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPasswordView.swift; sourceTree = "<group>"; };
 		6344BE312CD5F254009F404E /* ViewTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTransitionManager.swift; sourceTree = "<group>"; };
 		6344BE352CD708D5009F404E /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		6344BE372CD71678009F404E /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 				63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */,
 				63226E312D71A2A5006EBCCF /* EditEmailView.swift */,
 				63226E332D7374D5006EBCCF /* CheckView.swift */,
+				63226E352D74A171006EBCCF /* EditPasswordView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -811,6 +814,7 @@
 				63FDDFD12CEB2B1300B90074 /* FollowUserRowData.swift in Sources */,
 				F27521BA2CDEF38E00B00ABC /* URLFieldModifier.swift in Sources */,
 				638732112BF4B3BD0099F68A /* CreatePasswordView.swift in Sources */,
+				63226E362D74A171006EBCCF /* EditPasswordView.swift in Sources */,
 				63DFF8882BF704E500A6DFB8 /* UserService.swift in Sources */,
 				639A0BD72CE4A74300A769C6 /* CustomTabBarButtonView.swift in Sources */,
 				63DFF8C12C04040B00A6DFB8 /* SettingViewModel.swift in Sources */,

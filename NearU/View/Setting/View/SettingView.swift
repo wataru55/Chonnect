@@ -59,6 +59,12 @@ struct SettingView: View {
                     } label: {
                         Text("メールアドレス変更")
                     }
+                    
+                    NavigationLink {
+                        EditPasswordView(viewModel: viewModel)
+                    } label: {
+                        Text("パスワード変更")
+                    }
                 }
                 
                 AppInfo()

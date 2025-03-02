@@ -33,7 +33,7 @@ struct PasswordResetView: View {
             
             if let message = message {
                 Text(message)
-                    .foregroundColor(.red)
+                    .foregroundColor(.black)
                     .font(.footnote)
                     .padding(.top)
                     .transition(.opacity)
@@ -59,7 +59,7 @@ struct PasswordResetView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
                         .frame(width: 360, height: 44)
-                        .background(Color(.systemMint))
+                        .background(Color.mint)
                         .cornerRadius(12)
                         .padding(.top)
                 })
@@ -82,7 +82,7 @@ struct PasswordResetView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
                         .frame(width: 360, height: 44)
-                        .background(Color(.systemOrange))
+                        .background(Color.mint)
                         .cornerRadius(12)
                         .padding(.top)
                 })
