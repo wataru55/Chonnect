@@ -53,6 +53,14 @@ struct SettingView: View {
                     }
                 }
                 
+                Section(header: Text("ログイン情報の変更")) {
+                    NavigationLink {
+                        EditEmailView(viewModel: viewModel)
+                    } label: {
+                        Text("メールアドレス変更")
+                    }
+                }
+                
                 AppInfo()
 
             }
