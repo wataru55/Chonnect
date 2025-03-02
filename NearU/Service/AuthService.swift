@@ -70,7 +70,7 @@ class AuthService {
             } while !isUnique // 一意になるまで繰り返す
 
             // 一意なuserIdが確定したら、Firestoreにユーザーデータを保存
-            await uploadUserData(id: documentId, uid: result.user.uid, username: username, email: email, isPrivate: true)
+            await uploadUserData(id: documentId, uid: result.user.uid, username: username, isPrivate: true)
 
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
@@ -119,8 +119,8 @@ class AuthService {
     }
 
     //Firestore Databaseにユーザ情報を追加する関数
-    private func uploadUserData(id: String, uid: String, username: String, email: String, isPrivate: Bool) async {
-        let user = User(id: id, uid: uid, username: username, email: email, isPrivate: isPrivate, snsLinks: [:]) // インスタンス化
+    private func uploadUserData(id: String, uid: String, username: String, isPrivate: Bool) async {
+        let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:])
         self.currentUser = user
         guard let encodedUser = try? Firestore.Encoder().encode(user) else { return }
 
