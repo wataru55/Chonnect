@@ -17,6 +17,7 @@ class SettingViewModel: ObservableObject {
     @Published var isShowAlert: Bool = false
     @Published var isShowCheck: Bool = false
     @Published var isShowResend: Bool = false
+    @Published var isLoading: Bool = false
     @Published var message: String? = nil
     
     var currentEmail: String {
@@ -83,6 +84,30 @@ class SettingViewModel: ObservableObject {
             self.newEmail = ""
             self.password = ""
             self.isShowCheck = false
+            
+        } catch {
+            print("error: \(error)")
+            self.message = "予期せぬエラーです。もう一度お試しください。"
+        }
+    }
+    
+    @MainActor
+    func deleteUser() async {
+        guard !password.isEmpty else {
+            self.message = "パスワードを入力してください"
+            return
+        }
+        
+        self.isLoading = true
+        
+        do {
+            try await AuthService.shared.reAuthenticate(email: currentEmail, password: password)
+            
+            try await AuthService.shared.deleteUser()
+            
+            self.isLoading = false
+            
+            AuthService.shared.signout()
             
         } catch {
             print("error: \(error)")
