@@ -15,6 +15,10 @@ class AuthService {
     @Published var currentUser: User?
 
     static let shared = AuthService() //シングルトンインスタンス
+    
+    let subCollections = ["follows", "followers", "history",
+                          "notifications", "article", "selectedTags",
+                          "interestTags", "blocks", "blockedBy"]
 
     init() {
         Task{ try await loadUserData() }
@@ -126,5 +130,34 @@ class AuthService {
 
         // ドキュメントIDとしてuserIdを使用して保存
         try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+    }
+    
+    func deleteUser() async throws {
+        guard let currentUser = self.currentUser else { return }
+        
+        await deleteSubCollection(documentId: currentUser.id)
+        
+        try await Firestore.firestore().collection("users").document(currentUser.id).delete()
+        
+        try await Auth.auth().currentUser?.delete()
+    }
+    
+    private func deleteSubCollection(documentId: String) async {
+        let ref = Firestore.firestore().collection("users").document(documentId)
+        
+        do {
+            for collection in subCollections {
+                let subCollectionRef = ref.collection(collection)
+                let documents = try await subCollectionRef.getDocuments()
+                
+                let batch = Firestore.firestore().batch()
+                for document in documents.documents {
+                    batch.deleteDocument(document.reference)
+                }
+                try await batch.commit()
+            }
+        } catch {
+            print("Error: \(error)")
+        }
     }
 }
