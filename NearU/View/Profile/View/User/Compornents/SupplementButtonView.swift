@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SupplementButtonView: View {
-    @StateObject private var viewModel = SupplementButtonViewModel()
+    @EnvironmentObject private var viewModel: SupplementButtonViewModel
     @Environment(\.dismiss) var dismiss
+    
     let date: Date
     let userId: String
 
@@ -56,7 +57,7 @@ struct SupplementButtonView: View {
             
             HStack(spacing: 0) {
                 Button {
-                    print("報告")
+                    viewModel.isShowReport = true
                 } label: {
                     Text("報告")
                         .foregroundStyle(.black)
@@ -89,6 +90,6 @@ struct SupplementButtonView: View {
     }
 }
 
-#Preview {
-    SupplementButtonView(date: Date(), userId: "")
-}
+//#Preview {
+//    SupplementButtonView(date: Date(), userId: "")
+//}

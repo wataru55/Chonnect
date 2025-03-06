@@ -14,6 +14,7 @@ enum Field: Hashable {
 
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
+    @State private var isLoading = false
     @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
@@ -24,7 +25,6 @@ struct EditProfileView: View {
 
     var body: some View {
         NavigationStack {
-
             ZStack {
                 backgroundColor.ignoresSafeArea()
 
@@ -84,7 +84,15 @@ struct EditProfileView: View {
 
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
+                            isLoading = true
+                            
                             Task {
+                                defer {
+                                    Task { @MainActor in
+                                        isLoading = false
+                                    }
+                                }
+                                
                                 try await viewModel.updateUserData()
                                 await viewModel.saveInterestTags(tags: texts)
                                 try await AuthService.shared.loadUserData()
@@ -104,6 +112,10 @@ struct EditProfileView: View {
                             .foregroundStyle(Color.mint)
                         }
                     }
+                }
+                
+                if isLoading {
+                    LoadingView()
                 }
             }// zstack
             .modifier(EdgeSwipe())

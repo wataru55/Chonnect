@@ -30,7 +30,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", email: "", isPrivate: false, snsLinks: [:])
+            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:])
         }
 
         setupSubscribers()
@@ -90,8 +90,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         var data = [String: Any]() //keyがString型，valueがAnyの辞書を定義
 
         if let uiImage = uiBackgroundImage {
-            let imageUrl = try await ImageUploader.uploadImage(image: uiImage) //String型の画像のダウンロードURLが返される．
-            data["backgroundImageUrl"] = imageUrl //辞書に格納
+            try await ImageUploader.uploadImage(image: uiImage)
         }
 
         if !username.isEmpty && user.username != username {

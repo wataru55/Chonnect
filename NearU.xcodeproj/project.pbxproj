@@ -25,6 +25,10 @@
 		63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E292D6DDD10006EBCCF /* UserIdentifiable.swift */; };
 		63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */; };
 		63226E302D6F645B006EBCCF /* BlockListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */; };
+		63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E312D71A2A5006EBCCF /* EditEmailView.swift */; };
+		63226E342D7374D5006EBCCF /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E332D7374D5006EBCCF /* CheckView.swift */; };
+		63226E362D74A171006EBCCF /* EditPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E352D74A171006EBCCF /* EditPasswordView.swift */; };
+		63226E3A2D76D442006EBCCF /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E392D76D442006EBCCF /* DeleteView.swift */; };
 		6344BE322CD5F254009F404E /* ViewTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE312CD5F254009F404E /* ViewTransitionManager.swift */; };
 		6344BE362CD708D5009F404E /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE352CD708D5009F404E /* LoadingView.swift */; };
 		6344BE382CD71678009F404E /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE372CD71678009F404E /* LoadingViewModel.swift */; };
@@ -36,6 +40,7 @@
 		6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE452CDBA9A3009F404E /* UserRealtimeRecord.swift */; };
 		6344BE482CDBA9F8009F404E /* BLERealtimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE472CDBA9F8009F404E /* BLERealtimeView.swift */; };
 		6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE492CDE065A009F404E /* OpenGraphData.swift */; };
+		6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0332D799B0200EDC4E5 /* ReportView.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -157,6 +162,10 @@
 		63226E292D6DDD10006EBCCF /* UserIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIdentifiable.swift; sourceTree = "<group>"; };
 		63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListView.swift; sourceTree = "<group>"; };
 		63226E2F2D6F645B006EBCCF /* BlockListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListViewModel.swift; sourceTree = "<group>"; };
+		63226E312D71A2A5006EBCCF /* EditEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEmailView.swift; sourceTree = "<group>"; };
+		63226E332D7374D5006EBCCF /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		63226E352D74A171006EBCCF /* EditPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPasswordView.swift; sourceTree = "<group>"; };
+		63226E392D76D442006EBCCF /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
 		6344BE312CD5F254009F404E /* ViewTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTransitionManager.swift; sourceTree = "<group>"; };
 		6344BE352CD708D5009F404E /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		6344BE372CD71678009F404E /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
@@ -168,6 +177,7 @@
 		6344BE452CDBA9A3009F404E /* UserRealtimeRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRealtimeRecord.swift; sourceTree = "<group>"; };
 		6344BE472CDBA9F8009F404E /* BLERealtimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLERealtimeView.swift; sourceTree = "<group>"; };
 		6344BE492CDE065A009F404E /* OpenGraphData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenGraphData.swift; sourceTree = "<group>"; };
+		6346A0332D799B0200EDC4E5 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -618,6 +628,10 @@
 			children = (
 				63B6500A2B8DDF0200289469 /* SettingView.swift */,
 				63226E2B2D6E3B1E006EBCCF /* BlockListView.swift */,
+				63226E312D71A2A5006EBCCF /* EditEmailView.swift */,
+				63226E332D7374D5006EBCCF /* CheckView.swift */,
+				63226E352D74A171006EBCCF /* EditPasswordView.swift */,
+				63226E392D76D442006EBCCF /* DeleteView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -636,6 +650,7 @@
 			children = (
 				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
 				63FDDFE52CF6B44D00B90074 /* SupplementButtonView.swift */,
+				6346A0332D799B0200EDC4E5 /* ReportView.swift */,
 			);
 			path = Compornents;
 			sourceTree = "<group>";
@@ -750,6 +765,7 @@
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
 				63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */,
+				63226E342D7374D5006EBCCF /* CheckView.swift in Sources */,
 				6387321E2BF4B7F80099F68A /* RegistrationViewModel.swift in Sources */,
 				F20F20612CD36574007E85C2 /* EditFrameworkTagsView.swift in Sources */,
 				63B650052B8DDDF700289469 /* HomeView.swift in Sources */,
@@ -761,6 +777,7 @@
 				631591BA2D361E8B00E16DE3 /* KalmanFilter.swift in Sources */,
 				639A0BD92CE4A86F00A769C6 /* FollowerView.swift in Sources */,
 				63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */,
+				63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */,
 				63FDDFE62CF6B44D00B90074 /* SupplementButtonView.swift in Sources */,
 				6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */,
 				63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */,
@@ -784,6 +801,7 @@
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
 				631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */,
 				63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */,
+				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63FDDFEC2CF8378100B90074 /* FollowerUserRowData.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
@@ -803,6 +821,7 @@
 				63FDDFD12CEB2B1300B90074 /* FollowUserRowData.swift in Sources */,
 				F27521BA2CDEF38E00B00ABC /* URLFieldModifier.swift in Sources */,
 				638732112BF4B3BD0099F68A /* CreatePasswordView.swift in Sources */,
+				63226E362D74A171006EBCCF /* EditPasswordView.swift in Sources */,
 				63DFF8882BF704E500A6DFB8 /* UserService.swift in Sources */,
 				639A0BD72CE4A74300A769C6 /* CustomTabBarButtonView.swift in Sources */,
 				63DFF8C12C04040B00A6DFB8 /* SettingViewModel.swift in Sources */,
@@ -819,6 +838,7 @@
 				637BA05F2C44ADE400368566 /* ProfileViewModel.swift in Sources */,
 				63F84BB72D1E6D47009FE5DD /* HistoryService.swift in Sources */,
 				638732082BF4B0E40099F68A /* MainTabView.swift in Sources */,
+				63226E3A2D76D442006EBCCF /* DeleteView.swift in Sources */,
 				63AEA5CB2CC4053C009A22A2 /* Tags.swift in Sources */,
 				63DFF8BC2C01531000A6DFB8 /* ImageUploader.swift in Sources */,
 				32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */,

@@ -10,33 +10,38 @@ import Firebase
 import FirebaseStorage
 
 struct ImageUploader {
-    static func uploadImage(image: UIImage) async throws -> String? {
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return nil } //UIImageをjpeg形式のバイナリデータに変換
-        let filename = NSUUID().uuidString //filenameにUUIDのString型データを格納
+    static func uploadImage(image: UIImage) async throws {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return } //UIImageをjpeg形式のバイナリデータに変換
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        
+        //let filename = "\(documentId)_\(UUID().uuidString).jpg"
+        let filename = "\(documentId)_backgroundImage.jpg"
         //Firebase Storageの特定のパスに画像ファイルを保存する参照を作成
-        let ref = Storage.storage().reference(withPath: "/profile_images/\(filename)")
-
-        // Firebase Storageに保存する際のメタデータを設定
+        let ref = Storage.storage().reference(withPath: "/background_images/\(filename)")
+        
         let metadata = StorageMetadata()
-
-        // 認証されたユーザーのUIDを取得して, authorIdとしてメタデータに追加
-        if let uid = AuthService.shared.currentUser?.id {
-            metadata.customMetadata = ["authorId": uid]  // ここでUIDを設定
-        } else {
-            print("DEBUG: Failed to get current user's UID.")
-            return nil
-        }
+        metadata.customMetadata = ["authorId": documentId]
 
         do {
-            //Firebase StorageのputDataAsyncメソッドでバイナリデータを参照先へupload (返り値を期待しないためlet _)
+            //Firebase Storageへの保存
             let _ = try await ref.putDataAsync(imageData, metadata: metadata)
             //Firebase Storageに保存されたファイルのダウンロードURLを取得
             let url = try await ref.downloadURL()
-            return url.absoluteString //取得したダウンロードURLを文字列として返す
+            let urlString = url.absoluteString
+            //FireStoreのuserドキュメントに保存
+            try await saveImageURLToFirestore(userId: documentId, imageURL: urlString)
+            
         } catch {
             print("DEBUG: Failed to upload image with error \(error.localizedDescription)")
-            return nil
+            return
         }
+    }
+    
+    static func saveImageURLToFirestore(userId: String, imageURL: String) async throws {
+        let docRef = Firestore.firestore().collection("users").document(userId)
+
+        try await docRef.updateData(["backgroundImageUrl": imageURL])
+        
     }
 }
 
