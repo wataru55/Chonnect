@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @StateObject var supplementButtonViewModel = SupplementButtonViewModel()
     @State var isShowWordCloud: Bool = false
 
     let date: Date
@@ -26,6 +27,7 @@ struct ProfileView: View {
     var body: some View {
         ZStack{
             backgroundColor.ignoresSafeArea()
+            
             if viewModel.isLoading{
                 ProgressView("Loading...")
                     .progressViewStyle(CircularProgressViewStyle())
@@ -37,6 +39,7 @@ struct ProfileView: View {
                                           isShowFollowButton: isShowFollowButton,
                                           isShowDateButton: isShowDateButton)
                         .padding(.bottom, 10)
+                        .environmentObject(supplementButtonViewModel)
 
                         //MARK: - SNSLINKS
                         HStack {
@@ -115,6 +118,10 @@ struct ProfileView: View {
                 }//scrollView
                 .refreshable {
                     await viewModel.loadUserData()
+                }
+                .sheet(isPresented: $supplementButtonViewModel.isShowReport) {
+                    ReportView(viewModel: supplementButtonViewModel, userId: viewModel.user.id)
+                        .presentationDetents([.fraction(0.7)])
                 }
             }
 

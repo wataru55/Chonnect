@@ -40,6 +40,7 @@
 		6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE452CDBA9A3009F404E /* UserRealtimeRecord.swift */; };
 		6344BE482CDBA9F8009F404E /* BLERealtimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE472CDBA9F8009F404E /* BLERealtimeView.swift */; };
 		6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344BE492CDE065A009F404E /* OpenGraphData.swift */; };
+		6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0332D799B0200EDC4E5 /* ReportView.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -176,6 +177,7 @@
 		6344BE452CDBA9A3009F404E /* UserRealtimeRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRealtimeRecord.swift; sourceTree = "<group>"; };
 		6344BE472CDBA9F8009F404E /* BLERealtimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLERealtimeView.swift; sourceTree = "<group>"; };
 		6344BE492CDE065A009F404E /* OpenGraphData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenGraphData.swift; sourceTree = "<group>"; };
+		6346A0332D799B0200EDC4E5 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -648,6 +650,7 @@
 			children = (
 				63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */,
 				63FDDFE52CF6B44D00B90074 /* SupplementButtonView.swift */,
+				6346A0332D799B0200EDC4E5 /* ReportView.swift */,
 			);
 			path = Compornents;
 			sourceTree = "<group>";
@@ -798,6 +801,7 @@
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
 				631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */,
 				63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */,
+				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63FDDFEC2CF8378100B90074 /* FollowerUserRowData.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
