@@ -47,12 +47,14 @@ struct BLEHistoryView: View {
             .padding(.bottom, 100)
 
         } // ScrollView
-        .refreshable {
-            loadingViewModel.isLoading = true
+        .onFirstAppear {
             Task {
                 await viewModel.makeHistoryRowData()
-                // ローディング終了
-                loadingViewModel.isLoading = false
+            }
+        }
+        .refreshable {
+            Task {
+                await viewModel.makeHistoryRowData()
             }
         }
         .alert("エラー", isPresented: $isShowAlert) {

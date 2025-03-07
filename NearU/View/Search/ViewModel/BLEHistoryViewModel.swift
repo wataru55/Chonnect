@@ -12,17 +12,12 @@ import Firebase
 class BLEHistoryViewModel: ObservableObject {
     @Published var historyRowData: [HistoryRowData] = []
     @Published var sortedHistoryRowData: [HistoryRowData] = []
-    @Published var isLoading: Bool = true
+    @Published var isLoading: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     private var listenerRegistration: ListenerRegistration?
 
     init() {
-        Task {
-            await makeHistoryRowData()
-            isLoading = false
-        }
-
         setupSubscribers()
         //ユーザーブロックのフィルタリングに支障を来たすから一旦コメントアウト
         //observeFirestoreChanges()
