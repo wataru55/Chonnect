@@ -21,7 +21,7 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var username = ""
     @Published var bio = ""
-    @Published var interestTags: [InterestTag] = []
+    @Published var interestTags: [String] = []
 
     private var uiBackgroundImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
@@ -30,14 +30,10 @@ class CurrentUserProfileViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:])
+            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
         }
 
         setupSubscribers()
-
-        Task {
-            await loadInterestTags()
-        }
     }
 
     func setupSubscribers() {
@@ -48,6 +44,7 @@ class CurrentUserProfileViewModel: ObservableObject {
                 self?.user = currentUser
                 self?.username = currentUser.username
                 self?.bio = currentUser.bio ?? ""
+                self?.interestTags = currentUser.interestTags
             }
             .store(in: &cancellables)
     }
@@ -62,25 +59,6 @@ class CurrentUserProfileViewModel: ObservableObject {
         self.uiBackgroundImage = uiImage
         //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
         self.backgroundImage = Image(uiImage: uiImage)
-    }
-
-    func saveInterestTags(tags: [InterestTag]) async {
-        do {
-            try await UserService.saveInterestTags(tags: tags)
-            await loadInterestTags()
-        } catch {
-            print("DEBUG: Error saving interest tags \(error.localizedDescription)")
-        }
-    }
-
-    @MainActor
-    func loadInterestTags() async {
-        do {
-            let data = try await UserService.fetchInterestTags(documentId: user.id)
-            self.interestTags = data
-        } catch {
-            print("error loading interest tags \(error.localizedDescription)")
-        }
     }
 
     @MainActor
@@ -98,9 +76,12 @@ class CurrentUserProfileViewModel: ObservableObject {
             data["username"] = username
         }
 
-        //update bio if changed
         if !bio.isEmpty && user.bio != bio {
             data["bio"] = bio
+        }
+        
+        if user.interestTags != interestTags {
+            data["interestTags"] = interestTags
         }
 
         if !data.isEmpty {

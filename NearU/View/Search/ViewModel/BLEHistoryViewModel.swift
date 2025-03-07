@@ -70,86 +70,53 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
     
-    private func observeFirestoreChanges() {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        
-        let docRef = Firestore.firestore()
-            .collection("users")
-            .document(documentId)
-            .collection("history")
-        
-        listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
-            guard let self = self else { return }
-            guard let snapshot = snapshot else {
-                print("Error listening to Firestore collection: \(error?.localizedDescription ?? "")")
-                return
-            }
-            
-            for change in snapshot.documentChanges {
-                switch change.type {
-                case .added:
-                    self.handleAddedDocument(document: change.document)
-                case .modified:
-                    self.handleModifiedDocument(document: change.document)
-                case .removed:
-                    self.handleRemovedDocument(document: change.document)
-                }
-            }
-        }
-    }
+//    private func observeFirestoreChanges() {
+//        guard let documentId = AuthService.shared.currentUser?.id else { return }
+//        
+//        let docRef = Firestore.firestore()
+//            .collection("users")
+//            .document(documentId)
+//            .collection("history")
+//        
+//        listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
+//            guard let self = self else { return }
+//            guard let snapshot = snapshot else {
+//                print("Error listening to Firestore collection: \(error?.localizedDescription ?? "")")
+//                return
+//            }
+//            
+//            for change in snapshot.documentChanges {
+//                switch change.type {
+//                case .added:
+//                    self.handleAddedDocument(document: change.document)
+//                case .modified:
+//                    self.handleModifiedDocument(document: change.document)
+//                case .removed:
+//                    self.handleRemovedDocument(document: change.document)
+//                }
+//            }
+//        }
+//    }
 
-    // ドキュメントが追加されたときの処理
-    private func handleAddedDocument(document: QueryDocumentSnapshot) {
-        let newHistoryData = try? document.data(as: HistoryDataStruct.self)
-        if let data = newHistoryData {
-            Task {
-                // 必要な追加データをフェッチし、`historyRowData` に追加
-                let user = try await UserService.fetchUser(withUid: data.userId)
-                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
-                let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
-                let record = UserHistoryRecord(user: user, date: data.date, isRead: data.isRead)
-                let rowData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
-                
-                // メインスレッドで更新
-                await MainActor.run {
-                    self.historyRowData.append(rowData)
-                }
-            }
-        }
-    }
-
-    // ドキュメントが変更されたときの処理
-    private func handleModifiedDocument(document: QueryDocumentSnapshot) {
-        let modifiedHistoryData = try? document.data(as: HistoryDataStruct.self)
-        if let data = modifiedHistoryData {
-            Task {
-                if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == data.userId }) {
-                    let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
-                    let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
-                    let updatedRecord = UserHistoryRecord(user: self.historyRowData[index].record.user, date: data.date, isRead: data.isRead)
-                    let updatedRowData = HistoryRowData(record: updatedRecord, tags: interestTags, isFollowed: isFollowed)
-                    
-                    // メインスレッドで更新
-                    await MainActor.run {
-                        self.historyRowData[index] = updatedRowData
-                    }
-                }
-            }
-        }
-    }
-
-    // ドキュメントが削除されたときの処理
-    private func handleRemovedDocument(document: QueryDocumentSnapshot) {
-        let removedUserId = document.documentID
-        if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == removedUserId }) {
-            // メインスレッドで削除
-            Task {
-                await MainActor.run {
-                    self.historyRowData.remove(at: index)
-                }
-            }
-        }
-    }
+//    // ドキュメントが追加されたときの処理
+//    private func handleAddedDocument(document: QueryDocumentSnapshot) {
+//        let newHistoryData = try? document.data(as: HistoryDataStruct.self)
+//        if let data = newHistoryData {
+//            Task {
+//                // 必要な追加データをフェッチし、`historyRowData` に追加
+//                let user = try await UserService.fetchUser(withUid: data.userId)
+//                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
+//                let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
+//                let record = UserHistoryRecord(user: user, date: data.date, isRead: data.isRead)
+//                let rowData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
+//                
+//                // メインスレッドで更新
+//                await MainActor.run {
+//                    self.historyRowData.append(rowData)
+//                }
+//            }
+//        }
+//    }
 
     func setupSubscribers() {
         $historyRowData
@@ -193,12 +160,11 @@ class BLEHistoryViewModel: ObservableObject {
         return try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
             for record in records {
                 group.addTask {
-                    async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
+                    //async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
                     async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
                     
                     return HistoryRowData(
                         record: record,
-                        tags: try await interestTags,
                         isFollowed: await isFollowed
                     )
                 }

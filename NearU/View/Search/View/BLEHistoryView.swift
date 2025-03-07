@@ -36,7 +36,7 @@ struct BLEHistoryView: View {
                                     }
                                 }
                         } label: {
-                            UserRowView(user: data.record.user, tags: data.tags,
+                            UserRowView(user: data.record.user, tags: data.record.user.interestTags,
                                         date: data.record.date, isRead: data.record.isRead,
                                         rssi: nil, isFollower: data.isFollowed)
                         }

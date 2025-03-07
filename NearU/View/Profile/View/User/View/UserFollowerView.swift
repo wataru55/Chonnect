@@ -25,7 +25,7 @@ struct UserFollowerView: View {
                             ProfileView(user: follower.record.user, currentUser: viewModel.currentUser, date: follower.record.date,
                                         isShowFollowButton: false, isShowDateButton: false)
                         } label: {
-                            UserRowView(user: follower.record.user, tags: follower.tags,
+                            UserRowView(user: follower.record.user, tags: follower.record.user.interestTags,
                                         date: nil, isRead: true, rssi: nil, isFollower: follower.isFollowed)
                         }
                     } //foreach

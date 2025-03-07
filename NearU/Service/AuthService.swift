@@ -124,7 +124,7 @@ class AuthService {
 
     //Firestore Databaseにユーザ情報を追加する関数
     private func uploadUserData(id: String, uid: String, username: String, isPrivate: Bool) async {
-        let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:])
+        let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:], interestTags: [])
         self.currentUser = user
         guard let encodedUser = try? Firestore.Encoder().encode(user) else { return }
 

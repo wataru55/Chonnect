@@ -15,7 +15,7 @@ enum Field: Hashable {
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @State private var isLoading = false
-    @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
+    @State private var texts = [""]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     @FocusState private var focusedField: Field?
@@ -94,7 +94,6 @@ struct EditProfileView: View {
                                 }
                                 
                                 try await viewModel.updateUserData()
-                                await viewModel.saveInterestTags(tags: texts)
                                 try await AuthService.shared.loadUserData()
 
                                 await MainActor.run {
@@ -151,8 +150,8 @@ struct EditProfileRowView: View {
 }//view
 
 struct EditInterestView: View {
-    @Binding var texts: [InterestTag]
-    let interestTags: [InterestTag]
+    @Binding var texts: [String]
+    let interestTags: [String]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -163,7 +162,7 @@ struct EditInterestView: View {
                 .padding(.vertical, 10)
 
             ForEach(texts.indices, id: \.self) { index in
-                TextField("興味・関心", text: $texts[index].text)
+                TextField("興味・関心", text: $texts[index])
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .textInputAutocapitalization(.never) // 自動で大文字にしない
                     .disableAutocorrection(true) // スペルチェックを無効にする
@@ -173,7 +172,7 @@ struct EditInterestView: View {
             }
 
             Button {
-                texts.append(InterestTag(id: UUID(), text: ""))
+                texts.append("")
             } label: {
                 HStack {
                     Image(systemName: "plus.circle")
@@ -282,6 +281,6 @@ struct EditProfileBioRowView: View {
 }
 
 #Preview {
-    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]), interestTags: [InterestTag(id: UUID(), text: "SwiftUI")])
+    EditInterestView(texts: .constant([""]), interestTags: ["SwiftUI"])
 }
 

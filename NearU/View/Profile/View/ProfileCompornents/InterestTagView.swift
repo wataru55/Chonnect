@@ -22,10 +22,10 @@ enum TextFont {
 }
 
 struct InterestTagView: View {
-    @State private var isShowAlert: Bool = false
-    @State private var tagToDelete: InterestTag?
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    let interestTag: [InterestTag]
+    @State private var isShowAlert: Bool = false
+    @State private var tagToDelete: String?
+    @State var interestTag: [String]
     let isShowDeleteButton: Bool
     let textFont: TextFont
 
@@ -36,7 +36,7 @@ struct InterestTagView: View {
                     HStack(spacing: 0) {
                         Image(systemName: "number")
 
-                        Text(tag.text)
+                        Text(tag)
                             .fontWeight(.bold)
                     }
                     .font(textFont.font)
@@ -61,8 +61,6 @@ struct InterestTagView: View {
         .alert("確認", isPresented: $isShowAlert, presenting: tagToDelete) { tag in
             Button("削除", role: .destructive) {
                 Task {
-                    await UserService.deleteInterestTags(id: tag.id.uuidString)
-                    await viewModel.loadInterestTags()
                     tagToDelete = nil // 削除後にリセット
                 }
             }
@@ -73,5 +71,5 @@ struct InterestTagView: View {
 }
 
 #Preview {
-    InterestTagView(interestTag: [InterestTag(id: UUID(), text: "SwiftUI"), InterestTag(id: UUID(), text: "UIKit")], isShowDeleteButton: false, textFont: .footnote)
+    InterestTagView(interestTag: ["SwiftUI", "UIKit"], isShowDeleteButton: false, textFont: .footnote)
 }
