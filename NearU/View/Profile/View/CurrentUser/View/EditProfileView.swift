@@ -15,12 +15,12 @@ enum Field: Hashable {
 struct EditProfileView: View {
     @State private var isAddingNewLink = false
     @State private var isLoading = false
-    @State private var texts: [InterestTag] = [InterestTag(id: UUID(), text: "")]
+    @State private var texts = [""]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     @FocusState private var focusedField: Field?
 
-    let user: User
+    //let user: User
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
@@ -54,13 +54,17 @@ struct EditProfileView: View {
                     }//vstack
                     //edit profile info
                     VStack (spacing:0){
-                        EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.username)
+                        EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.user.username)
                             .focused($focusedField, equals: .title)
 
-                        EditProfileBioRowView( text: $viewModel.bio, title: "自己紹介", placeholder: "")
-                            .focused($focusedField, equals: .title)
+                        EditProfileBioRowView(text: Binding(
+                                                    get: { viewModel.user.bio ?? "" },
+                                                    set: { viewModel.user.bio = $0 }),
+                                              title: "自己紹介", placeholder: "")
+                        
+                        .focused($focusedField, equals: .title)
 
-                        EditInterestView(texts: $texts, interestTags: viewModel.interestTags)
+                        EditInterestView(texts: $texts)
                             .focused($focusedField, equals: .title)
                     }
                     .padding(.top, 5)
@@ -93,11 +97,12 @@ struct EditProfileView: View {
                                     }
                                 }
                                 
-                                try await viewModel.updateUserData()
-                                await viewModel.saveInterestTags(tags: texts)
-                                try await AuthService.shared.loadUserData()
+                                await viewModel.updateUserData(addTags: texts)
 
                                 await MainActor.run {
+                                    if let currentUser = AuthService.shared.currentUser {
+                                        viewModel.user = currentUser
+                                    }
                                     viewModel.resetSelectedImage()
                                     dismiss()
                                 }
@@ -120,6 +125,11 @@ struct EditProfileView: View {
             }// zstack
             .modifier(EdgeSwipe())
         }//navigationstack
+        .onDisappear {
+            if let currentUser = AuthService.shared.currentUser {
+                viewModel.user = currentUser
+            }
+        }
     }//body
 }//view
 
@@ -151,8 +161,9 @@ struct EditProfileRowView: View {
 }//view
 
 struct EditInterestView: View {
-    @Binding var texts: [InterestTag]
-    let interestTags: [InterestTag]
+    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @State private var isShowAlert: Bool = false
+    @Binding var texts: [String]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -163,7 +174,7 @@ struct EditInterestView: View {
                 .padding(.vertical, 10)
 
             ForEach(texts.indices, id: \.self) { index in
-                TextField("興味・関心", text: $texts[index].text)
+                TextField("興味・関心", text: $texts[index])
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .textInputAutocapitalization(.never) // 自動で大文字にしない
                     .disableAutocorrection(true) // スペルチェックを無効にする
@@ -173,7 +184,7 @@ struct EditInterestView: View {
             }
 
             Button {
-                texts.append(InterestTag(id: UUID(), text: ""))
+                texts.append("")
             } label: {
                 HStack {
                     Image(systemName: "plus.circle")
@@ -192,7 +203,7 @@ struct EditInterestView: View {
                     .foregroundStyle(.gray)
                     .padding()
 
-                if interestTags.isEmpty{
+                if viewModel.user.interestTags.isEmpty{
                     Text("興味タグがありません")
                         .font(.subheadline)
                         .fontWeight(.bold)
@@ -200,8 +211,32 @@ struct EditInterestView: View {
                         .padding()
                         .padding(.leading, 15)
                 } else {
-                    InterestTagView(interestTag: interestTags, isShowDeleteButton: true, textFont: .footnote)
-                        .padding(.horizontal, 15)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: 10) {
+                            ForEach(viewModel.user.interestTags, id: \.self) { tag in
+                                HStack(spacing: 0) {
+                                    Image(systemName: "number")
+
+                                    Text(tag)
+                                        .fontWeight(.bold)
+                                }
+                                .font(.footnote)
+                                .foregroundStyle(.blue)
+                                .overlay(alignment: .topTrailing) {
+                                    Button {
+                                        viewModel.deleteTag(tag: tag)
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.footnote)
+                                            .foregroundStyle(.black)
+                                            .offset(x: 10, y: -8)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: 40)
+                    .padding(.horizontal, 15)
                 }
             }
             .frame(width: UIScreen.main.bounds.width, alignment: .leading)
@@ -282,6 +317,6 @@ struct EditProfileBioRowView: View {
 }
 
 #Preview {
-    EditInterestView(texts: .constant([InterestTag(id: UUID(), text: "")]), interestTags: [InterestTag(id: UUID(), text: "SwiftUI")])
+    EditInterestView(texts: .constant([""]))
 }
 

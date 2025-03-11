@@ -28,9 +28,8 @@ class BLERealtimeViewModel: ObservableObject {
 
             for data in realtimeDataList {
                 let user = try await UserService.fetchUser(withUid: data.userId)
-                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
 
-                addData.append(UserRealtimeRecord(user: user, tags: interestTags, date: data.date, rssi: data.rssi))
+                addData.append(UserRealtimeRecord(user: user, date: data.date, rssi: data.rssi))
             }
 
             self.userRealtimeRecords = addData

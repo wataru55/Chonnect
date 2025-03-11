@@ -8,10 +8,10 @@ import SwiftUI
 
 struct SearchView: View {
     @StateObject var historyManager = HistoryManager()
-    let currentUser: User
     @State private var searchText: String = ""
     
-
+    let currentUser: User
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {

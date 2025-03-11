@@ -34,7 +34,7 @@ struct MainTabView: View {
                     Image(systemName: "magnifyingglass")
                 }
 
-            CurrentUserProfileView(user: user)
+            CurrentUserProfileView()
                 .environmentObject(loadingViewModel)
                 .tabItem {
                     Image(systemName: "person")

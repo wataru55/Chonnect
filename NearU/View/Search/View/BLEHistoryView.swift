@@ -36,7 +36,7 @@ struct BLEHistoryView: View {
                                     }
                                 }
                         } label: {
-                            UserRowView(user: data.record.user, tags: data.tags,
+                            UserRowView(user: data.record.user, tags: data.record.user.interestTags,
                                         date: data.record.date, isRead: data.record.isRead,
                                         rssi: nil, isFollower: data.isFollowed)
                         }
@@ -47,12 +47,14 @@ struct BLEHistoryView: View {
             .padding(.bottom, 100)
 
         } // ScrollView
-        .refreshable {
-            loadingViewModel.isLoading = true
+        .onFirstAppear {
             Task {
                 await viewModel.makeHistoryRowData()
-                // ローディング終了
-                loadingViewModel.isLoading = false
+            }
+        }
+        .refreshable {
+            Task {
+                await viewModel.makeHistoryRowData()
             }
         }
         .alert("エラー", isPresented: $isShowAlert) {

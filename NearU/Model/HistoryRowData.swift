@@ -9,6 +9,5 @@ import Foundation
 
 struct HistoryRowData: Hashable {
     let record: UserHistoryRecord
-    let tags: [InterestTag]
     let isFollowed: Bool
 }

@@ -16,8 +16,6 @@ class ProfileViewModel: ObservableObject {
     @Published var follows: [FollowUserRowData] = []
     @Published var followers: [HistoryRowData] = []
     @Published var skillSortedTags: [WordElement] = []
-    @Published var interestSortedTags: [WordElement] = []
-    @Published var interestTags: [InterestTag] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
     @Published var isLoading: Bool = true
@@ -44,9 +42,6 @@ class ProfileViewModel: ObservableObject {
                 }
                 group.addTask {
                     await self.checkMutualFollow()
-                }
-                group.addTask {
-                    await self.loadInterestTags()
                 }
                 group.addTask {
                     await self.fetchArticleLinks()
@@ -112,16 +107,6 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadInterestTags() async {
-        do {
-            let data = try await UserService.fetchInterestTags(documentId: user.id)
-            self.interestTags = data
-        } catch {
-            print("error loading interest tags \(error.localizedDescription)")
-        }
-    }
-
-    @MainActor
     func loadFollowUsers() async {
         do {
             let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
@@ -136,8 +121,7 @@ class ProfileViewModel: ObservableObject {
 
             for data in pairData {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
-                let interestTags = try await UserService.fetchInterestTags(documentId: data.user.id)
-                let addData = FollowUserRowData(pair: data, tags: interestTags, isFollowed: isFollowed)
+                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
 
@@ -162,8 +146,7 @@ class ProfileViewModel: ObservableObject {
 
             for record in filteredRecords {
                 let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
-                let interestTags = try await UserService.fetchInterestTags(documentId: record.user.id)
-                let addData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
+                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
                 historyRowData.append(addData)
             }
 
