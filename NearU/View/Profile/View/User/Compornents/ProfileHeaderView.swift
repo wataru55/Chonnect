@@ -147,7 +147,7 @@ struct ProfileHeaderView: View {
                     }
 
                     if !viewModel.user.interestTags.isEmpty{
-                        InterestTagView(interestTag: viewModel.user.interestTags, isShowDeleteButton: false, textFont: .footnote)
+                        InterestTagView(interestTags: viewModel.user.interestTags, isShowDeleteButton: false, textFont: .footnote)
                             .padding(.bottom, 5)
                     }
 

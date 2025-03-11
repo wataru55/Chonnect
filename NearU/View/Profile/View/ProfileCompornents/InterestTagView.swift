@@ -22,17 +22,37 @@ enum TextFont {
 }
 
 struct InterestTagView: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    @State private var isShowAlert: Bool = false
-    @State private var tagToDelete: String?
-    @State var interestTag: [String]
+    private var tags: Binding<[String]>?
+    private var constantTags: [String]?
     let isShowDeleteButton: Bool
     let textFont: TextFont
+    
+    @State private var isShowAlert: Bool = false
+    @State private var tagToDelete: String?
+    
+    // Bindingを受け取る初期化子
+    init(interestTags: Binding<[String]>, isShowDeleteButton: Bool, textFont: TextFont) {
+        self.tags = interestTags
+        self.constantTags = nil
+        self.isShowDeleteButton = isShowDeleteButton
+        self.textFont = textFont
+    }
+    
+    // 定数を受け取る初期化子
+    init(interestTags: [String], isShowDeleteButton: Bool, textFont: TextFont) {
+        self.tags = nil
+        self.constantTags = interestTags
+        self.isShowDeleteButton = isShowDeleteButton
+        self.textFont = textFont
+    }
 
     var body: some View {
+        // Bindingがあればそちら、なければ定数を使用
+        let interestTags = tags?.wrappedValue ?? constantTags ?? []
+        
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 10) {
-                ForEach(interestTag, id: \.self) { tag in
+                ForEach(interestTags, id: \.self) { tag in
                     HStack(spacing: 0) {
                         Image(systemName: "number")
 
@@ -42,10 +62,12 @@ struct InterestTagView: View {
                     .font(textFont.font)
                     .foregroundStyle(.blue)
                     .overlay(alignment: .topTrailing) {
-                        if isShowDeleteButton {
+                        // 編集可能なのはBindingの場合だけにする
+                        if isShowDeleteButton, let tags = tags {
                             Button {
-                                tagToDelete = tag
-                                isShowAlert = true
+                                if let index = tags.wrappedValue.firstIndex(of: tag) {
+                                    tags.wrappedValue.remove(at: index)
+                                }
                             } label: {
                                 Image(systemName: "minus.circle.fill")
                                     .font(.footnote)
@@ -60,6 +82,9 @@ struct InterestTagView: View {
         .frame(height: isShowDeleteButton ? 40 : 20)
         .alert("確認", isPresented: $isShowAlert, presenting: tagToDelete) { tag in
             Button("削除", role: .destructive) {
+                if let tags = tags {
+                    tags.wrappedValue.removeAll { $0 == tag }
+                }
                 Task {
                     tagToDelete = nil // 削除後にリセット
                 }
@@ -70,6 +95,6 @@ struct InterestTagView: View {
     }
 }
 
-#Preview {
-    InterestTagView(interestTag: ["SwiftUI", "UIKit"], isShowDeleteButton: false, textFont: .footnote)
-}
+//#Preview {
+//    InterestTagView(interestTag: ["SwiftUI", "UIKit"], isShowDeleteButton: false, textFont: .footnote)
+//}
