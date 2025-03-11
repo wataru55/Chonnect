@@ -20,11 +20,14 @@ struct TopTabView: View {
             }
             .padding()
 
-            if selectedTab == 0 {
-                BLEHistoryView(currentUser: currentUser).tag(0)
-            } else {
-                BLERealtimeView(currentUser: currentUser).tag(1)
+            TabView(selection: $selectedTab) {
+                BLEHistoryView(currentUser: currentUser)
+                    .tag(0)
+                
+                BLERealtimeView(currentUser: currentUser)
+                    .tag(1)
             }
+            .tabViewStyle(.page(indexDisplayMode: .never)) // インジケータを非表示
         }
         .ignoresSafeArea(edges: .bottom)
 

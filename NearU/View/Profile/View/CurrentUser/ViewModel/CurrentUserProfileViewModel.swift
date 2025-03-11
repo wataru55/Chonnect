@@ -19,10 +19,6 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @Published var backgroundImage: Image?
 
-    @Published var username = ""
-    @Published var bio = ""
-    @Published var interestTags: [InterestTag] = []
-
     private var uiBackgroundImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
 
@@ -30,14 +26,10 @@ class CurrentUserProfileViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:])
+            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
         }
 
         setupSubscribers()
-
-        Task {
-            await loadInterestTags()
-        }
     }
 
     func setupSubscribers() {
@@ -46,8 +38,6 @@ class CurrentUserProfileViewModel: ObservableObject {
             .compactMap({ $0 })
             .sink { [weak self] currentUser in
                 self?.user = currentUser
-                self?.username = currentUser.username
-                self?.bio = currentUser.bio ?? ""
             }
             .store(in: &cancellables)
     }
@@ -64,50 +54,25 @@ class CurrentUserProfileViewModel: ObservableObject {
         self.backgroundImage = Image(uiImage: uiImage)
     }
 
-    func saveInterestTags(tags: [InterestTag]) async {
+    func updateUserData(addTags: [String] = []) async {
+        let filteredTags = addTags.filter { !$0.isEmpty }
+        let saveTags = filteredTags.isEmpty ? user.interestTags : user.interestTags + filteredTags
+        
         do {
-            try await UserService.saveInterestTags(tags: tags)
-            await loadInterestTags()
+            if let uiImage = uiBackgroundImage {
+                try await ImageUploader.uploadImage(image: uiImage)
+            }
+            
+            try await UserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: saveTags)
+            try await AuthService.shared.loadUserData()
         } catch {
-            print("DEBUG: Error saving interest tags \(error.localizedDescription)")
+            print("Error updating user data: \(error)")
         }
     }
-
+    
     @MainActor
-    func loadInterestTags() async {
-        do {
-            let data = try await UserService.fetchInterestTags(documentId: user.id)
-            self.interestTags = data
-        } catch {
-            print("error loading interest tags \(error.localizedDescription)")
-        }
-    }
-
-    @MainActor
-    //Firebase Databaseのユーザ情報を変更する関数
-    func updateUserData() async throws {
-        //update profile image if changed
-        var data = [String: Any]() //keyがString型，valueがAnyの辞書を定義
-
-        if let uiImage = uiBackgroundImage {
-            try await ImageUploader.uploadImage(image: uiImage)
-        }
-
-        if !username.isEmpty && user.username != username {
-
-            data["username"] = username
-        }
-
-        //update bio if changed
-        if !bio.isEmpty && user.bio != bio {
-            data["bio"] = bio
-        }
-
-        if !data.isEmpty {
-            //Firestore Databaseのドキュメントを更新
-            try await Firestore.firestore().collection("users").document(user.id).updateData(data)
-            print("complete")
-        }
+    func deleteTag(tag: String) {
+        user.interestTags.removeAll { $0 == tag }
     }
 
     @MainActor

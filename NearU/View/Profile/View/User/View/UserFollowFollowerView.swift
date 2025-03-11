@@ -24,11 +24,14 @@ struct UserFollowFollowerView: View {
                 }
                 .padding()
 
-                if selectedTab == 0 {
+                TabView(selection: $selectedTab) {
                     UserFollowView(viewModel: viewModel)
-                } else {
+                        .tag(0)
+                    
                     UserFollowerView(viewModel: viewModel)
+                        .tag(1)
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never)) // インジケータを非表示
             }
             .ignoresSafeArea(edges:.bottom)
             .navigationBarTitleDisplayMode(.inline)

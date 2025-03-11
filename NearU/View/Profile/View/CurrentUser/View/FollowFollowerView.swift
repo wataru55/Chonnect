@@ -15,25 +15,27 @@ struct FollowFollowerView: View {
     @Environment(\.dismiss) var dismiss
 
     let currentUser: User
-
     var body: some View {
         VStack {
             EmptyView()
                 .searchable(text: $searchText, prompt: "Search...")
-
+            
             HStack {
                 CustomTabBarButtonView(selected: $selectedTab, title: "フォロー", tag: 0)
                 CustomTabBarButtonView(selected: $selectedTab, title: "フォロワー", tag: 1)
             }
             .padding()
-
-            if selectedTab == 0 {
+            
+            TabView(selection: $selectedTab) {
                 FollowView(currentUser: currentUser).tag(0)
                     .environmentObject(followViewModel)
-            } else {
+                    .tag(0)
+                
                 FollowerView(currentUser: currentUser).tag(1)
                     .environmentObject(followerViewModel)
+                    .tag(1)
             }
+            .tabViewStyle(.page(indexDisplayMode: .never)) // インジケータを非表示
         }
         .ignoresSafeArea(edges:.bottom)
         .navigationBarTitleDisplayMode(.inline)
