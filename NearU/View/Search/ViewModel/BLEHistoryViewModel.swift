@@ -13,14 +13,15 @@ class BLEHistoryViewModel: ObservableObject {
     @Published var historyRowData: [HistoryRowData] = []
     @Published var sortedHistoryRowData: [HistoryRowData] = []
     @Published var isLoading: Bool = false
+    @Published var isShowMarker: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     private var listenerRegistration: ListenerRegistration?
+    private var isFirstLoad = true
 
     init() {
         setupSubscribers()
-        //ユーザーブロックのフィルタリングに支障を来たすから一旦コメントアウト
-        //observeFirestoreChanges()
+        observeFirestoreChanges()
     }
     
     deinit {
@@ -55,6 +56,7 @@ class BLEHistoryViewModel: ObservableObject {
             let historyRowDataList = try await fetchHistoryRowData(records: userHistoryRecords)
             
             self.historyRowData = historyRowDataList
+            self.isShowMarker = false
         } catch {
             print("error: \(error)")
         }
@@ -70,53 +72,39 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
     
-//    private func observeFirestoreChanges() {
-//        guard let documentId = AuthService.shared.currentUser?.id else { return }
-//        
-//        let docRef = Firestore.firestore()
-//            .collection("users")
-//            .document(documentId)
-//            .collection("history")
-//        
-//        listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
-//            guard let self = self else { return }
-//            guard let snapshot = snapshot else {
-//                print("Error listening to Firestore collection: \(error?.localizedDescription ?? "")")
-//                return
-//            }
-//            
-//            for change in snapshot.documentChanges {
-//                switch change.type {
-//                case .added:
-//                    self.handleAddedDocument(document: change.document)
-//                case .modified:
-//                    self.handleModifiedDocument(document: change.document)
-//                case .removed:
-//                    self.handleRemovedDocument(document: change.document)
-//                }
-//            }
-//        }
-//    }
-
-//    // ドキュメントが追加されたときの処理
-//    private func handleAddedDocument(document: QueryDocumentSnapshot) {
-//        let newHistoryData = try? document.data(as: HistoryDataStruct.self)
-//        if let data = newHistoryData {
-//            Task {
-//                // 必要な追加データをフェッチし、`historyRowData` に追加
-//                let user = try await UserService.fetchUser(withUid: data.userId)
-//                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
-//                let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
-//                let record = UserHistoryRecord(user: user, date: data.date, isRead: data.isRead)
-//                let rowData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
-//                
-//                // メインスレッドで更新
-//                await MainActor.run {
-//                    self.historyRowData.append(rowData)
-//                }
-//            }
-//        }
-//    }
+    private func observeFirestoreChanges() {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        
+        let docRef = Firestore.firestore()
+            .collection("users")
+            .document(documentId)
+            .collection("history")
+        
+        listenerRegistration?.remove()
+        
+        listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else { return }
+            guard let snapshot = snapshot else {
+                print("Error listening to Firestore collection: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            // 初回ロード時のイベントかチェック
+            if self.isFirstLoad {
+                self.isFirstLoad = false
+                return
+            }
+            
+            for change in snapshot.documentChanges {
+                switch change.type {
+                case .added:
+                    self.isShowMarker = true
+                default:
+                    break
+                }
+            }
+        }
+    }
 
     func setupSubscribers() {
         $historyRowData
