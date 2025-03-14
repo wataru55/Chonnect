@@ -8,51 +8,60 @@ import SwiftUI
 
 struct BLEHistoryView: View {
     // MARK: - property
-    @StateObject var viewModel = BLEHistoryViewModel()
+    @ObservedObject var viewModel: BLEHistoryViewModel
     @EnvironmentObject var loadingViewModel: LoadingViewModel
     @State var isShowAlert: Bool = false
 
     let currentUser: User
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 16) {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if viewModel.sortedHistoryRowData.isEmpty {
-                    Text("すれちがったユーザーはいません")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
-                        NavigationLink {
-                            ProfileView(user: data.record.user, currentUser: currentUser, date: data.record.date,
-                                        isShowFollowButton: true, isShowDateButton: true)
-                                .onAppear {
-                                    Task {
-                                        await viewModel.markAsRead(data.record)
+        VStack {
+            if viewModel.isShowMarker {
+                Text("更新データがあります")
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.mint)
+            }
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 16) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else if viewModel.sortedHistoryRowData.isEmpty {
+                        Text("すれちがったユーザーはいません")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
+                            NavigationLink {
+                                ProfileView(user: data.record.user, currentUser: currentUser, date: data.record.date,
+                                            isShowFollowButton: true, isShowDateButton: true)
+                                    .onAppear {
+                                        Task {
+                                            await viewModel.markAsRead(data.record)
+                                        }
                                     }
-                                }
-                        } label: {
-                            UserRowView(user: data.record.user, tags: data.record.user.interestTags,
-                                        date: data.record.date, isRead: data.record.isRead,
-                                        rssi: nil, isFollower: data.isFollowed)
-                        }
-                    } // ForEach
-                }
-            } // LazyVStack
-            .padding(.top, 8)
-            .padding(.bottom, 100)
+                            } label: {
+                                UserRowView(user: data.record.user, tags: data.record.user.interestTags,
+                                            date: data.record.date, isRead: data.record.isRead,
+                                            rssi: nil, isFollower: data.isFollowed)
+                            }
+                        } // ForEach
+                    }
+                } // LazyVStack
+                .padding(.top, 8)
+                .padding(.bottom, 100)
 
-        } // ScrollView
-        .onFirstAppear {
-            Task {
-                await viewModel.makeHistoryRowData()
+            } // ScrollView
+            .refreshable {
+                Task {
+                    await viewModel.makeHistoryRowData()
+                }
             }
         }
-        .refreshable {
+        .onFirstAppear {
             Task {
                 await viewModel.makeHistoryRowData()
             }
@@ -66,5 +75,5 @@ struct BLEHistoryView: View {
 }
 
 #Preview {
-    BLEHistoryView(currentUser: User.MOCK_USERS[0])
+    BLEHistoryView(viewModel: BLEHistoryViewModel(), currentUser: User.MOCK_USERS[0])
 }
