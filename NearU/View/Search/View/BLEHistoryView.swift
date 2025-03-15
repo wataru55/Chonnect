@@ -28,11 +28,9 @@ struct BLEHistoryView: View {
                     if viewModel.isLoading {
                         ProgressView()
                     } else if viewModel.sortedHistoryRowData.isEmpty {
-                        Text("すれちがったユーザーはいません")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                            .padding()
+                        NothingDataView(text: "すれちがったユーザーがいません",
+                                        explanation: "ここでは、過去にすれちがったユーザーの一覧が表示されます。",
+                                        isAbleToReload: true)
                     } else {
                         ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
                             NavigationLink {
