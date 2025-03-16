@@ -8,11 +8,17 @@
 <br>
 
 ## 受賞歴
-2024年12月7日に行われたチャレキャラのコンテストで最優秀賞とビジネス賞を受賞することができました。
-<br>
-ビジネス賞に選ばれたため、「福岡県ITスタートアップビジネス大賞2025公開審査会」に出場予定です。
+2024年12月7日に行われた「チャレキャラ」のコンテストで最優秀賞とビジネス賞を受賞することができました。
 
 <img src="https://github.com/user-attachments/assets/64026419-3ab6-4e45-8dfe-ef62664daa7f" alt="IMG_3041" width="600">
+
+<br>
+<br>
+
+「福岡県ITスタートアップビジネス大賞2025公開審査会」に出場しました。
+
+<img src="https://github.com/user-attachments/assets/adb0749f-c6f5-436e-b6a9-e4dad5468180" alt="IMG_3042" width="600">
+
 
 <br>
 <br>
