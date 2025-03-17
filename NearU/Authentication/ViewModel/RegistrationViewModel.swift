@@ -11,6 +11,11 @@ class RegistrationViewModel: ObservableObject {
     @Published var username = ""
     @Published var email = ""
     @Published var password = ""
+    @Published var errorMessage: String?
+    
+    var isEmailValid: Bool {
+        Validation.validateEmail(email: email)
+    }
 
     @MainActor
     func createUser() async throws {
@@ -19,6 +24,16 @@ class RegistrationViewModel: ObservableObject {
         username = ""
         email = ""
         password = ""
+    }
+    
+    @MainActor
+    func checkEmail() -> Bool {
+        if Validation.validateEmail(email: email) {
+            return true // バリデーション成功時に遷移
+        } else {
+            errorMessage = "正しいメールアドレスを入力してください"
+            return false
+        }
     }
 }
 
