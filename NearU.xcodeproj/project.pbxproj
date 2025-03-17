@@ -43,6 +43,7 @@
 		6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0332D799B0200EDC4E5 /* ReportView.swift */; };
 		6346A0372D7B0A8500EDC4E5 /* OnFirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0362D7B0A8500EDC4E5 /* OnFirstAppear.swift */; };
 		6346A0392D855C9400EDC4E5 /* NothingDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0382D855C9400EDC4E5 /* NothingDataView.swift */; };
+		6346A03B2D8829A600EDC4E5 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A03A2D8829A600EDC4E5 /* Validation.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -180,6 +181,7 @@
 		6346A0332D799B0200EDC4E5 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		6346A0362D7B0A8500EDC4E5 /* OnFirstAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppear.swift; sourceTree = "<group>"; };
 		6346A0382D855C9400EDC4E5 /* NothingDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingDataView.swift; sourceTree = "<group>"; };
+		6346A03A2D8829A600EDC4E5 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 				631591CB2D44E14C00E16DE3 /* RealmService.swift */,
 				63226E1F2D69BF28006EBCCF /* UserActions.swift */,
 				63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */,
+				6346A03A2D8829A600EDC4E5 /* Validation.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -834,6 +837,7 @@
 				63DFF8C12C04040B00A6DFB8 /* SettingViewModel.swift in Sources */,
 				3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */,
 				639A0BDD2CE4E1F700A769C6 /* CountView.swift in Sources */,
+				6346A03B2D8829A600EDC4E5 /* Validation.swift in Sources */,
 				638732132BF4B3E90099F68A /* CompleteSignUpView.swift in Sources */,
 				6346A0392D855C9400EDC4E5 /* NothingDataView.swift in Sources */,
 				63AEF0FF2C0CC89F00DE196E /* FollowViewModel.swift in Sources */,
