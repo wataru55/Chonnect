@@ -23,54 +23,52 @@ struct CurrentUserProfileView: View {
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    let user: User
-
     var body: some View {
         NavigationStack {
             ZStack{
                 backgroundColor.ignoresSafeArea()
-
+                
                 VStack{
                     ScrollView(.vertical, showsIndicators: false){
                         //MARK: - HEADER
                         VStack{
-                            BackgroundImageView(user: user, height: 500, isGradient: true)
+                            BackgroundImageView(user: viewModel.user, height: 500, isGradient: true)
                                 .overlay(alignment: .bottomLeading) {
                                     VStack(alignment: .leading){
                                         HStack(spacing: 4) {
-                                            Text(user.username)
+                                            Text(viewModel.user.username)
                                                 .font(.system(size: 35, weight: .bold, design: .default))
                                                 .padding(.bottom, 1)
                                                 .padding(.top, 5)
-
-                                            Image(systemName: user.isPrivate ? "lock.fill" : "lock.open.fill")
+                                            
+                                            Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                                                 .font(.subheadline)
                                                 .offset(y: 7)
                                         }
-
+                                        
                                         HStack {
-                                            NavigationLink(value: FollowNavigationData(selectedTab: 0, currentUser: user)) {
+                                            NavigationLink(value: FollowNavigationData(selectedTab: 0, currentUser: viewModel.user)) {
                                                 CountView(count: followViewModel.followUsers.count, text: "フォロー")
                                             }
-
-                                            NavigationLink(value: FollowNavigationData(selectedTab: 1, currentUser: user)) {
+                                            
+                                            NavigationLink(value: FollowNavigationData(selectedTab: 1, currentUser: viewModel.user)) {
                                                 CountView(count: followerViewModel.followers.count, text: "フォロワー")
                                             }
                                         }
                                         .padding(.bottom, 5)
-
-                                        if let bio = user.bio {
+                                        
+                                        if let bio = viewModel.user.bio {
                                             Text(bio)
                                                 .font(.subheadline)
                                                 .frame(alignment: .leading)
                                                 .padding(.trailing, 8)
                                         }
-
-                                        if !viewModel.interestTags.isEmpty {
-                                            InterestTagView(interestTag: viewModel.interestTags, isShowDeleteButton: false, textFont: .footnote)
-                                                .padding(.bottom, 5)
+                                        
+                                        if !viewModel.user.interestTags.isEmpty {
+                                            InterestTagView(interestTags: $viewModel.user.interestTags, isShowDeleteButton: false, textFont: .footnote)
+                                            .padding(.bottom, 5)
                                         }
-
+                                        
                                         if !tagsViewModel.skillSortedTags.isEmpty {
                                             NavigationLink {
                                                 WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
@@ -80,7 +78,6 @@ struct CurrentUserProfileView: View {
                                                 Top3TabView(tags: tagsViewModel.skillSortedTags)
                                             }
                                         }
-
                                     }//VStack
                                     .padding(.bottom, 5)
                                     .padding(.leading)
@@ -101,7 +98,7 @@ struct CurrentUserProfileView: View {
                                         }
                                         .padding(.top, 50)
                                         .padding(.trailing, 20)
-
+                                        
                                         Button {
                                             showEditTags.toggle()
                                         } label: {
@@ -120,14 +117,14 @@ struct CurrentUserProfileView: View {
                                 }
                         }//vstack
                         .padding(.bottom, 10)
-
+                        
                         //MARK: - SNSLINKS
                         HStack {
                             Text("SNS")
                                 .font(.footnote)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.gray)
-
+                            
                             Rectangle()
                                 .fill(Color.gray.opacity(0.1))
                                 .frame(height: 1)
@@ -135,10 +132,10 @@ struct CurrentUserProfileView: View {
                         }
                         .frame(width: UIScreen.main.bounds.width)
                         .padding(.leading)
-
+                        
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                if user.snsLinks.isEmpty {
+                                if viewModel.user.snsLinks.isEmpty {
                                     Button {
                                         isAddingNewLink.toggle()
                                     } label: {
@@ -151,14 +148,14 @@ struct CurrentUserProfileView: View {
                                         .foregroundColor(.mint)
                                     }
                                     .padding(.leading, 8)
-
+                                    
                                 } else {
                                     ForEach(Array(addLinkViewModel.snsUrls.keys), id: \.self) { key in
                                         if let url = addLinkViewModel.snsUrls[key] {
                                             SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
                                         }
                                     }
-
+                                    
                                     Button(action: {
                                         isAddingNewLink.toggle()
                                     }, label: {
@@ -179,14 +176,14 @@ struct CurrentUserProfileView: View {
                             .padding(.horizontal, 15)
                         } // ScrollView
                         .padding(.bottom, 10)
-
+                        
                         //MARK: - ARTICLES
                         HStack {
                             Text("記事")
                                 .font(.footnote)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.gray)
-
+                            
                             Rectangle()
                                 .fill(Color.gray.opacity(0.1))
                                 .frame(height: 1)
@@ -195,7 +192,7 @@ struct CurrentUserProfileView: View {
                         .frame(width: UIScreen.main.bounds.width)
                         .padding(.leading)
                         .padding(.bottom, 10)
-
+                        
                         VStack(alignment: .center, spacing: 10) {
                             if articleLinksViewModel.openGraphData.isEmpty {
                                 Button {
@@ -211,20 +208,20 @@ struct CurrentUserProfileView: View {
                                 }
                                 .frame(width: UIScreen.main.bounds.width, height: 100, alignment: .topLeading)
                                 .padding(.leading)
-
+                                
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
                                     SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
                                         .environmentObject(articleLinksViewModel)
                                 }
-
+                                
                                 Button(action: {
                                     showEditArticle.toggle()
                                 }, label: {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                                         .frame(width: 30, height: 30)
-
+                                    
                                         .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                         .clipShape(Circle())
                                         .overlay(
@@ -237,7 +234,7 @@ struct CurrentUserProfileView: View {
                         }
                     }//scrollview
                     .fullScreenCover(isPresented: $showEditProfile) {
-                        EditProfileView(user: viewModel.user)
+                        EditProfileView()
                             .environmentObject(viewModel)
                     }
                     .fullScreenCover(isPresented: $isAddingNewLink) {
@@ -251,9 +248,7 @@ struct CurrentUserProfileView: View {
                     .fullScreenCover(isPresented: $showEditTags) {
                         EditSkillTagsView(viewModel: tagsViewModel)
                     }
-
                 }//vstack
-
             }// zstack
             .ignoresSafeArea()
             .navigationDestination(for: FollowNavigationData.self) { data in

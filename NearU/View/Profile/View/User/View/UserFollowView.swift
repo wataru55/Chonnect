@@ -15,18 +15,17 @@ struct UserFollowView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
                 if viewModel.follows.isEmpty {
-                    Text("フォローしているユーザーがいません")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundColor(.gray)
-                        .padding()
+                    NothingDataView(text: "フォローしたユーザーがいません",
+                                    explanation: "ここでは、フォローしたユーザーの一覧が表示されます。",
+                                    isAbleToReload: false)
+
                 } else {
                     ForEach(viewModel.follows, id: \.self) { followUser in
                         NavigationLink {
                             ProfileView(user: followUser.pair.user, currentUser: viewModel.currentUser, date: followUser.pair.date,
                                         isShowFollowButton: false, isShowDateButton: false)
                         } label: {
-                            UserRowView(user: followUser.pair.user, tags: followUser.tags,
+                            UserRowView(user: followUser.pair.user, tags: followUser.pair.user.interestTags,
                                         date: nil, isRead: true,rssi: nil, isFollower: followUser.isFollowed)
                         }
                     }//foreach

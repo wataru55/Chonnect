@@ -9,7 +9,6 @@ import Foundation
 
 struct UserRealtimeRecord: Hashable, Codable {
     let user: User
-    let tags: [InterestTag]
     var date: Date
     var rssi: Int
 }

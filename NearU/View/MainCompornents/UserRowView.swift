@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserRowView: View {
     let user: User
-    let tags: [InterestTag]
+    let tags: [String]
     let date: Date?
     let isRead: Bool?
     let rssi: Int?
@@ -67,7 +67,7 @@ struct UserRowView: View {
                 } //hstack
 
                 if !tags.isEmpty {
-                    InterestTagView(interestTag: tags, isShowDeleteButton: false, textFont: .caption)
+                    InterestTagView(interestTags: tags, isShowDeleteButton: false, textFont: .caption)
                         .padding(.leading, 5)
                 }
 
@@ -134,9 +134,7 @@ struct UserRowView: View {
 
 #Preview {
     UserRowView(user: User.MOCK_USERS[0],
-                tags: [InterestTag(id: UUID(), text: "SwiftUI"),
-                       InterestTag(id: UUID(), text: "UIKit"),
-                       InterestTag(id: UUID(), text: "iOSDC")],
+                tags: ["SwiftUI", "UIKit", "iOSDC"],
                 date: Date(),
                 isRead: false,
                 rssi: nil,

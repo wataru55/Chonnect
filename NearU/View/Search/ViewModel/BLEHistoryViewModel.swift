@@ -12,20 +12,16 @@ import Firebase
 class BLEHistoryViewModel: ObservableObject {
     @Published var historyRowData: [HistoryRowData] = []
     @Published var sortedHistoryRowData: [HistoryRowData] = []
-    @Published var isLoading: Bool = true
+    @Published var isLoading: Bool = false
+    @Published var isShowMarker: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     private var listenerRegistration: ListenerRegistration?
+    private var isFirstLoad = true
 
     init() {
-        Task {
-            await makeHistoryRowData()
-            isLoading = false
-        }
-
         setupSubscribers()
-        //ユーザーブロックのフィルタリングに支障を来たすから一旦コメントアウト
-        //observeFirestoreChanges()
+        observeFirestoreChanges()
     }
     
     deinit {
@@ -60,6 +56,7 @@ class BLEHistoryViewModel: ObservableObject {
             let historyRowDataList = try await fetchHistoryRowData(records: userHistoryRecords)
             
             self.historyRowData = historyRowDataList
+            self.isShowMarker = false
         } catch {
             print("error: \(error)")
         }
@@ -83,6 +80,8 @@ class BLEHistoryViewModel: ObservableObject {
             .document(documentId)
             .collection("history")
         
+        listenerRegistration?.remove()
+        
         listenerRegistration = docRef.addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
             guard let snapshot = snapshot else {
@@ -90,67 +89,18 @@ class BLEHistoryViewModel: ObservableObject {
                 return
             }
             
+            // 初回ロード時のイベントかチェック
+            if self.isFirstLoad {
+                self.isFirstLoad = false
+                return
+            }
+            
             for change in snapshot.documentChanges {
                 switch change.type {
                 case .added:
-                    self.handleAddedDocument(document: change.document)
-                case .modified:
-                    self.handleModifiedDocument(document: change.document)
-                case .removed:
-                    self.handleRemovedDocument(document: change.document)
-                }
-            }
-        }
-    }
-
-    // ドキュメントが追加されたときの処理
-    private func handleAddedDocument(document: QueryDocumentSnapshot) {
-        let newHistoryData = try? document.data(as: HistoryDataStruct.self)
-        if let data = newHistoryData {
-            Task {
-                // 必要な追加データをフェッチし、`historyRowData` に追加
-                let user = try await UserService.fetchUser(withUid: data.userId)
-                let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
-                let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
-                let record = UserHistoryRecord(user: user, date: data.date, isRead: data.isRead)
-                let rowData = HistoryRowData(record: record, tags: interestTags, isFollowed: isFollowed)
-                
-                // メインスレッドで更新
-                await MainActor.run {
-                    self.historyRowData.append(rowData)
-                }
-            }
-        }
-    }
-
-    // ドキュメントが変更されたときの処理
-    private func handleModifiedDocument(document: QueryDocumentSnapshot) {
-        let modifiedHistoryData = try? document.data(as: HistoryDataStruct.self)
-        if let data = modifiedHistoryData {
-            Task {
-                if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == data.userId }) {
-                    let interestTags = try await UserService.fetchInterestTags(documentId: data.userId)
-                    let isFollowed = await UserService.checkIsFollowed(receivedId: data.userId)
-                    let updatedRecord = UserHistoryRecord(user: self.historyRowData[index].record.user, date: data.date, isRead: data.isRead)
-                    let updatedRowData = HistoryRowData(record: updatedRecord, tags: interestTags, isFollowed: isFollowed)
-                    
-                    // メインスレッドで更新
-                    await MainActor.run {
-                        self.historyRowData[index] = updatedRowData
-                    }
-                }
-            }
-        }
-    }
-
-    // ドキュメントが削除されたときの処理
-    private func handleRemovedDocument(document: QueryDocumentSnapshot) {
-        let removedUserId = document.documentID
-        if let index = self.historyRowData.firstIndex(where: { $0.record.user.id == removedUserId }) {
-            // メインスレッドで削除
-            Task {
-                await MainActor.run {
-                    self.historyRowData.remove(at: index)
+                    self.isShowMarker = true
+                default:
+                    break
                 }
             }
         }
@@ -198,12 +148,11 @@ class BLEHistoryViewModel: ObservableObject {
         return try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
             for record in records {
                 group.addTask {
-                    async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
+                    //async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
                     async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
                     
                     return HistoryRowData(
                         record: record,
-                        tags: try await interestTags,
                         isFollowed: await isFollowed
                     )
                 }
