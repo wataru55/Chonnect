@@ -19,11 +19,10 @@ struct BLERealtimeView: View {
             LazyVStack(spacing: 16) {
                 // TODO: 毎回一瞬だけ表示されるから関数で渡すべきかも
                 if viewModel.sortedUserRealtimeRecords.isEmpty {
-                    Text("付近にユーザーがいません")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundColor(.gray)
-                        .padding()
+                    NothingDataView(text: "付近にユーザーがいません",
+                                    explanation: "ここでは、近くにいるユーザーの一覧を表示します。",
+                                    isAbleToReload: false)
+
                 } else {
                     ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { data in
                         NavigationLink {
