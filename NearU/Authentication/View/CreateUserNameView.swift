@@ -18,13 +18,25 @@ struct CreateUserNameView: View {
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("他のユーザに公開される名前です。いつでも変更ができます。")
+            Text("他のユーザに公開される名前です。\n20文字以内で設定してください。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.bottom)
 
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundColor(.orange)
+                    .padding(.top, 4)
+                    .onAppear {
+                        Task {
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            viewModel.errorMessage = nil
+                        }
+                    }
+            }
 
             TextField("ユーザ名", text: $viewModel.username)
                 .modifier(IGTextFieldModifier())
@@ -33,15 +45,16 @@ struct CreateUserNameView: View {
                 CreatePasswordView()
                     .navigationBarBackButtonHidden()
             } label: {
-                Text("Next")
+                Text(viewModel.isUsernameValid ? "次へ" : "適切なユーザー名を入力してください")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
                     .frame(width: 360, height: 44)
-                    .background(Color(.systemMint))
+                    .background(viewModel.isUsernameValid ? Color.mint : Color.gray)
                     .cornerRadius(12)
                     .padding(.top)
             }
+            .disabled(!viewModel.isUsernameValid)
 
             Spacer()//上に押し上げる
         }//vstack

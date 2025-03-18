@@ -19,4 +19,12 @@ struct Validation {
         
         return true
     }
+    
+    static func validateUsername(username: String) -> Bool {
+        guard !username.isEmpty else { return false }
+        
+        guard username.count <= 20 else { return false }
+        
+        return true
+    }
 }

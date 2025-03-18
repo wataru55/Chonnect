@@ -16,6 +16,10 @@ class RegistrationViewModel: ObservableObject {
     var isEmailValid: Bool {
         Validation.validateEmail(email: email)
     }
+    
+    var isUsernameValid: Bool {
+        Validation.validateUsername(username: username)
+    }
 
     @MainActor
     func createUser() async throws {
