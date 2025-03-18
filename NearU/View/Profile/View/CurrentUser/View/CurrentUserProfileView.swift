@@ -38,6 +38,7 @@ struct CurrentUserProfileView: View {
                                         HStack(spacing: 4) {
                                             Text(viewModel.user.username)
                                                 .font(.system(size: 35, weight: .bold, design: .default))
+                                                .lineLimit(1)
                                                 .padding(.bottom, 1)
                                                 .padding(.top, 5)
                                             
