@@ -27,4 +27,18 @@ struct Validation {
         
         return true
     }
+    
+    static func validatePassword(password: String, rePassword: String) -> Bool {
+        guard password == rePassword else { return false }
+        
+        guard password.rangeOfCharacter(from: .whitespaces) == nil else {
+            return false
+        }
+        
+        guard password.count >= 6 && password.count <= 20 else {
+            return false
+        }
+        
+        return true
+    }
 }

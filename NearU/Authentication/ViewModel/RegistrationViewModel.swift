@@ -11,6 +11,7 @@ class RegistrationViewModel: ObservableObject {
     @Published var username = ""
     @Published var email = ""
     @Published var password = ""
+    @Published var rePassword = ""
     @Published var errorMessage: String?
     
     var isEmailValid: Bool {
@@ -19,6 +20,10 @@ class RegistrationViewModel: ObservableObject {
     
     var isUsernameValid: Bool {
         Validation.validateUsername(username: username)
+    }
+    
+    var isPasswordValid: Bool {
+        Validation.validatePassword(password: password, rePassword: rePassword)
     }
 
     @MainActor
@@ -30,14 +35,5 @@ class RegistrationViewModel: ObservableObject {
         password = ""
     }
     
-    @MainActor
-    func checkEmail() -> Bool {
-        if Validation.validateEmail(email: email) {
-            return true // バリデーション成功時に遷移
-        } else {
-            errorMessage = "正しいメールアドレスを入力してください"
-            return false
-        }
-    }
 }
 

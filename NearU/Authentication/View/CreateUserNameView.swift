@@ -63,6 +63,7 @@ struct CreateUserNameView: View {
                 Image(systemName: "chevron.left")
                     .imageScale(.large)
                     .onTapGesture {
+                        viewModel.username = ""
                         dismiss()
                     }
             }
