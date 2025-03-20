@@ -21,6 +21,14 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     private var uiBackgroundImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
+    
+    var isUsernameValid: Bool {
+        Validation.validateUsername(username: user.username)
+    }
+    
+    var isAbleToSave: Bool {
+        isUsernameValid
+    }
 
     init() {
         if let currentUser = AuthService.shared.currentUser {

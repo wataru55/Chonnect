@@ -29,44 +29,15 @@ struct EditProfileView: View {
                 backgroundColor.ignoresSafeArea()
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
-                            VStack {
-                                if let image = viewModel.backgroundImage {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundStyle(.white)
-                                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                } else {
-                                    BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
-                                }
-
-                                Text("背景画像を変更する")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(Color.mint)
-                                    .padding(.bottom, 10)
-                            }//vstack
-                        }
-                        .disabled(focusedField != nil)
-                    }//vstack
-                    //edit profile info
-                    VStack (spacing:0){
-                        EditProfileRowView(title: "ニックネーム", placeholder: "", text: $viewModel.user.username)
-                            .focused($focusedField, equals: .title)
-
-                        EditProfileBioRowView(text: Binding(
-                                                    get: { viewModel.user.bio ?? "" },
-                                                    set: { viewModel.user.bio = $0 }),
-                                              title: "自己紹介", placeholder: "")
+                    VStack(spacing: 0) {
+                        editBackgroundImage()
                         
-                        .focused($focusedField, equals: .title)
+                        editUserName()
 
-                        EditInterestView(texts: $texts)
-                            .focused($focusedField, equals: .title)
-                    }
+                        editBio()
+
+                        editInterestTags()
+                    }//vstack
                     .padding(.top, 5)
                 } //scrollview
                 .onTapGesture {
@@ -109,13 +80,16 @@ struct EditProfileView: View {
                             }
                         } label: {
                             HStack(spacing: 2) {
-                                Image(systemName: "checkmark.circle")
+                                if viewModel.isAbleToSave {
+                                    Image(systemName: "checkmark.circle")
+                                }
                                 Text("保存")
                                     .fontWeight(.bold)
                             }
                             .font(.subheadline)
-                            .foregroundStyle(Color.mint)
+                            .foregroundStyle(viewModel.isAbleToSave ? Color.mint : Color.gray)
                         }
+                        .disabled(!viewModel.isAbleToSave)
                     }
                 }
                 
@@ -131,22 +105,50 @@ struct EditProfileView: View {
             }
         }
     }//body
-}//view
+    
+    private func editBackgroundImage() -> some View {
+        PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+            VStack {
+                if let image = viewModel.backgroundImage {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.white)
+                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                } else {
+                    BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
+                }
 
-struct EditProfileRowView: View {
-    let title: String
-    let placeholder: String
-    @Binding var text: String
-
-    var body: some View {
+                Text("背景画像を変更する")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.mint)
+                    .padding(.bottom, 10)
+            }//vstack
+        }
+        .disabled(focusedField != nil)
+    }
+    
+    private func editUserName() -> some View {
         VStack (spacing:10){
-            Text(title)
-                .font(.footnote)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color.gray)
+            VStack(spacing: 5) {
+                Text("ユーザー名（20文字以内）")
+                    .font(.footnote)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(Color.gray)
+                
+                if !viewModel.isUsernameValid {
+                    Text("適切なユーザー名を入力してください")
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(Color.orange)
+                        .padding(.leading, 5)
+                }
+            }
 
             VStack {
-                TextField(placeholder, text: $text)
+                TextField("", text: $viewModel.user.username)
                     .padding(.leading, 5)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
@@ -154,10 +156,25 @@ struct EditProfileRowView: View {
 
                 Divider()
             }//vstack
-        }//hstack
+        }//vstack
         .font(.subheadline)
         .padding(5)
-    }//body
+        .focused($focusedField, equals: .title)
+    }
+    
+    private func editBio() -> some View {
+        EditProfileBioRowView(text: Binding(
+                                    get: { viewModel.user.bio ?? "" },
+                                    set: { viewModel.user.bio = $0 }),
+                              title: "自己紹介", placeholder: "")
+        
+        .focused($focusedField, equals: .title)
+    }
+    
+    private func editInterestTags() -> some View {
+        EditInterestView(texts: $texts)
+            .focused($focusedField, equals: .title)
+    }
 }//view
 
 struct EditInterestView: View {
