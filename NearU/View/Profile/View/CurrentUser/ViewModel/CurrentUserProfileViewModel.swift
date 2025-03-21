@@ -26,8 +26,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         Validation.validateUsername(username: user.username)
     }
     
+    var isNotOverCharacterLimit: Bool {
+        Validation.validateBio(bio: user.bio ?? "")
+    }
+    
     var isAbleToSave: Bool {
-        isUsernameValid
+        isUsernameValid && isNotOverCharacterLimit
     }
 
     init() {

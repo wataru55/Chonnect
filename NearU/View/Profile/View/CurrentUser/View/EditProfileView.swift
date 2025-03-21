@@ -163,11 +163,39 @@ struct EditProfileView: View {
     }
     
     private func editBio() -> some View {
-        EditProfileBioRowView(text: Binding(
-                                    get: { viewModel.user.bio ?? "" },
-                                    set: { viewModel.user.bio = $0 }),
-                              title: "自己紹介", placeholder: "")
-        
+        VStack {
+            HStack {
+                Text("自己紹介（100文字以内）")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+
+                // 文字制限を超えている場合
+                if !viewModel.isNotOverCharacterLimit {
+                    Text("自己紹介は100字以内で入力してください")
+                        .font(.footnote)
+                        .foregroundColor(.orange)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack {
+                TextField("", text: Binding(
+                    get: { viewModel.user.bio ?? "" },
+                    set: { viewModel.user.bio = $0 }
+                ), axis: .vertical)
+                .lineLimit(5, reservesSpace: true)
+                .padding(.horizontal, 5)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .autocorrectionDisabled(true)
+                .scrollContentBackground(.hidden)
+                .background(backgroundColor)
+                
+                Divider()
+            }
+        }
+        .font(.subheadline)
+        .padding(5)
         .focused($focusedField, equals: .title)
     }
     
@@ -257,78 +285,6 @@ struct EditInterestView: View {
                 }
             }
             .frame(width: UIScreen.main.bounds.width, alignment: .leading)
-        }
-    }
-}
-
-struct EditProfileBioRowView: View {
-    @State private var isOverCharacterLimit = false // 文字制限を超えたかどうか
-    @Binding var text: String
-    let title: String
-    let placeholder: String
-    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
-    private let characterLimit = 100 // 文字制限
-    private let lineLimit = 4 // 行数制限
-    private let lineHeight: CGFloat = 20 // 1行の高さ
-
-    var body: some View {
-        VStack {
-            HStack {
-                Text(title)
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-
-                // 文字制限を超えている場合
-                if isOverCharacterLimit {
-                    Text("自己紹介は100字以内で入力してください")
-                        .font(.footnote)
-                        .foregroundColor(.red)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            VStack {
-                ZStack(alignment: .topLeading) {
-                    if text.isEmpty {
-                        Text(placeholder)
-                            .foregroundColor(.gray)
-                            .padding(.leading, 5)
-                            .padding(.top, 8)
-                    }
-
-                    TextEditor(text: $text)
-                        .frame(minHeight: lineHeight * CGFloat(lineLimit), maxHeight: lineHeight * CGFloat(lineLimit))
-                        .padding(.horizontal, 5)
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
-                        .autocorrectionDisabled(true)
-                        .scrollContentBackground(.hidden)
-                        .background(backgroundColor)
-                        .onChange(of: text) {
-                            enforceTextLimit()
-                        }
-                }
-                Divider()
-            }
-        }
-        .font(.subheadline)
-        .padding(5)
-    }
-
-    private func enforceTextLimit() {
-        let lines = text.components(separatedBy: "\n")
-
-        // 行数制限を超えた場合、制限内の行のみを保持
-        if lines.count > lineLimit {
-            text = lines.prefix(lineLimit).joined(separator: "\n")
-        }
-
-        // 文字数制限を超えたかどうかを確認して超えている場合に切り捨てる
-        if text.count > characterLimit {
-            text = String(text.prefix(characterLimit))
-            isOverCharacterLimit = true
-        } else {
-            isOverCharacterLimit = false
         }
     }
 }
