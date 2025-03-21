@@ -21,7 +21,7 @@ struct ReportView: View {
                     .padding(.leading)
                     .padding(.bottom)
                 
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("""
                         ・不適切なコンテンツ
                         ・なりすまし
@@ -35,15 +35,24 @@ struct ReportView: View {
                 }
                 .font(.footnote)
                 .fontWeight(.bold)
+                .foregroundStyle(.gray)
                 .padding(.horizontal)
+                
+                if !viewModel.isReportValid {
+                    Text("200文字以内で入力してください")
+                        .font(.footnote)
+                        .foregroundColor(Color.orange)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
                 
                 TextField("報告内容", text: $viewModel.reportText, axis: .vertical)
                     .font(.system(size: 15))
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                    .lineLimit(5...10)
-                    .padding()
+                    .lineLimit(5...8)
+                    .padding(.horizontal)
+                    .padding(.top, 5)
                     .focused(self.$focus)
                     .toolbar {
                         ToolbarItem(placement: .keyboard) {
@@ -56,26 +65,13 @@ struct ReportView: View {
                         }
                     }
                 
-                if let message = viewModel.message {
-                    Text(message)
-                        .fontWeight(.bold)
-                        .padding(.bottom)
-                        .padding(.leading)
-                        .onAppear {
-                            Task {
-                                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                viewModel.message = nil
-                            }
-                        }
-                }
-                
                 Button {
                     self.focus = false
                     Task {
                         await viewModel.addReport(id: userId)
                     }
                 } label: {
-                    Text("報告")
+                    Text(viewModel.isReportValid ? "報告" : "報告内容に不備があります")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
@@ -83,10 +79,12 @@ struct ReportView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.mint)
+                                .fill(viewModel.isReportValid ? Color.mint : Color.gray)
                                 .padding(.horizontal)
                         )
                 }
+                .padding(.top, 10)
+                .disabled(!viewModel.isReportValid)
             }
             .onDisappear {
                 viewModel.reportText = ""

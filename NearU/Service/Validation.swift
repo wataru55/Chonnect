@@ -46,8 +46,12 @@ struct Validation {
         // 空白・改行・タブなどを正規表現で取り除く
         let trimmed = bio.replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
         
-        // 残った文字の長さが100以下かどうかをチェック
         return trimmed.count <= 100
+    }
+    
+    static func validateReport(report: String) -> Bool {
+        let trimmed = report.replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
+        return trimmed.count <= 200
     }
     
     static func validateInterestTag(tags: [String]) -> Bool {
