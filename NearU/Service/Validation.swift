@@ -50,4 +50,11 @@ struct Validation {
         return trimmed.count <= 100
     }
     
+    static func validateInterestTag(tags: [String]) -> Bool {
+        for tag in tags {
+            guard tag.count <= 20 else { return false }
+        }
+        
+        return true
+    }
 }

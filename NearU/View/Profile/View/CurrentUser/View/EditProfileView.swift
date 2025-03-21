@@ -13,14 +13,11 @@ enum Field: Hashable {
 }
 
 struct EditProfileView: View {
-    @State private var isAddingNewLink = false
     @State private var isLoading = false
-    @State private var texts = [""]
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
     @FocusState private var focusedField: Field?
 
-    //let user: User
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
@@ -68,7 +65,7 @@ struct EditProfileView: View {
                                     }
                                 }
                                 
-                                await viewModel.updateUserData(addTags: texts)
+                                await viewModel.updateUserData(addTags: viewModel.user.interestTags)
 
                                 await MainActor.run {
                                     if let currentUser = AuthService.shared.currentUser {
@@ -164,19 +161,16 @@ struct EditProfileView: View {
     
     private func editBio() -> some View {
         VStack {
-            HStack {
-                Text("自己紹介（100文字以内）")
+            Text("自己紹介（100文字以内）")
+                .font(.footnote)
+                .foregroundColor(.gray)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            if !viewModel.isNotOverCharacterLimit {
+                Text("自己紹介は100字以内で入力してください")
                     .font(.footnote)
-                    .foregroundColor(.gray)
-
-                // 文字制限を超えている場合
-                if !viewModel.isNotOverCharacterLimit {
-                    Text("自己紹介は100字以内で入力してください")
-                        .font(.footnote)
-                        .foregroundColor(.orange)
-                }
+                    .foregroundColor(.orange)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack {
                 TextField("", text: Binding(
@@ -200,96 +194,59 @@ struct EditProfileView: View {
     }
     
     private func editInterestTags() -> some View {
-        EditInterestView(texts: $texts)
-            .focused($focusedField, equals: .title)
-    }
-}//view
-
-struct EditInterestView: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    @State private var isShowAlert: Bool = false
-    @Binding var texts: [String]
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Text("興味タグ")
+        VStack(spacing: 5) {
+            Text("興味タグ（上限10, 1つ20文字以内）")
                 .font(.footnote)
-                .foregroundStyle(.gray)
-                .frame(width: UIScreen.main.bounds.width - 20, alignment: .leading)
-                .padding(.vertical, 10)
-
-            ForEach(texts.indices, id: \.self) { index in
-                TextField("興味・関心", text: $texts[index])
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .textInputAutocapitalization(.never) // 自動で大文字にしない
-                    .disableAutocorrection(true) // スペルチェックを無効にする
-                    .font(.subheadline)
-                    .padding(.horizontal, 15)
-                    .padding(.bottom, 5)
-            }
+                .foregroundColor(.gray)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 5)
 
             Button {
-                texts.append("")
+                if viewModel.user.interestTags.count < 10 {
+                    viewModel.user.interestTags.insert("", at: 0)
+                }
             } label: {
                 HStack {
                     Image(systemName: "plus.circle")
-                        .offset(y: 3)
                     Text("入力欄を追加")
-                        .padding(.top, 5)
                         .font(.system(size: 15, weight: .bold))
                 }
-                .foregroundStyle(Color.mint)
+                .foregroundStyle(viewModel.user.interestTags.count < 10 ? Color.mint : Color.gray)
+                .padding(.vertical, 5)
             }
-            .padding(.bottom, 5)
-
-            VStack(alignment: .leading, spacing: 0) {
-                Text("一覧")
+            
+            if !viewModel.isInterestedTagValid {
+                Text("20文字以上の興味タグが含まれています")
                     .font(.footnote)
-                    .foregroundStyle(.gray)
-                    .padding()
-
-                if viewModel.user.interestTags.isEmpty{
-                    Text("興味タグがありません")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.gray)
-                        .padding()
-                        .padding(.leading, 15)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 10) {
-                            ForEach(viewModel.user.interestTags, id: \.self) { tag in
-                                HStack(spacing: 0) {
-                                    Image(systemName: "number")
-
-                                    Text(tag)
-                                        .fontWeight(.bold)
-                                }
-                                .font(.footnote)
-                                .foregroundStyle(.blue)
-                                .overlay(alignment: .topTrailing) {
-                                    Button {
-                                        viewModel.deleteTag(tag: tag)
-                                    } label: {
-                                        Image(systemName: "minus.circle.fill")
-                                            .font(.footnote)
-                                            .foregroundStyle(.black)
-                                            .offset(x: 10, y: -8)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .frame(height: 40)
-                    .padding(.horizontal, 15)
-                }
+                    .foregroundColor(.orange)
             }
-            .frame(width: UIScreen.main.bounds.width, alignment: .leading)
+            
+            ForEach($viewModel.user.interestTags.indices, id: \.self) { index in
+                HStack(spacing: 10) {
+                    TextField("興味・関心", text: $viewModel.user.interestTags[index])
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                        .font(.subheadline)
+                    
+                    Button {
+                        viewModel.deleteTag(tag: viewModel.user.interestTags[index])
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.black)
+                            .font(.footnote)
+                    }
+                }
+                .padding(.horizontal, 10)
+            }
+
         }
+        .padding(.horizontal, 8)
+        .focused($focusedField, equals: .title)
     }
-}
+}//view
 
 #Preview {
-    EditInterestView(texts: .constant([""]))
+    EditProfileView()
 }
 

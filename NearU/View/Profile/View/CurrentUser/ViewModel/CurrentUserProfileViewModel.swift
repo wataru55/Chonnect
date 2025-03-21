@@ -30,8 +30,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         Validation.validateBio(bio: user.bio ?? "")
     }
     
+    var isInterestedTagValid: Bool {
+        Validation.validateInterestTag(tags: user.interestTags)
+    }
+    
     var isAbleToSave: Bool {
-        isUsernameValid && isNotOverCharacterLimit
+        isUsernameValid && isNotOverCharacterLimit && isInterestedTagValid
     }
 
     init() {
@@ -68,14 +72,13 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     func updateUserData(addTags: [String] = []) async {
         let filteredTags = addTags.filter { !$0.isEmpty }
-        let saveTags = filteredTags.isEmpty ? user.interestTags : user.interestTags + filteredTags
         
         do {
             if let uiImage = uiBackgroundImage {
                 try await ImageUploader.uploadImage(image: uiImage)
             }
             
-            try await UserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: saveTags)
+            try await UserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: filteredTags)
             try await AuthService.shared.loadUserData()
         } catch {
             print("Error updating user data: \(error)")
