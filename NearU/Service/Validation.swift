@@ -77,7 +77,6 @@ struct Validation {
             "threads.net"
         ]
 
-        // 配列内の各URL文字列の先頭と末尾の空白を除去して再生成
         let filteredUrls = urls.filter{ !$0.isEmpty }
         
         for url in filteredUrls {
@@ -94,5 +93,22 @@ struct Validation {
         
         return true
     }
+    
+    static func validateArticleUrls(urls: [String]) -> Bool {
+        let filteredUrls = urls
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        for url in filteredUrls {
+            guard let urlObject = URL(string: url),
+                  let scheme = urlObject.scheme,
+                  scheme == "http" || scheme == "https" else {
+                return false
+            }
+        }
+
+        return true
+    }
+
 
 }

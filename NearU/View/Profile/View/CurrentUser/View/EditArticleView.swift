@@ -2,7 +2,6 @@ import SwiftUI
 
 struct EditArticleView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
-    @State private var articleUrls: [String] = [""]
     @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
@@ -11,17 +10,25 @@ struct EditArticleView: View {
             ZStack {
                 backgroundColor.ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("記事のURLを追加")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .padding(.leading, 5)
-                        .padding(.vertical, 10)
-
-                    ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("記事のURLを追加")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .padding(.leading, 5)
+                            .padding(.vertical, 10)
+                        
+                        if !viewModel.isUrlValid {
+                            Text("適切でないURLが含まれています")
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.bottom, 5)
+                        }
+                        
                         VStack(spacing: 3) {
-                            ForEach(articleUrls.indices, id: \.self) { index in
-                                TextField("URLを入力", text: $articleUrls[index])
+                            ForEach(viewModel.articleUrls.indices, id: \.self) { index in
+                                TextField("URLを入力", text: $viewModel.articleUrls[index])
                                     .textInputAutocapitalization(.never) // 自動で大文字にしない
                                     .disableAutocorrection(true) // スペルチェックを無効にする
                                     .font(.subheadline)
@@ -30,9 +37,9 @@ struct EditArticleView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                     .padding(.horizontal, 10)
                             }
-
+                            
                             Button {
-                                articleUrls.append("")
+                                viewModel.articleUrls.append("")
                             } label: {
                                 HStack {
                                     Image(systemName: "plus.circle")
@@ -45,14 +52,14 @@ struct EditArticleView: View {
                             }// label
                             .padding(.horizontal, 15)
                             .padding(.bottom, 10)
-
+                            
                             Text("記事一覧")
                                 .font(.footnote)
                                 .fontWeight(.bold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading, 5)
                                 .padding(.vertical, 10)
-
+                            
                             VStack(alignment: .center, spacing: 20) {
                                 if viewModel.openGraphData.isEmpty {
                                     Text("記事のリンクがありません")
@@ -71,11 +78,11 @@ struct EditArticleView: View {
                             } //vstack
                             .padding(.bottom, 10)
                         } // vstack
-                    } // scrollview
-                } //vstack
-                .padding()
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("記事の追加・削除")
+                    } //vstack
+                    .padding()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle("記事の追加・削除")
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -89,26 +96,27 @@ struct EditArticleView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
-                                try await viewModel.addLink(urls: articleUrls)
+                                try await viewModel.addLink(urls: viewModel.articleUrls)
                                 await viewModel.fetchArticleUrls()
                                 await MainActor.run {
                                     dismiss()
                                 }
                             }
                         } label: {
-                            HStack(spacing: 2) {
-                                Image(systemName: "plus.app")
-                                Text("追加")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                            }
-                            .foregroundStyle(Color.mint)
+                            Text("保存")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(viewModel.isUrlValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)
                         }
+                        .disabled(!viewModel.isUrlValid || viewModel.isInputUrlsAllEmpty)
                     }
                 }
             } //zstach
             .modifier(EdgeSwipe())
         } // navigationstack
+        .onDisappear {
+            viewModel.articleUrls = [""]
+        }
     }
 }
 
