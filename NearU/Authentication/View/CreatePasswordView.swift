@@ -18,7 +18,7 @@ struct CreatePasswordView: View {
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("6文字以上のパスワードを入力してください。")
+            Text("6文字以上20文字以内でパスワードを設定してください。\n空白は使用できません。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -26,22 +26,28 @@ struct CreatePasswordView: View {
                 .padding(.bottom)
 
 
-            TextField("パスワード", text: $viewModel.password)
+            
+            SecureField("パスワード", text: $viewModel.password)
+                .modifier(IGTextFieldModifier())
+
+                
+            SecureField("再入力", text: $viewModel.rePassword)
                 .modifier(IGTextFieldModifier())
 
             NavigationLink {
                 CompleteSignUpView()
                     .navigationBarBackButtonHidden()
             } label: {
-                Text("Next")
+                Text(viewModel.isPasswordValid ? "次へ" : "適切なパスワードを設定してください")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
                     .frame(width: 360, height: 44)
-                    .background(Color(.systemMint))
+                    .background(viewModel.isPasswordValid ? Color.mint : Color.gray)
                     .cornerRadius(12)
                     .padding(.top)
             }
+            .disabled(!viewModel.isPasswordValid)
 
             Spacer()
         }//vstack
@@ -50,6 +56,7 @@ struct CreatePasswordView: View {
                 Image(systemName: "chevron.left")
                     .imageScale(.large)
                     .onTapGesture {
+                        viewModel.password = ""
                         dismiss()
                     }
             }

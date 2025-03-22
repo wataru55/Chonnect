@@ -25,7 +25,19 @@ struct AddEmailView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom)
 
-
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundColor(.orange)
+                    .padding(.top, 4)
+                    .onAppear {
+                        Task {
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            viewModel.errorMessage = nil
+                        }
+                    }
+            }
+            
             TextField("メールアドレス", text: $viewModel.email)
                 .modifier(IGTextFieldModifier())
 
@@ -33,15 +45,16 @@ struct AddEmailView: View {
                 CreateUserNameView()
                     .navigationBarBackButtonHidden()
             } label: {
-                Text("Next")
+                Text(viewModel.isEmailValid ? "次へ" : "有効なアドレスを入力してください")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
                     .frame(width: 360, height: 44)
-                    .background(Color(.systemMint))
+                    .background(viewModel.isEmailValid ? Color.mint : Color.gray)
                     .cornerRadius(12)
                     .padding(.top)
             }
+            .disabled(!viewModel.isEmailValid)
 
             Spacer() //上に押し上げるため
         }//vstack
@@ -50,6 +63,7 @@ struct AddEmailView: View {
                 Image(systemName: "chevron.left")
                     .imageScale(.large)
                     .onTapGesture {
+                        viewModel.email = ""
                         dismiss()
                     }
             }

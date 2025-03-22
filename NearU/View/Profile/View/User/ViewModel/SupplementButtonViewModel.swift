@@ -15,6 +15,10 @@ class SupplementButtonViewModel: ObservableObject {
     
     @Published var message: String?
     
+    var isReportValid: Bool {
+        Validation.validateReport(report: reportText) && !reportText.isEmpty
+    }
+    
     func addBlockList(id: String) async {
         do {
             try await BlockUserManager.shared.blockUser(targetUserId: id)

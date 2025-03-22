@@ -17,14 +17,13 @@ struct CompleteSignUpView: View {
                 .multilineTextAlignment(.center)
                 .font(.system(size: 30, weight: .bold))
                 .fontWeight(.bold)
-                .padding(.top)
 
-            Text("下のボタンをクリックすると、登録が完了します。")
+            Text("下のボタンを押すと、登録が完了します。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
-                .padding(.bottom)
+                .padding(.vertical)
 
             Button(action: {
                 Task { try await viewModel.createUser() }

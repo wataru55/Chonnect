@@ -121,7 +121,7 @@ struct ProfileView: View {
                 }
                 .sheet(isPresented: $supplementButtonViewModel.isShowReport) {
                     ReportView(viewModel: supplementButtonViewModel, userId: viewModel.user.id)
-                        .presentationDetents([.fraction(0.7)])
+                        .presentationDetents([.medium, .fraction(0.8)])
                 }
             }
 

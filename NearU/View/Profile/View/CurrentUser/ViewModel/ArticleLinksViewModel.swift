@@ -12,6 +12,15 @@ import Combine
 
 class ArticleLinksViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
+    @Published var articleUrls: [String] = [""]
+    
+    var isUrlValid: Bool {
+        Validation.validateArticleUrls(urls: articleUrls)
+    }
+    
+    var isInputUrlsAllEmpty: Bool {
+        articleUrls.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
 
     init() {
         Task {
@@ -36,13 +45,10 @@ class ArticleLinksViewModel: ObservableObject {
     }
 
     func addLink(urls: [String]) async throws {
-        guard let userId = AuthService.shared.currentUser?.id else { return }
-
-        // 複数のURLが入力されている場合の更新
         for url in urls {
             if !url.isEmpty {
                 do {
-                    try await UserService.seveArticleLink(userId: userId, url: url)
+                    try await UserService.seveArticleLink(url: url)
                 } catch {
                     print("Error adding URL to article collection: \(error)")
                 }

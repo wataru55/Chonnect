@@ -62,6 +62,7 @@ struct ProfileHeaderView: View {
                             .font(.system(size: 35, weight: .bold, design: .default))
                             .padding(.bottom, 1)
                             .padding(.top, 5)
+                            .lineLimit(1)
 
                         Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                             .font(.subheadline)
