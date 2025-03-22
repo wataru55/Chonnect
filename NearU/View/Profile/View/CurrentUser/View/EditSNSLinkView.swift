@@ -126,7 +126,7 @@ struct EditSNSLinkView: View {
                                 }
                             }
                         } label: {
-                            Text("保存")
+                            Text("追加")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(viewModel.isSNSLinkValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)

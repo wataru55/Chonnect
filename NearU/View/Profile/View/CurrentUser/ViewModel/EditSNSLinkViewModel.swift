@@ -82,6 +82,10 @@ class EditSNSLinkViewModel: ObservableObject {
         } catch {
             print("Error deleteSNSLink: \(error)")
         }
+        
+        await MainActor.run {
+            snsUrls[serviceName] = nil // 該当のキーを削除
+        }
     }
 
     @MainActor

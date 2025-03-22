@@ -103,7 +103,7 @@ struct EditArticleView: View {
                                 }
                             }
                         } label: {
-                            Text("保存")
+                            Text("追加")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(viewModel.isUrlValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)

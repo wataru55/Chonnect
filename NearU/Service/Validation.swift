@@ -77,15 +77,20 @@ struct Validation {
             "threads.net"
         ]
 
-        let filteredUrls = urls.filter{ !$0.isEmpty }
+        let filteredUrls = urls
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
         
         for url in filteredUrls {
             guard let urlObject = URL(string: url),
-                  let host = urlObject.host else {
+                  let host = urlObject.host,
+                  let scheme = urlObject.scheme,
+                  scheme == "http" || scheme == "https" else {
                 return false
             }
             
-            let isValidHost = serviceHostMapping.contains { host.contains($0) }
+            // ホスト名を厳密に比較（例: www.github.com のようなケースも考慮したければ .hasSuffix にしてもOK）
+            let isValidHost = serviceHostMapping.contains(where: { host == $0 || host.hasSuffix("." + $0) })
             if !isValidHost {
                 return false
             }
