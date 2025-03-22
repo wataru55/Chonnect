@@ -9,7 +9,6 @@ import SwiftUI
 
 struct EditSNSLinkView: View {
     @EnvironmentObject var viewModel: EditSNSLinkViewModel
-    @State private var snsUrls: [String] = [""]
     @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
     
@@ -24,31 +23,38 @@ struct EditSNSLinkView: View {
             ZStack {
                 backgroundColor.ignoresSafeArea()
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("SNSのURLを追加")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .padding(.leading, 5)
-                        .padding(.top, 10)
-                    
-                    VStack(alignment: .leading) {
-                        Text("登録可能なSNS:")
-                            .font(.caption2)
-                            .foregroundColor(.gray)
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("SNSのURLを追加")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .padding(.leading, 5)
+                            .padding(.top, 10)
                         
-                        Text(availableSNS.joined(separator: ", "))
-                            .font(.caption2)
-                            .foregroundColor(.gray)
-                            .padding(.leading, 7)
-                    }
-                    .padding(.top, 3)
-                    .padding(.leading, 9)
-                    .padding(.bottom, 10)
-                    
-                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(alignment: .leading) {
+                            Text("登録可能なSNS:")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                            
+                            Text(availableSNS.joined(separator: ", "))
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.top, 3)
+                        .padding(.leading, 9)
+                        .padding(.bottom, 10)
+                        
+                        if !viewModel.isSNSLinkValid {
+                            Text("登録できないURLが含まれています")
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.bottom, 5)
+                        }
+                        
                         VStack(spacing: 3) {
-                            ForEach(snsUrls.indices, id: \.self) { index in
-                                TextField("URLを入力", text: $snsUrls[index])
+                            ForEach(viewModel.inputUrls.indices, id: \.self) { index in
+                                TextField("URLを入力", text: $viewModel.inputUrls[index])
                                     .modifier(URLFieldModifier())
                                     .padding(.horizontal, 10)
                                     .background(Color(.systemGray5))
@@ -56,7 +62,7 @@ struct EditSNSLinkView: View {
                             }
                             
                             Button {
-                                snsUrls.append("")
+                                viewModel.inputUrls.append("")
                             } label: {
                                 HStack {
                                     Image(systemName: "plus.circle")
@@ -95,11 +101,11 @@ struct EditSNSLinkView: View {
                                 .padding(.horizontal, 10)
                             }
                         } // VStack
-                    } // ScrollView
-                } // VStack
-                .padding()
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("SNSの追加・削除")
+                    } // VStack
+                    .padding()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle("SNSの追加・削除")
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -113,26 +119,27 @@ struct EditSNSLinkView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
-                                try await viewModel.updateSNSLink(urls: snsUrls)
+                                try await viewModel.updateSNSLink(urls: viewModel.inputUrls)
                                 await viewModel.loadSNSLinks()
                                 await MainActor.run {
                                     dismiss()
                                 }
                             }
                         } label: {
-                            HStack(spacing: 2) {
-                                Image(systemName: "plus.app")
-                                Text("追加")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                            }
-                            .foregroundStyle(Color.mint)
+                            Text("追加")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(viewModel.isSNSLinkValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)
                         }
+                        .disabled(!viewModel.isSNSLinkValid || viewModel.isInputUrlsAllEmpty)
                     }
                 }
             } // ZStack
             .modifier(EdgeSwipe())
         } // NavigationStack
+        .onDisappear {
+            viewModel.inputUrls = [""]
+        }
     }
 }
 

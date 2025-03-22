@@ -11,6 +11,20 @@ class RegistrationViewModel: ObservableObject {
     @Published var username = ""
     @Published var email = ""
     @Published var password = ""
+    @Published var rePassword = ""
+    @Published var errorMessage: String?
+    
+    var isEmailValid: Bool {
+        Validation.validateEmail(email: email)
+    }
+    
+    var isUsernameValid: Bool {
+        Validation.validateUsername(username: username)
+    }
+    
+    var isPasswordValid: Bool {
+        Validation.validatePassword(password: password, rePassword: rePassword)
+    }
 
     @MainActor
     func createUser() async throws {
@@ -20,5 +34,6 @@ class RegistrationViewModel: ObservableObject {
         email = ""
         password = ""
     }
+    
 }
 

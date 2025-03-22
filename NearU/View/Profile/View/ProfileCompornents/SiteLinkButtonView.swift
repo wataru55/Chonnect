@@ -71,7 +71,6 @@ struct SiteLinkButtonView: View {
                     Button("削除", role: .destructive) {
                         Task {
                             await viewModel.removeArticle(url: ogpData.url)
-                            await viewModel.fetchArticleUrls()
                             await MainActor.run {
                                 isShowAlert.toggle()
                             }

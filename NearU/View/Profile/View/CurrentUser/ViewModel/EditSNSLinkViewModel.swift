@@ -11,6 +11,16 @@ import Firebase
 
 class EditSNSLinkViewModel: ObservableObject {
     @Published var snsUrls: [String: String] = [:] // SNSリンクを保存
+    @Published var inputUrls: [String] = [""]
+    
+    var isSNSLinkValid: Bool {
+        Validation.validateSNSURL(urls: inputUrls)
+    }
+    
+    var isInputUrlsAllEmpty: Bool {
+        inputUrls.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+
 
     init() {
         Task {
@@ -71,6 +81,10 @@ class EditSNSLinkViewModel: ObservableObject {
             try await UserService.deleteSNSLink(serviceName: serviceName, url: url)
         } catch {
             print("Error deleteSNSLink: \(error)")
+        }
+        
+        await MainActor.run {
+            snsUrls[serviceName] = nil // 該当のキーを削除
         }
     }
 

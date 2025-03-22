@@ -83,10 +83,11 @@ struct UserService {
         }
     }
     
-    static func seveArticleLink(userId: String, url: String) async throws {
+    static func seveArticleLink(url: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
         let data = ["article_url": url]
         do {
-            try await Firestore.firestore().collection("users").document(userId).collection("article").addDocument(data: data)
+            try await Firestore.firestore().collection("users").document(documentId).collection("article").addDocument(data: data)
         } catch {
             throw error
         }
