@@ -61,4 +61,38 @@ struct Validation {
         
         return true
     }
+    
+    static func validateSNSURL(urls: [String]) -> Bool {
+        let serviceHostMapping: [String] = [
+            "github.com",
+            "twitter.com", "x.com",
+            "instagram.com",
+            "youtube.com", "youtu.be",
+            "facebook.com",
+            "tiktok.com",
+            "qiita.com",
+            "zenn.dev",
+            "wantedly.com",
+            "linkedin.com",
+            "threads.net"
+        ]
+
+        // 配列内の各URL文字列の先頭と末尾の空白を除去して再生成
+        let filteredUrls = urls.filter{ !$0.isEmpty }
+        
+        for url in filteredUrls {
+            guard let urlObject = URL(string: url),
+                  let host = urlObject.host else {
+                return false
+            }
+            
+            let isValidHost = serviceHostMapping.contains { host.contains($0) }
+            if !isValidHost {
+                return false
+            }
+        }
+        
+        return true
+    }
+
 }
