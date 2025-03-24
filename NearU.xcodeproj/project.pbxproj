@@ -44,6 +44,9 @@
 		6346A0372D7B0A8500EDC4E5 /* OnFirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0362D7B0A8500EDC4E5 /* OnFirstAppear.swift */; };
 		6346A0392D855C9400EDC4E5 /* NothingDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0382D855C9400EDC4E5 /* NothingDataView.swift */; };
 		6346A03B2D8829A600EDC4E5 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A03A2D8829A600EDC4E5 /* Validation.swift */; };
+		6346A03D2D90028F00EDC4E5 /* SkillTagRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */; };
+		6346A03F2D900A8800EDC4E5 /* SkillTagRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A03E2D900A8800EDC4E5 /* SkillTagRowView.swift */; };
+		6346A0412D900B0000EDC4E5 /* SkillTagPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0402D900B0000EDC4E5 /* SkillTagPickerView.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -74,7 +77,6 @@
 		639A0BE72CE5CB5500A769C6 /* UserFollowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A0BE62CE5CB5500A769C6 /* UserFollowView.swift */; };
 		639A0BE92CE5CB7F00A769C6 /* UserFollowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A0BE82CE5CB7F00A769C6 /* UserFollowerView.swift */; };
 		639A0BEB2CE739C400A769C6 /* UserRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A0BEA2CE739C400A769C6 /* UserRowView.swift */; };
-		63AEA5CB2CC4053C009A22A2 /* Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AEA5CA2CC4053C009A22A2 /* Tags.swift */; };
 		63AEA5CD2CC66B18009A22A2 /* UserDatePair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AEA5CC2CC66B18009A22A2 /* UserDatePair.swift */; };
 		63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AEF0F82C0C4C2A00DE196E /* TopTabView.swift */; };
 		63AEF0FB2C0C4C6500DE196E /* FollowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AEF0FA2C0C4C6500DE196E /* FollowView.swift */; };
@@ -182,6 +184,9 @@
 		6346A0362D7B0A8500EDC4E5 /* OnFirstAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppear.swift; sourceTree = "<group>"; };
 		6346A0382D855C9400EDC4E5 /* NothingDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingDataView.swift; sourceTree = "<group>"; };
 		6346A03A2D8829A600EDC4E5 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
+		6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillTagRepository.swift; sourceTree = "<group>"; };
+		6346A03E2D900A8800EDC4E5 /* SkillTagRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillTagRowView.swift; sourceTree = "<group>"; };
+		6346A0402D900B0000EDC4E5 /* SkillTagPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillTagPickerView.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -210,7 +215,6 @@
 		639A0BE62CE5CB5500A769C6 /* UserFollowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFollowView.swift; sourceTree = "<group>"; };
 		639A0BE82CE5CB7F00A769C6 /* UserFollowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFollowerView.swift; sourceTree = "<group>"; };
 		639A0BEA2CE739C400A769C6 /* UserRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRowView.swift; sourceTree = "<group>"; };
-		63AEA5CA2CC4053C009A22A2 /* Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tags.swift; sourceTree = "<group>"; };
 		63AEA5CC2CC66B18009A22A2 /* UserDatePair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDatePair.swift; sourceTree = "<group>"; };
 		63AEF0F82C0C4C2A00DE196E /* TopTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTabView.swift; sourceTree = "<group>"; };
 		63AEF0FA2C0C4C6500DE196E /* FollowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowView.swift; sourceTree = "<group>"; };
@@ -366,7 +370,6 @@
 			children = (
 				638732052BF4AE3F0099F68A /* User.swift */,
 				637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */,
-				63AEA5CA2CC4053C009A22A2 /* Tags.swift */,
 				63AEA5CC2CC66B18009A22A2 /* UserDatePair.swift */,
 				63BEA4952CD1CE3C006382AF /* FCMMessage.swift */,
 				6344BE392CD758B0009F404E /* HistoryData.swift */,
@@ -378,6 +381,7 @@
 				63FDDFCE2CEB1D4500B90074 /* HistoryRowData.swift */,
 				63FDDFD02CEB2B1300B90074 /* FollowUserRowData.swift */,
 				63FDDFD42CECCCE800B90074 /* WordElement.swift */,
+				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -471,6 +475,8 @@
 				63135D8D2CA90523004137AF /* BackgroundImageView.swift */,
 				63FDDFDC2CF1DA5800B90074 /* TagIndexView.swift */,
 				63FDDFE02CF4766A00B90074 /* InterestTagView.swift */,
+				6346A03E2D900A8800EDC4E5 /* SkillTagRowView.swift */,
+				6346A0402D900B0000EDC4E5 /* SkillTagPickerView.swift */,
 			);
 			path = ProfileCompornents;
 			sourceTree = "<group>";
@@ -793,6 +799,7 @@
 				6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */,
 				63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */,
 				63226E202D69BF28006EBCCF /* UserActions.swift in Sources */,
+				6346A03D2D90028F00EDC4E5 /* SkillTagRepository.swift in Sources */,
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
 				637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */,
 				63AEF0FD2C0C507300DE196E /* BLEHistoryView.swift in Sources */,
@@ -830,6 +837,7 @@
 				63226E302D6F645B006EBCCF /* BlockListViewModel.swift in Sources */,
 				63FDDFD12CEB2B1300B90074 /* FollowUserRowData.swift in Sources */,
 				F27521BA2CDEF38E00B00ABC /* URLFieldModifier.swift in Sources */,
+				6346A03F2D900A8800EDC4E5 /* SkillTagRowView.swift in Sources */,
 				638732112BF4B3BD0099F68A /* CreatePasswordView.swift in Sources */,
 				63226E362D74A171006EBCCF /* EditPasswordView.swift in Sources */,
 				63DFF8882BF704E500A6DFB8 /* UserService.swift in Sources */,
@@ -840,6 +848,7 @@
 				6346A03B2D8829A600EDC4E5 /* Validation.swift in Sources */,
 				638732132BF4B3E90099F68A /* CompleteSignUpView.swift in Sources */,
 				6346A0392D855C9400EDC4E5 /* NothingDataView.swift in Sources */,
+				6346A0412D900B0000EDC4E5 /* SkillTagPickerView.swift in Sources */,
 				63AEF0FF2C0CC89F00DE196E /* FollowViewModel.swift in Sources */,
 				63FDDFEE2CFD458A00B90074 /* EdgeSwipeModifier.swift in Sources */,
 				63173DF62C36BEC700F1FE82 /* UserDefaultsManager.swift in Sources */,
@@ -851,7 +860,6 @@
 				63F84BB72D1E6D47009FE5DD /* HistoryService.swift in Sources */,
 				638732082BF4B0E40099F68A /* MainTabView.swift in Sources */,
 				63226E3A2D76D442006EBCCF /* DeleteView.swift in Sources */,
-				63AEA5CB2CC4053C009A22A2 /* Tags.swift in Sources */,
 				63DFF8BC2C01531000A6DFB8 /* ImageUploader.swift in Sources */,
 				32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */,
 				F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */,
