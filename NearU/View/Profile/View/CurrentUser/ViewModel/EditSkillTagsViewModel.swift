@@ -11,6 +11,10 @@ import Combine
 
 class EditSkillTagsViewModel: ObservableObject {
     @Published var skillSortedTags: [WordElement] = []
+    @Published var languages: [WordElement] = [
+        WordElement(id: UUID(), name: "", skill: "3")
+    ]
+    
     let skillLevels = ["1", "2", "3", "4", "5"]
 
     private var cancellables = Set<AnyCancellable>()
@@ -21,17 +25,22 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
-    func saveSkillTags(newlanguages: [WordElement]) async {
-        await addSkillTags(newlanguages: newlanguages)
+    func saveSkillTags() async {
         await updateSkillTags()
-        await loadSkillTags()
+        await addSkillTags()
+        await MainActor.run {
+            self.skillSortedTags = sortSkillTags(tags: skillSortedTags)
+        }
     }
 
-    func addSkillTags(newlanguages: [WordElement]) async {
-        for newlanguage in newlanguages {
+    func addSkillTags() async {
+        for newlanguage in languages {
             if !newlanguage.name.isEmpty && !skillSortedTags.contains(where: { $0.name == newlanguage.name }) {
                 do {
                     try await TagsService.addTags(tagData: newlanguage)
+                    await MainActor.run {
+                        skillSortedTags.append(newlanguage)
+                    }
                 } catch {
                     print("DEBUG: Error adding tags \(error)")
                 }
@@ -63,10 +72,16 @@ class EditSkillTagsViewModel: ObservableObject {
     func deleteSkillTag(id: String) async {
         do {
             try await TagsService.deleteTag(id: id)
-            await loadSkillTags()
+            await MainActor.run {
+                skillSortedTags.removeAll(where: { $0.id.uuidString == id })
+            }
         } catch {
             print("DEBUG: Error deleting tag \(error)")
         }
+    }
+    
+    func sortSkillTags(tags: [WordElement]) -> [WordElement] {
+        return tags.sorted { $0.skill > $1.skill }
     }
 
 }
