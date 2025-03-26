@@ -55,6 +55,11 @@ class AuthService {
             throw error
         }
     }
+    
+    func sendVerification() async throws {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        try await currentUser.sendEmailVerification()
+    }
 
     @MainActor
     // 新規ユーザを作成する関数
@@ -62,8 +67,26 @@ class AuthService {
         do {
             // Firebase Authenticationに新規ユーザを登録
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
-            self.userSession = result.user // 新規登録されたユーザーの情報をuserSessionに格納
+            // 確認用メールを送信
+            try await result.user.sendEmailVerification()
 
+        } catch {
+            print("DEBUG: Failed to register user with error \(error.localizedDescription)")
+            throw error // エラーをスロー
+        }
+    }
+    
+    func deleteUserAuth() async throws {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        try await currentUser.delete()
+    }
+    
+    func initAddToFireStore(username: String) async throws {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        
+        try await currentUser.reload()
+        
+        if currentUser.isEmailVerified {
             // ユニークなuserIdが生成されるまで繰り返す
             var documentId = ""
             var isUnique = false
@@ -72,13 +95,13 @@ class AuthService {
                 documentId = generateRandomDocumentId() // ランダムなuserIdを生成
                 isUnique = try await isDocumentIdUnique(documentId) // 一意性を確認
             } while !isUnique // 一意になるまで繰り返す
-
+            
             // 一意なuserIdが確定したら、Firestoreにユーザーデータを保存
-            await uploadUserData(id: documentId, uid: result.user.uid, username: username, isPrivate: true)
-
-        } catch {
-            print("DEBUG: Failed to register user with error \(error.localizedDescription)")
-            throw error // エラーをスロー
+            await uploadUserData(id: documentId, uid: currentUser.uid, username: username, isPrivate: true)
+            
+            await MainActor.run {
+                self.userSession = currentUser
+            }
         }
     }
 

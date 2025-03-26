@@ -12,6 +12,8 @@ class RegistrationViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     @Published var rePassword = ""
+    @Published var isShowCheck = false
+    @Published var isLoading = false
     @Published var errorMessage: String?
     
     var isEmailValid: Bool {
@@ -25,7 +27,7 @@ class RegistrationViewModel: ObservableObject {
     var isPasswordValid: Bool {
         Validation.validatePassword(password: password, rePassword: rePassword)
     }
-
+    
     @MainActor
     func createUser() async throws {
         try await AuthService.shared.createUser(email: email, password: password, username: username) //ユーザー作成
@@ -33,6 +35,69 @@ class RegistrationViewModel: ObservableObject {
         username = ""
         email = ""
         password = ""
+    }
+    
+    @MainActor
+    func sendValidationEmail() async {
+        defer {
+            isLoading = false
+        }
+        
+        isLoading = true
+        
+        do {
+            try await AuthService.shared.createUser(email: email, password: password, username: username)
+            isShowCheck = true
+        } catch {
+            print("error: \(error)")
+            errorMessage = "入力されたメールアドレスはすでに登録されています"
+        }
+    }
+    
+    @MainActor
+    func registerComplete() async {
+        do {
+            try await AuthService.shared.initAddToFireStore(username: username)
+            isShowCheck = false
+        } catch {
+            print("error: \(error)")
+            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+        }
+    }
+    
+    @MainActor
+    func resend() async {
+        defer {
+            isLoading = false
+        }
+        
+        isLoading = true
+        
+        do {
+            try await AuthService.shared.sendVerification()
+        } catch {
+            print("error: \(error)")
+            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+        }
+    }
+    
+    func deleteAuth() async {
+        do {
+            try await AuthService.shared.deleteUserAuth()
+        } catch {
+            print("error: \(error)")
+            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+        }
+    
+    }
+    
+    @MainActor
+    func inputReset() {
+        email = ""
+        username = ""
+        password = ""
+        rePassword = ""
+        isShowCheck = false
     }
     
 }
