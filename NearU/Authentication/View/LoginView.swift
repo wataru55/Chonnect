@@ -7,12 +7,28 @@
 
 import SwiftUI
 
+enum AuthPath: Hashable {
+    case forgetPassword
+    case signUp(SignUpStep)
+}
+
+enum SignUpStep: Hashable {
+    case inputEmail
+    case inputUsername
+    case inputPassword
+    case emailCheck
+    case completeSignUp
+}
+
+
 struct LoginView: View {
     @StateObject var viewModel = LoginViewModel()
     @State private var errorMessage: String? = nil
+    
+    @State private var path = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack {
                 Spacer()
 
@@ -39,20 +55,15 @@ struct LoginView: View {
                     }
                 } //Vstack
 
-                Button(action: {
-                    print("show forgot password")
-                }, label: {
-                    NavigationLink {
-                        PasswordResetView()
-                            .navigationBarBackButtonHidden()
-                    } label: {
-                        Text("パスワードを忘れた場合")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color(.systemMint))
-                            .padding(.top)
-                    }
-                })
+                Button {
+                    path.append(AuthPath.forgetPassword)
+                } label: {
+                    Text("パスワードを忘れた場合")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color(.systemMint))
+                        .padding(.top)
+                }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.trailing)
                 .padding(.vertical, 5)
@@ -86,10 +97,8 @@ struct LoginView: View {
 
                 Divider()
 
-                NavigationLink {
-                    //遷移先のview
-                    AddEmailView()
-                        .navigationBarBackButtonHidden()
+                Button {
+                    path.append(AuthPath.signUp(.inputEmail))
                 } label: {
                     HStack {
                         Text("アカウントをお持ちでないですか？")
@@ -105,7 +114,38 @@ struct LoginView: View {
                 }
                 .padding(.vertical)
             }//vstack
+            .navigationDestination(for: AuthPath.self) { route in
+                switch route {
+                case .forgetPassword:
+                    PasswordResetView()
+                        .navigationBarBackButtonHidden()
+                    
+                case .signUp(let step):
+                    switch step {
+                    case .inputEmail:
+                        AddEmailView(path: $path)
+                            .navigationBarBackButtonHidden()
+                        
+                    case .inputUsername:
+                        CreateUserNameView(path: $path)
+                            .navigationBarBackButtonHidden()
+                        
+                    case .inputPassword:
+                        CreatePasswordView(path: $path)
+                            .navigationBarBackButtonHidden()
+                        
+                    case .emailCheck:
+                        EmailCheckView(path: $path)
+                            .navigationBarBackButtonHidden()
+                        
+                    case .completeSignUp:
+                        CompleteSignUpView(path: $path)
+                            .navigationBarBackButtonHidden()
+                    }
+                }
+            }
         }//navigationstack
+        .tint(Color.mint)
     }
 }
 

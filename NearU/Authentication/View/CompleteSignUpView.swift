@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CompleteSignUpView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: RegistrationViewModel
+    @Binding var path: NavigationPath
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack (spacing: 10) {
@@ -26,7 +27,10 @@ struct CompleteSignUpView: View {
                 .padding(.vertical)
 
             Button(action: {
-                Task { try await viewModel.createUser() }
+                Task {
+                    await viewModel.registerComplete()
+                }
+                
             }, label: {
                 Text("はじめる")
                     .font(.subheadline)
@@ -38,19 +42,10 @@ struct CompleteSignUpView: View {
                     .padding(.top)
             })
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Image(systemName: "chevron.left")
-                    .imageScale(.large)
-                    .onTapGesture {
-                        dismiss()
-                    }
-            }
-        }
     }
 }
 
 #Preview {
-    CompleteSignUpView()
+    CompleteSignUpView(path: .constant(NavigationPath()))
         .environmentObject(RegistrationViewModel())
 }

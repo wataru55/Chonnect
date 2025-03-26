@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AddEmailView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: RegistrationViewModel //クラスのインスタンス化
+    @Binding var path: NavigationPath
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack (spacing: 10) {
@@ -41,9 +42,8 @@ struct AddEmailView: View {
             TextField("メールアドレス", text: $viewModel.email)
                 .modifier(IGTextFieldModifier())
 
-            NavigationLink {
-                CreateUserNameView()
-                    .navigationBarBackButtonHidden()
+            Button {
+                path.append(AuthPath.signUp(.inputUsername))
             } label: {
                 Text(viewModel.isEmailValid ? "次へ" : "有効なアドレスを入力してください")
                     .font(.subheadline)
@@ -72,6 +72,6 @@ struct AddEmailView: View {
 }//view
 
 #Preview {
-    AddEmailView()
+    AddEmailView(path: .constant(NavigationPath()))
         .environmentObject(RegistrationViewModel())
 }
