@@ -23,6 +23,12 @@ class AuthService {
     init() {
         Task{ try await loadUserData() }
     }
+    
+    func isValidUser() -> Bool {
+        guard let currentUser = Auth.auth().currentUser else { return false }
+        currentUser.reload()
+        return currentUser.isEmailVerified
+    }
 
     @MainActor //メインスレットで行われることを保証
     func login(withEmail email: String, password: String) async throws { //throwsはエラーを投げる可能性がある時につける
@@ -66,10 +72,8 @@ class AuthService {
     func createUser(email: String, password: String, username: String) async throws {
         do {
             // Firebase Authenticationに新規ユーザを登録
-            let result = try await Auth.auth().createUser(withEmail: email, password: password)
-            // 確認用メールを送信
-            try await result.user.sendEmailVerification()
-
+            try await Auth.auth().createUser(withEmail: email, password: password)
+            
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
             throw error // エラーをスロー

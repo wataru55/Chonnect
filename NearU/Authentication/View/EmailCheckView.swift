@@ -29,7 +29,6 @@ struct EmailCheckView: View {
                 
                 if let message = viewModel.errorMessage {
                     Text(message)
-                        .padding(.top, 10)
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundStyle(.pink)
@@ -42,8 +41,17 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
+                    defer {
+                        viewModel.isLoading = false
+                    }
+                    viewModel.isLoading = true
+                    UserDefaults.standard.setValue(viewModel.username, forKey: "username")
                     Task {
+                        await viewModel.createUserToAuth()
                         await viewModel.sendValidationEmail()
+                        await MainActor.run {
+                            viewModel.isShowCheck = true
+                        }
                     }
                 } label: {
                     Text("送信")
@@ -103,8 +111,13 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
-                    viewModel.isShowCheck = false
-                    path.append(AuthPath.signUp(.completeSignUp))
+                    if viewModel.isValidateUser {
+                        viewModel.isShowCheck = false
+                        path.append(AuthPath.signUp(.completeSignUp))
+                    } else {
+                        viewModel.errorMessage = "認証が完了していません"
+                    }
+                    
                 } label: {
                     Text("確認完了")
                         .foregroundStyle(.white)
@@ -117,8 +130,12 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
+                    defer {
+                        viewModel.isLoading = false
+                    }
+                    viewModel.isLoading = true
                     Task {
-                        await viewModel.resend()
+                        await viewModel.sendValidationEmail()
                     }
                 } label: {
                     Text("メールを再送する")

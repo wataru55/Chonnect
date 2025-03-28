@@ -28,6 +28,14 @@ class RegistrationViewModel: ObservableObject {
         Validation.validatePassword(password: password, rePassword: rePassword)
     }
     
+    var isValidateUser: Bool {
+        AuthService.shared.isValidUser()
+    }
+    
+    var localUserName: String {
+        UserDefaults.standard.string(forKey: "username") ?? ""
+    }
+    
     @MainActor
     func createUser() async throws {
         try await AuthService.shared.createUser(email: email, password: password, username: username) //ユーザー作成
@@ -38,16 +46,9 @@ class RegistrationViewModel: ObservableObject {
     }
     
     @MainActor
-    func sendValidationEmail() async {
-        defer {
-            isLoading = false
-        }
-        
-        isLoading = true
-        
+    func createUserToAuth() async {
         do {
             try await AuthService.shared.createUser(email: email, password: password, username: username)
-            isShowCheck = true
         } catch {
             print("error: \(error)")
             errorMessage = "入力されたメールアドレスはすでに登録されています"
@@ -55,26 +56,20 @@ class RegistrationViewModel: ObservableObject {
     }
     
     @MainActor
-    func registerComplete() async {
+    func sendValidationEmail() async {
         do {
-            try await AuthService.shared.initAddToFireStore(username: username)
-            isShowCheck = false
+            try await AuthService.shared.sendVerification()
         } catch {
             print("error: \(error)")
-            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+            errorMessage = "通信エラーです。もう一度お試しください。"
         }
     }
     
     @MainActor
-    func resend() async {
-        defer {
-            isLoading = false
-        }
-        
-        isLoading = true
-        
+    func registerComplete() async {
         do {
-            try await AuthService.shared.sendVerification()
+            try await AuthService.shared.initAddToFireStore(username: localUserName)
+            isShowCheck = false
         } catch {
             print("error: \(error)")
             errorMessage = "予期せぬエラーです。もう一度お試しください。"
