@@ -18,13 +18,10 @@ struct ContentView: View {
                     .environmentObject(registrationViewModel)
             } else if let currentUser = viewModel.currentUser {
                 MainTabView(user: currentUser)
-            } //else {
-//                 //ログインはしているが、ユーザー情報が存在しない場合のハンドリング
-//                ProgressView("Loading...") // ローディングビューを表示
-//                .onAppear {
-//                    viewModel.forceSignout()
-//                }
-//            }
+            } else {
+                 //ログインはしているが、ユーザー情報が存在しない場合のハンドリング
+                RegistrationIncompleteView()
+            }
 
         }
     }
