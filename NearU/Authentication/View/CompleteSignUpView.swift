@@ -25,13 +25,32 @@ struct CompleteSignUpView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.vertical)
+            
+            if let message = viewModel.errorMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.pink)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: viewModel.errorMessage)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                viewModel.errorMessage = nil
+                            }
+                        }
+                    }
+            }
 
-            Button(action: {
+            Button {
+                viewModel.isLoading = true
                 Task {
-                    await viewModel.registerComplete()
+                    try await viewModel.registerComplete()
+                    await MainActor.run {
+                        viewModel.isLoading = false
+                    }
                 }
                 
-            }, label: {
+            }label: {
                 Text("はじめる")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -40,7 +59,7 @@ struct CompleteSignUpView: View {
                     .background(Color(.systemMint))
                     .cornerRadius(12)
                     .padding(.top)
-            })
+            }
         }
     }
 }

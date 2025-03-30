@@ -23,8 +23,6 @@ enum SignUpStep: Hashable {
 
 struct LoginView: View {
     @StateObject var viewModel = LoginViewModel()
-    @State private var errorMessage: String? = nil
-    
     @State private var path = NavigationPath()
 
     var body: some View {
@@ -44,14 +42,19 @@ struct LoginView: View {
                     SecureField("パスワード", text: $viewModel.password)
                         .modifier(IGTextFieldModifier())
                     
-                    if let errorMessage = errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
+                    if let message = viewModel.errorMessage {
+                        Text(message)
                             .font(.footnote)
-                            .padding(.top, 5)
-                            .padding(.horizontal, 10)
+                            .foregroundStyle(.pink)
                             .transition(.opacity)
-                            .animation(.easeInOut, value: errorMessage)
+                            .animation(.easeInOut, value: viewModel.errorMessage)
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    withAnimation {
+                                        viewModel.errorMessage = nil
+                                    }
+                                }
+                            }
                     }
                 } //Vstack
 
@@ -70,17 +73,7 @@ struct LoginView: View {
 
                 Button(action: {
                     Task {
-                        do {
-                            try await viewModel.signIn() // 関数を実行
-                        } catch {
-                            errorMessage = "ログインに失敗しました もう一度お試しください"
-                            viewModel.password = "" // パスワードをリセット
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                withAnimation {
-                                    errorMessage = nil
-                                }
-                            }
-                        }
+                        try await viewModel.signIn() // 関数を実行
                     }
                 }, label: {
                     Text("ログイン")

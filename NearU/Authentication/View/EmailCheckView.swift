@@ -28,28 +28,17 @@ struct EmailCheckView: View {
                     .padding(.bottom)
                 
                 if let message = viewModel.errorMessage {
-                    Text(message)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.pink)
-                        .onAppear {
-                            Task {
-                                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                viewModel.errorMessage = nil
-                            }
-                        }
+                    errorMessage(text: message)
                 }
                 
                 Button {
-                    defer {
-                        viewModel.isLoading = false
-                    }
                     viewModel.isLoading = true
                     UserDefaults.standard.setValue(viewModel.username, forKey: "username")
                     Task {
-                        await viewModel.createUserToAuth()
-                        await viewModel.sendValidationEmail()
+                        try await viewModel.createUserToAuth()
+                        try await viewModel.sendValidationEmail()
                         await MainActor.run {
+                            viewModel.isLoading = false
                             viewModel.isShowCheck = true
                         }
                     }
@@ -98,16 +87,7 @@ struct EmailCheckView: View {
                     .padding(.bottom, 20)
                 
                 if let message = viewModel.errorMessage {
-                    Text(message)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.pink)
-                        .onAppear {
-                            Task {
-                                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                viewModel.errorMessage = nil
-                            }
-                        }
+                    errorMessage(text: message)
                 }
                 
                 Button {
@@ -130,12 +110,12 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
-                    defer {
-                        viewModel.isLoading = false
-                    }
                     viewModel.isLoading = true
                     Task {
-                        await viewModel.sendValidationEmail()
+                        try await viewModel.sendValidationEmail()
+                        await MainActor.run {
+                            viewModel.isLoading = false
+                        }
                     }
                 } label: {
                     Text("メールを再送する")
@@ -151,14 +131,14 @@ struct EmailCheckView: View {
                 
                 Button {
                     Task {
-                        await viewModel.deleteAuth()
+                        try await viewModel.deleteAuth()
                         await MainActor.run {
                             viewModel.inputReset()
                             path.removeLast(path.count)
                         }
                     }
                 } label: {
-                    Text("やり直す")
+                    Text("最初からやり直す")
                         .foregroundStyle(.mint)
                         .padding(10)
                         .background {
@@ -174,6 +154,21 @@ struct EmailCheckView: View {
                 LoadingView()
             }
         }
+    }
+    
+    private func errorMessage(text: String) -> some View {
+        Text(text)
+            .font(.footnote)
+            .foregroundStyle(.pink)
+            .transition(.opacity)
+            .animation(.easeInOut, value: viewModel.errorMessage)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        viewModel.errorMessage = nil
+                    }
+                }
+            }
     }
 }
 

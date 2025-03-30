@@ -39,49 +39,54 @@ class RegistrationViewModel: ObservableObject {
     @MainActor
     func createUser() async throws {
         try await AuthService.shared.createUser(email: email, password: password, username: username) //ユーザー作成
-        //初期化
-        username = ""
-        email = ""
-        password = ""
     }
     
     @MainActor
-    func createUserToAuth() async {
+    func createUserToAuth() async throws{
         do {
             try await AuthService.shared.createUser(email: email, password: password, username: username)
         } catch {
-            print("error: \(error)")
             errorMessage = "入力されたメールアドレスはすでに登録されています"
+            isLoading = false
+            throw error
         }
     }
     
     @MainActor
-    func sendValidationEmail() async {
+    func sendValidationEmail() async throws {
         do {
             try await AuthService.shared.sendVerification()
-        } catch {
-            print("error: \(error)")
-            errorMessage = "通信エラーです。もう一度お試しください。"
+        } catch let error as NSError {
+            switch error.code {
+            case 17010:
+                errorMessage = "メール送信の回数制限を超えました。 \n少し待ってから再試行してください。"
+            default:
+                errorMessage = "通信エラーです。もう一度お試しください。"
+            }
+            isLoading = false
+            throw error
         }
     }
     
     @MainActor
-    func registerComplete() async {
+    func registerComplete() async throws {
         do {
             try await AuthService.shared.initAddToFireStore(username: localUserName)
-            isShowCheck = false
         } catch {
-            print("error: \(error)")
-            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+            errorMessage = "通信エラーです。もう一度お試しください。"
+            isLoading = false
+            throw error
         }
     }
     
-    func deleteAuth() async {
+    @MainActor
+    func deleteAuth() async throws {
         do {
             try await AuthService.shared.deleteUserAuth()
         } catch {
-            print("error: \(error)")
-            errorMessage = "予期せぬエラーです。もう一度お試しください。"
+            errorMessage = "通信エラーです。もう一度お試しください。"
+            isLoading = false
+            throw error
         }
     
     }

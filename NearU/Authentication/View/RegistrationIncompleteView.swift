@@ -32,38 +32,44 @@ struct RegistrationIncompleteView: View {
                         .padding(.bottom)
                     
                     if let message = viewModel.errorMessage {
-                        Text(message)
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.pink)
-                            .onAppear {
-                                Task {
-                                    try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                    viewModel.errorMessage = nil
-                                }
-                            }
+                        errorMessage(text: message)
                     }
                     
-                    Button {
-                        defer {
-                            viewModel.isLoading = false
-                        }
-                        viewModel.isLoading = true
-                        
-                        Task {
-                            await viewModel.sendValidationEmail()
-                            await MainActor.run {
-                                viewModel.isShowCheck = true
+                    VStack(spacing: 25) {
+                        Button {
+                            viewModel.isLoading = true
+                            
+                            Task {
+                                try await viewModel.sendValidationEmail()
+                                await MainActor.run {
+                                    viewModel.isLoading = false
+                                    viewModel.isShowCheck = true
+                                }
                             }
+                        } label: {
+                            Text("認証メールの送信")
+                                .foregroundStyle(.white)
+                                .padding(10)
+                                .background {
+                                    Capsule()
+                                        .foregroundStyle(.mint)
+                                        .frame(width: 350)
+                                }
                         }
-                    } label: {
-                        Text("認証メールの送信")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                            .frame(width: 350, height: 44)
-                            .background(Color(.systemMint))
-                            .cornerRadius(12)
+                        
+                        Button {
+                            AuthService.shared.signout()
+                        } label: {
+                            Text("ログイン画面へ戻る")
+                                .foregroundStyle(.mint)
+                                .padding(10)
+                                .background {
+                                    Capsule()
+                                        .stroke(lineWidth: 1.5)
+                                        .foregroundStyle(.mint)
+                                        .frame(width: 350)
+                                }
+                        }
                     }
                 }
                 
@@ -98,16 +104,7 @@ struct RegistrationIncompleteView: View {
                     .padding(.bottom, 20)
                 
                 if let message = viewModel.errorMessage {
-                    Text(message)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.pink)
-                        .onAppear {
-                            Task {
-                                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                viewModel.errorMessage = nil
-                            }
-                        }
+                    errorMessage(text: message)
                 }
                 
                 Button {
@@ -130,13 +127,12 @@ struct RegistrationIncompleteView: View {
                 }
                 
                 Button {
-                    defer {
-                        viewModel.isLoading = false
-                    }
                     viewModel.isLoading = true
-                    
                     Task {
-                        await viewModel.sendValidationEmail()
+                        try await viewModel.sendValidationEmail()
+                        await MainActor.run {
+                            viewModel.isLoading = false
+                        }
                     }
                 } label: {
                     Text("メールを再送する")
@@ -155,6 +151,21 @@ struct RegistrationIncompleteView: View {
                 LoadingView()
             }
         }
+    }
+    
+    private func errorMessage(text: String) -> some View {
+        Text(text)
+            .font(.footnote)
+            .foregroundStyle(.pink)
+            .transition(.opacity)
+            .animation(.easeInOut, value: viewModel.errorMessage)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        viewModel.errorMessage = nil
+                    }
+                }
+            }
     }
 }
 
