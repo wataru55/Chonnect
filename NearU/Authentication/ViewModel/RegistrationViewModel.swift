@@ -36,6 +36,10 @@ class RegistrationViewModel: ObservableObject {
         UserDefaults.standard.string(forKey: "username") ?? ""
     }
     
+    var isRegisterProcessing: Bool {
+        UserDefaults.standard.bool(forKey: "registration")
+    }
+    
     @MainActor
     func createUser() async throws {
         try await AuthService.shared.createUser(email: email, password: password, username: username) //ユーザー作成
@@ -76,6 +80,16 @@ class RegistrationViewModel: ObservableObject {
             errorMessage = "通信エラーです。もう一度お試しください。"
             isLoading = false
             throw error
+        }
+    }
+    
+    @MainActor
+    func loadUserData() async {
+        do {
+            try await AuthService.shared.loadUserData()
+        } catch {
+            errorMessage = "通信エラーです。もう一度お試しください。"
+            isLoading = false
         }
     }
     

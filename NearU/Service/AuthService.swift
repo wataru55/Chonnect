@@ -10,6 +10,17 @@ import FirebaseAuth
 import FirebaseFirestoreSwift
 import Firebase
 
+enum AuthServiceError: Error, LocalizedError {
+    case userDataNotFound
+
+    var errorDescription: String? {
+        switch self {
+        case .userDataNotFound:
+            return "ユーザーデータが見つかりませんでした。"
+        }
+    }
+}
+
 class AuthService {
     @Published var userSession: FirebaseAuth.User? //Firebaseのユーザ認証に用いられる変数
     @Published var currentUser: User?
@@ -136,6 +147,7 @@ class AuthService {
             self.currentUser = user
         } else {
             print("DEBUG: ユーザーデータが見つかりませんでした。")
+            throw AuthServiceError.userDataNotFound
         }
     }
 

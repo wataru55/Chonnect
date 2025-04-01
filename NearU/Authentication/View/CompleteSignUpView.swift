@@ -45,6 +45,7 @@ struct CompleteSignUpView: View {
                 viewModel.isLoading = true
                 Task {
                     try await viewModel.registerComplete()
+                    UserDefaults.standard.setValue(false, forKey: "registration")
                     await MainActor.run {
                         viewModel.isLoading = false
                     }

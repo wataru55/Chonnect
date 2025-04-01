@@ -34,6 +34,7 @@ struct EmailCheckView: View {
                 Button {
                     viewModel.isLoading = true
                     UserDefaults.standard.setValue(viewModel.username, forKey: "username")
+                    UserDefaults.standard.setValue(true, forKey: "registration")
                     Task {
                         try await viewModel.createUserToAuth()
                         try await viewModel.sendValidationEmail()
