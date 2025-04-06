@@ -76,6 +76,9 @@ struct UserDataReloadView: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.white)
+            .ignoresSafeArea()
             
             if viewModel.isLoading {
                 LoadingView()
