@@ -27,12 +27,14 @@ class ContentViewModel: ObservableObject { //SwiftUIがデータの変化を検�
     //MARK: - function
     func setupSubscribers() {
         service.$userSession
+            .receive(on: DispatchQueue.main)
             .sink { [ weak self ] userSession in //1.userSessionプロパティが持つPublisherにアクセス, 2.　.sinkでPublisherからデータ(userSession)を受け取る
             self?.userSession = userSession
         }
         .store(in: &cancellables) //作成されたサブスクリプション（購読）を管理
 
         service.$currentUser
+            .receive(on: DispatchQueue.main)
             .sink { [ weak self ] currentUser in //1.userSessionプロパティが持つPublisherにアクセス, 2.　.sinkでPublisherからデータ(userSession)を受け取る
             self?.currentUser = currentUser
         }

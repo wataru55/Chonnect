@@ -31,23 +31,14 @@ struct LaunchScreen: View {
                                 self.opacity = 1.0
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-
                                 withAnimation(.easeIn(duration: 0.5)) {
                                     self.isTextVisible = true
                                 }
                             }
                         }
-                    
-                    // テキストアニメーション
-//                    if isTextVisible {
-//                        Image("Chonnect_text")
-//                            .resizable()
-//                            .frame(width: 400, height: 150)
-//                    }
                 }
             }
             .onAppear {
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     withAnimation(.easeInOut(duration: 0.5)) {
                         self.isActive = true

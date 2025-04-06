@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CreatePasswordView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: RegistrationViewModel
+    @Binding var path: NavigationPath
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack (spacing: 10) {
@@ -24,8 +25,6 @@ struct CreatePasswordView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.bottom)
-
-
             
             SecureField("パスワード", text: $viewModel.password)
                 .modifier(IGTextFieldModifier())
@@ -34,9 +33,8 @@ struct CreatePasswordView: View {
             SecureField("再入力", text: $viewModel.rePassword)
                 .modifier(IGTextFieldModifier())
 
-            NavigationLink {
-                CompleteSignUpView()
-                    .navigationBarBackButtonHidden()
+            Button {
+                path.append(AuthPath.signUp(.emailCheck))
             } label: {
                 Text(viewModel.isPasswordValid ? "次へ" : "適切なパスワードを設定してください")
                     .font(.subheadline)
@@ -57,6 +55,7 @@ struct CreatePasswordView: View {
                     .imageScale(.large)
                     .onTapGesture {
                         viewModel.password = ""
+                        viewModel.rePassword = ""
                         dismiss()
                     }
             }
@@ -65,6 +64,6 @@ struct CreatePasswordView: View {
 }//view
 
 #Preview {
-    CreatePasswordView()
+    CreatePasswordView(path: .constant(NavigationPath()))
         .environmentObject(RegistrationViewModel())
 }
