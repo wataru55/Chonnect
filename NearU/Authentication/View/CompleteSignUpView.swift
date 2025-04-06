@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct CompleteSignUpView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: RegistrationViewModel
+    @Binding var path: NavigationPath
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack (spacing: 10) {
-            Text("Welcome to Chonnect! \n\(viewModel.username)")
+            Text("Welcome to Chonnect! \n\(viewModel.localUserName)")
                 .multilineTextAlignment(.center)
                 .font(.system(size: 30, weight: .bold))
                 .fontWeight(.bold)
@@ -24,10 +25,33 @@ struct CompleteSignUpView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.vertical)
+            
+            if let message = viewModel.errorMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.pink)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: viewModel.errorMessage)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                viewModel.errorMessage = nil
+                            }
+                        }
+                    }
+            }
 
-            Button(action: {
-                Task { try await viewModel.createUser() }
-            }, label: {
+            Button {
+                viewModel.isLoading = true
+                Task {
+                    try await viewModel.registerComplete()
+                    UserDefaults.standard.setValue(false, forKey: "registration")
+                    await MainActor.run {
+                        viewModel.isLoading = false
+                    }
+                }
+                
+            }label: {
                 Text("はじめる")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -36,21 +60,12 @@ struct CompleteSignUpView: View {
                     .background(Color(.systemMint))
                     .cornerRadius(12)
                     .padding(.top)
-            })
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Image(systemName: "chevron.left")
-                    .imageScale(.large)
-                    .onTapGesture {
-                        dismiss()
-                    }
             }
         }
     }
 }
 
 #Preview {
-    CompleteSignUpView()
+    CompleteSignUpView(path: .constant(NavigationPath()))
         .environmentObject(RegistrationViewModel())
 }

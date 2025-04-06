@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CreateUserNameView: View {
+    @EnvironmentObject var viewModel: RegistrationViewModel
+    @Binding var path: NavigationPath
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var viewModel: RegistrationViewModel //インスタンス化
 
     var body: some View {
         VStack (spacing: 10) {
@@ -41,9 +42,8 @@ struct CreateUserNameView: View {
             TextField("ユーザ名", text: $viewModel.username)
                 .modifier(IGTextFieldModifier())
 
-            NavigationLink {
-                CreatePasswordView()
-                    .navigationBarBackButtonHidden()
+            Button {
+                path.append(AuthPath.signUp(.inputPassword))
             } label: {
                 Text(viewModel.isUsernameValid ? "次へ" : "適切なユーザー名を入力してください")
                     .font(.subheadline)
@@ -72,6 +72,6 @@ struct CreateUserNameView: View {
 }//view
 
 #Preview {
-    CreateUserNameView()
+    CreateUserNameView(path: .constant(NavigationPath()))
         .environmentObject(RegistrationViewModel())
 }
