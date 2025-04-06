@@ -108,11 +108,14 @@ struct RegistrationIncompleteView: View {
                 }
                 
                 Button {
-                    if viewModel.isValidateUser {
-                        viewModel.isShowCheck = false
-                        path.append(RegistrationState.completeSignUp)
-                    } else {
-                        viewModel.errorMessage = "認証が完了していません"
+                    Task {
+                        await viewModel.checkUserValidation()
+                        if viewModel.isValidateUser {
+                            viewModel.isShowCheck = false
+                            path.append(RegistrationState.completeSignUp)
+                        } else {
+                            viewModel.errorMessage = "認証が完了していません"
+                        }
                     }
                     
                 } label: {

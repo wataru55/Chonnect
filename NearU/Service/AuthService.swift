@@ -35,10 +35,15 @@ class AuthService {
         Task{ try await loadUserData() }
     }
     
-    func isValidUser() -> Bool {
+    func isValidUser() async -> Bool {
         guard let currentUser = Auth.auth().currentUser else { return false }
-        currentUser.reload()
-        return currentUser.isEmailVerified
+        
+        do {
+            try await currentUser.reload()
+            return currentUser.isEmailVerified
+        } catch {
+            return false
+        }
     }
 
     @MainActor //メインスレットで行われることを保証

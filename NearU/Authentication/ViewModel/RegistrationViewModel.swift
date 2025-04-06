@@ -14,6 +14,7 @@ class RegistrationViewModel: ObservableObject {
     @Published var rePassword = ""
     @Published var isShowCheck = false
     @Published var isLoading = false
+    @Published var isValidateUser: Bool = false
     @Published var errorMessage: String?
     
     var isEmailValid: Bool {
@@ -26,10 +27,6 @@ class RegistrationViewModel: ObservableObject {
     
     var isPasswordValid: Bool {
         Validation.validatePassword(password: password, rePassword: rePassword)
-    }
-    
-    var isValidateUser: Bool {
-        AuthService.shared.isValidUser()
     }
     
     var localUserName: String {
@@ -91,6 +88,14 @@ class RegistrationViewModel: ObservableObject {
             errorMessage = "通信エラーです。もう一度お試しください。"
             isLoading = false
         }
+    }
+    
+    @MainActor
+    func checkUserValidation() async {
+        isLoading = true
+        let isValid = await AuthService.shared.isValidUser()
+        self.isValidateUser = isValid
+        isLoading = false
     }
     
     @MainActor
