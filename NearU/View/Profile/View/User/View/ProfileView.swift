@@ -109,7 +109,9 @@ struct ProfileView: View {
                                         .padding()
                                 } else {
                                     ForEach(viewModel.openGraphData) { openGraphData in
-                                        SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
+                                        SiteLinkButtonView(ogpData: openGraphData,
+                                                           _width: 200, _height: 250,
+                                                           showDeleteButton: false)
                                     }
                                 }
                             }

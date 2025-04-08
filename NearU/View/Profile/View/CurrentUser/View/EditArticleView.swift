@@ -3,6 +3,8 @@ import SwiftUI
 struct EditArticleView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
     @Environment(\.dismiss) var dismiss
+    
+    var columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 2)
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
@@ -58,25 +60,27 @@ struct EditArticleView: View {
                                 .fontWeight(.bold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading, 5)
-                                .padding(.vertical, 10)
+                                .padding(.top, 10)
                             
-                            VStack(alignment: .center, spacing: 20) {
-                                if viewModel.openGraphData.isEmpty {
-                                    Text("記事のリンクがありません")
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .foregroundColor(.gray)
-                                        .padding()
-                                } else {
+                            if viewModel.openGraphData.isEmpty {
+                                Text("記事のリンクがありません")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            } else {
+                                LazyVGrid(columns: columns, spacing: 0) {
                                     ForEach(viewModel.openGraphData) { openGraphData in
-                                        SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: true)
+                                        SiteLinkButtonView(ogpData: openGraphData,
+                                                           _width: 180, _height: 230,
+                                                           showDeleteButton: true)
                                             .environmentObject(viewModel)
                                             .padding(.horizontal, 10)
                                     }
                                 }
-                            } //vstack
-                            .padding(.bottom, 10)
+                            }
+                            //.padding(.bottom, 10)
                         } // vstack
                     } //vstack
                     .padding()

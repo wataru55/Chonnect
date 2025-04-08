@@ -12,6 +12,8 @@ struct SiteLinkButtonView: View {
     @EnvironmentObject var viewModel: ArticleLinksViewModel
     @State private var isShowAlert: Bool = false
     let ogpData: OpenGraphData
+    let _width: CGFloat
+    let _height: CGFloat
     var showDeleteButton: Bool
 
     var body: some View {
@@ -70,7 +72,7 @@ struct SiteLinkButtonView: View {
                             
                             Spacer()
                         }// Vstack
-                        .frame(width: 200, height: 250)
+                        .frame(width: _width, height: _height)
                         .background(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .shadow(color: .gray, radius: 2, x: 1, y: 1)
@@ -85,6 +87,7 @@ struct SiteLinkButtonView: View {
                     isShowAlert.toggle()
                 } label: {
                     Image(systemName: "minus.circle.fill")
+                        .font(.title2)
                         .foregroundStyle(.black)
                         .padding()
                 }

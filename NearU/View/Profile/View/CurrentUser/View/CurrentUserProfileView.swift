@@ -155,9 +155,9 @@ struct CurrentUserProfileView: View {
                                     }
                                 }
                                 
-                                Button(action: {
+                                Button {
                                     isAddingNewLink.toggle()
-                                }, label: {
+                                } label: {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                                         .frame(width: 60, height: 60)
@@ -167,7 +167,7 @@ struct CurrentUserProfileView: View {
                                             Circle()
                                                 .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
                                         )
-                                })
+                                }
                                 .padding(.horizontal, 8)
                             }
                         } // HStack
@@ -207,7 +207,9 @@ struct CurrentUserProfileView: View {
                                 
                             } else {
                                 ForEach(articleLinksViewModel.openGraphData) { openGraphData in
-                                    SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
+                                    SiteLinkButtonView(ogpData: openGraphData,
+                                                       _width: 200, _height: 250,
+                                                       showDeleteButton: false)
                                         .environmentObject(articleLinksViewModel)
                                 }
                                 
@@ -216,8 +218,7 @@ struct CurrentUserProfileView: View {
                                 } label: {
                                     Image(systemName: "plus")
                                         .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
-                                        .frame(width: 30, height: 30)
-                                    
+                                        .frame(width: 60, height: 60)
                                         .background(Color(red: 0.96, green: 0.97, blue: 0.98))
                                         .clipShape(Circle())
                                         .overlay(
@@ -225,7 +226,7 @@ struct CurrentUserProfileView: View {
                                                 .stroke(Color(red: 0.45, green: 0.45, blue: 0.45), lineWidth: 1)
                                         )
                                 }
-                                .frame(height: 130, alignment: .top)
+                                .padding(.horizontal, 8)
                             }
                         }
                     }
