@@ -30,6 +30,9 @@ class ArticleLinksViewModel: ObservableObject {
 
     func fetchArticleUrls() async {
         guard let userId = AuthService.shared.currentUser?.id else { return }
+        await MainActor.run {
+            self.openGraphData = []
+        }
 
         do {
             let snapshot = try await Firestore.firestore().collection("users").document(userId).collection("article").getDocuments()
@@ -37,50 +40,49 @@ class ArticleLinksViewModel: ObservableObject {
             // Firestoreから取得した記事URLを配列として返す
             let urls = snapshot.documents.compactMap { $0.data()["article_url"] as? String }
 
-            await getOpenGraphData(urls: urls)
-
+            for url in urls {
+                await getOpenGraphData(urlString: url)
+            }
+            
         } catch {
             print("Error fetchArticleUrls: \(error)")
         }
     }
 
-    func addLink(urls: [String]) async throws {
+    func saveLink(urls: [String]) async throws {
         for url in urls {
             if !url.isEmpty {
                 do {
                     try await UserService.seveArticleLink(url: url)
+                    await getOpenGraphData(urlString: url)
                 } catch {
                     print("Error adding URL to article collection: \(error)")
                 }
             }
         }
     }
-
+    
     // urlからOGPを取得する
     @MainActor
-    private func getOpenGraphData(urls: [String]) async {
-        self.openGraphData = []
-
-        for urlString in urls {
-            guard let url = URL(string: urlString) else {
-                let data = OpenGraphData(url: urlString, openGraph: nil)
-                await MainActor.run {
-                    openGraphData.append(data)
-                }
-                continue
+    private func getOpenGraphData(urlString: String) async {
+        guard let url = URL(string: urlString) else {
+            let data = OpenGraphData(url: urlString, openGraph: nil)
+            await MainActor.run {
+                openGraphData.append(data)
             }
-
-            do {
-                let og = try await OpenGraph.fetch(url: url)
-                let data = OpenGraphData(url: urlString, openGraph: og)
-                await MainActor.run {
-                    openGraphData.append(data)
-                }
-            } catch {
-                let data = OpenGraphData(url: urlString, openGraph: nil)
-                await MainActor.run {
-                    openGraphData.append(data)
-                }
+            return
+        }
+        
+        do {
+            let og = try await OpenGraph.fetch(url: url)
+            let data = OpenGraphData(url: urlString, openGraph: og)
+            await MainActor.run {
+                openGraphData.append(data)
+            }
+        } catch {
+            let data = OpenGraphData(url: urlString, openGraph: nil)
+            await MainActor.run {
+                openGraphData.append(data)
             }
         }
     }

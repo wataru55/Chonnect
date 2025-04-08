@@ -100,8 +100,8 @@ struct EditArticleView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
-                                try await viewModel.addLink(urls: viewModel.articleUrls)
-                                await viewModel.fetchArticleUrls()
+                                try await viewModel.saveLink(urls: viewModel.articleUrls)
+                            
                                 await MainActor.run {
                                     dismiss()
                                 }
