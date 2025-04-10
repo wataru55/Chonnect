@@ -120,7 +120,6 @@ struct EditSNSLinkView: View {
                         Button {
                             Task {
                                 try await viewModel.updateSNSLink(urls: viewModel.inputUrls)
-                                await viewModel.loadSNSLinks()
                                 await MainActor.run {
                                     dismiss()
                                 }
