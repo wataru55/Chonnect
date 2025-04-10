@@ -10,7 +10,6 @@ import SwiftUI
 struct SettingView: View {
     @StateObject var viewModel : SettingViewModel
     @State private var isShowAlert: Bool = false
-    @State private var isOnBluetooth: Bool = UserDefaults.standard.bool(forKey: "isOnBluetooth")
 
     init(user: User) {
         self._viewModel = StateObject(wrappedValue: SettingViewModel(user: user))
@@ -20,23 +19,6 @@ struct SettingView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("近くのユーザーとのプロフィール交換を可能にする")) {
-                        Toggle(isOn: $isOnBluetooth) {
-                            Text("BLE通信")
-                        }
-                        .tint(.mint)
-                        .onChange(of: isOnBluetooth) {
-                            UserDefaults.standard.set(isOnBluetooth, forKey: "isOnBluetooth")
-                            if isOnBluetooth {
-                                BLECentralManager.shared.centralManagerDidUpdateState(BLECentralManager.shared.centralManager)
-                                BLEPeripheralManager.shared.peripheralManagerDidUpdateState(BLEPeripheralManager.shared.peripheralManager)
-                            } else {
-                                BLECentralManager.shared.stopCentralManagerDelegate()
-                                BLEPeripheralManager.shared.stopPeripheralManagerDelegate()
-                            }
-                        }
-                    }
-
                     Section(header: Text("SNSリンクへのアクセスを相互フォローに限定")) {
                         Toggle(isOn: $viewModel.isPrivate) {
                             Text("SNSのアクセス制限")
