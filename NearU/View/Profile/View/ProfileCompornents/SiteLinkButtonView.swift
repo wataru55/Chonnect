@@ -26,14 +26,17 @@ struct SiteLinkButtonView: View {
                 VStack(alignment: .leading) {
                     if let data = ogpData.openGraph {
                         // メタデータが取得できた場合のリンクプレビュー
-                        VStack(alignment: .center, spacing: 20) {
+                        VStack(alignment: .center, spacing: 10) {
                             if let imageUrl = data[.image], let url = URL(string: imageUrl) {
                                 AsyncImage(url: url) { image in
                                     image
                                         .resizable()
-                                        .aspectRatio(contentMode: .fit)
+                                        .scaledToFill()
+                                        .frame(width: _width , height: _height * 0.5)
+                                        .clipped()
+                                    
                                 } placeholder: {
-                                    Color.gray.frame(height: 100).cornerRadius(10)
+                                    Color.gray.frame(height: 100)
                                 }
                             } else {
                                 Image(systemName: "network")

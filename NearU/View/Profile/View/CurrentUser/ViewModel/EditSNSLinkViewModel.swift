@@ -68,7 +68,7 @@ class EditSNSLinkViewModel: ObservableObject {
                 switch result {
                 case .success(let serviceName):
                     try await UserService.saveSNSLink(serviceName: serviceName, url: url)
-                    print("SNSリンクの更新完了")
+                    addSNSLinks(serviceName: serviceName, urlString: url)
                 case .failure(let error):
                     print("Error updateSNSLink: \(error)")
                 }
@@ -98,5 +98,10 @@ class EditSNSLinkViewModel: ObservableObject {
         guard let currentUser = AuthService.shared.currentUser else { return }
 
         self.snsUrls = currentUser.snsLinks
+    }
+    
+    @MainActor
+    func addSNSLinks(serviceName: String, urlString: String) {
+        self.snsUrls[serviceName] = urlString
     }
 }

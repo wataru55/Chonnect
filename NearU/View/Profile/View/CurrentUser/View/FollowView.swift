@@ -18,12 +18,9 @@ struct FollowView: View {
                 if viewModel.followUsers.isEmpty {
                     NothingDataView(text: "フォローしているユーザーがいません",
                                     explanation: "ここでは、あなたがフォローしたユーザーの一覧が表示されます。",
+                                    isSystemImage: true,
                                     isAbleToReload: true)
-//                    Text("フォローしているユーザーがいません")
-//                        .font(.footnote)
-//                        .fontWeight(.bold)
-//                        .foregroundColor(.gray)
-//                        .padding()
+
                 } else {
                     ForEach(viewModel.followUsers, id: \.self) { followUser in
                         NavigationLink {
