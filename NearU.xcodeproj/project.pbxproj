@@ -98,6 +98,7 @@
 		63BEA49D2CD2211A006382AF /* JWTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 63BEA49C2CD2211A006382AF /* JWTKit */; };
 		63CE6E682DACDC7F00B2628D /* IDGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E672DACDC7F00B2628D /* IDGenerator.swift */; };
 		63CE6E6A2DAD774A00B2628D /* FollowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E692DAD774A00B2628D /* FollowService.swift */; };
+		63CE6E6C2DAD7C4800B2628D /* LinkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E6B2DAD7C4800B2628D /* LinkService.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -242,6 +243,7 @@
 		63BEA4952CD1CE3C006382AF /* FCMMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCMMessage.swift; sourceTree = "<group>"; };
 		63CE6E672DACDC7F00B2628D /* IDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDGenerator.swift; sourceTree = "<group>"; };
 		63CE6E692DAD774A00B2628D /* FollowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowService.swift; sourceTree = "<group>"; };
+		63CE6E6B2DAD7C4800B2628D /* LinkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkService.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				6346A03A2D8829A600EDC4E5 /* Validation.swift */,
 				63CE6E672DACDC7F00B2628D /* IDGenerator.swift */,
 				63CE6E692DAD774A00B2628D /* FollowService.swift */,
+				63CE6E6B2DAD7C4800B2628D /* LinkService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -815,6 +818,7 @@
 				6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */,
 				63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */,
 				63226E202D69BF28006EBCCF /* UserActions.swift in Sources */,
+				63CE6E6C2DAD7C4800B2628D /* LinkService.swift in Sources */,
 				6346A03D2D90028F00EDC4E5 /* SkillTagRepository.swift in Sources */,
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
 				6346A0432D92829800EDC4E5 /* EmailCheckView.swift in Sources */,
