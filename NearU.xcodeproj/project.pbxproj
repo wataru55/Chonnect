@@ -99,6 +99,7 @@
 		63CE6E682DACDC7F00B2628D /* IDGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E672DACDC7F00B2628D /* IDGenerator.swift */; };
 		63CE6E6A2DAD774A00B2628D /* FollowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E692DAD774A00B2628D /* FollowService.swift */; };
 		63CE6E6C2DAD7C4800B2628D /* LinkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E6B2DAD7C4800B2628D /* LinkService.swift */; };
+		63CE6E6E2DB01C3900B2628D /* CurrentUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -244,6 +245,7 @@
 		63CE6E672DACDC7F00B2628D /* IDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDGenerator.swift; sourceTree = "<group>"; };
 		63CE6E692DAD774A00B2628D /* FollowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowService.swift; sourceTree = "<group>"; };
 		63CE6E6B2DAD7C4800B2628D /* LinkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkService.swift; sourceTree = "<group>"; };
+		63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserService.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				63CE6E672DACDC7F00B2628D /* IDGenerator.swift */,
 				63CE6E692DAD774A00B2628D /* FollowService.swift */,
 				63CE6E6B2DAD7C4800B2628D /* LinkService.swift */,
+				63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -823,6 +826,7 @@
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
 				6346A0432D92829800EDC4E5 /* EmailCheckView.swift in Sources */,
 				637B972C2CBA070D00EFB09F /* EncountDataStruct.swift in Sources */,
+				63CE6E6E2DB01C3900B2628D /* CurrentUserService.swift in Sources */,
 				63AEF0FD2C0C507300DE196E /* BLEHistoryView.swift in Sources */,
 				6344BE3A2CD758B0009F404E /* HistoryData.swift in Sources */,
 				63BEA4942CD0B46A006382AF /* NotificationManager.swift in Sources */,
