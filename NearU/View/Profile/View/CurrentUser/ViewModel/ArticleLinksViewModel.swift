@@ -53,7 +53,7 @@ class ArticleLinksViewModel: ObservableObject {
         for url in urls {
             if !url.isEmpty {
                 do {
-                    try await LinkService.seveArticleLink(url: url)
+                    try await LinkService.saveArticleLink(url: url)
                     await getOpenGraphData(urlString: url)
                 } catch {
                     print("Error adding URL to article collection: \(error)")

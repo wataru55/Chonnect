@@ -30,7 +30,7 @@ struct LinkService {
         }
     }
     
-    static func seveArticleLink(url: String) async throws {
+    static func saveArticleLink(url: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
         let data = ["article_url": url]
         do {
