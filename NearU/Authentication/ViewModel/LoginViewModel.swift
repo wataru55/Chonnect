@@ -14,12 +14,12 @@ class LoginViewModel: ObservableObject {
 
     @MainActor
     func signIn() async throws {
-        do {
-            try await AuthService.shared.login(withEmail: email, password: password) //login関数を実行
+        let result = await AuthService.shared.login(email: email, password: password) //login関数を実行
+        switch result {
+        case .success:
             inputReset()
-        } catch {
-            errorMessage = "ログインに失敗しました。もう一度お試しください。"
-            
+        case .failure(let error):
+            errorMessage = error.localizedDescription
         }
     }
     

@@ -34,7 +34,7 @@ class SupplementButtonViewModel: ObservableObject {
             return
         }
         do {
-            try await UserActions.report(to: id, content: reportText)
+            try await CurrentUserActions.report(to: id, content: reportText)
             self.reportText = ""
             self.message = "報告が完了しました"
         } catch {

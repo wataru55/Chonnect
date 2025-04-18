@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             if let error = error {
                 print("Error fetching FCM registration token: \(error)")
             } else if let token = token {
-                Task { await UserService.setFCMToken(fcmToken: token)}
+                Task { await CurrentUserService.setFCMToken(fcmToken: token)}
             }
         }
     }
@@ -78,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         guard let fcmToken = fcmToken else { return }
         print("messaging(_:didReceiveRegistrationToken:) called with token: \(fcmToken)")
 
-        Task { await UserService.setFCMToken(fcmToken: fcmToken)}
+        Task { await CurrentUserService.setFCMToken(fcmToken: fcmToken)}
     }
 
     // アプリがForeground時にPush通知を受信する処理

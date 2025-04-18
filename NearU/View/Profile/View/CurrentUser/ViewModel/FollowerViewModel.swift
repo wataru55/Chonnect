@@ -26,7 +26,7 @@ class FollowerViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async {
         do {
-            let users = try await UserService.fetchFollowers(receivedId: "")
+            let users = try await FollowService.fetchFollowers(receivedId: "")
             let filteredUsers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
             
             guard !filteredUsers.isEmpty else {
@@ -75,7 +75,7 @@ class FollowerViewModel: ObservableObject {
 
     func updateRead(userId: String) async {
         do {
-            try await UserService.updateRead(userId: userId)
+            try await CurrentUserActions.updateRead(userId: userId)
             await loadFollowers()
         } catch {
             print("Error updating read status: \(error)")

@@ -103,7 +103,7 @@ class SettingViewModel: ObservableObject {
         do {
             try await AuthService.shared.reAuthenticate(email: currentEmail, password: password)
             
-            try await AuthService.shared.deleteUser()
+            try await CurrentUserService.deleteUser()
             
             self.isLoading = false
             

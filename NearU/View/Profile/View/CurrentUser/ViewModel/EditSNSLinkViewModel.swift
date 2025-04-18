@@ -67,7 +67,7 @@ class EditSNSLinkViewModel: ObservableObject {
                 let result = getServiceName(urlString: url)
                 switch result {
                 case .success(let serviceName):
-                    try await UserService.saveSNSLink(serviceName: serviceName, url: url)
+                    try await LinkService.saveSNSLink(serviceName: serviceName, url: url)
                     addSNSLinks(serviceName: serviceName, urlString: url)
                 case .failure(let error):
                     print("Error updateSNSLink: \(error)")
@@ -78,7 +78,7 @@ class EditSNSLinkViewModel: ObservableObject {
 
     func deleteSNSLink(serviceName: String, url: String) async throws {
         do {
-            try await UserService.deleteSNSLink(serviceName: serviceName, url: url)
+            try await LinkService.deleteSNSLink(serviceName: serviceName, url: url)
         } catch {
             print("Error deleteSNSLink: \(error)")
         }
@@ -90,14 +90,15 @@ class EditSNSLinkViewModel: ObservableObject {
 
     @MainActor
     func loadSNSLinks() async {
-        do {
-            try await AuthService.shared.loadUserData()
-        } catch {
-            print("Error loadUserData: \(error)")
+        let result = await CurrentUserService.loadCurrentUser()
+        switch result {
+        case .success(let user):
+            self.snsUrls = user.snsLinks
+            
+        case .failure(let error):
+            print(error.localizedDescription)
         }
-        guard let currentUser = AuthService.shared.currentUser else { return }
-
-        self.snsUrls = currentUser.snsLinks
+    
     }
     
     @MainActor
