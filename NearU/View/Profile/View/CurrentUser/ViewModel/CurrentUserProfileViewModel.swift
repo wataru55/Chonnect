@@ -78,8 +78,14 @@ class CurrentUserProfileViewModel: ObservableObject {
                 try await ImageUploader.uploadImage(image: uiImage)
             }
             
-            try await UserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: filteredTags)
-            try await AuthService.shared.loadUserData()
+            try await CurrentUserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: filteredTags)
+            let result = await CurrentUserService.loadCurrentUser()
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
         } catch {
             print("Error updating user data: \(error)")
         }

@@ -109,7 +109,7 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowUsers() async {
         do {
-            let pairData = try await UserService.fetchFollowedUsers(receivedId: user.id)
+            let pairData = try await FollowService.fetchFollowedUsers(receivedId: user.id)
             let filteredData = BlockUserManager.shared.filterBlockedUsers(dataList: pairData)
             
             guard !filteredData.isEmpty else {
@@ -120,7 +120,7 @@ class ProfileViewModel: ObservableObject {
             var followUserRowData: [FollowUserRowData] = []
 
             for data in pairData {
-                let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: data.user.id)
                 let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }
@@ -134,7 +134,7 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async {
         do {
-            let userHistoryRecords = try await UserService.fetchFollowers(receivedId: user.id)
+            let userHistoryRecords = try await FollowService.fetchFollowers(receivedId: user.id)
             let filteredRecords = BlockUserManager.shared.filterBlockedUsers(dataList: userHistoryRecords)
             
             guard !filteredRecords.isEmpty else {
@@ -145,7 +145,7 @@ class ProfileViewModel: ObservableObject {
             var historyRowData: [HistoryRowData] = []
 
             for record in filteredRecords {
-                let isFollowed = await UserService.checkIsFollowed(receivedId: record.user.id)
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: record.user.id)
                 let addData = HistoryRowData(record: record, isFollowed: isFollowed)
                 historyRowData.append(addData)
             }
@@ -159,7 +159,7 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func fetchArticleLinks() async {
         do {
-            let urls = try await UserService.fetchArticleLinks(withUid: user.id)
+            let urls = try await LinkService.fetchArticleLinks(withUid: user.id)
             await getOpenGraphData(urls: urls)
         } catch {
             print("Error fetching article links: \(error)")
@@ -198,7 +198,7 @@ class ProfileViewModel: ObservableObject {
         guard let fcmToken = user.fcmtoken else { return }
         do {
             // フォロー処理を実行
-            try await UserService.followUser(receivedId: user.id, date: date)
+            try await CurrentUserActions.followUser(receivedId: user.id, date: date)
             // プッシュ通知を送信
             try await NotificationManager.shared.sendPushNotification(
                 fcmToken: fcmToken,

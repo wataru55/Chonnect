@@ -38,55 +38,79 @@ class RegistrationViewModel: ObservableObject {
     }
     
     @MainActor
-    func createUser() async throws {
-        try await AuthService.shared.createUser(email: email, password: password, username: username) //ユーザー作成
+    func registerUserAndSendEmail() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        let result = await createUserToAuth()
+        
+        switch result {
+        case .success:
+            break
+            
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return
+        }
+        
+        let mailResult = await AuthService.shared.sendVerification()
+        switch mailResult {
+        case .success:
+            break
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+        }
+        
+        isShowCheck = true
     }
     
     @MainActor
-    func createUserToAuth() async throws{
-        do {
-            try await AuthService.shared.createUser(email: email, password: password, username: username)
-        } catch {
-            errorMessage = "入力されたメールアドレスはすでに登録されています"
+    private func createUserToAuth() async -> Result<Bool, AuthError> {
+        let result = await AuthService.shared.createUser(email: email, password: password, username: username)
+        
+        if case .success = result {
+            UserDefaults.standard.setValue(username, forKey: "username")
+            UserDefaults.standard.setValue(true, forKey: "registration")
+        }
+        
+        return result
+    }
+    
+    @MainActor
+    func registerComplete() async {
+        let result = await AuthService.shared.initAddToFireStore(username: localUserName)
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            errorMessage = error.localizedDescription
             isLoading = false
-            throw error
         }
     }
     
     @MainActor
-    func sendValidationEmail() async throws {
-        do {
-            try await AuthService.shared.sendVerification()
-        } catch let error as NSError {
-            switch error.code {
-            case 17010:
-                errorMessage = "メール送信の回数制限を超えました。 \n少し待ってから再試行してください。"
-            default:
-                errorMessage = "通信エラーです。もう一度お試しください。"
-            }
-            isLoading = false
-            throw error
-        }
-    }
-    
-    @MainActor
-    func registerComplete() async throws {
-        do {
-            try await AuthService.shared.initAddToFireStore(username: localUserName)
-        } catch {
-            errorMessage = "通信エラーです。もう一度お試しください。"
-            isLoading = false
-            throw error
+    func reSendEmailVerification() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        let result = await AuthService.shared.sendVerification()
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            errorMessage = error.localizedDescription
         }
     }
     
     @MainActor
     func loadUserData() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
-            try await AuthService.shared.loadUserData()
+            try await AuthService.shared.initializeCurrentUser()
         } catch {
-            errorMessage = "通信エラーです。もう一度お試しください。"
-            isLoading = false
+            errorMessage = (error as? AuthError)?.localizedDescription ?? "予期せぬエラーです。"
         }
     }
     

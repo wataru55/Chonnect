@@ -53,7 +53,7 @@ class ArticleLinksViewModel: ObservableObject {
         for url in urls {
             if !url.isEmpty {
                 do {
-                    try await UserService.seveArticleLink(url: url)
+                    try await LinkService.seveArticleLink(url: url)
                     await getOpenGraphData(urlString: url)
                 } catch {
                     print("Error adding URL to article collection: \(error)")
@@ -91,7 +91,7 @@ class ArticleLinksViewModel: ObservableObject {
         // Firestoreから削除
         do {
             print(url)
-            try await UserService.deleteArticleLink(url: url)
+            try await LinkService.deleteArticleLink(url: url)
         } catch {
             print("Error removing article: \(error)")
         }
