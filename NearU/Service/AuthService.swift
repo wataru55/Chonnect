@@ -11,7 +11,8 @@ import FirebaseFirestoreSwift
 import Firebase
 
 enum AuthError: Error, LocalizedError {
-    case invalidEmailOrPassword
+    case invalidEmail
+    case invalidPassword
     case emailAlreadyInUse
     case invalidSession
     case userDataNotFound
@@ -23,8 +24,10 @@ enum AuthError: Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .invalidEmailOrPassword:
-            return "メールアドレスまたはパスワードが間違っています。"
+        case .invalidEmail:
+            return "メールアドレスが間違っています。"
+        case .invalidPassword:
+            return "パスワードが間違っています。"
         case .emailAlreadyInUse:
             return "そのメールアドレスは既に登録されています。\nアプリを利用される方はログインしてください。"
         case .invalidSession:
@@ -102,10 +105,11 @@ class AuthService {
             print("DEBUG: ログイン失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
 
             switch error.code {
-            case AuthErrorCode.wrongPassword.rawValue,
-                 AuthErrorCode.invalidEmail.rawValue,
-                 AuthErrorCode.invalidCredential.rawValue:
-                return .failure(.invalidEmailOrPassword)
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue:
+                return .failure(.invalidPassword)
                 
             case AuthErrorCode.userNotFound.rawValue:
                 return .failure(.userDataNotFound)
@@ -137,10 +141,26 @@ class AuthService {
         }
     }
     
-    func reAuthenticate(email: String, password: String) async throws {
+    func reAuthenticate(email: String, password: String) async -> Result<Bool, AuthError> {
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        
-        try await Auth.auth().currentUser?.reauthenticate(with: credential)
+        do {
+            try await Auth.auth().currentUser?.reauthenticate(with: credential)
+            return .success(true)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue:
+                return .failure(.invalidPassword)
+                
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+                
+            default:
+                return .failure(.serverError)
+            }
+        }
     }
     
     func resetPassword(withEmail email: String) async throws { //パスワードリセット
