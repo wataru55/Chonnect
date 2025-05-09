@@ -53,8 +53,8 @@ struct CheckView: View {
             }
             
             Button {
-                viewModel.newEmail = ""
-                viewModel.password = ""
+                viewModel.inputEmail = ""
+                viewModel.inputPassword = ""
                 viewModel.isShowCheck = false
             } label: {
                 Text("やり直す")

@@ -18,7 +18,7 @@ struct EditEmailView: View {
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("新しいメールアドレスを入力してください\n確認メールが送信されます。")
+            Text("新しいメールアドレスを入力してください\n確認メールが送信されます")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
@@ -32,7 +32,7 @@ struct EditEmailView: View {
                 .padding(.bottom)
 
 
-            TextField("新しいメールアドレス", text: $viewModel.newEmail)
+            TextField("新しいメールアドレス", text: $viewModel.inputEmail)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
                 .toolbar {
@@ -59,7 +59,7 @@ struct EditEmailView: View {
                     .padding(.top)
             }
             .alert("確認", isPresented: $viewModel.isShowAlert) {
-                SecureField("パスワード", text: $viewModel.password)
+                SecureField("パスワード", text: $viewModel.inputPassword)
                 
                 Button("キャンセル") {
                     viewModel.isShowAlert = false
@@ -73,7 +73,7 @@ struct EditEmailView: View {
                 }
             } message: {
                 Text(
-                    "ログイン時のパスワードを入力してください。"
+                    "ログイン時のパスワードを\n入力してください。"
                 )
             }
             
@@ -91,8 +91,8 @@ struct EditEmailView: View {
             Spacer()
         }//vstack
         .onDisappear {
-            viewModel.password = ""
-            viewModel.newEmail = ""
+            viewModel.inputPassword = ""
+            viewModel.inputEmail = ""
         }
         .fullScreenCover(isPresented: $viewModel.isShowCheck) {
             CheckView(viewModel: viewModel)
