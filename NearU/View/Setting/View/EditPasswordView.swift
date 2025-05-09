@@ -18,14 +18,20 @@ struct EditPasswordView: View {
                 .fontWeight(.bold)
                 .padding(.top)
 
-            Text("パスワードを変更するためのリンクをメールで送信します。\nメールアドレスを入力してください。")
+            Text("パスワード変更に使用するリンクを\n登録されているメールアドレス宛に送信します。")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.bottom)
+            
+            Text("現在のメールアドレス：\(viewModel.currentEmail)")
+                .font(.footnote)
+                .foregroundStyle(.gray)
+                .padding(.horizontal, 24)
+                .padding(.bottom)
 
-            TextField("メールアドレス", text: $viewModel.newEmail)
+            TextField("変更前のパスワードを入力してください", text: $viewModel.inputPassword)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
                 .toolbar {
@@ -42,52 +48,39 @@ struct EditPasswordView: View {
             if let message = viewModel.message {
                 Text(message)
                     .padding(.top, 10)
-                    .foregroundColor(.black)
+                    .foregroundColor(.pink)
                     .font(.footnote)
                     .onAppear {
-                        Task {
-                            try? await Task.sleep(nanoseconds: 3_000_000_000)
-                            viewModel.message = nil
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                viewModel.message = nil
+                            }
                         }
                     }
             }
 
             Button {
-                viewModel.isShowAlert = true
+                Task {
+                    await viewModel.reAuthAndSendPasswordResetMail()
+                    self.focus = false
+                }
             } label: {
                 Text(viewModel.isShowResend ? "再送信" : "送信")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
                     .frame(width: 360, height: 44)
-                    .background(Color(.systemMint))
+                    .background(viewModel.validatePassword ? Color.mint : Color.gray)
                     .cornerRadius(12)
                     .padding(.top)
             }
-            .alert("確認", isPresented: $viewModel.isShowAlert) {
-                SecureField("パスワード", text: $viewModel.password)
-                
-                Button("キャンセル") {
-                    viewModel.isShowAlert = false
-                }
-                Button("完了") {
-                    viewModel.isShowAlert = false
-                    Task {
-                        await viewModel.reAuthAndEditPassword()
-                        self.focus = false
-                    }
-                }
-            } message: {
-                Text(
-                    "現在のパスワードを入力してください。"
-                )
-            }
+            .disabled(!viewModel.validatePassword)
 
             Spacer()
         }//vstack
         .onDisappear {
-            viewModel.password = ""
-            viewModel.newEmail = ""
+            viewModel.inputPassword = ""
+            viewModel.inputEmail = ""
             viewModel.isShowResend = false
         }
     }
