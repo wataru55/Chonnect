@@ -41,7 +41,7 @@ enum AuthError: Error, LocalizedError {
         case .networkError:
             return "ネットワークに接続できません。通信環境を確認してください。"
         case .serverError:
-            return "サーバーで問題が発生しました。時間をおいて再試行してください。"
+            return "サーバーで問題が発生しました。\n時間をおいて再試行してください。"
         default:
             return "予期せぬエラーが発生しました。"
         }
@@ -147,11 +147,12 @@ class AuthService {
             try await Auth.auth().currentUser?.reauthenticate(with: credential)
             return .success(true)
         } catch let error as NSError {
+            print("DEBUG: 再認証失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
             switch error.code {
             case AuthErrorCode.invalidEmail.rawValue:
                 return .failure(.invalidEmail)
                 
-            case AuthErrorCode.wrongPassword.rawValue:
+            case AuthErrorCode.wrongPassword.rawValue, AuthErrorCode.invalidCredential.rawValue:
                 return .failure(.invalidPassword)
                 
             case AuthErrorCode.networkError.rawValue:
@@ -163,12 +164,21 @@ class AuthService {
         }
     }
     
-    func resetPassword(withEmail email: String) async throws { //パスワードリセット
+    //パスワードリセットメールを送信
+    func sendResetPasswordMail(withEmail email: String) async throws {
         do {
             try await Auth.auth().sendPasswordReset(withEmail: email)
-        } catch {
-            print("DEBUG: パスワードリセットに失敗しました。エラー: \(error.localizedDescription)")
-            throw error
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
         }
     }
     
