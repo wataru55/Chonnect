@@ -31,7 +31,7 @@ struct EditPasswordView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom)
 
-            TextField("変更前のパスワードを入力してください", text: $viewModel.inputPassword)
+            TextField("変更前のパスワードを入力", text: $viewModel.inputPassword)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
                 .toolbar {

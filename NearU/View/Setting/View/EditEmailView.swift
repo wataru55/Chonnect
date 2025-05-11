@@ -12,84 +12,93 @@ struct EditEmailView: View {
     @FocusState var focus: Bool
     
     var body: some View {
-        VStack (spacing: 10) {
-            Text("メールアドレスの変更")
-                .font(.title2)
-                .fontWeight(.bold)
-                .padding(.top)
+        ZStack {
+            VStack (spacing: 10) {
+                Text("メールアドレスの変更")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.top)
 
-            Text("新しいメールアドレスを入力してください\n確認メールが送信されます")
-                .font(.footnote)
-                .foregroundStyle(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
-                .padding(.bottom)
-            
-            Text("現在のメールアドレス：\(viewModel.currentEmail)")
-                .font(.footnote)
-                .foregroundStyle(.gray)
-                .padding(.horizontal, 24)
-                .padding(.bottom)
+                Text("新しいメールアドレスを入力してください\n確認メールが送信されます")
+                    .font(.footnote)
+                    .foregroundStyle(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom)
+                
+                Text("現在のメールアドレス：\(viewModel.currentEmail)")
+                    .font(.footnote)
+                    .foregroundStyle(.gray)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom)
 
-
-            TextField("新しいメールアドレス", text: $viewModel.inputEmail)
-                .modifier(IGTextFieldModifier())
-                .focused(self.$focus)
-                .toolbar {
-                    ToolbarItem(placement: .keyboard) {
-                        HStack{
-                            Spacer()
-                            Button("閉じる"){
-                                self.focus = false
+                TextField("新しいメールアドレス", text: $viewModel.inputEmail)
+                    .modifier(IGTextFieldModifier())
+                    .focused(self.$focus)
+                    .toolbar {
+                        ToolbarItem(placement: .keyboard) {
+                            HStack{
+                                Spacer()
+                                Button("閉じる"){
+                                    self.focus = false
+                                }
                             }
                         }
                     }
+                
+                if let message = viewModel.message {
+                    Text(message)
+                        .padding(.top, 10)
+                        .foregroundColor(.pink)
+                        .font(.footnote)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                withAnimation {
+                                    viewModel.message = nil
+                                }
+                            }
+                        }
                 }
 
-            Button {
-                viewModel.isShowAlert = true
-            } label: {
-                Text("送信")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .frame(width: 360, height: 44)
-                    .background(Color(.systemMint))
-                    .cornerRadius(12)
-                    .padding(.top)
-            }
-            .alert("確認", isPresented: $viewModel.isShowAlert) {
-                SecureField("パスワード", text: $viewModel.inputPassword)
-                
-                Button("キャンセル") {
-                    viewModel.isShowAlert = false
+                Button {
+                    viewModel.sendButtonPressed()
+                } label: {
+                    Text("送信")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .frame(width: 360, height: 44)
+                        .background(viewModel.validateEmail ? Color.mint : Color.gray)
+                        .cornerRadius(12)
+                        .padding(.top)
                 }
-                Button("完了") {
-                    viewModel.isShowAlert = false
-                    Task {
-                        await viewModel.reAuthAndEditEmail()
-                        self.focus = false
+                .disabled(!viewModel.validateEmail)
+                .alert("確認", isPresented: $viewModel.isShowAlert) {
+                    SecureField("パスワード", text: $viewModel.inputPassword)
+                    
+                    Button("キャンセル") {
+                        viewModel.isShowAlert = false
                     }
-                }
-            } message: {
-                Text(
-                    "ログイン時のパスワードを\n入力してください。"
-                )
-            }
-            
-            if let message = viewModel.message {
-                Text(message)
-                    .padding(.top, 10)
-                    .onAppear {
+                    Button("完了") {
+                        viewModel.isShowAlert = false
                         Task {
-                            try? await Task.sleep(nanoseconds: 3_000_000_000)
-                            viewModel.message = nil
+                            await viewModel.reAuthAndSendEmailResetLink()
+                            self.focus = false
                         }
                     }
-            }
+                } message: {
+                    Text(
+                        "ログイン時のパスワードを\n入力してください。"
+                    )
+                }
 
-            Spacer()
-        }//vstack
+                Spacer()
+            }//vstack
+            
+            if viewModel.isLoading {
+                LoadingView()
+            }
+        }
         .onDisappear {
             viewModel.inputPassword = ""
             viewModel.inputEmail = ""
