@@ -127,8 +127,18 @@ class AuthService {
         }
     }
     
-    func refreshUserSession() async throws {
-        try await Auth.auth().currentUser?.reload()
+    func refreshUserSession() async -> Result<Bool, AuthError> {
+        do {
+            try await Auth.auth().currentUser?.reload()
+            return .success(true)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+            default:
+                return .failure(.serverError)
+            }
+        }
     }
     
     private func checkEmailVerification(for user: FirebaseAuth.User) async -> Result<Bool, AuthError> {
@@ -168,6 +178,24 @@ class AuthService {
     func sendResetPasswordMail(withEmail email: String) async throws {
         do {
             try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
+        }
+    }
+    
+    // メールアドレスリセットメールを送信
+    func sendResetEmailLink(email: String) async throws {
+        do {
+            try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: email)
         } catch let error as NSError {
             switch error.code {
             case AuthErrorCode.networkError.rawValue:

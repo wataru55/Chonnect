@@ -47,21 +47,35 @@ class SettingViewModel: ObservableObject {
         }
     }
     
-    @MainActor
-    func reAuthAndEditEmail() async {
-        let result = await AuthService.shared.reAuthenticate(email: currentEmail, password: inputPassword)
-        if case let .failure(error) = result {
-            self.message = error.localizedDescription
-            self.inputPassword = ""
-            return
+    func sendButtonPressed() {
+        if validatePassword {
+            Task {
+                await reAuthAndSendEmailResetLink()
+            }
+        } else {
+            self.isShowAlert = true
         }
+    }
+    
+    @MainActor
+    func reAuthAndSendEmailResetLink() async {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        // 再認証
+        guard await reAuthenticateOrFail() else { return }
+        
         do {
-            try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: inputEmail)
+            // メール送信
+            try await AuthService.shared.sendResetEmailLink(email: inputEmail)
             self.isShowCheck = true
             
+        } catch let error as AuthError {
+            self.message = "送信に失敗しました。\n\(error.localizedDescription)"
+            self.inputPassword = ""
         } catch {
-            print("error: \(error)")
-            self.message = "送信に失敗しました。もう一度お試しください。"
+            self.message = "予期せぬエラーです。もう一度お試しください。"
             self.inputPassword = ""
         }
     }
@@ -69,18 +83,8 @@ class SettingViewModel: ObservableObject {
     @MainActor
     func reAuthAndSendPasswordResetMail() async {
         // 再認証
-        let result = await AuthService.shared.reAuthenticate(email: currentEmail, password: inputPassword)
-        if case let .failure(error) = result {
-            switch error {
-            case .invalidPassword:
-                self.inputPassword = ""
-            
-            default:
-                break
-            }
-            self.message = error.localizedDescription
-            return
-        }
+        guard await reAuthenticateOrFail() else { return }
+        
         do {
             // メール送信
             try await AuthService.shared.sendResetPasswordMail(withEmail: currentEmail)
@@ -98,20 +102,25 @@ class SettingViewModel: ObservableObject {
     
     @MainActor
     func checkComplete() async {
+        self.isLoading = true
+        
         let result = await AuthService.shared.reAuthenticate(email: inputEmail, password: inputPassword)
-        if case let .failure(error) = result {
-            self.message = error.localizedDescription
+        if case .failure = result {
+            self.message = "認証が完了していません。もう一度お試しください。"
+            self.isLoading = false
+            return
         }
         
-        do {
-            try await AuthService.shared.refreshUserSession()
-            
+        let sessionResult = await AuthService.shared.refreshUserSession()
+        switch sessionResult {
+        case .success:
             self.inputEmail = ""
             self.inputPassword = ""
+            self.isLoading = false
             self.isShowCheck = false
             
-        } catch {
-            self.message = "予期せぬエラーです。もう一度お試しください。"
+        case .failure(let error):
+            self.message = error.localizedDescription
         }
     }
     
@@ -139,5 +148,19 @@ class SettingViewModel: ObservableObject {
         } catch {
             self.message = "予期せぬエラーです。もう一度お試しください。"
         }
+    }
+    
+    @MainActor
+    private func reAuthenticateOrFail() async -> Bool {
+        let result = await AuthService.shared.reAuthenticate(email: currentEmail, password: inputPassword)
+        if case let .failure(error) = result {
+            if error == .invalidPassword {
+                self.inputPassword = ""
+            }
+            self.message = error.localizedDescription
+            return false
+        }
+        
+        return true
     }
 }
