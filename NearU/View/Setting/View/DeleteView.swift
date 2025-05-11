@@ -36,7 +36,7 @@ struct DeleteView: View {
             .padding(.horizontal, 24)
             .padding(.bottom)
             
-            TextField("パスワード", text: $viewModel.password)
+            TextField("パスワード", text: $viewModel.inputPassword)
                 .modifier(IGTextFieldModifier())
                 .focused(self.$focus)
                 .toolbar {
@@ -96,7 +96,7 @@ struct DeleteView: View {
             Spacer()
         }//vstack
         .onDisappear {
-            viewModel.password = ""
+            viewModel.inputPassword = ""
         }
         .overlay {
             if viewModel.isLoading {

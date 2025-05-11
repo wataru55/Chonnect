@@ -11,7 +11,8 @@ import FirebaseFirestoreSwift
 import Firebase
 
 enum AuthError: Error, LocalizedError {
-    case invalidEmailOrPassword
+    case invalidEmail
+    case invalidPassword
     case emailAlreadyInUse
     case invalidSession
     case userDataNotFound
@@ -23,8 +24,10 @@ enum AuthError: Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .invalidEmailOrPassword:
-            return "メールアドレスまたはパスワードが間違っています。"
+        case .invalidEmail:
+            return "メールアドレスが間違っています。"
+        case .invalidPassword:
+            return "パスワードが間違っています。"
         case .emailAlreadyInUse:
             return "そのメールアドレスは既に登録されています。\nアプリを利用される方はログインしてください。"
         case .invalidSession:
@@ -38,7 +41,7 @@ enum AuthError: Error, LocalizedError {
         case .networkError:
             return "ネットワークに接続できません。通信環境を確認してください。"
         case .serverError:
-            return "サーバーで問題が発生しました。時間をおいて再試行してください。"
+            return "サーバーで問題が発生しました。\n時間をおいて再試行してください。"
         default:
             return "予期せぬエラーが発生しました。"
         }
@@ -102,10 +105,11 @@ class AuthService {
             print("DEBUG: ログイン失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
 
             switch error.code {
-            case AuthErrorCode.wrongPassword.rawValue,
-                 AuthErrorCode.invalidEmail.rawValue,
-                 AuthErrorCode.invalidCredential.rawValue:
-                return .failure(.invalidEmailOrPassword)
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue:
+                return .failure(.invalidPassword)
                 
             case AuthErrorCode.userNotFound.rawValue:
                 return .failure(.userDataNotFound)
@@ -123,8 +127,18 @@ class AuthService {
         }
     }
     
-    func refreshUserSession() async throws {
-        try await Auth.auth().currentUser?.reload()
+    func refreshUserSession() async -> Result<Bool, AuthError> {
+        do {
+            try await Auth.auth().currentUser?.reload()
+            return .success(true)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+            default:
+                return .failure(.serverError)
+            }
+        }
     }
     
     private func checkEmailVerification(for user: FirebaseAuth.User) async -> Result<Bool, AuthError> {
@@ -137,18 +151,62 @@ class AuthService {
         }
     }
     
-    func reAuthenticate(email: String, password: String) async throws {
+    func reAuthenticate(email: String, password: String) async -> Result<Bool, AuthError> {
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        
-        try await Auth.auth().currentUser?.reauthenticate(with: credential)
+        do {
+            try await Auth.auth().currentUser?.reauthenticate(with: credential)
+            return .success(true)
+        } catch let error as NSError {
+            print("DEBUG: 再認証失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
+            switch error.code {
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue, AuthErrorCode.invalidCredential.rawValue:
+                return .failure(.invalidPassword)
+                
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+                
+            default:
+                return .failure(.serverError)
+            }
+        }
     }
     
-    func resetPassword(withEmail email: String) async throws { //パスワードリセット
+    //パスワードリセットメールを送信
+    func sendResetPasswordMail(withEmail email: String) async throws {
         do {
             try await Auth.auth().sendPasswordReset(withEmail: email)
-        } catch {
-            print("DEBUG: パスワードリセットに失敗しました。エラー: \(error.localizedDescription)")
-            throw error
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
+        }
+    }
+    
+    // メールアドレスリセットメールを送信
+    func sendResetEmailLink(email: String) async throws {
+        do {
+            try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: email)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
         }
     }
     
