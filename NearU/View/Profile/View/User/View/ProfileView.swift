@@ -98,21 +98,24 @@ struct ProfileView: View {
                                 .frame(height: 1)
                                 .padding(.horizontal, 10)
                         }
-                        .padding(.bottom, 10)
 
-                        VStack(spacing: 20) {
-                            if viewModel.openGraphData.isEmpty {
-                                Text("記事がありません")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.gray)
-                                    .padding()
-                            } else {
-                                ForEach(viewModel.openGraphData) { openGraphData in
-                                    SiteLinkButtonView(ogpData: openGraphData, showDeleteButton: false)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 0) {
+                                if viewModel.openGraphData.isEmpty {
+                                    Text("記事がありません")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.gray)
+                                        .padding()
+                                } else {
+                                    ForEach(viewModel.openGraphData) { openGraphData in
+                                        SiteLinkButtonView(ogpData: openGraphData,
+                                                           _width: 200, _height: 250,
+                                                           showDeleteButton: false)
+                                    }
                                 }
                             }
-                        }//Vstack
+                        }
                         .padding(.bottom, 100)
                     } //vstack
                 }//scrollView

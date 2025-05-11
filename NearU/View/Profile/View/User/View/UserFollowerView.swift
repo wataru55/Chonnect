@@ -16,6 +16,7 @@ struct UserFollowerView: View {
                 if viewModel.followers.isEmpty {
                     NothingDataView(text: "フォローされたユーザーがいません",
                                     explanation: "ここでは、フォローされたユーザーの一覧が表示されます。",
+                                    isSystemImage: true,
                                     isAbleToReload: false)
 
                 } else {

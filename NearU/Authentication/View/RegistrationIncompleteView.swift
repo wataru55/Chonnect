@@ -37,12 +37,9 @@ struct RegistrationIncompleteView: View {
                     
                     VStack(spacing: 25) {
                         Button {
-                            viewModel.isLoading = true
-                            
                             Task {
-                                try await viewModel.sendValidationEmail()
+                                await viewModel.reSendEmailVerification()
                                 await MainActor.run {
-                                    viewModel.isLoading = false
                                     viewModel.isShowCheck = true
                                 }
                             }
@@ -130,12 +127,8 @@ struct RegistrationIncompleteView: View {
                 }
                 
                 Button {
-                    viewModel.isLoading = true
                     Task {
-                        try await viewModel.sendValidationEmail()
-                        await MainActor.run {
-                            viewModel.isLoading = false
-                        }
+                        await viewModel.reSendEmailVerification()
                     }
                 } label: {
                     Text("メールを再送する")

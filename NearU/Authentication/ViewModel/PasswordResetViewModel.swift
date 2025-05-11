@@ -14,6 +14,6 @@ class PasswordResetViewModel: ObservableObject {
         guard !email.isEmpty else {
             throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "メールアドレスを入力してください。"])
         }
-        try await AuthService.shared.resetPassword(withEmail: email)
+        try await AuthService.shared.sendResetPasswordMail(withEmail: email)
     }
 }

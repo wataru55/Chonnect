@@ -14,11 +14,11 @@ struct BlockListView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
                 if viewModel.blockList.isEmpty {
-                    Text("ブロックしたユーザーがいません")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundColor(.gray)
-                        .padding()
+                    NothingDataView(text: "ブロックしたユーザーがいません",
+                                    explanation: "ここでは、あなたがブロックしたユーザーの一覧が表示されます。",
+                                    isSystemImage: true,
+                                    isAbleToReload: false)
+                    
                 } else {
                     ForEach(viewModel.blockList, id: \.self) { user in
                         blockUserRow(user: user)

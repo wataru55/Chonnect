@@ -10,13 +10,40 @@ import FirebaseAuth
 import FirebaseFirestoreSwift
 import Firebase
 
-enum AuthServiceError: Error, LocalizedError {
+enum AuthError: Error, LocalizedError {
+    case invalidEmail
+    case invalidPassword
+    case emailAlreadyInUse
+    case invalidSession
     case userDataNotFound
-
+    case emailNotVerified
+    case tooManyRequests
+    case networkError
+    case serverError
+    case unknown
+    
     var errorDescription: String? {
         switch self {
+        case .invalidEmail:
+            return "メールアドレスが間違っています。"
+        case .invalidPassword:
+            return "パスワードが間違っています。"
+        case .emailAlreadyInUse:
+            return "そのメールアドレスは既に登録されています。\nアプリを利用される方はログインしてください。"
+        case .invalidSession:
+            return "セッションが無効です。再度ログインしてください。"
         case .userDataNotFound:
             return "ユーザーデータが見つかりませんでした。"
+        case .emailNotVerified:
+            return "メールアドレスの認証が完了していません。"
+        case .tooManyRequests:
+            return "メール送信の回数制限を超えました。\n少し待ってから再試行してください。"
+        case .networkError:
+            return "ネットワークに接続できません。通信環境を確認してください。"
+        case .serverError:
+            return "サーバーで問題が発生しました。\n時間をおいて再試行してください。"
+        default:
+            return "予期せぬエラーが発生しました。"
         }
     }
 }
@@ -24,15 +51,25 @@ enum AuthServiceError: Error, LocalizedError {
 class AuthService {
     @Published var userSession: FirebaseAuth.User? //Firebaseのユーザ認証に用いられる変数
     @Published var currentUser: User?
-
+    
     static let shared = AuthService() //シングルトンインスタンス
     
-    let subCollections = ["follows", "followers", "history",
-                          "notifications", "article", "selectedTags",
-                          "interestTags", "blocks", "blockedBy"]
-
     init() {
-        Task{ try await loadUserData() }
+        Task{
+            self.userSession = Auth.auth().currentUser
+            try await initializeCurrentUser()
+        }
+    }
+    
+    @MainActor
+    func initializeCurrentUser() async throws {
+        let result = await CurrentUserService.loadCurrentUser()
+        switch result {
+        case .success(let user):
+            self.currentUser = user
+        case .failure(let error):
+            throw error
+        }
     }
     
     func isValidUser() async -> Bool {
@@ -45,54 +82,183 @@ class AuthService {
             return false
         }
     }
-
-    @MainActor //メインスレットで行われることを保証
-    func login(withEmail email: String, password: String) async throws { //throwsはエラーを投げる可能性がある時につける
-        do { //エラーを補足するためにdo-catch構文
-            let result = try await Auth.auth().signIn(withEmail: email, password: password) //Firebaseを利用してログイン．成功→ resultにユーザ情報が格納　失敗→エラー
-            self.userSession = result.user
-            try await loadUserData() //関数を非同期に実行
-
-        } catch { //doブロックでエラーが発生したら実行される
-            print("DEBUG: Failed to log in with error \(error.localizedDescription)")
-            throw error  // エラーを再スロー
-        }
-    }
     
-    func refreshUserSession() async throws {
-        try await Auth.auth().currentUser?.reload()
-    }
-    
-    func reAuthenticate(email: String, password: String) async throws {
-        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        
-        try await Auth.auth().currentUser?.reauthenticate(with: credential)
-    }
-    
-    func resetPassword(withEmail email: String) async throws { //パスワードリセット
-        do {
-            try await Auth.auth().sendPasswordReset(withEmail: email)
-        } catch {
-            print("DEBUG: パスワードリセットに失敗しました。エラー: \(error.localizedDescription)")
-            throw error
-        }
-    }
-    
-    func sendVerification() async throws {
-        guard let currentUser = Auth.auth().currentUser else { return }
-        try await currentUser.sendEmailVerification()
-    }
-
     @MainActor
-    // 新規ユーザを作成する関数
-    func createUser(email: String, password: String, username: String) async throws {
+    func login(email: String, password: String) async -> Result<Bool, AuthError> {
         do {
-            // Firebase Authenticationに新規ユーザを登録
-            try await Auth.auth().createUser(withEmail: email, password: password)
+            // サインイン
+            let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            self.userSession = result.user
+            
+            // ユーザーデータ読み込み
+            let userResult = await CurrentUserService.loadCurrentUser()
+            switch userResult {
+            case .success(let user):
+                self.currentUser = user
+            case .failure(let error):
+                return .failure(error)
+            }
+            
+            return .success(true)
+            
+        } catch let error as NSError {
+            print("DEBUG: ログイン失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
+
+            switch error.code {
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue:
+                return .failure(.invalidPassword)
+                
+            case AuthErrorCode.userNotFound.rawValue:
+                return .failure(.userDataNotFound)
+
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+
+            case AuthErrorCode.internalError.rawValue,
+                 AuthErrorCode.tooManyRequests.rawValue:
+                return .failure(.serverError)
+
+            default:
+                return .failure(.unknown)
+            }
+        }
+    }
+    
+    func refreshUserSession() async -> Result<Bool, AuthError> {
+        do {
+            try await Auth.auth().currentUser?.reload()
+            return .success(true)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+            default:
+                return .failure(.serverError)
+            }
+        }
+    }
+    
+    private func checkEmailVerification(for user: FirebaseAuth.User) async -> Result<Bool, AuthError> {
+        do {
+            try await user.reload()
+            return user.isEmailVerified ? .success(true) : .failure(.emailNotVerified)
             
         } catch {
-            print("DEBUG: Failed to register user with error \(error.localizedDescription)")
-            throw error // エラーをスロー
+            return .failure(.serverError)
+        }
+    }
+    
+    func reAuthenticate(email: String, password: String) async -> Result<Bool, AuthError> {
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        do {
+            try await Auth.auth().currentUser?.reauthenticate(with: credential)
+            return .success(true)
+        } catch let error as NSError {
+            print("DEBUG: 再認証失敗 - domain: \(error.domain), code: \(error.code), message: \(error.localizedDescription)")
+            switch error.code {
+            case AuthErrorCode.invalidEmail.rawValue:
+                return .failure(.invalidEmail)
+                
+            case AuthErrorCode.wrongPassword.rawValue, AuthErrorCode.invalidCredential.rawValue:
+                return .failure(.invalidPassword)
+                
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+                
+            default:
+                return .failure(.serverError)
+            }
+        }
+    }
+    
+    //パスワードリセットメールを送信
+    func sendResetPasswordMail(withEmail email: String) async throws {
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
+        }
+    }
+    
+    // メールアドレスリセットメールを送信
+    func sendResetEmailLink(email: String) async throws {
+        do {
+            try await Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: email)
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.networkError.rawValue:
+                throw AuthError.networkError
+                
+            case AuthErrorCode.tooManyRequests.rawValue:
+                throw AuthError.tooManyRequests
+            
+            default:
+                throw AuthError.serverError
+            }
+        }
+    }
+    
+    func sendVerification() async -> Result<Bool, AuthError> {
+        guard let currentUser = Auth.auth().currentUser else {
+            return .failure(.invalidSession)
+        }
+        
+        do {
+            try await currentUser.sendEmailVerification()
+            return .success(true)
+            
+        } catch let error as NSError {
+            switch error.code {
+            case AuthErrorCode.tooManyRequests.rawValue:
+                return .failure(.tooManyRequests)
+                
+            case AuthErrorCode.networkError.rawValue:
+                return .failure(.networkError)
+                
+            default:
+                return .failure(.serverError)
+            }
+        }
+    }
+    
+    // 新規ユーザを作成する関数
+    func createUser(email: String, password: String, username: String) async -> Result<Bool, AuthError> {
+        do {
+            try await Auth.auth().createUser(withEmail: email, password: password)
+            return .success(true)
+        } catch let error as NSError {
+            print("DEBUG: ログイン失敗: \(error.code) \(error.localizedDescription)")
+            
+            // Authenticationのエラー処理
+            if error.domain == AuthErrorDomain {
+                switch error.code {
+                case AuthErrorCode.emailAlreadyInUse.rawValue:
+                    return .failure(.emailAlreadyInUse)
+                    
+                case AuthErrorCode.networkError.rawValue:
+                    return .failure(.networkError)
+                    
+                case AuthErrorCode.internalError.rawValue, AuthErrorCode.tooManyRequests.rawValue:
+                    return .failure(.serverError)
+                    
+                default:
+                    return .failure(.unknown)
+                }
+            }
+            
+            return .failure(.unknown)
         }
     }
     
@@ -101,107 +267,61 @@ class AuthService {
         try await currentUser.delete()
     }
     
-    func initAddToFireStore(username: String) async throws {
-        guard let currentUser = Auth.auth().currentUser else { return }
-        
-        try await currentUser.reload()
-        
-        if currentUser.isEmailVerified {
-            // ユニークなuserIdが生成されるまで繰り返す
-            var documentId = ""
-            var isUnique = false
-
-            repeat {
-                documentId = generateRandomDocumentId() // ランダムなuserIdを生成
-                isUnique = try await isDocumentIdUnique(documentId) // 一意性を確認
-            } while !isUnique // 一意になるまで繰り返す
+    func initAddToFireStore(username: String) async -> Result<Bool, AuthError> {
+        guard let currentUser = Auth.auth().currentUser else {
+            return .failure(.invalidSession)
+        }
+    
+        do {
+            // 一意なuserIdを確定
+            let documentId = try await IDGenerator.generateUniqueUserId()
             
-            // 一意なuserIdが確定したら、Firestoreにユーザーデータを保存
-            await uploadUserData(id: documentId, uid: currentUser.uid, username: username, isPrivate: true)
-            
-            await MainActor.run {
+            // Firestoreにユーザーデータを保存
+            let result = await createUserDocument(id: documentId, uid: currentUser.uid, username: username, isPrivate: true)
+            switch result {
+            case .success:
                 self.userSession = currentUser
+                return .success(true)
+            case .failure(let error):
+                return .failure(error)
             }
+            
+        } catch let error as AuthError {
+            return .failure(error)
+        } catch {
+            return .failure(.unknown)
         }
     }
-
-    // 8文字のランダムなdocumentIdを生成する関数
-    private func generateRandomDocumentId(length: Int = 8) -> String {
-        let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((0..<length).compactMap { _ in characters.randomElement() })
-    }
-
-    func isDocumentIdUnique(_ userId: String) async throws -> Bool {
-        let query = Firestore.firestore().collection("users").whereField("userId", isEqualTo: userId).limit(to: 1)
-        let snapshot = try await query.getDocuments()
-        return snapshot.isEmpty
-    }
-
-    @MainActor
-    func loadUserData() async throws {
-        self.userSession = Auth.auth().currentUser // Firebase Authenticationから現在のユーザデータ情報を取得
-        guard let currentUid = userSession?.uid else { return } // currentUserのuidを取得
-        // uidフィールドがcurrentUidと一致するユーザードキュメントをクエリ
-        let querySnapshot = try await Firestore.firestore().collection("users").whereField("uid", isEqualTo: currentUid).getDocuments()
-
-        if let document = querySnapshot.documents.first {
-            // Firestoreから取得したデータをデコード
-            var user = try document.data(as: User.self)
-            // ドキュメントIDを手動でセット
-            user.id = document.documentID
-            self.currentUser = user
-        } else {
-            print("DEBUG: ユーザーデータが見つかりませんでした。")
-            throw AuthServiceError.userDataNotFound
-        }
-    }
-
+    
     func signout() {
         try? Auth.auth().signOut() //try?はエラーを無視
         self.userSession = nil
         self.currentUser = nil
-
+        
         //BLE通信の停止
         BLECentralManager.shared.stopCentralManagerDelegate()
         BLEPeripheralManager.shared.stopPeripheralManagerDelegate()
     }
-
+    
     //Firestore Databaseにユーザ情報を追加する関数
-    private func uploadUserData(id: String, uid: String, username: String, isPrivate: Bool) async {
+    private func createUserDocument(id: String, uid: String, username: String, isPrivate: Bool) async -> Result<Bool, AuthError> {
         let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:], interestTags: [])
         self.currentUser = user
-        guard let encodedUser = try? Firestore.Encoder().encode(user) else { return }
 
-        // ドキュメントIDとしてuserIdを使用して保存
-        try? await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
-    }
-    
-    func deleteUser() async throws {
-        guard let currentUser = self.currentUser else { return }
-        
-        await deleteSubCollection(documentId: currentUser.id)
-        
-        try await Firestore.firestore().collection("users").document(currentUser.id).delete()
-        
-        try await Auth.auth().currentUser?.delete()
-    }
-    
-    private func deleteSubCollection(documentId: String) async {
-        let ref = Firestore.firestore().collection("users").document(documentId)
-        
         do {
-            for collection in subCollections {
-                let subCollectionRef = ref.collection(collection)
-                let documents = try await subCollectionRef.getDocuments()
-                
-                let batch = Firestore.firestore().batch()
-                for document in documents.documents {
-                    batch.deleteDocument(document.reference)
-                }
-                try await batch.commit()
+            let encodedUser = try Firestore.Encoder().encode(user)
+            try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+            return .success(true)
+        } catch let error as NSError {
+            print("DEBUG: ユーザーデータの保存に失敗しました: \(error.code) \(error.localizedDescription)")
+            
+            switch error.code {
+            case FirestoreErrorCode.unavailable.rawValue,
+                 FirestoreErrorCode.deadlineExceeded.rawValue:
+                return .failure(.networkError)
+            default:
+                return .failure(.serverError)
             }
-        } catch {
-            print("Error: \(error)")
         }
     }
 }

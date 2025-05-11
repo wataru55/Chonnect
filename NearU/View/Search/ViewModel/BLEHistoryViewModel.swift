@@ -149,7 +149,7 @@ class BLEHistoryViewModel: ObservableObject {
             for record in records {
                 group.addTask {
                     //async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
-                    async let isFollowed = UserService.checkIsFollowed(receivedId: record.user.id)
+                    async let isFollowed = FollowService.checkIsFollowed(receivedId: record.user.id)
                     
                     return HistoryRowData(
                         record: record,

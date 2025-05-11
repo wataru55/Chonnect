@@ -21,6 +21,7 @@ struct BLERealtimeView: View {
                 if viewModel.sortedUserRealtimeRecords.isEmpty {
                     NothingDataView(text: "付近にユーザーがいません",
                                     explanation: "ここでは、近くにいるユーザーの一覧を表示します。",
+                                    isSystemImage: false,
                                     isAbleToReload: false)
 
                 } else {

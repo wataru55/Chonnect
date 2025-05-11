@@ -26,7 +26,7 @@ class FollowViewModel: ObservableObject {
     @MainActor
     func loadFollowedUsers() async {
         do {
-            let users = try await UserService.fetchFollowedUsers(receivedId: "")
+            let users = try await FollowService.fetchFollowedUsers(receivedId: "")
             let filteredUsers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
             
             guard !filteredUsers.isEmpty else {
@@ -37,7 +37,7 @@ class FollowViewModel: ObservableObject {
             var followUserRowData: [FollowUserRowData] = []
 
             for data in filteredUsers {
-                let isFollowed = await UserService.checkIsFollowed(receivedId: data.user.id)
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: data.user.id)
                 let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
                 followUserRowData.append(addData)
             }

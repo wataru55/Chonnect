@@ -18,6 +18,7 @@ struct FollowerView: View {
                 if viewModel.followers.isEmpty {
                     NothingDataView(text: "フォローされたユーザーがいません",
                                     explanation: "ここでは、あなたをフォローしたユーザーの一覧が表示されます。",
+                                    isSystemImage: true,
                                     isAbleToReload: true)
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in

@@ -32,16 +32,8 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
-                    viewModel.isLoading = true
-                    UserDefaults.standard.setValue(viewModel.username, forKey: "username")
-                    UserDefaults.standard.setValue(true, forKey: "registration")
                     Task {
-                        try await viewModel.createUserToAuth()
-                        try await viewModel.sendValidationEmail()
-                        await MainActor.run {
-                            viewModel.isLoading = false
-                            viewModel.isShowCheck = true
-                        }
+                        await viewModel.registerUserAndSendEmail()
                     }
                 } label: {
                     Text("送信")
@@ -114,12 +106,8 @@ struct EmailCheckView: View {
                 }
                 
                 Button {
-                    viewModel.isLoading = true
                     Task {
-                        try await viewModel.sendValidationEmail()
-                        await MainActor.run {
-                            viewModel.isLoading = false
-                        }
+                        await viewModel.reSendEmailVerification()
                     }
                 } label: {
                     Text("メールを再送する")

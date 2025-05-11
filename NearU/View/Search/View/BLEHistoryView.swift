@@ -30,6 +30,7 @@ struct BLEHistoryView: View {
                     } else if viewModel.sortedHistoryRowData.isEmpty {
                         NothingDataView(text: "すれちがったユーザーがいません",
                                         explanation: "ここでは、過去にすれちがったユーザーの一覧が表示されます。",
+                                        isSystemImage: false,
                                         isAbleToReload: true)
                     } else {
                         ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in

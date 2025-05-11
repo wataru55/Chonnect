@@ -42,13 +42,8 @@ struct UserDataReloadView: View {
                 
                 VStack(spacing: 25) {
                     Button {
-                        viewModel.isLoading = true
-                        
                         Task {
                             await viewModel.loadUserData()
-                            await MainActor.run {
-                                viewModel.isLoading = false
-                            }
                         }
                     } label: {
                         Text("再読み込み")

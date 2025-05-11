@@ -10,6 +10,7 @@ import SwiftUI
 struct NothingDataView: View {
     let text: String
     let explanation: String
+    let isSystemImage: Bool
     let isAbleToReload: Bool
     
     @State private var textWidth: CGFloat = 0
@@ -26,9 +27,17 @@ struct NothingDataView: View {
             
             Spacer()
             
-            Image(systemName: "person.slash")
-                .resizable()
-                .frame(width: 80, height: 80)
+            Group {
+                if isSystemImage {
+                    Image(systemName: "person.fill")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                } else {
+                    Image("sleep")
+                        .resizable()
+                        .frame(width: 150, height: 75)
+                }
+            }
             
             VStack(spacing: 20) {
                 Text(text)
@@ -70,5 +79,6 @@ struct TextWidthPreferenceKey: PreferenceKey {
                     explanation: """
                                 ここでは、過去にすれちがったユーザーの一覧が表示されます。
                                 """,
+                    isSystemImage: false,
                     isAbleToReload: true)
 }

@@ -17,8 +17,8 @@ struct FollowFollowerView: View {
     let currentUser: User
     var body: some View {
         VStack {
-            EmptyView()
-                .searchable(text: $searchText, prompt: "Search...")
+//            EmptyView()
+//                .searchable(text: $searchText, prompt: "Search...")
             
             HStack {
                 CustomTabBarButtonView(selected: $selectedTab, title: "フォロー", tag: 0)

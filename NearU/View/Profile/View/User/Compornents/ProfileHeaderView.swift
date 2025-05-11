@@ -173,7 +173,7 @@ struct ProfileHeaderView: View {
             }
             Button("解除", role: .destructive) {
                 Task {
-                    try await UserService.deleteFollowedUser(receivedId: viewModel.user.id)
+                    try await CurrentUserActions.deleteFollowedUser(receivedId: viewModel.user.id)
                     await viewModel.checkFollow()
                     await viewModel.loadFollowers()
                 }
