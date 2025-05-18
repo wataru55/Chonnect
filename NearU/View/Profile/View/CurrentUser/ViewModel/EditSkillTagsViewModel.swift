@@ -14,6 +14,7 @@ class EditSkillTagsViewModel: ObservableObject {
     @Published var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3")
     ]
+    @Published var isLoading: Bool = false
     
     let skillLevels = ["1", "2", "3", "4", "5"]
     
@@ -34,7 +35,11 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func saveSkillTags() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await TagsService.saveTags(tagData: mergedTags)
             await MainActor.run {
@@ -48,6 +53,7 @@ class EditSkillTagsViewModel: ObservableObject {
     @MainActor
     func loadSkillTags() async {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
+        
         do {
             let tags = try await TagsService.fetchTags(documentId: documentId)
             self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
@@ -56,7 +62,11 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func deleteSkillTag(id: String) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await TagsService.deleteTag(id: id)
             await MainActor.run {

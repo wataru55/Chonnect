@@ -118,6 +118,10 @@ struct EditSkillTagsView: View {
                         }
                     } //toolbar
                 } //scrollview
+                
+                if viewModel.isLoading {
+                    LoadingView()
+                }
             } //zstack
             .modifier(EdgeSwipe())
         } // NavigationStack
