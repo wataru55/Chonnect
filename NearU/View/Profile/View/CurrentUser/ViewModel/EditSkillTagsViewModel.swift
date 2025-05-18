@@ -16,6 +16,15 @@ class EditSkillTagsViewModel: ObservableObject {
     ]
     
     let skillLevels = ["1", "2", "3", "4", "5"]
+    
+    var mergedTags: [WordElement] {
+        let newLanguages = languages.filter { language in
+            !language.name.isEmpty && !skillSortedTags.contains(where: { $0.name == language.name })
+        }
+        
+        return skillSortedTags + newLanguages
+    }
+        
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -26,12 +35,6 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     func saveSkillTags() async {
-        let newLanguages = languages.filter { language in
-            !language.name.isEmpty && !skillSortedTags.contains(where: { $0.name == language.name })
-        }
-        
-        let mergedTags = skillSortedTags + newLanguages
-        
         do {
             try await TagsService.saveTags(tagData: mergedTags)
             await MainActor.run {
