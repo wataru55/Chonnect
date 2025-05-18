@@ -26,35 +26,19 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     func saveSkillTags() async {
-        await updateSkillTags()
-        await addSkillTags()
-        await MainActor.run {
-            self.skillSortedTags = sortSkillTags(tags: skillSortedTags)
+        let newLanguages = languages.filter { language in
+            !language.name.isEmpty && !skillSortedTags.contains(where: { $0.name == language.name })
         }
-    }
-
-    func addSkillTags() async {
-        for newlanguage in languages {
-            if !newlanguage.name.isEmpty && !skillSortedTags.contains(where: { $0.name == newlanguage.name }) {
-                do {
-                    try await TagsService.addTags(tagData: newlanguage)
-                    await MainActor.run {
-                        skillSortedTags.append(newlanguage)
-                    }
-                } catch {
-                    print("DEBUG: Error adding tags \(error)")
-                }
+        
+        let mergedTags = skillSortedTags + newLanguages
+        
+        do {
+            try await TagsService.saveTags(tagData: mergedTags)
+            await MainActor.run {
+                self.skillSortedTags = sortSkillTags(tags: mergedTags)
             }
-        }
-    }
-
-    func updateSkillTags() async {
-        for tag in skillSortedTags {
-            do {
-                try await TagsService.updateTags(tagData: tag)
-            } catch {
-                print("DEBUG: Error updating tags \(error)")
-            }
+        } catch {
+            print("DEBUG: Error saving tags \(error)")
         }
     }
 

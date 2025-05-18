@@ -110,7 +110,7 @@ struct EditSkillTagsView: View {
                                     }
                                 }
                             } label: {
-                                Text("追加")
+                                Text("保存")
                                     .font(.subheadline)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.mint)
