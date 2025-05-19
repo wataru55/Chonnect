@@ -26,7 +26,20 @@ struct TagsService {
             batch.setData(data, forDocument: docRef)
         }
 
-        try await batch.commit()
+        do {
+            try await batch.commit()
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+            case FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+            case FirestoreErrorCode.unavailable.rawValue:
+                throw FireStoreSaveError.serverError
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
+        }
     }
 
     static func fetchTags(documentId: String) async throws -> [WordElement] {
@@ -54,8 +67,17 @@ struct TagsService {
 
         do {
             try await ref.document(id).delete()
-        } catch {
-            throw error
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+            case FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+            case FirestoreErrorCode.unavailable.rawValue:
+                throw FireStoreSaveError.serverError
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
         }
     }
 }

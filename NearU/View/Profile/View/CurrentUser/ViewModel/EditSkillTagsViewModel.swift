@@ -15,6 +15,8 @@ class EditSkillTagsViewModel: ObservableObject {
         WordElement(id: UUID(), name: "", skill: "3")
     ]
     @Published var isLoading: Bool = false
+    @Published var isShowAlert: Bool = false
+    @Published var errorMessage: String?
     
     let skillLevels = ["1", "2", "3", "4", "5"]
     
@@ -42,11 +44,16 @@ class EditSkillTagsViewModel: ObservableObject {
         
         do {
             try await TagsService.saveTags(tagData: mergedTags)
-            await MainActor.run {
-                self.skillSortedTags = sortSkillTags(tags: mergedTags)
-            }
+            self.skillSortedTags = sortSkillTags(tags: mergedTags)
+            languages = [WordElement(id: UUID(), name: "", skill: "3")]
+            
+        } catch let error as FireStoreSaveError{
+            self.isShowAlert = true
+            self.errorMessage = error.localizedDescription
+
         } catch {
-            print("DEBUG: Error saving tags \(error)")
+            self.isShowAlert = true
+            self.errorMessage = "予期せぬエラーが発生しました"
         }
     }
 
@@ -72,8 +79,12 @@ class EditSkillTagsViewModel: ObservableObject {
             await MainActor.run {
                 skillSortedTags.removeAll(where: { $0.id.uuidString == id })
             }
+        } catch let error as FireStoreSaveError {
+            self.isShowAlert = true
+            self.errorMessage = error.localizedDescription
         } catch {
-            print("DEBUG: Error deleting tag \(error)")
+            self.isShowAlert = true
+            self.errorMessage = "予期せぬエラーが発生しました"
         }
     }
     
