@@ -105,19 +105,25 @@ struct EditSkillTagsView: View {
                             Button {
                                 Task {
                                     await viewModel.saveSkillTags()
-                                    await MainActor.run {
-                                        dismiss()
-                                    }
                                 }
                             } label: {
-                                Text("追加")
+                                Text("保存")
                                     .font(.subheadline)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.mint)
                             }
+                            .alert("Error", isPresented: $viewModel.isShowAlert) {
+                                Button("OK", role: .cancel) { }
+                            } message: {
+                                if let errorMessage = viewModel.errorMessage {
+                                    Text(errorMessage)
+                                }
+                            }
                         }
                     } //toolbar
                 } //scrollview
+                
+                ViewStateOverlayView(state: $viewModel.state)
             } //zstack
             .modifier(EdgeSwipe())
         } // NavigationStack
