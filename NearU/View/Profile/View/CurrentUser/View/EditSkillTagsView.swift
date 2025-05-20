@@ -123,9 +123,7 @@ struct EditSkillTagsView: View {
                     } //toolbar
                 } //scrollview
                 
-                if viewModel.isLoading {
-                    LoadingView()
-                }
+                ViewStateOverlayView(state: $viewModel.state)
             } //zstack
             .modifier(EdgeSwipe())
         } // NavigationStack

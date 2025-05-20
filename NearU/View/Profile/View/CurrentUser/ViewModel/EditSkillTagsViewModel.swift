@@ -14,7 +14,7 @@ class EditSkillTagsViewModel: ObservableObject {
     @Published var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3")
     ]
-    @Published var isLoading: Bool = false
+    @Published var state: ViewState = .idle
     @Published var isShowAlert: Bool = false
     @Published var errorMessage: String?
     
@@ -39,21 +39,23 @@ class EditSkillTagsViewModel: ObservableObject {
 
     @MainActor
     func saveSkillTags() async {
-        isLoading = true
-        defer { isLoading = false }
+        state = .loading
         
         do {
             try await TagsService.saveTags(tagData: mergedTags)
             self.skillSortedTags = sortSkillTags(tags: mergedTags)
             languages = [WordElement(id: UUID(), name: "", skill: "3")]
+            state = .success
             
         } catch let error as FireStoreSaveError{
             self.isShowAlert = true
             self.errorMessage = error.localizedDescription
+            state = .idle
 
         } catch {
             self.isShowAlert = true
             self.errorMessage = "予期せぬエラーが発生しました"
+            state = .idle
         }
     }
 
@@ -71,20 +73,21 @@ class EditSkillTagsViewModel: ObservableObject {
 
     @MainActor
     func deleteSkillTag(id: String) async {
-        isLoading = true
-        defer { isLoading = false }
+        state = .loading
         
         do {
             try await TagsService.deleteTag(id: id)
-            await MainActor.run {
-                skillSortedTags.removeAll(where: { $0.id.uuidString == id })
-            }
+            skillSortedTags.removeAll(where: { $0.id.uuidString == id })
+            state = .success
+            
         } catch let error as FireStoreSaveError {
             self.isShowAlert = true
             self.errorMessage = error.localizedDescription
+            state = .idle
         } catch {
             self.isShowAlert = true
             self.errorMessage = "予期せぬエラーが発生しました"
+            state = .idle
         }
     }
     
