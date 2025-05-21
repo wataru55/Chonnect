@@ -108,26 +108,22 @@ class HistoryManager: ObservableObject {
     
     // Realm上の履歴データをFirestoreに保存し、成功したものをRealmから削除するメソッド
     private func syncHistoryDataToFireStore() async {
-        print("--------------syncHistoryDataToFireStore------------------")
-        
         guard let service = realmService else {
             return
         }
-        
+        // Realmから履歴データを読み込み
         let historyDataList = await service.fetchAllHistoryData()
-        
         guard !historyDataList.isEmpty else { return }
             
         var deleteUserIds: [String] = []
         
-        // ☆ for文で逐次 await しながら Firestore に保存
+        // for文で逐次 await しながら Firestore に保存
         for structHistoryData in historyDataList {
             do {
                 // Firestore への保存を待機
                 print("---------------savetoFireStore------------------")
                 try await HistoryService.saveHistoryUser(historyData: structHistoryData)
                 
-                print("---------------addToDeleteUserIds------------------")
                 deleteUserIds.append(structHistoryData.userId)
             } catch {
                 print("Failed to save userId \(structHistoryData.userId): \(error)")
@@ -135,7 +131,6 @@ class HistoryManager: ObservableObject {
         }
         
         // ここまで来た時点で deleteUserIds には保存に成功した ID が入っている
-        print("-------------\(deleteUserIds)--------------")
         if !deleteUserIds.isEmpty {
             await service.deleteHistoryData(for: deleteUserIds)
         } else {

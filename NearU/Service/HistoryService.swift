@@ -25,7 +25,6 @@ struct HistoryService {
         } catch {
             throw error
         }
-            
     }
     
     static func fetchHistoryUser() async throws -> [HistoryDataStruct] {
@@ -35,7 +34,7 @@ struct HistoryService {
         let snapshot = try await path.getDocuments()
         
         var historyData: [HistoryDataStruct] = []
-        
+
         for document in snapshot.documents {
             let data = try document.data(as: HistoryDataStruct.self)
             historyData.append(data)
