@@ -8,6 +8,6 @@
 import Foundation
 
 struct HistoryRowData: Hashable {
-    let record: UserHistoryRecord
+    let record: UserDatePair
     let isFollowed: Bool
 }
