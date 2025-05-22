@@ -10,7 +10,6 @@ import Foundation
 struct UserHistoryRecord: Hashable, Codable {
     let user: User
     var date: Date
-    var isRead: Bool
 }
 
 extension UserHistoryRecord: UserIdentifiable {

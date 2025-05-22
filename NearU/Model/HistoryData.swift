@@ -11,5 +11,4 @@ import RealmSwift
 class HistoryData: Object, Identifiable {
     @Persisted(primaryKey: true) var userId: String = ""
     @Persisted var date: Date = Date()
-    @Persisted var isRead: Bool = false
 }
