@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HistoryRowData: Hashable {
-    let record: UserDatePair
+struct RowData: Hashable {
+    let pairData: UserDatePair
     let isFollowed: Bool
 }
