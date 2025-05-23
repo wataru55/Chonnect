@@ -23,11 +23,11 @@ struct UserFollowView: View {
                 } else {
                     ForEach(viewModel.follows, id: \.self) { followUser in
                         NavigationLink {
-                            ProfileView(user: followUser.pair.user, currentUser: viewModel.currentUser, date: followUser.pair.date,
+                            ProfileView(user: followUser.pairData.user, currentUser: viewModel.currentUser, date: followUser.pairData.date,
                                         isShowFollowButton: false, isShowDateButton: false)
                         } label: {
-                            UserRowView(user: followUser.pair.user, tags: followUser.pair.user.interestTags,
-                                        date: nil, isRead: true,rssi: nil, isFollower: followUser.isFollowed)
+                            UserRowView(user: followUser.pairData.user, tags: followUser.pairData.user.interestTags,
+                                        date: nil, rssi: nil, isFollower: followUser.isFollowed)
                         }
                     }//foreach
                 }

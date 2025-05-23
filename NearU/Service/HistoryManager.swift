@@ -15,7 +15,7 @@ class HistoryManager: ObservableObject {
     
     private var realmService: RealmService?
 
-    private var pendingHistoryData: [(userId: String, date: Date, isRead: Bool)] = []
+    private var pendingHistoryData: [(userId: String, date: Date)] = []
     // 10秒ごとにpendingHistoryDataを Realm に書き込むタイマー
     private var historyBatchTimer: Timer?
     // 30秒ごとに Realm → Firestore → Realm削除するタイマー
@@ -73,13 +73,13 @@ class HistoryManager: ObservableObject {
                 }
                 
                 //更新
-                pendingHistoryData[index] = (receivedUserId, date, false)
+                pendingHistoryData[index] = (receivedUserId, date)
             } else {
-                pendingHistoryData.append((receivedUserId, date, false))
+                pendingHistoryData.append((receivedUserId, date))
             }
         } else {
             Task {
-                await realmService?.saveHistoryData(userId: receivedUserId, date: date, isRead: false)
+                await realmService?.saveHistoryData(userId: receivedUserId, date: date)
             }
         }
     }
@@ -100,8 +100,8 @@ class HistoryManager: ObservableObject {
                 return
             }
             
-            for (userId, date, isRead) in updatesToProcess {
-                await service.saveHistoryData(userId: userId, date: date, isRead: isRead)
+            for (userId, date) in updatesToProcess {
+                await service.saveHistoryData(userId: userId, date: date)
             }
         }
     }

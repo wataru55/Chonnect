@@ -17,7 +17,6 @@ struct HistoryService {
         let addData: [String: Any] = [
             "userId": historyData.userId,
             "date": historyData.date,
-            "isRead": historyData.isRead
         ]
         
         do {
@@ -42,12 +41,5 @@ struct HistoryService {
         
         return historyData
     }
-    
-    static func changeIsRead(userId: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        
-        let path = Firestore.firestore().collection("users").document(documentId).collection("history").document(userId)
-        
-        try await path.updateData(["isRead" : true])
-    }
+
 }

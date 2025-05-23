@@ -31,7 +31,7 @@ struct BLERealtimeView: View {
                                         isShowFollowButton: true, isShowDateButton: true)
                         } label: {
                             UserRowView(user: data.user, tags: data.user.interestTags, date: nil,
-                                        isRead: true, rssi: data.rssi, isFollower: false)
+                                        rssi: data.rssi, isFollower: false)
                         }
                     } // ForEach
                 }

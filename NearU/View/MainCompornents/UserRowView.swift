@@ -11,7 +11,6 @@ struct UserRowView: View {
     let user: User
     let tags: [String]
     let date: Date?
-    let isRead: Bool?
     let rssi: Int?
     let isFollower: Bool?
 
@@ -22,18 +21,12 @@ struct UserRowView: View {
             VStack(alignment: .center, spacing: 0) {
                 HStack {
                     VStack(alignment: .leading) {
-                        HStack {
-                            Text(user.username)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.black)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-
-                            Circle()
-                                .frame(width: 8, height: 8)
-                                .foregroundColor(isRead ?? false ? .clear : .mint)
-                        }
+                        Text(user.username)
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.black)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
 
                         if isFollower == true {
                             Text("フォローされています")
@@ -136,7 +129,6 @@ struct UserRowView: View {
     UserRowView(user: User.MOCK_USERS[0],
                 tags: ["SwiftUI", "UIKit", "iOSDC"],
                 date: Date(),
-                isRead: false,
                 rssi: nil,
                 isFollower: true
     )

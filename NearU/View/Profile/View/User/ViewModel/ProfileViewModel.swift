@@ -13,8 +13,8 @@ class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
     @Published var openGraphData: [OpenGraphData] = []
-    @Published var follows: [FollowUserRowData] = []
-    @Published var followers: [HistoryRowData] = []
+    @Published var follows: [RowData] = []
+    @Published var followers: [RowData] = []
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
@@ -109,23 +109,23 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowUsers() async {
         do {
-            let pairData = try await FollowService.fetchFollowedUsers(receivedId: user.id)
-            let filteredData = BlockUserManager.shared.filterBlockedUsers(dataList: pairData)
+            let followedUsers = try await FollowService.fetchFollowedUsers(receivedId: user.id)
+            let visibleFollowedUsers = BlockUserManager.shared.filterBlockedUsers(dataList: followedUsers)
             
-            guard !filteredData.isEmpty else {
+            guard !visibleFollowedUsers.isEmpty else {
                 self.follows = []
                 return
             }
                 
-            var followUserRowData: [FollowUserRowData] = []
+            var rows: [RowData] = []
 
-            for data in pairData {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
-                followUserRowData.append(addData)
+            for followedUser in visibleFollowedUsers {
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: followedUser.user.id)
+                let row = RowData(pairData: followedUser, isFollowed: isFollowed)
+                rows.append(row)
             }
 
-            self.follows = followUserRowData
+            self.follows = rows
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -134,23 +134,23 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async {
         do {
-            let userHistoryRecords = try await FollowService.fetchFollowers(receivedId: user.id)
-            let filteredRecords = BlockUserManager.shared.filterBlockedUsers(dataList: userHistoryRecords)
+            let fetchedFollowers = try await FollowService.fetchFollowers(receivedId: user.id)
+            let visibleFollowers = BlockUserManager.shared.filterBlockedUsers(dataList: fetchedFollowers)
             
-            guard !filteredRecords.isEmpty else {
+            guard !visibleFollowers.isEmpty else {
                 self.followers = []
                 return
             }
             
-            var historyRowData: [HistoryRowData] = []
+            var followerRows: [RowData] = []
 
-            for record in filteredRecords {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: record.user.id)
-                let addData = HistoryRowData(record: record, isFollowed: isFollowed)
-                historyRowData.append(addData)
+            for follower in visibleFollowers {
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: follower.user.id)
+                let addData = RowData(pairData: follower, isFollowed: isFollowed)
+                followerRows.append(addData)
             }
 
-            self.followers = historyRowData
+            self.followers = followerRows
         } catch {
             print("Error fetching followers: \(error)")
         }

@@ -15,7 +15,7 @@ actor RealmService {
         realm = try await Realm(actor: self)
     }
     
-    func saveHistoryData(userId: String, date: Date, isRead: Bool) async {
+    func saveHistoryData(userId: String, date: Date) async {
         do {
             try await realm.asyncWrite {
                 if let existingData = realm.objects(HistoryData.self).filter("userId == %@", userId).first {
@@ -24,7 +24,6 @@ actor RealmService {
                     let newData = HistoryData()
                     newData.userId = userId
                     newData.date = date
-                    newData.isRead = isRead
                     realm.add(newData)
                 }
             }
