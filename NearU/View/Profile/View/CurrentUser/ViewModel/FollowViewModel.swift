@@ -10,7 +10,7 @@ import Combine
 import Firebase
 
 class FollowViewModel: ObservableObject {
-    @Published var followUsers: [FollowUserRowData] = []
+    @Published var followUsers: [RowData] = []
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
 
@@ -26,23 +26,23 @@ class FollowViewModel: ObservableObject {
     @MainActor
     func loadFollowedUsers() async {
         do {
-            let users = try await FollowService.fetchFollowedUsers(receivedId: "")
-            let filteredUsers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
+            let followedUsers = try await FollowService.fetchFollowedUsers(receivedId: "")
+            let visibleFollowedUsers = BlockUserManager.shared.filterBlockedUsers(dataList: followedUsers)
             
-            guard !filteredUsers.isEmpty else {
+            guard !visibleFollowedUsers.isEmpty else {
                 self.followUsers = []
                 return
             }
             
-            var followUserRowData: [FollowUserRowData] = []
+            var rows: [RowData] = []
 
-            for data in filteredUsers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: data.user.id)
-                let addData = FollowUserRowData(pair: data, isFollowed: isFollowed)
-                followUserRowData.append(addData)
+            for followedUser in visibleFollowedUsers {
+                let isFollowed = await FollowService.checkIsFollowed(receivedId: followedUser.user.id)
+                let row = RowData(pairData: followedUser, isFollowed: isFollowed)
+                rows.append(row)
             }
 
-            self.followUsers = followUserRowData
+            self.followUsers = rows
 
         } catch {
             print("Error fetching connected users: \(error)")
@@ -76,7 +76,7 @@ class FollowViewModel: ObservableObject {
                 
                 // blockUserIdsに含まれるユーザーを除外
                 self.followUsers = self.followUsers.filter { followUser in
-                    !blockUserIds.contains(followUser.pair.userIdentifier)
+                    !blockUserIds.contains(followUser.pairData.userIdentifier)
                 }
             }
             .store(in: &cancellables)

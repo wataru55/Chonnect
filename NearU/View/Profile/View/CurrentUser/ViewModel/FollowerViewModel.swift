@@ -10,7 +10,7 @@ import Combine
 import Firebase
 
 class FollowerViewModel: ObservableObject {
-    @Published var followers: [UserHistoryRecord] = []
+    @Published var followers: [UserDatePair] = []
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
 
@@ -27,15 +27,8 @@ class FollowerViewModel: ObservableObject {
     func loadFollowers() async {
         do {
             let users = try await FollowService.fetchFollowers(receivedId: "")
-            let filteredUsers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
-            
-            guard !filteredUsers.isEmpty else {
-                self.followers = []
-                return
-            }
-
-            let sortedFollowers = filteredUsers.sorted { !$0.isRead && $1.isRead }
-            self.followers = sortedFollowers
+            // ブロックユーザーのフィルタリング
+            self.followers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
         } catch {
             print("Error fetching followers: \(error)")
         }
@@ -71,15 +64,6 @@ class FollowerViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-    }
-
-    func updateRead(userId: String) async {
-        do {
-            try await CurrentUserActions.updateRead(userId: userId)
-            await loadFollowers()
-        } catch {
-            print("Error updating read status: \(error)")
-        }
     }
 
     deinit {

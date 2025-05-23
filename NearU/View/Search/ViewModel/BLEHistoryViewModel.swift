@@ -10,8 +10,8 @@ import Firebase
 
 @MainActor
 class BLEHistoryViewModel: ObservableObject {
-    @Published var historyRowData: [HistoryRowData] = []
-    @Published var sortedHistoryRowData: [HistoryRowData] = []
+    @Published var historyRowData: [RowData] = []
+    @Published var sortedHistoryRowData: [RowData] = []
     @Published var isLoading: Bool = false
     @Published var isShowMarker: Bool = false
     
@@ -36,7 +36,7 @@ class BLEHistoryViewModel: ObservableObject {
         }
     }
 
-    //HistoryDataStructからUserHistoryRecordの配列を作成するメソッド
+    //HistoryDataStructからUserDatePairの配列を作成するメソッド
     func makeHistoryRowData() async {
         isLoading = true
         
@@ -52,8 +52,8 @@ class BLEHistoryViewModel: ObservableObject {
                 return
             }
             
-            let userHistoryRecords = try await createUserHistoryRecords(historyDataList: filteredHistoryData)
-            let historyRowDataList = try await fetchHistoryRowData(records: userHistoryRecords)
+            let userDatePair = try await createUserDatePair(historyDataList: filteredHistoryData)
+            let historyRowDataList = try await createHistoryRowData(pairs: userDatePair)
             
             self.historyRowData = historyRowDataList
             self.isShowMarker = false
@@ -62,14 +62,6 @@ class BLEHistoryViewModel: ObservableObject {
         }
         
         isLoading = false
-    }
-
-    func markAsRead(_ pair: UserHistoryRecord) async {
-        do {
-            try await HistoryService.changeIsRead(userId: pair.user.id)
-        } catch {
-            print("error marking history as read: \(error.localizedDescription)")
-        }
     }
     
     private func observeFirestoreChanges() {
@@ -109,11 +101,8 @@ class BLEHistoryViewModel: ObservableObject {
     func setupSubscribers() {
         $historyRowData
             .map { records in
-                records.sorted { (a: HistoryRowData, b: HistoryRowData) -> Bool in
-                    if a.record.isRead == b.record.isRead {
-                        return a.record.date > b.record.date  // date が新しいもの順にソート
-                    }
-                    return !a.record.isRead && b.record.isRead
+                records.sorted { (a: RowData, b: RowData) -> Bool in
+                    return a.pairData.date > b.pairData.date  // date が新しいもの順にソート
                 }
             }
             .assign(to: &$sortedHistoryRowData)
@@ -123,42 +112,38 @@ class BLEHistoryViewModel: ObservableObject {
                 guard let self = self else { return }
                 
                 self.historyRowData = self.historyRowData.filter { historyData in
-                    !newBlockUserIds.contains(historyData.record.userIdentifier)
+                    !newBlockUserIds.contains(historyData.pairData.userIdentifier)
                 }
             }
             .store(in: &cancellables)
     }
     
     // ヘルパー関数
-    /// UserHistoryRecordの作成
-    private func createUserHistoryRecords(historyDataList: [HistoryDataStruct]) async throws -> [UserHistoryRecord] {
+    /// UserDatePairの作成
+    private func createUserDatePair(historyDataList: [HistoryDataStruct]) async throws -> [UserDatePair] {
         let userIds = historyDataList.map { $0.userId }
         let dates = historyDataList.map { $0.date }
-        let isReads = historyDataList.map { $0.isRead }
         
         let users = try await UserService.fetchUsers(userIds)
         
         return (0..<users.count).map { index in
-            UserHistoryRecord(user: users[index], date: dates[index], isRead: isReads[index])
+            UserDatePair(user: users[index], date: dates[index])
         }
     }
     
     /// HistoryRowDataの作成（並列処理）
-    private func fetchHistoryRowData(records: [UserHistoryRecord]) async throws -> [HistoryRowData] {
-        return try await withThrowingTaskGroup(of: HistoryRowData.self) { group in
-            for record in records {
+    private func createHistoryRowData(pairs: [UserDatePair]) async throws -> [RowData] {
+        return try await withThrowingTaskGroup(of: RowData.self) { group in
+            for pair in pairs {
                 group.addTask {
                     //async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
-                    async let isFollowed = FollowService.checkIsFollowed(receivedId: record.user.id)
+                    async let isFollowed = FollowService.checkIsFollowed(receivedId: pair.user.id)
                     
-                    return HistoryRowData(
-                        record: record,
-                        isFollowed: await isFollowed
-                    )
+                    return RowData(pairData: pair, isFollowed: await isFollowed)
                 }
             }
             
-            var results: [HistoryRowData] = []
+            var results: [RowData] = []
             for try await data in group {
                 results.append(data)
             }

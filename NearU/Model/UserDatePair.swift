@@ -9,7 +9,7 @@ import Foundation
 
 struct UserDatePair: Hashable, Codable {
     let user: User
-    let date: Date
+    var date: Date
 }
 
 extension UserDatePair: UserIdentifiable {

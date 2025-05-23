@@ -16,7 +16,6 @@ struct CurrentUserActions {
         let followerData: [String: Any] = [
             "userId": documentId,
             "date": date,
-            "isRead": false
         ]
         
         let followData: [String: Any] = [
@@ -68,14 +67,4 @@ struct CurrentUserActions {
         try await reportRef.setData(data)
     }
     
-    static func updateRead(userId: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let ref = Firestore.firestore().collection("users").document(documentId).collection("followers").document(userId)
-        
-        do {
-            try await ref.updateData(["isRead": true])
-        } catch {
-            throw error
-        }
-    }
 }
