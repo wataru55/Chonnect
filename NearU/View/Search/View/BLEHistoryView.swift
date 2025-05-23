@@ -35,17 +35,11 @@ struct BLEHistoryView: View {
                     } else {
                         ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
                             NavigationLink {
-                                ProfileView(user: data.record.user, currentUser: currentUser, date: data.record.date,
+                                ProfileView(user: data.pairData.user, currentUser: currentUser, date: data.pairData.date,
                                             isShowFollowButton: true, isShowDateButton: true)
-                                    .onAppear {
-                                        Task {
-                                            await viewModel.markAsRead(data.record)
-                                        }
-                                    }
                             } label: {
-                                UserRowView(user: data.record.user, tags: data.record.user.interestTags,
-                                            date: data.record.date, isRead: data.record.isRead,
-                                            rssi: nil, isFollower: data.isFollowed)
+                                UserRowView(user: data.pairData.user, tags: data.pairData.user.interestTags,
+                                            date: data.pairData.date, rssi: nil, isFollower: data.isFollowed)
                             }
                         } // ForEach
                     }

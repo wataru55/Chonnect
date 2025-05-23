@@ -18,27 +18,27 @@ struct FollowService {
         var followedUsers: [UserDatePair] = []
         
         for document in snapshot.documents {
-            let data = try document.data(as: NotificationData.self)
-            let followedUser = try await UserService.fetchUser(withUid: data.userId)
-            let userDatePair = UserDatePair(user: followedUser, date: data.date)
-            followedUsers.append(userDatePair)
+            let data = try document.data(as: HistoryDataStruct.self)
+            let userData = try await UserService.fetchUser(withUid: data.userId)
+            let followedUser = UserDatePair(user: userData, date: data.date)
+            followedUsers.append(followedUser)
         }
         return followedUsers
     }
     
-    static func fetchFollowers(receivedId: String) async throws -> [UserHistoryRecord] {
+    static func fetchFollowers(receivedId: String) async throws -> [UserDatePair] {
         guard let documentId = AuthService.shared.currentUser?.id else { return [] }
         let snapshot = try await Firestore.firestore().collection("users")
             .document(receivedId.isEmpty ? documentId : receivedId)
             .collection("followers").getDocuments()
         
-        var followers: [UserHistoryRecord] = []
+        var followers: [UserDatePair] = []
         
         for document in snapshot.documents {
             let data = try document.data(as: HistoryDataStruct.self)
-            let follower = try await UserService.fetchUser(withUid: data.userId)
-            let userHistoryRecord = UserHistoryRecord(user: follower, date: data.date, isRead: data.isRead)
-            followers.append(userHistoryRecord)
+            let userData = try await UserService.fetchUser(withUid: data.userId)
+            let follower = UserDatePair(user: userData, date: data.date)
+            followers.append(follower)
         }
         return followers
     }

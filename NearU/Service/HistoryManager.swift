@@ -15,7 +15,7 @@ class HistoryManager: ObservableObject {
     
     private var realmService: RealmService?
 
-    private var pendingHistoryData: [(userId: String, date: Date, isRead: Bool)] = []
+    private var pendingHistoryData: [(userId: String, date: Date)] = []
     // 10秒ごとにpendingHistoryDataを Realm に書き込むタイマー
     private var historyBatchTimer: Timer?
     // 30秒ごとに Realm → Firestore → Realm削除するタイマー
@@ -73,13 +73,13 @@ class HistoryManager: ObservableObject {
                 }
                 
                 //更新
-                pendingHistoryData[index] = (receivedUserId, date, false)
+                pendingHistoryData[index] = (receivedUserId, date)
             } else {
-                pendingHistoryData.append((receivedUserId, date, false))
+                pendingHistoryData.append((receivedUserId, date))
             }
         } else {
             Task {
-                await realmService?.saveHistoryData(userId: receivedUserId, date: date, isRead: false)
+                await realmService?.saveHistoryData(userId: receivedUserId, date: date)
             }
         }
     }
@@ -100,34 +100,30 @@ class HistoryManager: ObservableObject {
                 return
             }
             
-            for (userId, date, isRead) in updatesToProcess {
-                await service.saveHistoryData(userId: userId, date: date, isRead: isRead)
+            for (userId, date) in updatesToProcess {
+                await service.saveHistoryData(userId: userId, date: date)
             }
         }
     }
     
     // Realm上の履歴データをFirestoreに保存し、成功したものをRealmから削除するメソッド
     private func syncHistoryDataToFireStore() async {
-        print("--------------syncHistoryDataToFireStore------------------")
-        
         guard let service = realmService else {
             return
         }
-        
+        // Realmから履歴データを読み込み
         let historyDataList = await service.fetchAllHistoryData()
-        
         guard !historyDataList.isEmpty else { return }
             
         var deleteUserIds: [String] = []
         
-        // ☆ for文で逐次 await しながら Firestore に保存
+        // for文で逐次 await しながら Firestore に保存
         for structHistoryData in historyDataList {
             do {
                 // Firestore への保存を待機
                 print("---------------savetoFireStore------------------")
                 try await HistoryService.saveHistoryUser(historyData: structHistoryData)
                 
-                print("---------------addToDeleteUserIds------------------")
                 deleteUserIds.append(structHistoryData.userId)
             } catch {
                 print("Failed to save userId \(structHistoryData.userId): \(error)")
@@ -135,7 +131,6 @@ class HistoryManager: ObservableObject {
         }
         
         // ここまで来た時点で deleteUserIds には保存に成功した ID が入っている
-        print("-------------\(deleteUserIds)--------------")
         if !deleteUserIds.isEmpty {
             await service.deleteHistoryData(for: deleteUserIds)
         } else {

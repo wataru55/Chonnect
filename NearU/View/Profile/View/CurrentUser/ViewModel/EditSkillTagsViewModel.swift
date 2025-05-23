@@ -14,8 +14,20 @@ class EditSkillTagsViewModel: ObservableObject {
     @Published var languages: [WordElement] = [
         WordElement(id: UUID(), name: "", skill: "3")
     ]
+    @Published var state: ViewState = .idle
+    @Published var isShowAlert: Bool = false
+    @Published var errorMessage: String?
     
     let skillLevels = ["1", "2", "3", "4", "5"]
+    
+    var mergedTags: [WordElement] {
+        let newLanguages = languages.filter { language in
+            !language.name.isEmpty && !skillSortedTags.contains(where: { $0.name == language.name })
+        }
+        
+        return skillSortedTags + newLanguages
+    }
+        
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -25,42 +37,32 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func saveSkillTags() async {
-        await updateSkillTags()
-        await addSkillTags()
-        await MainActor.run {
-            self.skillSortedTags = sortSkillTags(tags: skillSortedTags)
-        }
-    }
+        state = .loading
+        
+        do {
+            try await TagsService.saveTags(tagData: mergedTags)
+            self.skillSortedTags = sortSkillTags(tags: mergedTags)
+            languages = [WordElement(id: UUID(), name: "", skill: "3")]
+            state = .success
+            
+        } catch let error as FireStoreSaveError{
+            self.isShowAlert = true
+            self.errorMessage = error.localizedDescription
+            state = .idle
 
-    func addSkillTags() async {
-        for newlanguage in languages {
-            if !newlanguage.name.isEmpty && !skillSortedTags.contains(where: { $0.name == newlanguage.name }) {
-                do {
-                    try await TagsService.addTags(tagData: newlanguage)
-                    await MainActor.run {
-                        skillSortedTags.append(newlanguage)
-                    }
-                } catch {
-                    print("DEBUG: Error adding tags \(error)")
-                }
-            }
-        }
-    }
-
-    func updateSkillTags() async {
-        for tag in skillSortedTags {
-            do {
-                try await TagsService.updateTags(tagData: tag)
-            } catch {
-                print("DEBUG: Error updating tags \(error)")
-            }
+        } catch {
+            self.isShowAlert = true
+            self.errorMessage = "予期せぬエラーが発生しました"
+            state = .idle
         }
     }
 
     @MainActor
     func loadSkillTags() async {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
+        
         do {
             let tags = try await TagsService.fetchTags(documentId: documentId)
             self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
@@ -69,14 +71,23 @@ class EditSkillTagsViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func deleteSkillTag(id: String) async {
+        state = .loading
+        
         do {
             try await TagsService.deleteTag(id: id)
-            await MainActor.run {
-                skillSortedTags.removeAll(where: { $0.id.uuidString == id })
-            }
+            skillSortedTags.removeAll(where: { $0.id.uuidString == id })
+            state = .success
+            
+        } catch let error as FireStoreSaveError {
+            self.isShowAlert = true
+            self.errorMessage = error.localizedDescription
+            state = .idle
         } catch {
-            print("DEBUG: Error deleting tag \(error)")
+            self.isShowAlert = true
+            self.errorMessage = "予期せぬエラーが発生しました"
+            state = .idle
         }
     }
     

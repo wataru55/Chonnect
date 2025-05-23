@@ -76,7 +76,7 @@ struct SkillTagRowView: View {
             }
         }
         .sheet(isPresented: $isShowTechTags) {
-            SkillTagPickerView(tags: viewModel.skillSortedTags, language: $language)
+            SkillTagPickerView(tags: viewModel.mergedTags, language: $language)
         }
     }
 }

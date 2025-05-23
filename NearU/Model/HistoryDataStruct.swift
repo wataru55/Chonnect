@@ -10,14 +10,12 @@ import SwiftUI
 struct HistoryDataStruct: Codable, UserIdentifiable {
     let userId: String
     var date: Date
-    var isRead: Bool
     
     var userIdentifier: String { userId }
     
     init(from object: HistoryData) {
         self.userId = object.userId
         self.date = object.date
-        self.isRead = object.isRead
     }
     
     // Realmオブジェクトに変換するメソッド
@@ -25,7 +23,6 @@ struct HistoryDataStruct: Codable, UserIdentifiable {
         let realmObject = HistoryData()
         realmObject.userId = self.userId
         realmObject.date = self.date
-        realmObject.isRead = self.isRead
         return realmObject
     }
 }

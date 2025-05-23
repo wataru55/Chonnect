@@ -10,39 +10,35 @@ import Firebase
 
 struct TagsService {
 
-    static func addTags(tagData: WordElement) async throws {
+    static func saveTags(tagData: [WordElement]) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        let batch = Firestore.firestore().batch()
         let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
-        let id = tagData.id.uuidString
-
-        let data: [String: String] = [
-            "id": id,
-            "name": tagData.name,
-            "skill": tagData.skill,
-        ]
-
-        do {
-            try await ref.document(id).setData(data)
-        } catch {
-            throw error
+        
+        for tag in tagData {
+            let docRef = ref.document(tag.id.uuidString)
+            let data: [String: String] = [
+                "id": tag.id.uuidString,
+                "name": tag.name,
+                "skill": tag.skill,
+            ]
+            batch.setData(data, forDocument: docRef)
         }
-    }
-
-    static func updateTags(tagData: WordElement) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let ref = Firestore.firestore().collection("users").document(documentId).collection("selectedTags")
-        let id = tagData.id.uuidString
-
-        let data: [String: String] = [
-            "id": id,
-            "name": tagData.name,
-            "skill": tagData.skill,
-        ]
 
         do {
-            try await ref.document(id).updateData(data)
-        } catch {
-            throw error
+            try await batch.commit()
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+            case FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+            case FirestoreErrorCode.unavailable.rawValue:
+                throw FireStoreSaveError.serverError
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
         }
     }
 
@@ -71,8 +67,17 @@ struct TagsService {
 
         do {
             try await ref.document(id).delete()
-        } catch {
-            throw error
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+            case FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+            case FirestoreErrorCode.unavailable.rawValue:
+                throw FireStoreSaveError.serverError
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
         }
     }
 }

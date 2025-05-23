@@ -14,7 +14,6 @@ struct MainTabView: View {
 
     @StateObject var centralManager = BLECentralManager.shared
     @StateObject var peripheralManager = BLEPeripheralManager.shared
-    @StateObject var viewTransitionManager = ViewTransitionManager.shared
     @StateObject private var loadingViewModel = LoadingViewModel()
     @Environment(\.scenePhase) private var scenePhase
 

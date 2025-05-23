@@ -25,15 +25,9 @@ struct FollowerView: View {
                         NavigationLink {
                             ProfileView(user: follower.user, currentUser: currentUser, date: follower.date,
                                         isShowFollowButton: true, isShowDateButton: true)
-                                .onAppear {
-                                    Task {
-                                        await viewModel.updateRead(userId: follower.user.id)
-                                    }
-                                }
                         } label: {
                             UserRowView(user: follower.user, tags: follower.user.interestTags,
-                                        date: follower.date, isRead: follower.isRead,
-                                        rssi: nil, isFollower: false)
+                                        date: follower.date, rssi: nil, isFollower: false)
                         }
                     } //foreach
                 }
