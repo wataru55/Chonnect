@@ -31,13 +31,12 @@ struct CurrentUserActions {
             // 自分のfollowsコレクションに保存
             try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
             print("Followed successfully saved")
-        } catch {
-            print("Error saving Followed: \(error)")
-            throw error
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
     }
     
-    static func deleteFollowedUser(receivedId: String) async throws {
+    static func unFollowUser(receivedId: String) async throws {
         guard let documentId = AuthService.shared.currentUser?.id else { return }
         
         do {
@@ -46,9 +45,8 @@ struct CurrentUserActions {
             // 自分のfollowsコレクションから削除
             try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedId).delete()
             print("Followed successfully deleted")
-        } catch {
-            print("Error deleting Followed: \(error)")
-            throw error
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
     }
     
@@ -64,7 +62,24 @@ struct CurrentUserActions {
             "timeStamp": Timestamp()
         ]
         
-        try await reportRef.setData(data)
+        do {
+            try await reportRef.setData(data)
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
+        }
+    }
+    
+    private static func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {
+        switch error.code {
+        case FirestoreErrorCode.permissionDenied.rawValue:
+            return .permissionDenied
+        case FirestoreErrorCode.deadlineExceeded.rawValue:
+            return .networkError
+        case FirestoreErrorCode.unavailable.rawValue:
+            return .serverError
+        default:
+            return .unknown(underlying: error)
+        }
     }
     
 }
