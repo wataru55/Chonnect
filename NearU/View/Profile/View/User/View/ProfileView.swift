@@ -15,6 +15,7 @@ struct ProfileView: View {
     let date: Date
     let isShowFollowButton: Bool
     let isShowDateButton: Bool
+    
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
     init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
@@ -28,7 +29,7 @@ struct ProfileView: View {
         ZStack{
             backgroundColor.ignoresSafeArea()
             
-            if viewModel.isLoading{
+            if viewModel.isLoading {
                 ProgressView("Loading...")
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
@@ -119,19 +120,23 @@ struct ProfileView: View {
                         .padding(.bottom, 100)
                     } //vstack
                 }//scrollView
-                .refreshable {
-                    await viewModel.loadUserData()
+                .alert("エラー", isPresented: $viewModel.isShowAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(viewModel.errorMessage ?? "エラーが発生しました。")
                 }
                 .sheet(isPresented: $supplementButtonViewModel.isShowReport) {
                     ReportView(viewModel: supplementButtonViewModel, userId: viewModel.user.id)
                         .presentationDetents([.medium, .fraction(0.8)])
                 }
             }
+            
+            ViewStateOverlayView(state: $viewModel.state)
 
         } //zstack
         .ignoresSafeArea()
-        .onAppear {
-                viewModel.loadData()
+        .onFirstAppear {
+            viewModel.loadData()
         }
     }//body
 }//view

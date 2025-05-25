@@ -18,8 +18,12 @@ class ProfileViewModel: ObservableObject {
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     @Published var isMutualFollow: Bool = false
+    
     @Published var isLoading: Bool = true
-
+    @Published var isShowAlert: Bool = false
+    @Published var errorMessage: String?
+    @Published var state: ViewState = .idle
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
@@ -58,7 +62,6 @@ class ProfileViewModel: ObservableObject {
         let followsRef = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
         do {
             self.isFollow = try await followsRef.document(user.id).getDocument().exists
-
         } catch {
             self.isFollow = false
         }
@@ -76,7 +79,6 @@ class ProfileViewModel: ObservableObject {
             // エラーが発生した場合は相互フォローと判定しない
             self.isMutualFollow = false
         }
-        print("相互フォロー: \(isMutualFollow)")
     }
 
     @MainActor
@@ -194,20 +196,47 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
-    func followUser(date: Date) async throws{
+    @MainActor
+    func followUser(date: Date) async {
         guard let fcmToken = user.fcmtoken else { return }
+        state = .loading
         do {
             // フォロー処理を実行
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
+            await MainActor.run {
+                self.isFollow = true
+                self.state = .success
+            }
             // プッシュ通知を送信
-            try await NotificationManager.shared.sendPushNotification(
+            await NotificationManager.shared.sendPushNotification (
                 fcmToken: fcmToken,
                 username: currentUser.username,
                 documentId: currentUser.id,
                 date: date
             )
         } catch {
-            throw error
+            self.errorMessage = "フォローに失敗しました"
+            self.isShowAlert = true
+            self.state = .idle
         }
     }
+    
+    @MainActor
+    func unFollowUser() async {
+        state = .loading
+        do {
+            // フォロー解除処理を実行
+            try await CurrentUserActions.unFollowUser(receivedId: user.id)
+            await MainActor.run {
+                self.isFollow = false
+                self.state = .success
+                // 相互フォローも解除
+            }
+        } catch {
+            self.errorMessage = "フォロー解除に失敗しました"
+            self.isShowAlert = true
+            self.state = .idle
+        }
+    }
+        
 }
