@@ -14,7 +14,7 @@ struct ReportView: View {
     let userId: String
     
     var body: some View {
-        NavigationStack {
+        ZStack {
             VStack(alignment: .leading) {
                 Text("報告対象となる行為")
                     .font(.title3)
@@ -31,6 +31,7 @@ struct ReportView: View {
                     Text("""
                         * 報告は匿名で行われ、相手に通知されることはありません。
                         * 虚偽の報告を繰り返すと、アカウントの制限対象となる場合があります。
+                        * ２００文字以内で報告内容を入力してください。
                         """)
                 }
                 .font(.footnote)
@@ -38,11 +39,21 @@ struct ReportView: View {
                 .foregroundStyle(.gray)
                 .padding(.horizontal)
                 
-                if !viewModel.isReportValid {
-                    Text("200文字以内で入力してください")
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
                         .font(.footnote)
-                        .foregroundColor(Color.orange)
+                        .foregroundStyle(.pink)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 5)
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: viewModel.errorMessage)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                withAnimation {
+                                    viewModel.errorMessage = nil
+                                }
+                            }
+                        }
                 }
                 
                 TextField("報告内容", text: $viewModel.reportText, axis: .vertical)
@@ -89,6 +100,8 @@ struct ReportView: View {
             .onDisappear {
                 viewModel.reportText = ""
             }
+            
+            ViewStateOverlayView(state: $viewModel.state)
         }
     }
 }

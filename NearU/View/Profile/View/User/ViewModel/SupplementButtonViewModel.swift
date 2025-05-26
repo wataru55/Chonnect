@@ -12,8 +12,9 @@ class SupplementButtonViewModel: ObservableObject {
     @Published var isShowAlert = false
     @Published var isShowReport = false
     @Published var reportText: String = ""
+    @Published var state: ViewState = .idle
     
-    @Published var message: String?
+    @Published var errorMessage: String?
     
     var isReportValid: Bool {
         Validation.validateReport(report: reportText) && !reportText.isEmpty
@@ -29,16 +30,15 @@ class SupplementButtonViewModel: ObservableObject {
     
     @MainActor
     func addReport(id: String) async {
-        guard !reportText.isEmpty else {
-            self.message = "報告内容を記入してください"
-            return
-        }
+        self.state = .loading
+        
         do {
             try await CurrentUserActions.report(to: id, content: reportText)
+            self.state = .success
             self.reportText = ""
-            self.message = "報告が完了しました"
         } catch {
-            print("error: \(error)")
+            self.errorMessage = "報告に失敗しました。もう一度お試しください。"
+            self.state = .idle
         }
     }
 }
