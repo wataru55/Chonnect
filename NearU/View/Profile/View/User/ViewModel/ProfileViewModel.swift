@@ -15,11 +15,21 @@ class ProfileViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [RowData] = []
     @Published var followers: [RowData] = []
+    @Published var followCount: Int = 0
+    @Published var followerCount: Int = 0
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
-    @Published var isMutualFollow: Bool = false
+    var isFollowed: Bool = false
+    
     @Published var isLoading: Bool = true
-
+    @Published var isShowAlert: Bool = false
+    @Published var errorMessage: String?
+    @Published var state: ViewState = .idle
+    
+    var isMutualFollow: Bool {
+        isFollow && isFollowed
+    }
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
@@ -29,10 +39,10 @@ class ProfileViewModel: ObservableObject {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask {
-                    await self.loadFollowUsers()
+                    await self.loadFollowCount()
                 }
                 group.addTask {
-                    await self.loadFollowers()
+                    await self.loadFollowerCount()
                 }
                 group.addTask {
                     await self.loadSkillTags()
@@ -41,7 +51,7 @@ class ProfileViewModel: ObservableObject {
                     await self.checkFollow()
                 }
                 group.addTask {
-                    await self.checkMutualFollow()
+                    await self.checkFollowed()
                 }
                 group.addTask {
                     await self.fetchArticleLinks()
@@ -54,29 +64,15 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
+    // 相手をフォローしているか確認
     func checkFollow() async {
-        let followsRef = Firestore.firestore().collection("users").document(currentUser.id).collection("follows")
-        do {
-            self.isFollow = try await followsRef.document(user.id).getDocument().exists
-
-        } catch {
-            self.isFollow = false
-        }
+        self.isFollow = await FollowService.checkIsFollowing(receivedId: user.id)
     }
-
+    
     @MainActor
-    func checkMutualFollow() async {
-        let followersRef = Firestore.firestore().collection("users").document(user.id).collection("follows")
-        do {
-            // 相手が自分をフォローしているかを確認
-            let isFollower = try await followersRef.document(currentUser.id).getDocument().exists
-            // 相互フォローを更新
-            self.isMutualFollow = isFollow && isFollower
-        } catch {
-            // エラーが発生した場合は相互フォローと判定しない
-            self.isMutualFollow = false
-        }
-        print("相互フォロー: \(isMutualFollow)")
+    // 相手にフォローされているか確認
+    func checkFollowed() async {
+        self.isFollowed = await FollowService.checkIsFollowed(receivedId: user.id)
     }
 
     @MainActor
@@ -105,7 +101,25 @@ class ProfileViewModel: ObservableObject {
             print("Error fetching tags: \(error)")
         }
     }
-
+    
+    @MainActor
+    func loadFollowCount() async {
+        do {
+            self.followCount = try await FollowService.fetchFollowedUserCount(receivedId: user.id)
+        } catch {
+            print("Error fetching follow count: \(error)")
+        }
+    }
+    
+    @MainActor
+    func loadFollowerCount() async {
+        do {
+            self.followerCount = try await FollowService.fetchFollowerCount(receivedId: user.id)
+        } catch {
+            print("Error fetching follower count: \(error)")
+        }
+    }
+    
     @MainActor
     func loadFollowUsers() async {
         do {
@@ -194,20 +208,49 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
-    func followUser(date: Date) async throws{
+    @MainActor
+    func followUser(date: Date) async {
         guard let fcmToken = user.fcmtoken else { return }
+        state = .loading
         do {
             // フォロー処理を実行
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
+            await MainActor.run {
+                self.isFollow = true
+                self.followerCount += 1
+                self.state = .success
+            }
             // プッシュ通知を送信
-            try await NotificationManager.shared.sendPushNotification(
+            await NotificationManager.shared.sendPushNotification (
                 fcmToken: fcmToken,
                 username: currentUser.username,
                 documentId: currentUser.id,
                 date: date
             )
         } catch {
-            throw error
+            self.errorMessage = "フォローに失敗しました"
+            self.isShowAlert = true
+            self.state = .idle
         }
     }
+    
+    @MainActor
+    func unFollowUser() async {
+        state = .loading
+        do {
+            // フォロー解除処理を実行
+            try await CurrentUserActions.unFollowUser(receivedId: user.id)
+            await MainActor.run {
+                self.isFollow = false
+                self.followerCount -= 1
+                self.state = .success
+                // 相互フォローも解除
+            }
+        } catch {
+            self.errorMessage = "フォロー解除に失敗しました"
+            self.isShowAlert = true
+            self.state = .idle
+        }
+    }
+        
 }

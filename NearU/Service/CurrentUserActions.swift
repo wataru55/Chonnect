@@ -9,9 +9,13 @@ import Firebase
 
 struct CurrentUserActions {
     static func followUser(receivedId: String, date: Date) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
         
-        let path = Firestore.firestore().collection("users")
+        let db = Firestore.firestore()
+        let batch = db.batch()
+        let path = db.collection("users")
         
         let followerData: [String: Any] = [
             "userId": documentId,
@@ -23,37 +27,54 @@ struct CurrentUserActions {
             "date": date
         ]
         
+        // バッチに書き込みを追加
+        // 相手の followers コレクションに追加
+        let followerRef = path.document(receivedId).collection("followers").document(documentId)
+        batch.setData(followerData, forDocument: followerRef)
+        
+        // 自分の follows コレクションに追加
+        let followRef = path.document(documentId).collection("follows").document(receivedId)
+        batch.setData(followData, forDocument: followRef)
+        
         do {
-            // 相手のfollowersコレクションに保存
-            try await path.document(receivedId).collection("followers").document(documentId).setData(followerData)
-            // 相手のnotificationsコレクションに保存
-            try await path.document(receivedId).collection("notifications").document(documentId).setData(followerData)
-            // 自分のfollowsコレクションに保存
-            try await path.document(documentId).collection("follows").document(receivedId).setData(followData)
-            print("Followed successfully saved")
-        } catch {
-            print("Error saving Followed: \(error)")
-            throw error
+            // バッチ書き込みを実行
+            try await batch.commit()
+            
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
     }
     
-    static func deleteFollowedUser(receivedId: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
+    static func unFollowUser(receivedId: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
+        
+        let db = Firestore.firestore()
+        let batch = db.batch()
+        let path = db.collection("users")
+        
+        // 相手の followers から削除
+        let followerRef = path.document(receivedId).collection("followers").document(documentId)
+        batch.deleteDocument(followerRef)
+        
+        // 自分の follows から削除
+        let followRef = path.document(documentId).collection("follows").document(receivedId)
+        batch.deleteDocument(followRef)
         
         do {
-            // 相手のfollowersコレクションから削除
-            try await Firestore.firestore().collection("users").document(receivedId).collection("followers").document(documentId).delete()
-            // 自分のfollowsコレクションから削除
-            try await Firestore.firestore().collection("users").document(documentId).collection("follows").document(receivedId).delete()
-            print("Followed successfully deleted")
-        } catch {
-            print("Error deleting Followed: \(error)")
-            throw error
+            // バッチ書き込みを実行
+            try await batch.commit()
+            
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
     }
     
     static func report(to: String, content: String) async throws {
-        guard let currentUserId = AuthService.shared.currentUser?.id else { return }
+        guard let currentUserId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
         
         let reportRef = Firestore.firestore().collection("reports").document("\(currentUserId)_\(to)")
             
@@ -64,7 +85,24 @@ struct CurrentUserActions {
             "timeStamp": Timestamp()
         ]
         
-        try await reportRef.setData(data)
+        do {
+            try await reportRef.setData(data)
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
+        }
+    }
+    
+    private static func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {
+        switch error.code {
+        case FirestoreErrorCode.permissionDenied.rawValue:
+            return .permissionDenied
+        case FirestoreErrorCode.deadlineExceeded.rawValue:
+            return .networkError
+        case FirestoreErrorCode.unavailable.rawValue:
+            return .serverError
+        default:
+            return .unknown(underlying: error)
+        }
     }
     
 }
