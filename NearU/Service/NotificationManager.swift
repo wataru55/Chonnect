@@ -22,10 +22,12 @@ enum PushNotificationError: Error {
 class NotificationManager {
     static let shared = NotificationManager()
 
-    func sendPushNotification(fcmToken: String, username: String, documentId: String, date: Date) async throws {
+    func sendPushNotification(fcmToken: String, username: String, documentId: String, date: Date) async {
         // エンドポイントが正しいか確認
         guard let url = URL(string: "https://fcm.googleapis.com/v1/projects/nearu-46768/messages:send") else {
-            throw PushNotificationError.invalidURL
+            //throw PushNotificationError.invalidURL
+            print("DEBUG: Invalid URL for FCM endpoint")
+            return
         }
 
         // 通知データの作成
@@ -37,7 +39,9 @@ class NotificationManager {
 
         // jsonエンコーディング
         guard let jsonData = try? JSONEncoder().encode(fcmMessage) else {
-            throw PushNotificationError.jsonEncodingFailed
+            //throw PushNotificationError.jsonEncodingFailed
+            print("DEBUG: JSON encoding failed for FCM message")
+            return
         }
 
         // アクセストークンの取得
@@ -45,7 +49,9 @@ class NotificationManager {
         do {
             accessToken = try await generateAccessToken()
         } catch {
-            throw PushNotificationError.accessTokenGenerationFailed(error)
+            //throw PushNotificationError.accessTokenGenerationFailed(error)
+            print("DEBUG: Failed to generate access token: \(error.localizedDescription)")
+            return
         }
 
         // FCMに対する通知リクエストの設定
@@ -68,7 +74,9 @@ class NotificationManager {
                 throw PushNotificationError.httpError(statusCode: httpResponse.statusCode, responseBody: responseBody)
             }
         } catch {
-            throw PushNotificationError.networkError(error)
+            //throw PushNotificationError.networkError(error)
+            print("DEBUG: Network error while sending push notification: \(error.localizedDescription)")
+            return
         }
     }
 

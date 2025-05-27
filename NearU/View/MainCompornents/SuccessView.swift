@@ -20,7 +20,7 @@ struct SuccessView: View {
             .foregroundStyle(.green)
             .background {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(.green.opacity(0.2))
+                    .foregroundStyle(.white)
             }
         }
     }

@@ -10,7 +10,6 @@ import SwiftUI
 struct ProfileHeaderView: View {
     @EnvironmentObject var loadingViewModel: LoadingViewModel
     @ObservedObject var viewModel: ProfileViewModel
-    @State private var isShowAlert: Bool = false
     @State private var isShowCheck: Bool = false
 
     let date: Date
@@ -80,13 +79,13 @@ struct ProfileHeaderView: View {
                         NavigationLink {
                             UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
                         } label: {
-                            CountView(count: viewModel.follows.count, text: "フォロー")
+                            CountView(count: viewModel.followCount, text: "フォロー")
                         }
 
                         NavigationLink {
                             UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
                         } label: {
-                            CountView(count: viewModel.followers.count, text: "フォロワー")
+                            CountView(count: viewModel.followerCount, text: "フォロワー")
                         }
 
                         if isShowFollowButton {
@@ -109,16 +108,7 @@ struct ProfileHeaderView: View {
                                 } else {
                                     Button {
                                         Task {
-                                            loadingViewModel.isLoading = true
-                                            do {
-                                                try await viewModel.followUser(date: date)
-                                                await viewModel.checkFollow()
-                                                await viewModel.loadFollowers()
-                                                loadingViewModel.isLoading = false
-                                            } catch {
-                                                loadingViewModel.isLoading = false
-                                                isShowAlert.toggle()
-                                            }
+                                            await viewModel.followUser(date: date)
                                         }
                                     } label: {
                                         Text("フォロー")
@@ -173,18 +163,11 @@ struct ProfileHeaderView: View {
             }
             Button("解除", role: .destructive) {
                 Task {
-                    try await CurrentUserActions.deleteFollowedUser(receivedId: viewModel.user.id)
-                    await viewModel.checkFollow()
-                    await viewModel.loadFollowers()
+                    await viewModel.unFollowUser()
                 }
             }
         } message: {
             Text("本当にフォローを解除しますか？")
-        }
-        .alert("エラー", isPresented: $isShowAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text("予期せぬエラーが発生しました\nもう一度お試しください")
         }
     }//body
 }//view
@@ -193,3 +176,8 @@ struct ProfileHeaderView: View {
     ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
                       date: Date(), isShowFollowButton: true, isShowDateButton: true)
 }
+
+//#Preview {
+//    ProfileHeaderView(viewModel: ProfileViewModel(user: User.MOCK_USERS[1], currentUser: User.MOCK_USERS[0]),
+//                      date: Date(), isShowFollowButton: true, isShowDateButton: true)
+//}
