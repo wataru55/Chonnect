@@ -97,16 +97,20 @@ final class BlockUserManager: ObservableObject {
         
     }
 
-    func loadAllBlockData() async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            group.addTask {
-                try await self.loadBlockUserIds()
+    func loadAllBlockData() async {
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try await self.loadBlockUserIds()
+                }
+                group.addTask {
+                    try await self.loadBlockedByUserIds()
+                }
+                // すべてのタスクの完了を待機
+                try await group.waitForAll()
             }
-            group.addTask {
-                try await self.loadBlockedByUserIds()
-            }
-            // すべてのタスクの完了を待機
-            try await group.waitForAll()
+        } catch {
+            print("Error loading block data: \(error.localizedDescription)")
         }
     }
     
