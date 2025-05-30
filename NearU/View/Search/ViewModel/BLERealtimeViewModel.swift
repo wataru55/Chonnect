@@ -23,20 +23,15 @@ class BLERealtimeViewModel: ObservableObject {
 
     @MainActor
     func fetchRealtimeAllUsers(realtimeDataList: [EncountDataStruct]) async {
-        do {
-            var addData: [UserRealtimeRecord] = []
-
-            for data in realtimeDataList {
-                let user = try await UserService.fetchUser(withUid: data.userId)
-
+        var addData: [UserRealtimeRecord] = []
+        
+        for data in realtimeDataList {
+            if let user = await UserService.fetchUser(withUid: data.userId) {
                 addData.append(UserRealtimeRecord(user: user, date: data.date, rssi: data.rssi))
             }
-
-            self.userRealtimeRecords = addData
-
-        } catch {
-            print("Error fetching users: \(error)")
         }
+        
+        self.userRealtimeRecords = addData
     }
 
     func setupSubscribers() {
