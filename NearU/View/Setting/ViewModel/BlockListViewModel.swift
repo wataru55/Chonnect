@@ -23,7 +23,7 @@ final class BlockListViewModel: ObservableObject {
     
     func unblockUser(user: User) async {
         do {
-            try await BlockUserManager.shared.unblockUser(id: user.id)
+            try await BlockUserManager.shared.unblockUser(targetUserId: user.id)
             await MainActor.run {
                 blockList.removeAll { $0 == user }
             }

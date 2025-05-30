@@ -41,7 +41,7 @@ class BLEHistoryViewModel: ObservableObject {
         isLoading = true
         
         do {
-            try await BlockUserManager.shared.loadAllBlockData()
+            await BlockUserManager.shared.loadAllBlockData()
             
             let historyDataList = await loadHistoryData()
             let filteredHistoryData = BlockUserManager.shared.filterBlockedUsers(dataList: historyDataList)
