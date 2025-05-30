@@ -104,20 +104,12 @@ class ProfileViewModel: ObservableObject {
     
     @MainActor
     func loadFollowCount() async {
-        do {
-            self.followCount = try await FollowService.fetchFollowedUserCount(receivedId: user.id)
-        } catch {
-            print("Error fetching follow count: \(error)")
-        }
+        self.followCount = await FollowService.fetchFollowedUserCount(receivedId: user.id)
     }
     
     @MainActor
     func loadFollowerCount() async {
-        do {
-            self.followerCount = try await FollowService.fetchFollowerCount(receivedId: user.id)
-        } catch {
-            print("Error fetching follower count: \(error)")
-        }
+        self.followerCount = await FollowService.fetchFollowerCount(receivedId: user.id)
     }
     
     @MainActor

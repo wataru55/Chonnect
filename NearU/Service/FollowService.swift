@@ -9,28 +9,41 @@ import Foundation
 import Firebase
 
 struct FollowService {
-    static func fetchFollowedUserCount(receivedId: String) async throws -> Int {
+    static func fetchFollowedUserCount(receivedId: String) async -> Int {
         guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
 
-        let snapshot = try await Firestore.firestore()
-            .collection("users")
-            .document(receivedId.isEmpty ? documentId : receivedId)
-            .collection("follows")
-            .getDocuments()
-
-        return snapshot.documents.count
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("users")
+                .document(receivedId.isEmpty ? documentId : receivedId)
+                .collection("follows")
+                .getDocuments()
+            
+            return snapshot.documents.count
+            
+        } catch {
+            print("Error fetching followed user count: \(error)")
+            return 0
+        }
     }
     
-    static func fetchFollowerCount(receivedId: String) async throws -> Int {
+    static func fetchFollowerCount(receivedId: String) async -> Int {
         guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
 
-        let snapshot = try await Firestore.firestore()
-            .collection("users")
-            .document(receivedId.isEmpty ? documentId : receivedId)
-            .collection("followers")
-            .getDocuments()
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("users")
+                .document(receivedId.isEmpty ? documentId : receivedId)
+                .collection("followers")
+                .getDocuments()
+            
+            return snapshot.documents.count
+            
+        } catch {
+            print("Error fetching follower count: \(error)")
+            return 0
+        }
 
-        return snapshot.documents.count
     }
     
     static func fetchFollowedUsers(receivedId: String) async throws -> [UserDatePair] {
@@ -43,10 +56,12 @@ struct FollowService {
         
         for document in snapshot.documents {
             let data = try document.data(as: HistoryDataStruct.self)
-            let userData = try await UserService.fetchUser(withUid: data.userId)
-            let followedUser = UserDatePair(user: userData, date: data.date)
-            followedUsers.append(followedUser)
+            if let userData = await UserService.fetchUser(withUid: data.userId) {
+                let followedUser = UserDatePair(user: userData, date: data.date)
+                followedUsers.append(followedUser)
+            }
         }
+        
         return followedUsers
     }
     
@@ -60,10 +75,12 @@ struct FollowService {
         
         for document in snapshot.documents {
             let data = try document.data(as: HistoryDataStruct.self)
-            let userData = try await UserService.fetchUser(withUid: data.userId)
-            let follower = UserDatePair(user: userData, date: data.date)
-            followers.append(follower)
+            if let userData = await UserService.fetchUser(withUid: data.userId) {
+                let follower = UserDatePair(user: userData, date: data.date)
+                followers.append(follower)
+            }
         }
+        
         return followers
     }
     
