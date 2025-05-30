@@ -10,40 +10,11 @@ import Firebase
 
 struct FollowService {
     static func fetchFollowedUserCount(receivedId: String) async -> Int {
-        guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
-
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("users")
-                .document(receivedId.isEmpty ? documentId : receivedId)
-                .collection("follows")
-                .getDocuments()
-            
-            return snapshot.documents.count
-            
-        } catch {
-            print("Error fetching followed user count: \(error)")
-            return 0
-        }
+        await fetchUserCount(receivedId: receivedId, collectionName: "follows")
     }
     
     static func fetchFollowerCount(receivedId: String) async -> Int {
-        guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
-
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("users")
-                .document(receivedId.isEmpty ? documentId : receivedId)
-                .collection("followers")
-                .getDocuments()
-            
-            return snapshot.documents.count
-            
-        } catch {
-            print("Error fetching follower count: \(error)")
-            return 0
-        }
-
+        await fetchUserCount(receivedId: receivedId, collectionName: "followers")
     }
     
     static func fetchFollowedUsers(receivedId: String) async throws -> [UserDatePair] {
@@ -105,6 +76,23 @@ struct FollowService {
             return try await path.getDocument().exists
         } catch {
             return false
+        }
+    }
+    
+    private static func fetchUserCount(receivedId: String, collectionName: String) async -> Int {
+        guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
+
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("users")
+                .document(receivedId.isEmpty ? documentId : receivedId)
+                .collection(collectionName)
+                .getDocuments()
+            
+            return snapshot.documents.count
+        } catch {
+            print("Error fetching \(collectionName) count: \(error)")
+            return 0
         }
     }
 }
