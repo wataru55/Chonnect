@@ -50,11 +50,7 @@ struct SNSLinkButtonView: View {
                     .alert("確認", isPresented: $isShowAlert) {
                         Button("削除", role: .destructive) {
                             Task {
-                                try await viewModel.deleteSNSLink(serviceName: selectedSNS, url: sns_url)
-                                await viewModel.loadSNSLinks()
-                                await MainActor.run {
-                                    isShowAlert.toggle()
-                                }
+                                await viewModel.deleteSNSLink(serviceName: selectedSNS, url: sns_url)
                             }
                         }
                     } message: {

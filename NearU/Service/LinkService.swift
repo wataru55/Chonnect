@@ -9,24 +9,27 @@ import Foundation
 import Firebase
 
 struct LinkService {
-    static func saveSNSLink(serviceName: String, url: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
+    static func saveSNSLink(updateDict: [String: Any]) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
         
-        let data = ["snsLinks.\(serviceName)": url]
         do {
-            try await Firestore.firestore().collection("users").document(documentId).updateData(data)
-        } catch {
-            throw error
+            try await Firestore.firestore().collection("users").document(documentId).updateData(updateDict)
+        } catch let error as NSError{
+            throw mapFirestoreError(error)
         }
     }
     
     static func deleteSNSLink(serviceName: String, url: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
         
         do {
             try await Firestore.firestore().collection("users").document(documentId).updateData(["snsLinks.\(serviceName)": FieldValue.delete()])
-        } catch {
-            throw error
+        } catch let error as NSError{
+            throw mapFirestoreError(error)
         }
     }
     
@@ -72,6 +75,19 @@ struct LinkService {
         }
         
         return articleUrls
+    }
+    
+    private static func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {
+        switch error.code {
+        case FirestoreErrorCode.permissionDenied.rawValue:
+            return .permissionDenied
+        case FirestoreErrorCode.deadlineExceeded.rawValue:
+            return .networkError
+        case FirestoreErrorCode.unavailable.rawValue:
+            return .serverError
+        default:
+            return .unknown(underlying: error)
+        }
     }
 
 }
