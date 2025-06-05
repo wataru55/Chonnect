@@ -33,48 +33,59 @@ struct LinkService {
         }
     }
     
-    static func saveArticleLink(url: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let data = ["article_url": url]
-        do {
-            try await Firestore.firestore().collection("users").document(documentId).collection("article").addDocument(data: data)
-        } catch {
-            throw error
+    static func saveArticleLink(url: String) async throws -> Article {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
         }
-    }
-    
-    static func deleteArticleLink(url: String) async throws {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        let query = Firestore.firestore().collection("users").document(documentId).collection("article").whereField("article_url", isEqualTo: url)
-        
-        // Firestoreから削除
+        let articleId = UUID().uuidString
+        let createdAt = Date()
+        let data: [String: Any] = [
+            "id": articleId,
+            "url": url,
+            "createdAt": Timestamp(date: createdAt)
+        ]
         do {
-            let snapshot = try await query.getDocuments()
+            try await Firestore.firestore().collection("users").document(documentId).collection("article").document(articleId).setData(data)
+            return Article(id: articleId, url: url, createdAt: createdAt)
             
-            if let document = snapshot.documents.first {
-                try await document.reference.delete()
-            }
-        } catch {
-            throw error
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
     }
     
-    static func fetchArticleLinks(withUid userId: String) async throws -> [String] {
-        var articleUrls: [String] = []
-        
-        let snapshot = try await Firestore.firestore()
-            .collection("users")
-            .document(userId)
-            .collection("article")
-            .getDocuments()
-        
-        for document in snapshot.documents {
-            if let articleUrlString = document.data()["article_url"] as? String {
-                articleUrls.append(articleUrlString)
+    static func deleteArticleLink(article: Article) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
+        let ref = Firestore.firestore().collection("users").document(documentId).collection("article").document(article.id)
+    
+        do {
+            try await ref.delete()
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
+        }
+    }
+    
+    static func fetchArticleLinks(withUid userId: String) async throws -> [Article] {
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("users")
+                .document(userId)
+                .collection("article")
+                .getDocuments()
+            
+            var articles: [Article] = []
+            
+            for document in snapshot.documents {
+                let data = try document.data(as: Article.self)
+                articles.append(data)
             }
+            
+            return articles
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
         }
         
-        return articleUrls
     }
     
     private static func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {

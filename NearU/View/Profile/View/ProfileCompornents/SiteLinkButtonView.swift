@@ -19,7 +19,7 @@ struct SiteLinkButtonView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Button {
-                if let url = URL(string: ogpData.url) {
+                if let url = URL(string: ogpData.article.url) {
                     UIApplication.shared.open(url)
                 }
             } label: {
@@ -65,7 +65,7 @@ struct SiteLinkButtonView: View {
                                         .fontWeight(.bold)
                                         .lineLimit(3)
                                 } else {
-                                    Text(ogpData.url)
+                                    Text(ogpData.article.url)
                                         .font(.headline)
                                         .foregroundStyle(.blue)
                                         .lineLimit(3)
@@ -97,7 +97,7 @@ struct SiteLinkButtonView: View {
                 .alert("確認", isPresented: $isShowAlert) {
                     Button("削除", role: .destructive) {
                         Task {
-                            await viewModel.removeArticle(url: ogpData.url)
+                            await viewModel.removeArticle(article: ogpData.article)
                             await MainActor.run {
                                 isShowAlert.toggle()
                             }
