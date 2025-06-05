@@ -162,40 +162,19 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
-    @MainActor
     func fetchArticleLinks() async {
         do {
             let articles = try await LinkService.fetchArticleLinks(withUid: user.id)
             
             for article in articles {
-                await getOpenGraphData(article: article)
+                let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                await MainActor.run {
+                    self.openGraphData.append(ogpData)
+                }
+                
             }
         } catch {
             print("Error fetching article links: \(error)")
-        }
-    }
-
-    @MainActor
-    private func getOpenGraphData(article: Article) async {
-        guard let url = URL(string: article.url) else {
-            let data = OpenGraphData(article: article, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
-            return
-        }
-        
-        do {
-            let og = try await OpenGraph.fetch(url: url)
-            let data = OpenGraphData(article: article, openGraph: og)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
-        } catch {
-            let data = OpenGraphData(article: article, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
         }
     }
 

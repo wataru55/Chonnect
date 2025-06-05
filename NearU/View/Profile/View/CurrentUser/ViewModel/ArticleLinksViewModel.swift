@@ -38,7 +38,10 @@ class ArticleLinksViewModel: ObservableObject {
             let articles = try await LinkService.fetchArticleLinks(withUid: documentId)
 
             for article in articles {
-                await getOpenGraphData(article: article)
+                let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                await MainActor.run {
+                    self.openGraphData.append(ogpData)
+                }
             }
             
         } catch {
@@ -51,35 +54,13 @@ class ArticleLinksViewModel: ObservableObject {
             if !url.isEmpty {
                 do {
                     let article = try await LinkService.saveArticleLink(url: url)
-                    await getOpenGraphData(article: article)
+                    let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                    await MainActor.run {
+                        self.openGraphData.append(ogpData)
+                    }
                 } catch {
                     print("Error adding URL to article collection: \(error)")
                 }
-            }
-        }
-    }
-    
-    // urlからOGPを取得する
-    @MainActor
-    private func getOpenGraphData(article: Article) async {
-        guard let url = URL(string: article.url) else {
-            let data = OpenGraphData(article: article, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
-            return
-        }
-        
-        do {
-            let og = try await OpenGraph.fetch(url: url)
-            let data = OpenGraphData(article: article, openGraph: og)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
-        } catch {
-            let data = OpenGraphData(article: article, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
             }
         }
     }

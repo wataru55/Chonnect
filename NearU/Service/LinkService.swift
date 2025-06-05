@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import OpenGraph
 
 struct LinkService {
     static func saveSNSLink(updateDict: [String: Any]) async throws {
@@ -85,7 +86,19 @@ struct LinkService {
         } catch let error as NSError {
             throw mapFirestoreError(error)
         }
+    }
+    
+    static func fetchOpenGraphData(article: Article) async -> OpenGraphData {
+        guard let url = URL(string: article.url) else {
+            return OpenGraphData(article: article, openGraph: nil)
+        }
         
+        do {
+            let og = try await OpenGraph.fetch(url: url)
+            return OpenGraphData(article: article, openGraph: og)
+        } catch {
+            return OpenGraphData(article: article, openGraph: nil)
+        }
     }
     
     private static func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {
