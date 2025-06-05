@@ -10,6 +10,7 @@
 		3207D11D2CDD232F00A6E637 /* EditArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3207D11C2CDD232F00A6E637 /* EditArticleView.swift */; };
 		32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */; };
 		3292076D2CB3C3E60003EC78 /* SiteLinkButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */; };
+		630604702DEEFCE600074F24 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306046F2DEEFCE600074F24 /* Article.swift */; };
 		6306DE4A2DDB0EEC00DDEECE /* FireStoreSaveError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306DE492DDB0EEC00DDEECE /* FireStoreSaveError.swift */; };
 		6306DE4C2DDC6BE600DDEECE /* SuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306DE4B2DDC6BE600DDEECE /* SuccessView.swift */; };
 		6306DE4E2DDC6FC600DDEECE /* ViewStateOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306DE4D2DDC6FC600DDEECE /* ViewStateOverlayView.swift */; };
@@ -156,6 +157,7 @@
 		3207D11C2CDD232F00A6E637 /* EditArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditArticleView.swift; sourceTree = "<group>"; };
 		32860C692CD32B4300D9BBD7 /* ArticleLinksViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleLinksViewModel.swift; sourceTree = "<group>"; };
 		3292076C2CB3C3E50003EC78 /* SiteLinkButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteLinkButtonView.swift; sourceTree = "<group>"; };
+		6306046F2DEEFCE600074F24 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		6306DE492DDB0EEC00DDEECE /* FireStoreSaveError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireStoreSaveError.swift; sourceTree = "<group>"; };
 		6306DE4B2DDC6BE600DDEECE /* SuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessView.swift; sourceTree = "<group>"; };
 		6306DE4D2DDC6FC600DDEECE /* ViewStateOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewStateOverlayView.swift; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 				63FDDFD42CECCCE800B90074 /* WordElement.swift */,
 				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
 				6306DE492DDB0EEC00DDEECE /* FireStoreSaveError.swift */,
+				6306046F2DEEFCE600074F24 /* Article.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -848,6 +851,7 @@
 				6387320D2BF4B3930099F68A /* AddEmailView.swift in Sources */,
 				63DFF8902BF876D100A6DFB8 /* BLEHistoryViewModel.swift in Sources */,
 				63DFF8992BFC9A8300A6DFB8 /* CircleImageView.swift in Sources */,
+				630604702DEEFCE600074F24 /* Article.swift in Sources */,
 				63DFF8C32C05B60300A6DFB8 /* BLEPeripheralManager.swift in Sources */,
 				6346A0372D7B0A8500EDC4E5 /* OnFirstAppear.swift in Sources */,
 				63B64FD82B8C763900289469 /* NearUApp.swift in Sources */,
