@@ -13,6 +13,10 @@ import Combine
 class ArticleLinksViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var articleUrls: [String] = [""]
+    @Published var isShowAlert: Bool = false
+    @Published var state: ViewState = .idle
+    
+    var errorMessage: String?
     
     var isUrlValid: Bool {
         Validation.validateArticleUrls(urls: articleUrls)
@@ -24,24 +28,24 @@ class ArticleLinksViewModel: ObservableObject {
 
     init() {
         Task {
-            await fetchArticleUrls()
+            await loadArticle()
         }
     }
 
-    func fetchArticleUrls() async {
-        guard let userId = AuthService.shared.currentUser?.id else { return }
-        await MainActor.run {
-            self.openGraphData = []
+    func loadArticle() async {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            return
         }
-
+        
         do {
-            let snapshot = try await Firestore.firestore().collection("users").document(userId).collection("article").getDocuments()
+            // Firestoreから記事URLを取得
+            let articles = try await LinkService.fetchArticleLinks(withUid: documentId)
 
-            // Firestoreから取得した記事URLを配列として返す
-            let urls = snapshot.documents.compactMap { $0.data()["article_url"] as? String }
-
-            for url in urls {
-                await getOpenGraphData(urlString: url)
+            for article in articles {
+                let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                await MainActor.run {
+                    self.openGraphData.append(ogpData)
+                }
             }
             
         } catch {
@@ -49,58 +53,44 @@ class ArticleLinksViewModel: ObservableObject {
         }
     }
 
-    func saveLink(urls: [String]) async throws {
-        for url in urls {
-            if !url.isEmpty {
-                do {
-                    try await LinkService.saveArticleLink(url: url)
-                    await getOpenGraphData(urlString: url)
-                } catch {
-                    print("Error adding URL to article collection: \(error)")
-                }
-            }
-        }
-    }
-    
-    // urlからOGPを取得する
     @MainActor
-    private func getOpenGraphData(urlString: String) async {
-        guard let url = URL(string: urlString) else {
-            let data = OpenGraphData(url: urlString, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
-            return
-        }
+    func saveLink(urls: [String]) async throws {
+        self.state = .loading
         
         do {
-            let og = try await OpenGraph.fetch(url: url)
-            let data = OpenGraphData(url: urlString, openGraph: og)
-            await MainActor.run {
-                openGraphData.append(data)
+            let articles = try await LinkService.saveArticleLink(urls: urls)
+            for article in articles {
+                let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                self.openGraphData.append(ogpData)
             }
-        } catch {
-            let data = OpenGraphData(url: urlString, openGraph: nil)
-            await MainActor.run {
-                openGraphData.append(data)
-            }
+            
+        } catch let error as FireStoreSaveError {
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+            self.state = .idle
         }
+        
+        self.state = .success
     }
 
-    func removeArticle(url: String) async {
-        // Firestoreから削除
+    @MainActor
+    func removeArticle(article: Article) async {
+        self.state = .loading
+        
         do {
-            print(url)
-            try await LinkService.deleteArticleLink(url: url)
-        } catch {
-            print("Error removing article: \(error)")
-        }
-        // UI更新
-        await MainActor.run {
-            if let index = openGraphData.firstIndex(where: { $0.url == url }) {
-                openGraphData.remove(at: index)
+            try await LinkService.deleteArticleLink(article: article)
+            // UI更新
+            await MainActor.run {
+                if let index = openGraphData.firstIndex(where: { $0.article.url == article.url }) {
+                    openGraphData.remove(at: index)
+                }
+                
+                self.state = .success
             }
+        } catch {
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+            self.state = .idle
         }
-
     }
 }

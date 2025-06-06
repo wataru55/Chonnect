@@ -101,10 +101,6 @@ struct EditArticleView: View {
                         Button {
                             Task {
                                 try await viewModel.saveLink(urls: viewModel.articleUrls)
-                            
-                                await MainActor.run {
-                                    dismiss()
-                                }
                             }
                         } label: {
                             Text("追加")
@@ -113,8 +109,17 @@ struct EditArticleView: View {
                                 .foregroundStyle(viewModel.isUrlValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)
                         }
                         .disabled(!viewModel.isUrlValid || viewModel.isInputUrlsAllEmpty)
+                        .alert("Error", isPresented: $viewModel.isShowAlert) {
+                            Button("OK", role: .cancel) { }
+                        } message: {
+                            if let errorMessage = viewModel.errorMessage {
+                                Text(errorMessage)
+                            }
+                        }
                     }
                 }
+                
+                ViewStateOverlayView(state: $viewModel.state)
             } //zstach
             .modifier(EdgeSwipe())
         } // navigationstack

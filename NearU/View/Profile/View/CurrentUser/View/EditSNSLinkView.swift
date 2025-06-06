@@ -47,7 +47,7 @@ struct EditSNSLinkView: View {
                         if !viewModel.isSNSLinkValid {
                             Text("登録できないURLが含まれています")
                                 .font(.footnote)
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(.pink)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.bottom, 5)
                         }
@@ -119,10 +119,7 @@ struct EditSNSLinkView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
-                                try await viewModel.updateSNSLink(urls: viewModel.inputUrls)
-                                await MainActor.run {
-                                    dismiss()
-                                }
+                                await viewModel.updateSNSLink(urls: viewModel.inputUrls)
                             }
                         } label: {
                             Text("追加")
@@ -131,8 +128,17 @@ struct EditSNSLinkView: View {
                                 .foregroundStyle(viewModel.isSNSLinkValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)
                         }
                         .disabled(!viewModel.isSNSLinkValid || viewModel.isInputUrlsAllEmpty)
+                        .alert("Error", isPresented: $viewModel.isShowAlert) {
+                            Button("OK", role: .cancel) { }
+                        } message: {
+                            if let errorMessage = viewModel.errorMessage {
+                                Text(errorMessage)
+                            }
+                        }
                     }
                 }
+                
+                ViewStateOverlayView(state: $viewModel.state)
             } // ZStack
             .modifier(EdgeSwipe())
         } // NavigationStack
