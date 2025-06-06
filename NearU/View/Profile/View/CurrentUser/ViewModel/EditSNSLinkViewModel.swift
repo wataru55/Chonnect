@@ -68,7 +68,7 @@ class EditSNSLinkViewModel: ObservableObject {
     func updateSNSLink(urls: [String]) async {
         self.state = .loading
         
-        var updateDict: [String: Any] = [:]
+        var updateDict: [String: String] = [:]
         
         for url in urls {
             if !url.isEmpty {
@@ -88,7 +88,7 @@ class EditSNSLinkViewModel: ObservableObject {
             for (field, value) in updateDict {
                 // field = "snsLinks.{serviceName}", value = url
                 let serviceName = field.replacingOccurrences(of: "snsLinks.", with: "")
-                addSNSLinks(serviceName: serviceName, urlString: value as! String)
+                addSNSLinks(serviceName: serviceName, urlString: value)
             }
             self.inputUrls = [""]
             self.state = .success
