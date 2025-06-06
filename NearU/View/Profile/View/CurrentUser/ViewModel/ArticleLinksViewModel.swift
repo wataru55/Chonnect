@@ -57,20 +57,17 @@ class ArticleLinksViewModel: ObservableObject {
     func saveLink(urls: [String]) async throws {
         self.state = .loading
         
-        for url in urls {
-            if !url.isEmpty {
-                do {
-                    let article = try await LinkService.saveArticleLink(url: url)
-                    let ogpData = await LinkService.fetchOpenGraphData(article: article)
-                    await MainActor.run {
-                        self.openGraphData.append(ogpData)
-                    }
-                } catch let error as FireStoreSaveError {
-                    self.errorMessage = error.localizedDescription
-                    self.isShowAlert = true
-                    self.state = .idle
-                }
+        do {
+            let articles = try await LinkService.saveArticleLink(urls: urls)
+            for article in articles {
+                let ogpData = await LinkService.fetchOpenGraphData(article: article)
+                self.openGraphData.append(ogpData)
             }
+            
+        } catch let error as FireStoreSaveError {
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+            self.state = .idle
         }
         
         self.state = .success
