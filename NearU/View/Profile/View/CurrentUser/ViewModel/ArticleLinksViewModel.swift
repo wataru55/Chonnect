@@ -13,6 +13,10 @@ import Combine
 class ArticleLinksViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var articleUrls: [String] = [""]
+    @Published var isShowAlert: Bool = false
+    @Published var state: ViewState = .idle
+    
+    var errorMessage: String?
     
     var isUrlValid: Bool {
         Validation.validateArticleUrls(urls: articleUrls)
@@ -49,7 +53,10 @@ class ArticleLinksViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func saveLink(urls: [String]) async throws {
+        self.state = .loading
+        
         for url in urls {
             if !url.isEmpty {
                 do {
@@ -58,26 +65,35 @@ class ArticleLinksViewModel: ObservableObject {
                     await MainActor.run {
                         self.openGraphData.append(ogpData)
                     }
-                } catch {
-                    print("Error adding URL to article collection: \(error)")
+                } catch let error as FireStoreSaveError {
+                    self.errorMessage = error.localizedDescription
+                    self.isShowAlert = true
+                    self.state = .idle
                 }
             }
         }
+        
+        self.state = .success
     }
 
+    @MainActor
     func removeArticle(article: Article) async {
-        // Firestoreから削除
+        self.state = .loading
+        
         do {
             try await LinkService.deleteArticleLink(article: article)
-        } catch {
-            print("Error removing article: \(error)")
-        }
-        // UI更新
-        await MainActor.run {
-            if let index = openGraphData.firstIndex(where: { $0.article.url == article.url }) {
-                openGraphData.remove(at: index)
+            // UI更新
+            await MainActor.run {
+                if let index = openGraphData.firstIndex(where: { $0.article.url == article.url }) {
+                    openGraphData.remove(at: index)
+                }
+                
+                self.state = .success
             }
+        } catch {
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+            self.state = .idle
         }
-
     }
 }
