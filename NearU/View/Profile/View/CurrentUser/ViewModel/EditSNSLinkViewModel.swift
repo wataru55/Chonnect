@@ -12,6 +12,10 @@ import Firebase
 class EditSNSLinkViewModel: ObservableObject {
     @Published var snsUrls: [String: String] = [:] // SNSリンクを保存
     @Published var inputUrls: [String] = [""]
+    @Published var isShowAlert: Bool = false
+    @Published var state: ViewState = .idle
+    
+    var errorMessage: String?
     
     var isSNSLinkValid: Bool {
         Validation.validateSNSURL(urls: inputUrls)
@@ -61,30 +65,61 @@ class EditSNSLinkViewModel: ObservableObject {
     }
 
     @MainActor
-    func updateSNSLink(urls: [String]) async throws {
+    func updateSNSLink(urls: [String]) async {
+        self.state = .loading
+        
+        var updateDict: [String: String] = [:]
+        
         for url in urls {
             if !url.isEmpty {
                 let result = getServiceName(urlString: url)
                 switch result {
                 case .success(let serviceName):
-                    try await LinkService.saveSNSLink(serviceName: serviceName, url: url)
-                    addSNSLinks(serviceName: serviceName, urlString: url)
+                    updateDict["snsLinks.\(serviceName)"] = url
                 case .failure(let error):
                     print("Error updateSNSLink: \(error)")
+                    return
                 }
             }
         }
+        
+        do {
+            try await LinkService.saveSNSLink(updateDict: updateDict)
+            for (field, value) in updateDict {
+                // field = "snsLinks.{serviceName}", value = url
+                let serviceName = field.replacingOccurrences(of: "snsLinks.", with: "")
+                addSNSLinks(serviceName: serviceName, urlString: value)
+            }
+            self.inputUrls = [""]
+            self.state = .success
+            
+        } catch let error as FireStoreSaveError {
+            self.state = .idle
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+        } catch {
+            self.state = .idle
+            self.errorMessage = "予期せぬエラーです"
+            self.isShowAlert = true
+        }
     }
 
-    func deleteSNSLink(serviceName: String, url: String) async throws {
+    @MainActor
+    func deleteSNSLink(serviceName: String, url: String) async {
+        self.state = .loading
         do {
             try await LinkService.deleteSNSLink(serviceName: serviceName, url: url)
-        } catch {
-            print("Error deleteSNSLink: \(error)")
-        }
-        
-        await MainActor.run {
             snsUrls[serviceName] = nil // 該当のキーを削除
+            self.state = .success
+        
+        } catch let error as FireStoreSaveError {
+            self.state = .idle
+            self.errorMessage = error.localizedDescription
+            self.isShowAlert = true
+        } catch {
+            self.state = .idle
+            self.errorMessage = "予期せぬエラーです"
+            self.isShowAlert = true
         }
     }
 

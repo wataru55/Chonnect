@@ -9,7 +9,7 @@ import Foundation
 import OpenGraph
 
 struct OpenGraphData: Identifiable {
-    let id = UUID()
-    let url: String
+    var id: String { article.id }
+    let article: Article
     let openGraph: OpenGraph?
 }

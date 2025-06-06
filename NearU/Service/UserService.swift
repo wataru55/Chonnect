@@ -9,9 +9,14 @@ import Foundation
 import Firebase
 
 struct UserService {
-    static func fetchUser(withUid uid: String) async throws -> User {
-        let snapshot = try await Firestore.firestore().collection("users").document(uid).getDocument() //ユーザidを使用してFirestoreDatabaseからドキュメントを取得
-        return try snapshot.data(as: User.self) //snapshotからUser型にデータをデコードして値を返す
+    static func fetchUser(withUid uid: String) async -> User? {
+        do {
+            let snapshot = try await Firestore.firestore().collection("users").document(uid).getDocument() //ユーザidを使用してFirestoreDatabaseからドキュメントを取得
+            return try snapshot.data(as: User.self) //snapshotからUser型にデータをデコードして値を返す
+        } catch {
+            print("Error fetching user: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     static func fetchUsers(_ userIds: [String]) async throws -> [User] {

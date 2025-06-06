@@ -17,8 +17,12 @@ final class BlockUserManager: ObservableObject {
     private init() {}
     
     func blockUser(targetUserId: String) async throws {
-        guard let currentUserId = AuthService.shared.currentUser?.id else { return }
+        guard let currentUserId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
+        
         let db = Firestore.firestore()
+        let batch = db.batch()
         
         // 自分のblocksへのパス
         let myBlockRef = db.collection("users").document(currentUserId).collection("blocks").document(targetUserId)
@@ -26,14 +30,46 @@ final class BlockUserManager: ObservableObject {
         let targetBlockRef = db.collection("users").document(targetUserId).collection("blockedBy").document(currentUserId)
         
         // バッチ処理でユーザーをブロック
-        let batch = db.batch()
         batch.setData(["timeStamp": Timestamp()], forDocument: myBlockRef)
         batch.setData(["timeStamp": Timestamp()], forDocument: targetBlockRef)
         
-        try await batch.commit()
+        do {
+            try await batch.commit()
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
+        }
         
         await MainActor.run {
             blockUserIds.append(targetUserId)
+        }
+    }
+    
+    func unblockUser(targetUserId: String) async throws {
+        guard let currentUserId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
+        
+        let db = Firestore.firestore()
+        let batch = db.batch()
+        
+        // 自分のblocksへのパス
+        let myBlockRef = db.collection("users").document(currentUserId).collection("blocks").document(targetUserId)
+        // 相手のblocksへのパス
+        let targetBlockRef = db.collection("users").document(targetUserId).collection("blockedBy").document(currentUserId)
+        
+        // バッチ削除
+        batch.deleteDocument(myBlockRef)
+        batch.deleteDocument(targetBlockRef)
+        
+        do {
+            try await batch.commit()
+        
+        } catch let error as NSError {
+            throw mapFirestoreError(error)
+        }
+        
+        await MainActor.run {
+            self.blockUserIds.removeAll { $0 == targetUserId }
         }
     }
     
@@ -61,27 +97,20 @@ final class BlockUserManager: ObservableObject {
         
     }
 
-    func loadAllBlockData() async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            group.addTask {
-                try await self.loadBlockUserIds()
+    func loadAllBlockData() async {
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try await self.loadBlockUserIds()
+                }
+                group.addTask {
+                    try await self.loadBlockedByUserIds()
+                }
+                // すべてのタスクの完了を待機
+                try await group.waitForAll()
             }
-            group.addTask {
-                try await self.loadBlockedByUserIds()
-            }
-            // すべてのタスクの完了を待機
-            try await group.waitForAll()
-        }
-    }
-    
-    func unblockUser(id: String) async throws {
-        guard let currentUserIds = AuthService.shared.currentUser?.id else { return }
-        let ref = Firestore.firestore().collection("users").document(currentUserIds).collection("blocks").document(id)
-        
-        try await ref.delete()
-        
-        await MainActor.run {
-            self.blockUserIds.removeAll { $0 == id }
+        } catch {
+            print("Error loading block data: \(error.localizedDescription)")
         }
     }
     
@@ -96,5 +125,18 @@ final class BlockUserManager: ObservableObject {
     /// ブロックされたユーザーであるか確認
     func isUserBlocked(id: String) -> Bool {
         return blockUserIds.contains(id) || blockedByUserIds.contains(id)
+    }
+    
+    private func mapFirestoreError(_ error: NSError) -> FireStoreSaveError {
+        switch error.code {
+        case FirestoreErrorCode.permissionDenied.rawValue:
+            return .permissionDenied
+        case FirestoreErrorCode.deadlineExceeded.rawValue:
+            return .networkError
+        case FirestoreErrorCode.unavailable.rawValue:
+            return .serverError
+        default:
+            return .unknown(underlying: error)
+        }
     }
 }
