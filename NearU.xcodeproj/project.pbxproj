@@ -50,6 +50,7 @@
 		6346A0432D92829800EDC4E5 /* EmailCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0422D92829800EDC4E5 /* EmailCheckView.swift */; };
 		6346A0452D966D7100EDC4E5 /* RegistrationIncompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0442D966D7100EDC4E5 /* RegistrationIncompleteView.swift */; };
 		6346A0492D9BC65200EDC4E5 /* UserDataReloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0482D9BC65200EDC4E5 /* UserDataReloadView.swift */; };
+		63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63483AF62DF6ACBD00956814 /* EditImageView.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -196,6 +197,7 @@
 		6346A0422D92829800EDC4E5 /* EmailCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCheckView.swift; sourceTree = "<group>"; };
 		6346A0442D966D7100EDC4E5 /* RegistrationIncompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationIncompleteView.swift; sourceTree = "<group>"; };
 		6346A0482D9BC65200EDC4E5 /* UserDataReloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataReloadView.swift; sourceTree = "<group>"; };
+		63483AF62DF6ACBD00956814 /* EditImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageView.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -532,6 +534,7 @@
 				639A0BD82CE4A86F00A769C6 /* FollowerView.swift */,
 				63AEF0FA2C0C4C6500DE196E /* FollowView.swift */,
 				63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */,
+				63483AF62DF6ACBD00956814 /* EditImageView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -844,6 +847,7 @@
 				63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */,
 				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
+				63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
 				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
 				6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */,
