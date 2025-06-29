@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct EditImageView: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @StateObject var viewModel = EditImageViewModel()
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -26,40 +26,48 @@ struct EditImageView: View {
                     BackgroundImageView(user: viewModel.user, height: 500, isGradient: false)
                 }
                 
-                HStack {
-                    Button {
-                        
-                    } label: {
-                        Text("削除")
-                            .fontWeight(.bold)
-                            .font(.subheadline)
+                Button {
+                    Task {
+                        await viewModel.updateProfileImage()
                     }
-                    .padding(.horizontal)
-                    
-                    Spacer()
-
-                    Button {
-                        Task {
-                            await viewModel.updateProfileImage()
-                        }
-                    } label: {
-                        Text("保存")
-                            .fontWeight(.bold)
-                            .font(.subheadline)
-                            .foregroundStyle((viewModel.selectedBackgroundImage != nil) ? Color.mint : Color.gray)
-                    }
-                    .disabled(viewModel.selectedBackgroundImage == nil)
-                    .padding(.horizontal)
-                    .alert("Error", isPresented: $viewModel.isShowAlert) {
-                        Button("OK", role: .cancel) { }
-                    } message: {
-                        if let errorMessage = viewModel.errorMessage {
-                            Text(errorMessage)
-                        }
-                    }
-                    
+                } label: {
+                    Text("保存")
+                        .fontWeight(.bold)
+                        .font(.subheadline)
+                        .foregroundStyle((viewModel.selectedBackgroundImage != nil) ? Color.mint : Color.gray)
                 }
+                .disabled(viewModel.selectedBackgroundImage == nil)
+                .frame(width: UIScreen.main.bounds.width, alignment: .trailing)
                 .padding(.vertical, 10)
+                .padding(.trailing, 20)
+                .alert("Error", isPresented: Binding<Bool> (
+                    get: { viewModel.alertType != nil },
+                    set: { if !$0 { viewModel.alertType = nil } }
+                ), presenting: viewModel.alertType) { alert in
+                    switch alert {
+                    case .okOnly:
+                        Button("OK", role: .cancel) { }
+                        
+                    case .retryURLFetch:
+                        Button("キャンセル") { }
+                        Button("再試行") {
+                            Task {
+                                await viewModel.retrySaveProcess()
+                            }
+                        }
+                        
+                    case .retrySaveToFireStore:
+                        Button("キャンセル") { }
+                        Button("再試行") {
+                            Task {
+                                await viewModel.retrySaveProcess()
+                            }
+                        }
+                    }
+                } message: { alert in
+                    Text(alert.message)
+                }
+                
                 
                 PhotosPicker(
                     selection: $viewModel.selectedBackgroundImage,
@@ -72,7 +80,7 @@ struct EditImageView: View {
                 .photosPickerStyle(.inline)
                 .photosPickerDisabledCapabilities(.selectionActions)
                 .photosPickerAccessoryVisibility(.hidden, edges: .all)
-
+                
             }//vstack
             .ignoresSafeArea(edges: .top)
             .navigationBarBackButtonHidden()
