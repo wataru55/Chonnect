@@ -13,6 +13,8 @@ import Combine
 class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var userName: String = ""
+    @Published var bio: String = ""
+    
     @Published var isLoading: Bool = false
     @Published var state: ViewState = .idle
     @Published var alertType: AlertType? = nil
@@ -20,7 +22,7 @@ class CurrentUserProfileViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     var isUsernameValid: Bool {
-        Validation.validateUsername(username: user.username)
+        Validation.validateUsername(username: userName)
     }
     
     var isUsernameUnique: Bool {
@@ -28,22 +30,21 @@ class CurrentUserProfileViewModel: ObservableObject {
         user.username != userName
     }
     
-    var isNotOverCharacterLimit: Bool {
-        Validation.validateBio(bio: user.bio ?? "")
+    var isBioValid: Bool {
+        bio.count <= 100
+    }
+    
+    var isBioUnique: Bool {
+        user.bio != bio
     }
     
     var isInterestedTagValid: Bool {
         Validation.validateInterestTag(tags: user.interestTags)
     }
     
-    var isAbleToSave: Bool {
-        isUsernameValid && isNotOverCharacterLimit && isInterestedTagValid
-    }
-    
     init() {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
-            self.userName = currentUser.username
         } else {
             self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
         }
@@ -78,6 +79,27 @@ class CurrentUserProfileViewModel: ObservableObject {
             throw error
         }
     }
+    
+    @MainActor
+    func saveBio() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        
+        // 空白行削除
+        let cleanedBio = bio.removingBlankLines()
+        
+        do {
+            try await CurrentUserService.updateBio(bio: cleanedBio)
+            AuthService.shared.currentUser?.bio = cleanedBio
+            self.state = .success
+            
+        } catch {
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
+        }
+    }
 
     func updateUserData(addTags: [String] = []) async {
         let filteredTags = addTags.filter { !$0.isEmpty }
@@ -99,5 +121,14 @@ class CurrentUserProfileViewModel: ObservableObject {
     @MainActor
     func deleteTag(tag: String) {
         user.interestTags.removeAll { $0 == tag }
+    }
+}
+
+extension String {
+    func removingBlankLines() -> String {
+        self
+            .components(separatedBy: .newlines)
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            .joined(separator: "\n")
     }
 }
