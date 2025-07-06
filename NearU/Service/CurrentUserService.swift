@@ -42,6 +42,33 @@ struct CurrentUserService {
         }
     }
     
+    static func updateUserName(username: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
+        }
+        
+        let docRef = Firestore.firestore().collection("users").document(documentId)
+        do {
+            try await docRef.updateData(["username": username])
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.unavailable.rawValue, FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+                
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+                
+            case FirestoreErrorCode.internal.rawValue, FirestoreErrorCode.resourceExhausted.rawValue:
+                throw FireStoreSaveError.serverError
+                
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
+        } catch {
+            throw FireStoreSaveError.unknown(underlying: error)
+        }
+    }
+    
     static func updateUserProfile(username: String, bio: String, interestTags: [String]) async throws {
         guard let currentUser = AuthService.shared.currentUser else { return }
         

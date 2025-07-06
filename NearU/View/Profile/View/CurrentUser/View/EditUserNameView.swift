@@ -24,7 +24,7 @@ struct EditUserNameView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 10)
                 
-                TextField("", text: $viewModel.user.username)
+                TextField("", text: $viewModel.userName)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled(true)
                     .focused($isFocused)
@@ -40,7 +40,7 @@ struct EditUserNameView: View {
                 Text("⚠️20文字以内で入力してください")
                     .foregroundStyle(.gray)
                 
-                Text("\(viewModel.user.username.count)/20")
+                Text("\(viewModel.userName.count)/20")
                     .foregroundStyle(viewModel.user.username.count > 20 ? Color.pink : Color.gray)
             }
             .font(.footnote)
@@ -48,13 +48,19 @@ struct EditUserNameView: View {
             
             Spacer()
             
-            if !viewModel.isUsernameValid {
-                Text("適切なユーザー名を入力してください")
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.pink)
-                    .padding(.leading, 5)
+            Group {
+                if !viewModel.isUsernameValid {
+                    Text("適切なユーザー名を入力してください")
+                }
+        
+                if !viewModel.isUsernameUnique {
+                    Text("ユーザーネームが変更されていません")
+                }
             }
+            .font(.footnote)
+            .fontWeight(.bold)
+            .foregroundColor(Color.pink)
+            .padding(.leading, 5)
             
             Spacer()
         }
@@ -62,7 +68,9 @@ struct EditUserNameView: View {
             backgroundColor.ignoresSafeArea()
         )
         .overlay {
-            ViewStateOverlayView(state: $viewModel.state)
+            if viewModel.isLoading {
+                LoadingView()
+            }
         }
         .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
@@ -79,17 +87,34 @@ struct EditUserNameView: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    
+                    Task {
+                        try await viewModel.saveUserName()
+                        await MainActor.run() {
+                            dismiss()
+                        }
+                    }
                 } label: {
                     Text("保存")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundStyle(viewModel.isUsernameValid ? Color.mint : Color.gray)
+                        .foregroundStyle(viewModel.isUsernameValid && viewModel.isUsernameUnique ? Color.mint : Color.gray)
+                }
+                .disabled(!viewModel.isUsernameValid || !viewModel.isUsernameUnique)
+                .alert("Error", isPresented: Binding<Bool> (
+                    get: { viewModel.alertType != nil },
+                    set: { if !$0 { viewModel.alertType = nil } }
+                ), presenting: viewModel.alertType) { _ in
+                    Button("OK", role: .cancel) { }
+                } message: { alert in
+                    Text(alert.message)
                 }
             }
         }
         .onAppear {
             isFocused = true
+        }
+        .onDisappear() {
+            viewModel.userName = viewModel.user.username
         }
     }
 }

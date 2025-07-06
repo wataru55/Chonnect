@@ -12,11 +12,20 @@ import Combine
 
 class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
-
+    @Published var userName: String = ""
+    @Published var isLoading: Bool = false
+    @Published var state: ViewState = .idle
+    @Published var alertType: AlertType? = nil
+    
     private var cancellables = Set<AnyCancellable>()
     
     var isUsernameValid: Bool {
         Validation.validateUsername(username: user.username)
+    }
+    
+    var isUsernameUnique: Bool {
+        //　変更前と変更後のユーザーネームが同じでない
+        user.username != userName
     }
     
     var isNotOverCharacterLimit: Bool {
@@ -30,17 +39,18 @@ class CurrentUserProfileViewModel: ObservableObject {
     var isAbleToSave: Bool {
         isUsernameValid && isNotOverCharacterLimit && isInterestedTagValid
     }
-
+    
     init() {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
+            self.userName = currentUser.username
         } else {
             self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
         }
-
+        
         setupSubscribers()
     }
-
+    
     func setupSubscribers() {
         // currentUserプロパティが変更されるとクロージャが実行される
         AuthService.shared.$currentUser
@@ -49,6 +59,24 @@ class CurrentUserProfileViewModel: ObservableObject {
                 self?.user = currentUser
             }
             .store(in: &cancellables)
+    }
+    
+    @MainActor
+    func saveUserName() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        
+        do {
+            try await CurrentUserService.updateUserName(username: userName)
+            AuthService.shared.currentUser?.username = userName
+            self.state = .success
+            
+        } catch {
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
+        }
     }
 
     func updateUserData(addTags: [String] = []) async {
