@@ -40,7 +40,7 @@ struct EditUserNameView: View {
                 Text("⚠️20文字以内で入力してください")
                     .foregroundStyle(.gray)
                 
-                Text("\(viewModel.userName.count)/20")
+                Text("(\(viewModel.userName.count)/20)")
                     .foregroundStyle(viewModel.user.username.count > 20 ? Color.pink : Color.gray)
             }
             .font(.footnote)
@@ -50,11 +50,11 @@ struct EditUserNameView: View {
             
             Group {
                 if !viewModel.isUsernameValid {
-                    Text("適切なユーザー名を入力してください")
+                    Text("内容に誤りがあります")
                 }
         
                 if !viewModel.isUsernameUnique {
-                    Text("ユーザーネームが変更されていません")
+                    Text("内容が変更されていません")
                 }
             }
             .font(.footnote)
@@ -111,6 +111,7 @@ struct EditUserNameView: View {
             }
         }
         .onAppear {
+            viewModel.userName = viewModel.user.username
             isFocused = true
         }
         .onDisappear() {

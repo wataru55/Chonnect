@@ -44,7 +44,7 @@ struct EditBioView: View {
                 Text("⚠️100文字以内で入力してください")
                     .foregroundStyle(.gray)
                 
-                Text("\(viewModel.bio.count)/100")
+                Text("(\(viewModel.bio.count)/100)")
                     .foregroundStyle(viewModel.bio.count > 100 ? .pink : .gray)
             }
             .font(.footnote)
