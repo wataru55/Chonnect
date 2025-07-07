@@ -132,7 +132,12 @@ struct EditInterestTagsView: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    
+                    Task {
+                        try await viewModel.saveInterestTags()
+                        await MainActor.run {
+                            dismiss()
+                        }
+                    }
                 } label: {
                     Text("保存")
                         .font(.subheadline)

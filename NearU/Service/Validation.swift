@@ -55,11 +55,7 @@ struct Validation {
     }
     
     static func validateInterestTag(tags: [String]) -> Bool {
-        for tag in tags {
-            guard tag.count <= 20 else { return false }
-        }
-        
-        return true
+        return tags.allSatisfy { !$0.isEmpty && $0.count <= 20 }
     }
     
     static func validateSNSURL(urls: [String]) -> Bool {

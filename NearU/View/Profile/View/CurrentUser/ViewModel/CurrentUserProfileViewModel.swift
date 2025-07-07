@@ -14,6 +14,7 @@ class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var userName: String = ""
     @Published var bio: String = ""
+    @Published var interestTags: [String] = []
     
     @Published var isLoading: Bool = false
     @Published var state: ViewState = .idle
@@ -38,8 +39,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         user.bio != bio
     }
     
-    var isInterestedTagValid: Bool {
-        Validation.validateInterestTag(tags: user.interestTags)
+    var isInterestTagsValid: Bool {
+        Validation.validateInterestTag(tags: interestTags)
+    }
+    
+    var isInterestTagsUnique: Bool {
+        user.interestTags != interestTags
     }
     
     init() {
@@ -101,26 +106,27 @@ class CurrentUserProfileViewModel: ObservableObject {
         }
     }
 
-    func updateUserData(addTags: [String] = []) async {
-        let filteredTags = addTags.filter { !$0.isEmpty }
+    @MainActor
+    func saveInterestTags() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
         
         do {
-            try await CurrentUserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: filteredTags)
-            let result = await CurrentUserService.loadCurrentUser()
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+            try await CurrentUserService.updateInterestTags(tags: interestTags)
+            AuthService.shared.currentUser?.interestTags = interestTags
+            self.state = .success
         } catch {
-            print("Error updating user data: \(error)")
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
         }
     }
     
     @MainActor
-    func deleteTag(tag: String) {
-        user.interestTags.removeAll { $0 == tag }
+    func deleteTag(at index: Int) {
+        guard interestTags.indices.contains(index) else { return }
+        interestTags.remove(at: index)
     }
 }
 
