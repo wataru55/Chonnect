@@ -71,8 +71,10 @@ struct EditProfileView: View {
                         .environmentObject(viewModel)
                 case .bio:
                     EditBioView()
+                        .environmentObject(viewModel)
                 case .interestTags:
                     EditInterestTagsView()
+                        .environmentObject(viewModel)
                 }
             }
         }//navigationstack
