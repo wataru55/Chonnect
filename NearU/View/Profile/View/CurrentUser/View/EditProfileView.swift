@@ -8,245 +8,182 @@
 import SwiftUI
 import PhotosUI
 
-enum Field: Hashable {
-    case title
+enum EditProfileDestination: Hashable {
+    case backgroundImage
+    case userName
+    case bio
+    case interestTags
 }
 
 struct EditProfileView: View {
-    @State private var isLoading = false
+    @State var path = NavigationPath()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: CurrentUserProfileViewModel
-    @FocusState private var focusedField: Field?
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundColor.ignoresSafeArea()
-
+        NavigationStack(path: $path) {
+            VStack {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         editBackgroundImage()
                         
                         editUserName()
+                        
+                        Divider()
 
                         editBio()
+                        
+                        Divider()
 
                         editInterestTags()
                     }//vstack
                     .padding(.top, 5)
                 } //scrollview
-                .onTapGesture {
-                    focusedField = nil
-                }
                 .padding()
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("プロフィール編集")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
-                            viewModel.resetSelectedImage()
                             dismiss()
                         } label: {
                             Image(systemName: "chevron.backward")
                                 .foregroundStyle(.black)
                         }
                     }
-
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isLoading = true
-                            
-                            Task {
-                                defer {
-                                    Task { @MainActor in
-                                        isLoading = false
-                                    }
-                                }
-                                
-                                await viewModel.updateUserData(addTags: viewModel.user.interestTags)
-
-                                await MainActor.run {
-                                    if let currentUser = AuthService.shared.currentUser {
-                                        viewModel.user = currentUser
-                                    }
-                                    viewModel.resetSelectedImage()
-                                    dismiss()
-                                }
-                            }
-                        } label: {
-                            HStack(spacing: 2) {
-                                if viewModel.isAbleToSave {
-                                    Image(systemName: "checkmark.circle")
-                                }
-                                Text("保存")
-                                    .fontWeight(.bold)
-                            }
-                            .font(.subheadline)
-                            .foregroundStyle(viewModel.isAbleToSave ? Color.mint : Color.gray)
-                        }
-                        .disabled(!viewModel.isAbleToSave)
-                    }
                 }
-                
-                if isLoading {
-                    LoadingView()
-                }
-            }// zstack
-            .modifier(EdgeSwipe())
-        }//navigationstack
-        .onDisappear {
-            if let currentUser = AuthService.shared.currentUser {
-                viewModel.user = currentUser
+            }// vstack
+            .background(
+                backgroundColor.ignoresSafeArea()
+            )
+            .overlay {
+                ViewStateOverlayView(state: $viewModel.state)
             }
-        }
+            .modifier(EdgeSwipe())
+            .navigationDestination(for: EditProfileDestination.self) { destination in
+                switch destination {
+                case .backgroundImage:
+                    EditImageView()
+                case .userName:
+                    EditUserNameView()
+                        .environmentObject(viewModel)
+                case .bio:
+                    EditBioView()
+                        .environmentObject(viewModel)
+                case .interestTags:
+                    EditInterestTagsView()
+                        .environmentObject(viewModel)
+                }
+            }
+        }//navigationstack
     }//body
     
+    // MARK: - Private Functions
+    
     private func editBackgroundImage() -> some View {
-        PhotosPicker(selection: $viewModel.selectedBackgroundImage) {
+        NavigationLink(value: EditProfileDestination.backgroundImage) {
             VStack {
-                if let image = viewModel.backgroundImage {
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.white)
-                        .frame(width: UIScreen.main.bounds.width - 20, height: 250)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else {
-                    BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
-                }
-
-                Text("背景画像を変更する")
+                BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
+                
+                Text("プロフィール画像を変更")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(Color.mint)
                     .padding(.bottom, 10)
             }//vstack
         }
-        .disabled(focusedField != nil)
     }
     
     private func editUserName() -> some View {
-        VStack (spacing:10){
-            VStack(spacing: 5) {
-                Text("ユーザー名（20文字以内）")
-                    .font(.footnote)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(Color.gray)
-                
-                if !viewModel.isUsernameValid {
-                    Text("適切なユーザー名を入力してください")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(Color.orange)
-                        .padding(.leading, 5)
+        NavigationLink(value: EditProfileDestination.userName) {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    captionText(text: "ユーザーネーム")
+            
+                    Text(viewModel.user.username)
+                        .padding(.horizontal, 5)
                 }
+                
+                Spacer()
+                
+                chevron()
             }
-
-            VStack {
-                TextField("", text: $viewModel.user.username)
-                    .padding(.leading, 5)
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .autocorrectionDisabled(true)
-
-                Divider()
-            }//vstack
-        }//vstack
-        .font(.subheadline)
-        .padding(5)
-        .focused($focusedField, equals: .title)
+            .font(.subheadline)
+            .padding(5)
+            .padding(.vertical, 5)
+        }
     }
     
     private func editBio() -> some View {
-        VStack {
-            Text("自己紹介（100文字以内）")
-                .font(.footnote)
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            if !viewModel.isNotOverCharacterLimit {
-                Text("自己紹介は100字以内で入力してください")
-                    .font(.footnote)
-                    .foregroundColor(.orange)
-            }
-
-            VStack {
-                TextField("", text: Binding(
-                    get: { viewModel.user.bio ?? "" },
-                    set: { viewModel.user.bio = $0 }
-                ), axis: .vertical)
-                .lineLimit(5, reservesSpace: true)
-                .padding(.horizontal, 5)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-                .autocorrectionDisabled(true)
-                .scrollContentBackground(.hidden)
-                .background(backgroundColor)
+        NavigationLink(value: EditProfileDestination.bio) {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    captionText(text: "自己紹介")
+                    
+                    Text(viewModel.user.bio ?? "")
+                        .padding(.horizontal, 5)
+                        .multilineTextAlignment(TextAlignment.leading)
+                        .lineLimit(5, reservesSpace: true)
+                }
                 
-                Divider()
+                Spacer()
+                
+                chevron()
             }
+            .font(.subheadline)
+            .padding(5)
+            .padding(.vertical, 5)
         }
-        .font(.subheadline)
-        .padding(5)
-        .focused($focusedField, equals: .title)
     }
     
     private func editInterestTags() -> some View {
-        VStack(spacing: 5) {
-            Text("興味タグ（上限10, 1つ20文字以内）")
-                .font(.footnote)
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 5)
-
-            Button {
-                if viewModel.user.interestTags.count < 10 {
-                    viewModel.user.interestTags.insert("", at: 0)
-                }
-            } label: {
-                HStack {
-                    Image(systemName: "plus.circle")
-                    Text("入力欄を追加")
-                        .font(.system(size: 15, weight: .bold))
-                }
-                .foregroundStyle(viewModel.user.interestTags.count < 10 ? Color.mint : Color.gray)
-                .padding(.vertical, 5)
-            }
-            
-            if !viewModel.isInterestedTagValid {
-                Text("20文字以上の興味タグが含まれています")
-                    .font(.footnote)
-                    .foregroundColor(.orange)
-            }
-            
-            ForEach($viewModel.user.interestTags.indices, id: \.self) { index in
-                HStack(spacing: 10) {
-                    TextField("興味・関心", text: $viewModel.user.interestTags[index])
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
-                        .font(.subheadline)
+        NavigationLink(value: EditProfileDestination.interestTags) {
+            HStack {
+                VStack(spacing: 5) {
+                    captionText(text: "興味タグ")
                     
-                    Button {
-                        viewModel.deleteTag(tag: viewModel.user.interestTags[index])
-                    } label: {
-                        Image(systemName: "trash")
-                            .foregroundStyle(.black)
-                            .font(.footnote)
-                    }
-                }
-                .padding(.horizontal, 10)
-            }
+                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), alignment: .leading, spacing: 10) {
+                        ForEach(viewModel.user.interestTags, id: \.self) { tag in
+                            HStack(spacing: 0) {
+                                Image(systemName: "number")
 
+                                Text(tag)
+                                    .fontWeight(.bold)
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(.blue)
+                        }
+                    } // LazyVGrid
+                    .padding(.top, 5)
+                    .padding(.horizontal, 5)
+                }
+                
+                Spacer()
+                
+                chevron()
+            }
+            .padding(5)
+            .padding(.vertical, 5)
         }
-        .padding(.horizontal, 8)
-        .focused($focusedField, equals: .title)
     }
 }//view
 
-#Preview {
-    EditProfileView()
+private func chevron() -> some View {
+    Image(systemName: "chevron.forward")
+        .foregroundStyle(.gray)
+        .padding(.trailing, 5)
 }
+
+private func captionText(text: String) -> some View {
+    Text(text)
+        .font(.footnote)
+        .foregroundColor(.gray)
+        .frame(maxWidth: .infinity, alignment: .leading)
+}
+
+//#Preview {
+//    EditProfileView()
+//}
 

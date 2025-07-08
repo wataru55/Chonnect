@@ -50,6 +50,8 @@
 		6346A0432D92829800EDC4E5 /* EmailCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0422D92829800EDC4E5 /* EmailCheckView.swift */; };
 		6346A0452D966D7100EDC4E5 /* RegistrationIncompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0442D966D7100EDC4E5 /* RegistrationIncompleteView.swift */; };
 		6346A0492D9BC65200EDC4E5 /* UserDataReloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6346A0482D9BC65200EDC4E5 /* UserDataReloadView.swift */; };
+		63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63483AF62DF6ACBD00956814 /* EditImageView.swift */; };
+		63483AFA2E04F8A200956814 /* UploadImageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63483AF92E04F8A200956814 /* UploadImageError.swift */; };
 		6375622C2CCE50B100137B27 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6375622B2CCE50B100137B27 /* FirebaseMessaging */; };
 		637B97272CB8FBC100EFB09F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; };
 		637B97282CB9024400EFB09F /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 637B97262CB8FBC100EFB09F /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -100,6 +102,10 @@
 		63CE6E6A2DAD774A00B2628D /* FollowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E692DAD774A00B2628D /* FollowService.swift */; };
 		63CE6E6C2DAD7C4800B2628D /* LinkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E6B2DAD7C4800B2628D /* LinkService.swift */; };
 		63CE6E6E2DB01C3900B2628D /* CurrentUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */; };
+		63D957C52E0FC6350006C73F /* EditImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957C42E0FC6350006C73F /* EditImageViewModel.swift */; };
+		63D957C72E15267B0006C73F /* EditUserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957C62E15267B0006C73F /* EditUserNameView.swift */; };
+		63D957C92E1526980006C73F /* EditBioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957C82E1526980006C73F /* EditBioView.swift */; };
+		63D957CB2E1526B30006C73F /* EditInterestTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957CA2E1526B30006C73F /* EditInterestTagsView.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -196,6 +202,8 @@
 		6346A0422D92829800EDC4E5 /* EmailCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCheckView.swift; sourceTree = "<group>"; };
 		6346A0442D966D7100EDC4E5 /* RegistrationIncompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationIncompleteView.swift; sourceTree = "<group>"; };
 		6346A0482D9BC65200EDC4E5 /* UserDataReloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataReloadView.swift; sourceTree = "<group>"; };
+		63483AF62DF6ACBD00956814 /* EditImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageView.swift; sourceTree = "<group>"; };
+		63483AF92E04F8A200956814 /* UploadImageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImageError.swift; sourceTree = "<group>"; };
 		6375622A2CCC83C900137B27 /* NearU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NearU.entitlements; sourceTree = "<group>"; };
 		637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncountDataStruct.swift; sourceTree = "<group>"; };
 		637BA0582C4252D200368566 /* EditSNSLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkViewModel.swift; sourceTree = "<group>"; };
@@ -245,6 +253,10 @@
 		63CE6E692DAD774A00B2628D /* FollowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowService.swift; sourceTree = "<group>"; };
 		63CE6E6B2DAD7C4800B2628D /* LinkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkService.swift; sourceTree = "<group>"; };
 		63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserService.swift; sourceTree = "<group>"; };
+		63D957C42E0FC6350006C73F /* EditImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageViewModel.swift; sourceTree = "<group>"; };
+		63D957C62E15267B0006C73F /* EditUserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditUserNameView.swift; sourceTree = "<group>"; };
+		63D957C82E1526980006C73F /* EditBioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBioView.swift; sourceTree = "<group>"; };
+		63D957CA2E1526B30006C73F /* EditInterestTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInterestTagsView.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -356,6 +368,15 @@
 			path = Compornents;
 			sourceTree = "<group>";
 		};
+		63483AF82E04F86200956814 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				6306DE492DDB0EEC00DDEECE /* FireStoreSaveError.swift */,
+				63483AF92E04F8A200956814 /* UploadImageError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
 		6367B7922BE149DF0065C1BD /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -384,6 +405,7 @@
 		638732042BF4AE0C0099F68A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				63483AF82E04F86200956814 /* Error */,
 				638732052BF4AE3F0099F68A /* User.swift */,
 				637B972B2CBA070D00EFB09F /* EncountDataStruct.swift */,
 				63AEA5CC2CC66B18009A22A2 /* UserDatePair.swift */,
@@ -395,7 +417,6 @@
 				63FDDFCE2CEB1D4500B90074 /* RowData.swift */,
 				63FDDFD42CECCCE800B90074 /* WordElement.swift */,
 				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
-				6306DE492DDB0EEC00DDEECE /* FireStoreSaveError.swift */,
 				6306046F2DEEFCE600074F24 /* Article.swift */,
 			);
 			path = Model;
@@ -532,6 +553,10 @@
 				639A0BD82CE4A86F00A769C6 /* FollowerView.swift */,
 				63AEF0FA2C0C4C6500DE196E /* FollowView.swift */,
 				63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */,
+				63483AF62DF6ACBD00956814 /* EditImageView.swift */,
+				63D957C62E15267B0006C73F /* EditUserNameView.swift */,
+				63D957C82E1526980006C73F /* EditBioView.swift */,
+				63D957CA2E1526B30006C73F /* EditInterestTagsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -645,6 +670,7 @@
 				639A0BDA2CE4B01200A769C6 /* FollowerViewModel.swift */,
 				63AEF0FE2C0CC89F00DE196E /* FollowViewModel.swift */,
 				63FDDFD82CEF537500B90074 /* EditSkillTagsViewModel.swift */,
+				63D957C42E0FC6350006C73F /* EditImageViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -791,6 +817,7 @@
 				3207D11D2CDD232F00A6E637 /* EditArticleView.swift in Sources */,
 				63B64FDA2B8C763900289469 /* ContentView.swift in Sources */,
 				63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */,
+				63D957C72E15267B0006C73F /* EditUserNameView.swift in Sources */,
 				6344BE442CDBA93D009F404E /* BLERealtimeViewModel.swift in Sources */,
 				639A0BE52CE5C93B00A769C6 /* UserFollowFollowerView.swift in Sources */,
 				638732232BF4BC770099F68A /* ContentViewModel.swift in Sources */,
@@ -811,6 +838,7 @@
 				63135D8E2CA90523004137AF /* BackgroundImageView.swift in Sources */,
 				6387320B2BF4B3680099F68A /* LoginView.swift in Sources */,
 				631591BA2D361E8B00E16DE3 /* KalmanFilter.swift in Sources */,
+				63D957C92E1526980006C73F /* EditBioView.swift in Sources */,
 				639A0BD92CE4A86F00A769C6 /* FollowerView.swift in Sources */,
 				63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */,
 				6306DE4E2DDC6FC600DDEECE /* ViewStateOverlayView.swift in Sources */,
@@ -831,6 +859,7 @@
 				63DFF8842BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift in Sources */,
 				638732192BF4B62B0099F68A /* LoginViewModel.swift in Sources */,
 				639A0BE72CE5CB5500A769C6 /* UserFollowView.swift in Sources */,
+				63D957C52E0FC6350006C73F /* EditImageViewModel.swift in Sources */,
 				63B650072B8DDE9300289469 /* ProfileView.swift in Sources */,
 				63BEA4962CD1CE3C006382AF /* FCMMessage.swift in Sources */,
 				63B64FE62B8C797400289469 /* BLECentralManager.swift in Sources */,
@@ -844,7 +873,9 @@
 				63FDDFE12CF4766A00B90074 /* InterestTagView.swift in Sources */,
 				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
+				63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
+				63483AFA2E04F8A200956814 /* UploadImageError.swift in Sources */,
 				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
 				6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */,
 				6344BE482CDBA9F8009F404E /* BLERealtimeView.swift in Sources */,
@@ -853,6 +884,7 @@
 				63DFF8992BFC9A8300A6DFB8 /* CircleImageView.swift in Sources */,
 				630604702DEEFCE600074F24 /* Article.swift in Sources */,
 				63DFF8C32C05B60300A6DFB8 /* BLEPeripheralManager.swift in Sources */,
+				63D957CB2E1526B30006C73F /* EditInterestTagsView.swift in Sources */,
 				6346A0372D7B0A8500EDC4E5 /* OnFirstAppear.swift in Sources */,
 				63B64FD82B8C763900289469 /* NearUApp.swift in Sources */,
 				639A0BD52CE446CC00A769C6 /* FollowFollowerView.swift in Sources */,

@@ -42,26 +42,84 @@ struct CurrentUserService {
         }
     }
     
-    static func updateUserProfile(username: String, bio: String, interestTags: [String]) async throws {
-        guard let currentUser = AuthService.shared.currentUser else { return }
-        
-        var data = [String: Any]()
-        
-        if !username.isEmpty && currentUser.username != username {
-            data["username"] = username
+    static func updateUserName(username: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
         }
         
-        if !bio.isEmpty && currentUser.bio != bio {
-            data["bio"] = bio
+        let docRef = Firestore.firestore().collection("users").document(documentId)
+        do {
+            try await docRef.updateData(["username": username])
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.unavailable.rawValue, FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+                
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+                
+            case FirestoreErrorCode.internal.rawValue, FirestoreErrorCode.resourceExhausted.rawValue:
+                throw FireStoreSaveError.serverError
+                
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
+        } catch {
+            throw FireStoreSaveError.unknown(underlying: error)
+        }
+    }
+    
+    static func updateBio(bio: String) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
         }
         
-        if currentUser.interestTags != interestTags {
-            data["interestTags"] = interestTags
+        let docRef = Firestore.firestore().collection("users").document(documentId)
+        do {
+            try await docRef.updateData(["bio": bio])
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.unavailable.rawValue, FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+                
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+                
+            case FirestoreErrorCode.internal.rawValue, FirestoreErrorCode.resourceExhausted.rawValue:
+                throw FireStoreSaveError.serverError
+                
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
+        } catch {
+            throw FireStoreSaveError.unknown(underlying: error)
+        }
+    }
+    
+    static func updateInterestTags(tags: [String]) async throws {
+        guard let documentId = AuthService.shared.currentUser?.id else {
+            throw FireStoreSaveError.missingUserId
         }
         
-        if !data.isEmpty {
-            //Firestore Databaseのドキュメントを更新
-            try await Firestore.firestore().collection("users").document(currentUser.id).updateData(data)
+        let docRef = Firestore.firestore().collection("users").document(documentId)
+        do {
+            try await docRef.updateData(["interestTags": tags])
+        } catch let error as NSError {
+            switch error.code {
+            case FirestoreErrorCode.unavailable.rawValue, FirestoreErrorCode.deadlineExceeded.rawValue:
+                throw FireStoreSaveError.networkError
+                
+            case FirestoreErrorCode.permissionDenied.rawValue:
+                throw FireStoreSaveError.permissionDenied
+                
+            case FirestoreErrorCode.internal.rawValue, FirestoreErrorCode.resourceExhausted.rawValue:
+                throw FireStoreSaveError.serverError
+                
+            default:
+                throw FireStoreSaveError.unknown(underlying: error)
+            }
+        } catch {
+            throw FireStoreSaveError.unknown(underlying: error)
         }
     }
     

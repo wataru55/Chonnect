@@ -12,42 +12,51 @@ import Combine
 
 class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
-
-    @Published var selectedBackgroundImage: PhotosPickerItem? {
-        didSet { Task { await loadBackgroundImage(fromItem: selectedBackgroundImage) }}
-    }
-
-    @Published var backgroundImage: Image?
-
-    private var uiBackgroundImage: UIImage?
+    @Published var userName: String = ""
+    @Published var bio: String = ""
+    @Published var interestTags: [String] = []
+    
+    @Published var isLoading: Bool = false
+    @Published var state: ViewState = .idle
+    @Published var alertType: AlertType? = nil
+    
     private var cancellables = Set<AnyCancellable>()
     
     var isUsernameValid: Bool {
-        Validation.validateUsername(username: user.username)
+        Validation.validateUsername(username: userName)
     }
     
-    var isNotOverCharacterLimit: Bool {
-        Validation.validateBio(bio: user.bio ?? "")
+    var isUsernameUnique: Bool {
+        //　変更前と変更後のユーザーネームが同じでない
+        user.username != userName
     }
     
-    var isInterestedTagValid: Bool {
-        Validation.validateInterestTag(tags: user.interestTags)
+    var isBioValid: Bool {
+        bio.count <= 100
     }
     
-    var isAbleToSave: Bool {
-        isUsernameValid && isNotOverCharacterLimit && isInterestedTagValid
+    var isBioUnique: Bool {
+        user.bio != bio
     }
-
+    
+    var isInterestTagsValid: Bool {
+        Validation.validateInterestTag(tags: interestTags)
+    }
+    
+    var isInterestTagsUnique: Bool {
+        user.interestTags != interestTags
+    }
+    
     init() {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
             self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
         }
-
+        
         setupSubscribers()
     }
-
+    
     func setupSubscribers() {
         // currentUserプロパティが変更されるとクロージャが実行される
         AuthService.shared.$currentUser
@@ -57,47 +66,75 @@ class CurrentUserProfileViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
+    
     @MainActor
-    func loadBackgroundImage(fromItem item: PhotosPickerItem?) async {
-        guard let item = item else { return } //オプショナルでないか確認
-        //データを読み込みバイナリデータとして取得
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        //バイナリデータをUIImage型に変換
-        guard let uiImage = UIImage(data: data) else { return } //バイナリデータが有効な画像データであるか検証するため
-        self.uiBackgroundImage = uiImage
-        //UIImage(画像の操作に使われる型)をImage型（SwiftUI の画像表示用オブジェクト）に変換．
-        self.backgroundImage = Image(uiImage: uiImage)
-    }
-
-    func updateUserData(addTags: [String] = []) async {
-        let filteredTags = addTags.filter { !$0.isEmpty }
+    func saveUserName() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
         
         do {
-            if let uiImage = uiBackgroundImage {
-                try await ImageUploader.uploadImage(image: uiImage)
-            }
+            try await CurrentUserService.updateUserName(username: userName)
+            AuthService.shared.currentUser?.username = userName
+            self.state = .success
             
-            try await CurrentUserService.updateUserProfile(username: user.username, bio: user.bio ?? "", interestTags: filteredTags)
-            let result = await CurrentUserService.loadCurrentUser()
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
         } catch {
-            print("Error updating user data: \(error)")
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
         }
     }
     
     @MainActor
-    func deleteTag(tag: String) {
-        user.interestTags.removeAll { $0 == tag }
+    func saveBio() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        
+        // 空白行削除
+        let cleanedBio = bio.removingBlankLines()
+        
+        do {
+            try await CurrentUserService.updateBio(bio: cleanedBio)
+            AuthService.shared.currentUser?.bio = cleanedBio
+            self.state = .success
+            
+        } catch {
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
+        }
     }
 
     @MainActor
-    func resetSelectedImage() {
-        backgroundImage = nil
+    func saveInterestTags() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        
+        do {
+            try await CurrentUserService.updateInterestTags(tags: interestTags)
+            AuthService.shared.currentUser?.interestTags = interestTags
+            self.state = .success
+        } catch {
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
+        }
+    }
+    
+    @MainActor
+    func deleteTag(at index: Int) {
+        guard interestTags.indices.contains(index) else { return }
+        interestTags.remove(at: index)
+    }
+}
+
+extension String {
+    func removingBlankLines() -> String {
+        self
+            .components(separatedBy: .newlines)
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            .joined(separator: "\n")
     }
 }
