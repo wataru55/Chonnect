@@ -41,7 +41,7 @@ struct EditUserNameView: View {
                     .foregroundStyle(.gray)
                 
                 Text("(\(viewModel.userName.count)/20)")
-                    .foregroundStyle(viewModel.user.username.count > 20 ? Color.pink : Color.gray)
+                    .foregroundStyle(viewModel.userName.count > 20 ? Color.pink : Color.gray)
             }
             .font(.footnote)
             .fontWeight(.bold)
