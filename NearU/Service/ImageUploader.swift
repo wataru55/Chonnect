@@ -27,7 +27,7 @@ struct ImageUploader {
     }
 
     /// Firebase Storage に保存済みの画像のダウンロードURLを取得
-    static func retrySaveProcess() async throws -> String? {
+    static func retrySaveProcess() async throws -> String {
         let documentId = try currentUserId()
         let filename = "\(documentId)_backgroundImage.jpg"
         let ref = storageReference(for: filename)
