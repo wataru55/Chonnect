@@ -8,6 +8,21 @@
 import SwiftUI
 import Kingfisher
 
+enum AppDestination: Hashable {
+    case editProfile
+    case editSkillTags
+    case editSNSLink
+    case editArticle
+    case wordCloud
+    case follow(FollowNavigationData)
+    
+    // EditProfileView 内でさらに分岐する遷移
+    case profileImage
+    case userName
+    case bio
+    case interestTags
+}
+
 struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
@@ -16,16 +31,13 @@ struct CurrentUserProfileView: View {
     @StateObject var followerViewModel = FollowerViewModel()
     @StateObject var tagsViewModel = EditSkillTagsViewModel()
     
-    @State private var isAddingNewLink = false
-    @State private var showEditArticle = false
-    @State private var showEditProfile = false
-    @State private var showEditTags = false
+    @State var path = NavigationPath()
     @State private var isBioExpanded: Bool = false
     
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack{
                 backgroundColor.ignoresSafeArea()
                 
@@ -64,27 +76,43 @@ struct CurrentUserProfileView: View {
                     articleLinks()
                     
                 }//scrollview
-                .fullScreenCover(isPresented: $showEditProfile) {
-                    EditProfileView()
-                        .environmentObject(viewModel)
-                }
-                .fullScreenCover(isPresented: $isAddingNewLink) {
-                    EditSNSLinkView()
-                        .environmentObject(addLinkViewModel)
-                }
-                .fullScreenCover(isPresented: $showEditArticle) {
-                    EditArticleView()
-                        .environmentObject(articleLinksViewModel)
-                }
-                .fullScreenCover(isPresented: $showEditTags) {
-                    EditSkillTagsView(viewModel: tagsViewModel)
-                }
             }// zstack
             .ignoresSafeArea()
-            .navigationDestination(for: FollowNavigationData.self) { data in
-                FollowFollowerView(selectedTab: data.selectedTab, currentUser: data.currentUser)
+            .navigationDestination(for: AppDestination.self) { destination in
+                switch destination {
+                case .editProfile:
+                    EditProfileView()
+                        .environmentObject(viewModel)
+                case .editSkillTags:
+                    EditSkillTagsView(viewModel: tagsViewModel)
+                case .editSNSLink:
+                    EditSNSLinkView()
+                        .environmentObject(addLinkViewModel)
+                case .editArticle:
+                    EditArticleView()
+                        .environmentObject(articleLinksViewModel)
+                case .wordCloud:
+                    WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
+                    
+                case .follow(let data):
+                    FollowFollowerView(selectedTab: data.selectedTab,
+                                       currentUser: data.currentUser)
                     .environmentObject(followViewModel)
                     .environmentObject(followerViewModel)
+                    
+                case .profileImage:
+                    EditImageView()
+                case .userName:
+                    EditUserNameView()
+                        .environmentObject(viewModel)
+                case .bio:
+                    EditBioView()
+                        .environmentObject(viewModel)
+                case .interestTags:
+                    EditInterestTagsView()
+                        .environmentObject(viewModel)
+                }
+                
             }
         }
         .tint(.black)
@@ -95,9 +123,7 @@ struct CurrentUserProfileView: View {
     /// 画像の上に配置するボタンアクション
     private func overlayButtonActions() -> some View {
         VStack {
-            Button {
-                showEditProfile.toggle()
-            } label: {
+            NavigationLink(value: AppDestination.editProfile) {
                 Image(systemName: "pencil")
                     .font(.system(size: 20))
                     .foregroundColor(.white)
@@ -109,9 +135,7 @@ struct CurrentUserProfileView: View {
             }
             .padding(.top, 50)
             
-            Button {
-                showEditTags.toggle()
-            } label: {
+            NavigationLink(value: AppDestination.editSkillTags) {
                 Image(systemName: "tag")
                     .font(.system(size: 16))
                     .foregroundColor(.white)
@@ -144,11 +168,11 @@ struct CurrentUserProfileView: View {
     /// フォローとフォロワーのカウントビュー
     private func followFollowerCountView() -> some View {
         HStack {
-            NavigationLink(value: FollowNavigationData(selectedTab: 0, currentUser: viewModel.user)) {
+            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))) {
                 CountView(count: followViewModel.followUsers.count, text: "フォロー")
             }
             
-            NavigationLink(value: FollowNavigationData(selectedTab: 1, currentUser: viewModel.user)) {
+            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))) {
                 CountView(count: followerViewModel.followers.count, text: "フォロワー")
             }
         }
@@ -183,11 +207,7 @@ struct CurrentUserProfileView: View {
     @ViewBuilder
     private func skillTags() -> some View {
         if !tagsViewModel.skillSortedTags.isEmpty {
-            NavigationLink {
-                WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
-                    .background(Color.white.opacity(0.7))
-                    .ignoresSafeArea()
-            } label: {
+            NavigationLink(value: AppDestination.wordCloud) {
                 Top3TabView(tags: tagsViewModel.skillSortedTags)
             }
         }
@@ -214,9 +234,7 @@ struct CurrentUserProfileView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 if viewModel.user.snsLinks.isEmpty {
-                    Button {
-                        isAddingNewLink.toggle()
-                    } label: {
+                    NavigationLink(value: AppDestination.editSNSLink) {
                         HStack(spacing: 0) {
                             Image(systemName: "plus.circle")
                                 .font(.title2)
@@ -234,9 +252,7 @@ struct CurrentUserProfileView: View {
                         }
                     }
                     
-                    Button {
-                        isAddingNewLink.toggle()
-                    } label: {
+                    NavigationLink(value: AppDestination.editSNSLink) {
                         Image(systemName: "plus")
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .frame(width: 60, height: 60)
@@ -261,9 +277,7 @@ struct CurrentUserProfileView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 if articleLinksViewModel.openGraphData.isEmpty {
-                    Button {
-                        showEditArticle.toggle()
-                    } label: {
+                    NavigationLink(value: AppDestination.editArticle) {
                         HStack(spacing: 0) {
                             Image(systemName: "plus.circle")
                                 .font(.title2)
@@ -272,7 +286,6 @@ struct CurrentUserProfileView: View {
                         }
                         .foregroundColor(.mint)
                     }
-                    
                 } else {
                     ForEach(articleLinksViewModel.openGraphData) { openGraphData in
                         SiteLinkButtonView(ogpData: openGraphData,
@@ -281,9 +294,7 @@ struct CurrentUserProfileView: View {
                             .environmentObject(articleLinksViewModel)
                     }
                     
-                    Button {
-                        showEditArticle.toggle()
-                    } label: {
+                    NavigationLink(value: AppDestination.editArticle) {
                         Image(systemName: "plus")
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .frame(width: 60, height: 60)
