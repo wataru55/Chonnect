@@ -118,7 +118,10 @@ struct ExpandableText: View {
         var high = text.count
         var mid  = high
         
-        while high - low > 1 {
+        let maxIterations = 100  // 最大反復回数
+        var iterationCount = 0   // 現在の反復回数
+                
+        while high - low > 1 && iterationCount < maxIterations {
             let trial = String(text.prefix(mid)) + ellipsis.text
             let trialHeight = (trial as NSString)
                 .boundingRect(with: size,
@@ -134,6 +137,7 @@ struct ExpandableText: View {
                 low = mid
             }
             mid = (high + low) / 2
+            iterationCount += 1 
         }
         visibleText = String(text.prefix(low))
     }
