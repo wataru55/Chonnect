@@ -8,13 +8,6 @@
 import SwiftUI
 import PhotosUI
 
-enum EditProfileDestination: Hashable {
-    case backgroundImage
-    case userName
-    case bio
-    case interestTags
-}
-
 struct EditProfileView: View {
     @State var path = NavigationPath()
     @Environment(\.dismiss) var dismiss
@@ -23,67 +16,51 @@ struct EditProfileView: View {
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
     var body: some View {
-        NavigationStack(path: $path) {
-            VStack {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        editBackgroundImage()
-                        
-                        editUserName()
-                        
-                        Divider()
-
-                        editBio()
-                        
-                        Divider()
-
-                        editInterestTags()
-                    }//vstack
-                    .padding(.top, 5)
-                } //scrollview
-                .padding()
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("プロフィール編集")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .foregroundStyle(.black)
-                        }
+        VStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    editBackgroundImage()
+                    
+                    editUserName()
+                    
+                    Divider()
+                    
+                    editBio()
+                    
+                    Divider()
+                    
+                    editInterestTags()
+                }//vstack
+                .padding(.top, 5)
+            } //scrollview
+            .padding()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("プロフィール編集")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
                     }
                 }
-            }// vstack
-            .background(
-                backgroundColor.ignoresSafeArea()
-            )
-            .overlay {
-                ViewStateOverlayView(state: $viewModel.state)
             }
-            .modifier(EdgeSwipe())
-            .navigationDestination(for: EditProfileDestination.self) { destination in
-                switch destination {
-                case .backgroundImage:
-                    EditImageView()
-                case .userName:
-                    EditUserNameView()
-                        .environmentObject(viewModel)
-                case .bio:
-                    EditBioView()
-                        .environmentObject(viewModel)
-                case .interestTags:
-                    EditInterestTagsView()
-                        .environmentObject(viewModel)
-                }
-            }
-        }//navigationstack
+        }// vstack
+        .background(
+            backgroundColor.ignoresSafeArea()
+        )
+        .overlay {
+            ViewStateOverlayView(state: $viewModel.state)
+        }
+        .modifier(EdgeSwipe())
+        .navigationBarBackButtonHidden()
     }//body
     
     // MARK: - Private Functions
     
     private func editBackgroundImage() -> some View {
-        NavigationLink(value: EditProfileDestination.backgroundImage) {
+        NavigationLink(value: AppDestination.profileImage) {
             VStack {
                 BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
                 
@@ -97,7 +74,7 @@ struct EditProfileView: View {
     }
     
     private func editUserName() -> some View {
-        NavigationLink(value: EditProfileDestination.userName) {
+        NavigationLink(value: AppDestination.userName) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "ユーザーネーム")
@@ -117,7 +94,7 @@ struct EditProfileView: View {
     }
     
     private func editBio() -> some View {
-        NavigationLink(value: EditProfileDestination.bio) {
+        NavigationLink(value: AppDestination.bio) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "自己紹介")
@@ -139,7 +116,7 @@ struct EditProfileView: View {
     }
     
     private func editInterestTags() -> some View {
-        NavigationLink(value: EditProfileDestination.interestTags) {
+        NavigationLink(value: AppDestination.interestTags) {
             HStack {
                 VStack(spacing: 5) {
                     captionText(text: "興味タグ")
