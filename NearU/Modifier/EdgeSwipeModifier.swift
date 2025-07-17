@@ -15,6 +15,7 @@ struct EdgeSwipe: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .contentShape(Rectangle())
             .gesture (
                 DragGesture().onChanged { value in
                     if value.startLocation.x < edgeWidth && value.translation.width > baseDragWidth {
