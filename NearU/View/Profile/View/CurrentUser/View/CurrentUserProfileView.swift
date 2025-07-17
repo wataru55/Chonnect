@@ -44,12 +44,15 @@ struct CurrentUserProfileView: View {
                 ScrollView(.vertical, showsIndicators: false){
                     ZStack(alignment: .top) {
                         BackgroundImageView(user: viewModel.user, height: 500, isGradient: true)
-                            .overlay(alignment: .topTrailing){
-                                overlayButtonActions()
-                            }
                         
                         VStack(spacing: 0) {
-                            Spacer().frame(height: 500 - 160) // 上2/3をスペースとして空ける
+                            Spacer()
+                                .frame(height: 50)
+                            
+                            overlayButtonActions()
+                            
+                            Spacer()
+                                .frame(height: 200)
                             
                             VStack(alignment: .leading, spacing: 6) {
                                 userNameAndPrivateIcon()
@@ -122,30 +125,32 @@ struct CurrentUserProfileView: View {
     
     /// 画像の上に配置するボタンアクション
     private func overlayButtonActions() -> some View {
-        VStack {
-            NavigationLink(value: AppDestination.editProfile) {
-                Image(systemName: "pencil")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(
-                        Color.black.opacity(0.8)
-                            .clipShape(Circle())
-                    )
-            }
-            .padding(.top, 50)
+        HStack {
+            Spacer()
             
-            NavigationLink(value: AppDestination.editSkillTags) {
-                Image(systemName: "tag")
-                    .font(.system(size: 16))
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(
-                        Color.black.opacity(0.8)
-                            .clipShape(Circle())
-                    )
+            VStack(spacing: 10) {
+                NavigationLink(value: AppDestination.editProfile) {
+                    Image(systemName: "pencil")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(
+                            Color.black.opacity(0.8)
+                                .clipShape(Circle())
+                        )
+                }
+                
+                NavigationLink(value: AppDestination.editSkillTags) {
+                    Image(systemName: "tag")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(
+                            Color.black.opacity(0.8)
+                                .clipShape(Circle())
+                        )
+                }
             }
-            .padding(.top, 10)
         }
         .padding(.trailing, 10)
     }

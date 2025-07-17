@@ -34,13 +34,10 @@ struct ProfileView: View {
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        ProfileHeaderView(viewModel: viewModel, date: date,
-                                          isShowFollowButton: isShowFollowButton,
-                                          isShowDateButton: isShowDateButton)
-                        .environmentObject(supplementButtonViewModel)
-                    } //vstack
-                    .padding(.bottom, 10)
+                    ProfileHeaderView(viewModel: viewModel, date: date,
+                                      isShowFollowButton: isShowFollowButton,
+                                      isShowDateButton: isShowDateButton)
+                    .environmentObject(supplementButtonViewModel)
                     
                     sectionHeader(title: "SNS")
                     
@@ -65,6 +62,8 @@ struct ProfileView: View {
             
         } //zstack
         .ignoresSafeArea()
+        .navigationBarBackButtonHidden()
+        .modifier(EdgeSwipe())
         .onFirstAppear {
             viewModel.loadData()
         }
