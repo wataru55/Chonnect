@@ -72,19 +72,10 @@ struct EditUserNameView: View {
                 LoadingView()
             }
         }
-        .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("ユーザーネーム")
+        .navigationBack()
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .foregroundStyle(.black)
-                }
-            }
-            
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task {

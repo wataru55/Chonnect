@@ -30,6 +30,7 @@ struct BlockListView: View {
             .navigationTitle("ブロックリスト")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationBack()
         .onAppear {
             Task {
                 await viewModel.loadBlockList()
