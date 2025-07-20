@@ -76,19 +76,10 @@ struct EditBioView: View {
                 LoadingView()
             }
         }
-        .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("自己紹介")
+        .navigationBack()
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .foregroundStyle(.black)
-                }
-            }
-            
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task {

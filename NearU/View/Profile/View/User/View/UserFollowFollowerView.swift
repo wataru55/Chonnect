@@ -32,6 +32,7 @@ struct UserFollowFollowerView: View {
         .ignoresSafeArea(edges:.bottom)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(viewModel.user.username)")
+        .navigationBack()
         .onFirstAppear {
             viewModel.isLoading = true
             Task {

@@ -78,6 +78,7 @@ struct EditPasswordView: View {
 
             Spacer()
         }//vstack
+        .navigationBack()
         .onDisappear {
             viewModel.inputPassword = ""
             viewModel.inputEmail = ""

@@ -107,6 +107,7 @@
 		63D957C92E1526980006C73F /* EditBioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957C82E1526980006C73F /* EditBioView.swift */; };
 		63D957CB2E1526B30006C73F /* EditInterestTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957CA2E1526B30006C73F /* EditInterestTagsView.swift */; };
 		63D957CF2E1F92E10006C73F /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957CE2E1F92E10006C73F /* ExpandableText.swift */; };
+		63D957D12E28B18A0006C73F /* NavigationBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D02E28B18A0006C73F /* NavigationBack.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -259,6 +260,7 @@
 		63D957C82E1526980006C73F /* EditBioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBioView.swift; sourceTree = "<group>"; };
 		63D957CA2E1526B30006C73F /* EditInterestTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInterestTagsView.swift; sourceTree = "<group>"; };
 		63D957CE2E1F92E10006C73F /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
+		63D957D02E28B18A0006C73F /* NavigationBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBack.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 				6387321B2BF4B6B50099F68A /* IGTextFieldModifier.swift */,
 				63FDDFED2CFD458A00B90074 /* EdgeSwipeModifier.swift */,
 				6346A0362D7B0A8500EDC4E5 /* OnFirstAppear.swift */,
+				63D957D02E28B18A0006C73F /* NavigationBack.swift */,
 			);
 			path = Modifier;
 			sourceTree = "<group>";
@@ -830,6 +833,7 @@
 				63AEA5CD2CC66B18009A22A2 /* UserDatePair.swift in Sources */,
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
+				63D957D12E28B18A0006C73F /* NavigationBack.swift in Sources */,
 				63CE6E682DACDC7F00B2628D /* IDGenerator.swift in Sources */,
 				63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */,
 				63226E342D7374D5006EBCCF /* CheckView.swift in Sources */,

@@ -11,6 +11,7 @@ struct ProfileHeaderView: View {
     @EnvironmentObject var loadingViewModel: LoadingViewModel
     @ObservedObject var viewModel: ProfileViewModel
     @State private var isShowCheck: Bool = false
+    @Environment(\.dismiss) var dismiss
 
     let date: Date
     let isShowFollowButton: Bool
@@ -21,7 +22,13 @@ struct ProfileHeaderView: View {
             profileImage()
             
             VStack(spacing: 0) {
-                Spacer().frame(height: 500 - 160)
+                Spacer()
+                    .frame(height: 50)
+                
+                backButton()
+                
+                Spacer()
+                    .frame(height: 250)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     userNameAndInfo()
@@ -46,6 +53,7 @@ struct ProfileHeaderView: View {
             } //VStack
             .padding(.leading, 10)
         } //ZStack
+        .padding(.bottom, 10)
         .alert("確認", isPresented: $isShowCheck) {
             Button("戻る", role: .cancel) {
                 isShowCheck.toggle()
@@ -62,43 +70,62 @@ struct ProfileHeaderView: View {
     
     //MARK: - Helper Functions
     
+    private func backButton() -> some View {
+        HStack {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.backward")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(
+                        Color.black.opacity(0.8)
+                            .clipShape(Circle())
+                    )
+            }
+            
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
     /// プロフィール画像を表示するView
     private func profileImage() -> some View {
-        Group {
-            if let backgroundImageUrl = viewModel.user.backgroundImageUrl {
-                AsyncImage(url: URL(string: backgroundImageUrl)) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .clipped()
-                        .overlay(
-                            Group{
-                                LinearGradient(
-                                    gradient: Gradient(stops: [
-                                        .init(color: Color.white.opacity(0), location: 0.5),
-                                        .init(color: Color(red: 0.96, green: 0.97, blue: 0.98).opacity(1), location: 1)
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            }
-                        )
-                } placeholder: {
-                    ProgressView()
-                }
-            } else {
-                RoundedRectangle(cornerRadius: 0)
-                    .foregroundColor(Color(.systemGray4))
-                    .overlay {
-                        Image(systemName: "photo.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.white)
-                    }
+        if let backgroundImageUrl = viewModel.user.backgroundImageUrl {
+            AsyncImage(url: URL(string: backgroundImageUrl)) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIScreen.main.bounds.width, height: 500)
+                    .clipped()
+                    .overlay(
+                        Group{
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    .init(color: Color.white.opacity(0), location: 0.5),
+                                    .init(color: Color(red: 0.96, green: 0.97, blue: 0.98).opacity(1), location: 1)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                    )
+            } placeholder: {
+                ProgressView()
             }
+        } else {
+            RoundedRectangle(cornerRadius: 0)
+                .frame(width: UIScreen.main.bounds.width, height: 500)
+                .foregroundColor(Color(.systemGray4))
+                .overlay {
+                    Image(systemName: "photo.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.white)
+                }
         }
-        .frame(width: UIScreen.main.bounds.width, height: 500)
     }
     
     /// ユーザー名と情報を表示するView

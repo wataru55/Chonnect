@@ -9,7 +9,6 @@ import SwiftUI
 
 struct EditSkillTagsView: View {
     @ObservedObject var viewModel: EditSkillTagsViewModel
-    @Environment(\.dismiss) var dismiss
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
@@ -91,15 +90,6 @@ struct EditSkillTagsView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("技術タグの編集")
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
@@ -124,8 +114,7 @@ struct EditSkillTagsView: View {
             
             ViewStateOverlayView(state: $viewModel.state)
         } //zstack
-        .navigationBarBackButtonHidden()
-        .modifier(EdgeSwipe())
+        .navigationBack()
         .onDisappear{
             viewModel.languages = [
                 WordElement(id: UUID(), name: "", skill: "3")

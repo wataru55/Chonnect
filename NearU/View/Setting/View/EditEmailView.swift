@@ -99,6 +99,7 @@ struct EditEmailView: View {
                 LoadingView()
             }
         }
+        .navigationBack()
         .onDisappear {
             viewModel.inputPassword = ""
             viewModel.inputEmail = ""

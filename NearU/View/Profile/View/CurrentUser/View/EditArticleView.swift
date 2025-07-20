@@ -2,7 +2,6 @@ import SwiftUI
 
 struct EditArticleView: View {
     @EnvironmentObject private var viewModel: ArticleLinksViewModel
-    @Environment(\.dismiss) var dismiss
     
     var columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 2)
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
@@ -87,15 +86,6 @@ struct EditArticleView: View {
                 .navigationTitle("記事の追加・削除")
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
-                }
-                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
@@ -120,8 +110,7 @@ struct EditArticleView: View {
             
             ViewStateOverlayView(state: $viewModel.state)
         } //zstach
-        .navigationBarBackButtonHidden()
-        .modifier(EdgeSwipe())
+        .navigationBack()
         .onDisappear {
             viewModel.articleUrls = [""]
         }

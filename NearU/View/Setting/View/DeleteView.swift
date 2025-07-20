@@ -95,6 +95,7 @@ struct DeleteView: View {
 
             Spacer()
         }//vstack
+        .navigationBack()
         .onDisappear {
             viewModel.inputPassword = ""
         }

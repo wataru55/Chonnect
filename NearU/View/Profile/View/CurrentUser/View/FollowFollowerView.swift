@@ -40,6 +40,7 @@ struct FollowFollowerView: View {
         .ignoresSafeArea(edges:.bottom)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(currentUser.username)")
+        .navigationBack()
     }
 }
 

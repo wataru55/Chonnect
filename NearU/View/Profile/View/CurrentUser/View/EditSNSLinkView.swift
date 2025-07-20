@@ -9,7 +9,6 @@ import SwiftUI
 
 struct EditSNSLinkView: View {
     @EnvironmentObject var viewModel: EditSNSLinkViewModel
-    @Environment(\.dismiss) var dismiss
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
     
     // 登録可能なSNS一覧
@@ -106,15 +105,6 @@ struct EditSNSLinkView: View {
                 .navigationTitle("SNSの追加・削除")
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
-                }
-                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
@@ -139,8 +129,7 @@ struct EditSNSLinkView: View {
             
             ViewStateOverlayView(state: $viewModel.state)
         } // ZStack
-        .navigationBarBackButtonHidden()
-        .modifier(EdgeSwipe())
+        .navigationBack()
         .onDisappear {
             viewModel.inputUrls = [""]
         }

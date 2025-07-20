@@ -117,19 +117,10 @@ struct EditInterestTagsView: View {
                 LoadingView()
             }
         }
-        .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("興味タグ")
+        .navigationBack()
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .foregroundStyle(.black)
-                }
-            }
-            
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task {

@@ -91,13 +91,20 @@ struct EditImageView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(
+                                Color.black.opacity(0.8)
+                                    .clipShape(Circle())
+                            )
                     }
                 }
             }
             
             ViewStateOverlayView(state: $viewModel.state)
         }
+        .navigationBarBackButtonHidden()
         .modifier(EdgeSwipe())
         .onDisappear() {
             viewModel.resetSelectedImage()
