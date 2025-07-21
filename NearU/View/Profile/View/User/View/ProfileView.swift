@@ -9,6 +9,7 @@ import SwiftUI
 
 enum ProfileDestination: Hashable {
     case wordCloud
+    case FollowFollower(Int)
 }
 
 struct ProfileView: View {
@@ -72,6 +73,9 @@ struct ProfileView: View {
             switch destination {
             case .wordCloud:
                 WordCloudView(skillSortedTags: viewModel.skillSortedTags)
+                
+            case .FollowFollower(let tabNum):
+                UserFollowFollowerView(viewModel: viewModel, selectedTab: tabNum)
             }
         }
         .onFirstAppear {

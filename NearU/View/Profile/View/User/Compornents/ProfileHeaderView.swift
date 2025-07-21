@@ -153,15 +153,11 @@ struct ProfileHeaderView: View {
     /// フォローとフォロワーのカウントを表示するView
     @ViewBuilder
     private func followFollowerCountView() -> some View {
-        NavigationLink {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
-        } label: {
+        NavigationLink(value: ProfileDestination.FollowFollower(0)) {
             CountView(count: viewModel.followCount, text: "フォロー")
         }
         
-        NavigationLink {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
-        } label: {
+        NavigationLink(value: ProfileDestination.FollowFollower(1)) {
             CountView(count: viewModel.followerCount, text: "フォロワー")
         }
     }
