@@ -233,11 +233,7 @@ struct ProfileHeaderView: View {
     @ViewBuilder
     private func skillTags() -> some View {
         if !viewModel.skillSortedTags.isEmpty {
-            NavigationLink {
-                WordCloudView(skillSortedTags: viewModel.skillSortedTags)
-                    .background(Color.white.opacity(0.7))
-                    .ignoresSafeArea()
-            } label: {
+            NavigationLink(value: ProfileDestination.wordCloud) {
                 Top3TabView(tags: viewModel.skillSortedTags)
             }
         }

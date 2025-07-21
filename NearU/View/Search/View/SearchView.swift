@@ -82,6 +82,10 @@ struct SearchView: View {
                 }
             }
             .navigationBarHidden(true) // デフォルトのナビゲーションバーを非表示
+            .navigationDestination(for: UserDatePair.self) { pairData in
+                ProfileView(user: pairData.user, currentUser: currentUser, date: pairData.date, // 日付は仮
+                            isShowFollowButton: true, isShowDateButton: true)
+            }
         }
         .tint(.black)
     }

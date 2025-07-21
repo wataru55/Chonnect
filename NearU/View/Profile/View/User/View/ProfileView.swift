@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum ProfileDestination: Hashable {
+    case wordCloud
+}
+
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
     @StateObject var supplementButtonViewModel = SupplementButtonViewModel()
@@ -64,6 +68,12 @@ struct ProfileView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
         .modifier(EdgeSwipe())
+        .navigationDestination(for: ProfileDestination.self) { destination in
+            switch destination {
+            case .wordCloud:
+                WordCloudView(skillSortedTags: viewModel.skillSortedTags)
+            }
+        }
         .onFirstAppear {
             viewModel.loadData()
         }
