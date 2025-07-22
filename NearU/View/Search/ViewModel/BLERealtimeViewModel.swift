@@ -27,7 +27,7 @@ class BLERealtimeViewModel: ObservableObject {
         
         for data in realtimeDataList {
             if let user = await UserService.fetchUser(withUid: data.userId) {
-                addData.append(UserRealtimeRecord(user: user, date: data.date, rssi: data.rssi))
+                addData.append(UserRealtimeRecord(pairData: UserDatePair(user: user, date: data.date), rssi: data.rssi))
             }
         }
         
@@ -55,7 +55,7 @@ class BLERealtimeViewModel: ObservableObject {
                 guard let self = self else { return }
                 
                 self.userRealtimeRecords = self.userRealtimeRecords.filter { record in
-                    !newBlockUserIds.contains(record.user.userIdentifier)
+                    !newBlockUserIds.contains(record.pairData.user.userIdentifier)
                 }
             }
             .store(in: &cancellables)
