@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct UserFollowFollowerView: View {
-    @ObservedObject var viewModel: ProfileViewModel
-    @State private var searchText: String = ""
+//    @ObservedObject var viewModel: ProfileViewModel
+    let follows: [RowData]
+    let followers: [RowData]
+    let userName: String
     @State var selectedTab: Int
+    @State private var searchText: String = ""
 
     var body: some View {
         VStack {
@@ -21,34 +24,18 @@ struct UserFollowFollowerView: View {
             .padding()
             
             TabView(selection: $selectedTab) {
-                UserFollowView(viewModel: viewModel)
+                UserFollowView(follows: follows)
                     .tag(0)
                 
-                UserFollowerView(viewModel: viewModel)
+                UserFollowerView(followers: followers)
                     .tag(1)
             }
             .tabViewStyle(.page(indexDisplayMode: .never)) // インジケータを非表示
         }
         .ignoresSafeArea(edges:.bottom)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("\(viewModel.user.username)")
+        .navigationTitle("\(userName)")
         .navigationBack()
-        .onFirstAppear {
-            viewModel.isLoading = true
-            Task {
-                await withTaskGroup(of: Void.self) { group in
-                    group.addTask {
-                        await viewModel.loadFollowUsers()
-                    }
-                    group.addTask {
-                        await viewModel.loadFollowers()
-                    }
-                }
-                await MainActor.run {
-                    viewModel.isLoading = false
-                }
-            }
-        }
     }
 }
 
