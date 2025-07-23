@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct UserFollowFollowerView: View {
-//    @ObservedObject var viewModel: ProfileViewModel
     let follows: [RowData]
     let followers: [RowData]
     let userName: String
     @State var selectedTab: Int
-    @State private var searchText: String = ""
 
     var body: some View {
         VStack {
