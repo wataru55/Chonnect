@@ -153,16 +153,22 @@ struct ProfileHeaderView: View {
     /// フォローとフォロワーのカウントを表示するView
     @ViewBuilder
     private func followFollowerCountView() -> some View {
-        NavigationLink {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 0)
-        } label: {
-            CountView(count: viewModel.followCount, text: "フォロー")
+        NavigationLink(value: ProfileDestination.FollowFollower(
+            FollowFollowerData(follows: viewModel.follows,
+                               followers: viewModel.followers,
+                               userName: viewModel.user.username,
+                               tabNum: 0)
+        )) {
+            CountView(count: viewModel.follows.count, text: "フォロー")
         }
         
-        NavigationLink {
-            UserFollowFollowerView(viewModel: viewModel, selectedTab: 1)
-        } label: {
-            CountView(count: viewModel.followerCount, text: "フォロワー")
+        NavigationLink(value: ProfileDestination.FollowFollower(
+            FollowFollowerData(follows: viewModel.follows,
+                               followers: viewModel.followers,
+                               userName: viewModel.user.username,
+                               tabNum: 1)
+        )) {
+            CountView(count: viewModel.followers.count, text: "フォロワー")
         }
     }
     
@@ -233,11 +239,7 @@ struct ProfileHeaderView: View {
     @ViewBuilder
     private func skillTags() -> some View {
         if !viewModel.skillSortedTags.isEmpty {
-            NavigationLink {
-                WordCloudView(skillSortedTags: viewModel.skillSortedTags)
-                    .background(Color.white.opacity(0.7))
-                    .ignoresSafeArea()
-            } label: {
+            NavigationLink(value: ProfileDestination.wordCloud(viewModel.skillSortedTags)) {
                 Top3TabView(tags: viewModel.skillSortedTags)
             }
         }

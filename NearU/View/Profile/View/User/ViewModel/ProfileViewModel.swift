@@ -15,8 +15,6 @@ class ProfileViewModel: ObservableObject {
     @Published var openGraphData: [OpenGraphData] = []
     @Published var follows: [RowData] = []
     @Published var followers: [RowData] = []
-    @Published var followCount: Int = 0
-    @Published var followerCount: Int = 0
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     var isFollowed: Bool = false
@@ -39,10 +37,10 @@ class ProfileViewModel: ObservableObject {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask {
-                    await self.loadFollowCount()
+                    await self.loadFollowUsers()
                 }
                 group.addTask {
-                    await self.loadFollowerCount()
+                    await self.loadFollowers()
                 }
                 group.addTask {
                     await self.loadSkillTags()
@@ -100,16 +98,6 @@ class ProfileViewModel: ObservableObject {
         } catch {
             print("Error fetching tags: \(error)")
         }
-    }
-    
-    @MainActor
-    func loadFollowCount() async {
-        self.followCount = await FollowService.fetchFollowedUserCount(receivedId: user.id)
-    }
-    
-    @MainActor
-    func loadFollowerCount() async {
-        self.followerCount = await FollowService.fetchFollowerCount(receivedId: user.id)
     }
     
     @MainActor
@@ -187,7 +175,7 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
             await MainActor.run {
                 self.isFollow = true
-                self.followerCount += 1
+                // ToDo: フォローに成功した場合、自分をフォローリストに追加
                 self.state = .success
             }
             // プッシュ通知を送信
@@ -212,7 +200,7 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.unFollowUser(receivedId: user.id)
             await MainActor.run {
                 self.isFollow = false
-                self.followerCount -= 1
+                // ToDo: フォロー解除に成功した場合、自分をフォロワーリストからも削除
                 self.state = .success
                 // 相互フォローも解除
             }
@@ -222,5 +210,4 @@ class ProfileViewModel: ObservableObject {
             self.state = .idle
         }
     }
-        
 }

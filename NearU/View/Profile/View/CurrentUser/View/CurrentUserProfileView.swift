@@ -117,6 +117,10 @@ struct CurrentUserProfileView: View {
                 }
                 
             }
+            .navigationDestination(for: UserDatePair.self) { pairData in
+                ProfileView(user: pairData.user, currentUser: viewModel.user, date: pairData.date,
+                            isShowFollowButton: true, isShowDateButton: true)
+            }
         }
         .tint(.black)
     }// body

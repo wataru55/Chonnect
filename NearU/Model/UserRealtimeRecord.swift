@@ -8,7 +8,6 @@
 import Foundation
 
 struct UserRealtimeRecord: Hashable, Codable {
-    let user: User
-    var date: Date
+    var pairData: UserDatePair
     var rssi: Int
 }

@@ -34,13 +34,11 @@ struct BLEHistoryView: View {
                                         isAbleToReload: true)
                     } else {
                         ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
-                            NavigationLink {
-                                ProfileView(user: data.pairData.user, currentUser: currentUser, date: data.pairData.date,
-                                            isShowFollowButton: true, isShowDateButton: true)
-                            } label: {
+                            NavigationLink(value: data.pairData) { // userオブジェクトそのものを値として渡す
                                 UserRowView(user: data.pairData.user, tags: data.pairData.user.interestTags,
                                             date: data.pairData.date, rssi: nil, isFollower: data.isFollowed)
                             }
+                                                    
                         } // ForEach
                     }
                 } // LazyVStack
