@@ -9,38 +9,31 @@ import SwiftUI
 import Combine
 
 struct UserFollowView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+//    @ObservedObject var viewModel: ProfileViewModel
+    let follows: [RowData]
 
     var body: some View {
-        if viewModel.isLoading {
-            ProgressView("Loading...")
-                .progressViewStyle(CircularProgressViewStyle())
-        } else {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 16) {
-                    if viewModel.follows.isEmpty {
-                        NothingDataView(text: "フォローしたユーザーがいません",
-                                        explanation: "ここでは、フォローしたユーザーの一覧が表示されます。",
-                                        isSystemImage: true,
-                                        isAbleToReload: false)
-                        
-                    } else {
-                        ForEach(viewModel.follows, id: \.self) { followUser in
-                            NavigationLink {
-                                ProfileView(user: followUser.pairData.user, currentUser: viewModel.currentUser, date: followUser.pairData.date,
-                                            isShowFollowButton: false, isShowDateButton: false)
-                            } label: {
-                                UserRowView(user: followUser.pairData.user, tags: followUser.pairData.user.interestTags,
-                                            date: nil, rssi: nil, isFollower: followUser.isFollowed)
-                            }
-                        }//foreach
-                    }
-                }//lazyvstack
-                .padding(.top, 8)
-                .padding(.bottom, 100)
-                
-            }//scrollview
-        }
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 16) {
+                if follows.isEmpty {
+                    NothingDataView(text: "フォローしたユーザーがいません",
+                                    explanation: "ここでは、フォローしたユーザーの一覧が表示されます。",
+                                    isSystemImage: true,
+                                    isAbleToReload: false)
+                    
+                } else {
+                    ForEach(follows, id: \.self) { followUser in
+                        NavigationLink(value: followUser.pairData) {
+                            UserRowView(user: followUser.pairData.user, tags: followUser.pairData.user.interestTags,
+                                        date: nil, rssi: nil, isFollower: followUser.isFollowed)
+                        }
+                    }//foreach
+                }
+            }//lazyvstack
+            .padding(.top, 8)
+            .padding(.bottom, 100)
+            
+        }//scrollview
     }
 }
 
