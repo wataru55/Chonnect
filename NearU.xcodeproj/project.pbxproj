@@ -129,7 +129,6 @@
 		63E4CC902BED30EA009E0C9B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E4CC8F2BED30EA009E0C9B /* FirebaseStorage */; };
 		63F84BB12D1C3B82009FE5DD /* Private.json in Resources */ = {isa = PBXBuildFile; fileRef = 63F84BB02D1C3B82009FE5DD /* Private.json */; };
 		63F84BB72D1E6D47009FE5DD /* HistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F84BB62D1E6D47009FE5DD /* HistoryService.swift */; };
-		63FDDFCF2CEB1D4500B90074 /* RowData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFCE2CEB1D4500B90074 /* RowData.swift */; };
 		63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD22CECCC2900B90074 /* WordCloudView.swift */; };
 		63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD42CECCCE800B90074 /* WordElement.swift */; };
 		63FDDFD72CECD9C400B90074 /* EditSkillTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */; };
@@ -277,7 +276,6 @@
 		63E4CC862BED3037009E0C9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		63F84BB02D1C3B82009FE5DD /* Private.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Private.json; sourceTree = "<group>"; };
 		63F84BB62D1E6D47009FE5DD /* HistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryService.swift; sourceTree = "<group>"; };
-		63FDDFCE2CEB1D4500B90074 /* RowData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowData.swift; sourceTree = "<group>"; };
 		63FDDFD22CECCC2900B90074 /* WordCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCloudView.swift; sourceTree = "<group>"; };
 		63FDDFD42CECCCE800B90074 /* WordElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordElement.swift; sourceTree = "<group>"; };
 		63FDDFD62CECD9C400B90074 /* EditSkillTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSkillTagsView.swift; sourceTree = "<group>"; };
@@ -420,7 +418,6 @@
 				6344BE3B2CD759CA009F404E /* HistoryDataStruct.swift */,
 				6344BE452CDBA9A3009F404E /* UserRealtimeRecord.swift */,
 				6344BE492CDE065A009F404E /* OpenGraphData.swift */,
-				63FDDFCE2CEB1D4500B90074 /* RowData.swift */,
 				63FDDFD42CECCCE800B90074 /* WordElement.swift */,
 				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
 				6306046F2DEEFCE600074F24 /* Article.swift */,
@@ -821,7 +818,6 @@
 				63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */,
 				63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */,
 				63AEF0FB2C0C4C6500DE196E /* FollowView.swift in Sources */,
-				63FDDFCF2CEB1D4500B90074 /* RowData.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
 				3207D11D2CDD232F00A6E637 /* EditArticleView.swift in Sources */,
 				63B64FDA2B8C763900289469 /* ContentView.swift in Sources */,
