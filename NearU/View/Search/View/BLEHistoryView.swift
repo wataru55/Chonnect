@@ -34,9 +34,9 @@ struct BLEHistoryView: View {
                                         isAbleToReload: true)
                     } else {
                         ForEach(viewModel.sortedHistoryRowData, id: \.self) { data in
-                            NavigationLink(value: data.pairData) { // userオブジェクトそのものを値として渡す
-                                UserRowView(user: data.pairData.user, tags: data.pairData.user.interestTags,
-                                            date: data.pairData.date, rssi: nil, isFollower: data.isFollowed)
+                            NavigationLink(value: data) { // userオブジェクトそのものを値として渡す
+                                UserRowView(user: data.user, tags: data.user.interestTags,
+                                            date: data.date, rssi: nil)
                             }
                                                     
                         } // ForEach

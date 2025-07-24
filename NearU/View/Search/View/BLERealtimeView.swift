@@ -28,7 +28,7 @@ struct BLERealtimeView: View {
                     ForEach(viewModel.sortedUserRealtimeRecords, id: \.self) { data in
                         NavigationLink(value: data.pairData) {
                             UserRowView(user: data.pairData.user, tags: data.pairData.user.interestTags, date: nil,
-                                        rssi: data.rssi, isFollower: false)
+                                        rssi: data.rssi)
                         }
                     } // ForEach
                 }

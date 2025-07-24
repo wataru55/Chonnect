@@ -10,7 +10,7 @@ import Combine
 import Firebase
 
 class FollowViewModel: ObservableObject {
-    @Published var followUsers: [RowData] = []
+    @Published var followUsers: [UserDatePair] = []
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
 
@@ -33,16 +33,8 @@ class FollowViewModel: ObservableObject {
                 self.followUsers = []
                 return
             }
-            
-            var rows: [RowData] = []
 
-            for followedUser in visibleFollowedUsers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: followedUser.user.id)
-                let row = RowData(pairData: followedUser, isFollowed: isFollowed)
-                rows.append(row)
-            }
-
-            self.followUsers = rows
+            self.followUsers = visibleFollowedUsers
 
         } catch {
             print("Error fetching connected users: \(error)")
@@ -76,7 +68,7 @@ class FollowViewModel: ObservableObject {
                 
                 // blockUserIdsに含まれるユーザーを除外
                 self.followUsers = self.followUsers.filter { followUser in
-                    !blockUserIds.contains(followUser.pairData.userIdentifier)
+                    !blockUserIds.contains(followUser.userIdentifier)
                 }
             }
             .store(in: &cancellables)

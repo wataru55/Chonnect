@@ -8,8 +8,8 @@
 import Foundation
 
 struct FollowFollowerData: Hashable {
-    let follows: [RowData]
-    let followers: [RowData]
+    let follows: [User]
+    let followers: [User]
     let userName: String
     let tabNum: Int
 }

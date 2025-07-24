@@ -27,7 +27,7 @@ struct FollowerView: View {
                                         isShowFollowButton: true, isShowDateButton: true)
                         } label: {
                             UserRowView(user: follower.user, tags: follower.user.interestTags,
-                                        date: follower.date, rssi: nil, isFollower: false)
+                                        date: follower.date, rssi: nil)
                         }
                     } //foreach
                 }

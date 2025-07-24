@@ -10,8 +10,8 @@ import Firebase
 
 @MainActor
 class BLEHistoryViewModel: ObservableObject {
-    @Published var historyRowData: [RowData] = []
-    @Published var sortedHistoryRowData: [RowData] = []
+    @Published var historyRowData: [UserDatePair] = []
+    @Published var sortedHistoryRowData: [UserDatePair] = []
     @Published var isLoading: Bool = false
     @Published var isShowMarker: Bool = false
     
@@ -53,9 +53,8 @@ class BLEHistoryViewModel: ObservableObject {
             }
             
             let userDatePair = try await createUserDatePair(historyDataList: filteredHistoryData)
-            let historyRowDataList = try await createHistoryRowData(pairs: userDatePair)
             
-            self.historyRowData = historyRowDataList
+            self.historyRowData = userDatePair
             self.isShowMarker = false
         } catch {
             print("error: \(error)")
@@ -101,8 +100,8 @@ class BLEHistoryViewModel: ObservableObject {
     func setupSubscribers() {
         $historyRowData
             .map { records in
-                records.sorted { (a: RowData, b: RowData) -> Bool in
-                    return a.pairData.date > b.pairData.date  // date が新しいもの順にソート
+                records.sorted { (a: UserDatePair, b: UserDatePair) -> Bool in
+                    return a.date > b.date  // date が新しいもの順にソート
                 }
             }
             .assign(to: &$sortedHistoryRowData)
@@ -112,7 +111,7 @@ class BLEHistoryViewModel: ObservableObject {
                 guard let self = self else { return }
                 
                 self.historyRowData = self.historyRowData.filter { historyData in
-                    !newBlockUserIds.contains(historyData.pairData.userIdentifier)
+                    !newBlockUserIds.contains(historyData.userIdentifier)
                 }
             }
             .store(in: &cancellables)
@@ -128,26 +127,6 @@ class BLEHistoryViewModel: ObservableObject {
         
         return (0..<users.count).map { index in
             UserDatePair(user: users[index], date: dates[index])
-        }
-    }
-    
-    /// HistoryRowDataの作成（並列処理）
-    private func createHistoryRowData(pairs: [UserDatePair]) async throws -> [RowData] {
-        return try await withThrowingTaskGroup(of: RowData.self) { group in
-            for pair in pairs {
-                group.addTask {
-                    //async let interestTags = UserService.fetchInterestTags(documentId: record.user.id)
-                    async let isFollowed = FollowService.checkIsFollowed(receivedId: pair.user.id)
-                    
-                    return RowData(pairData: pair, isFollowed: await isFollowed)
-                }
-            }
-            
-            var results: [RowData] = []
-            for try await data in group {
-                results.append(data)
-            }
-            return results
         }
     }
 }
