@@ -14,7 +14,7 @@ enum AppDestination: Hashable {
     case editSNSLink
     case editArticle
     case wordCloud
-    case follow(FollowNavigationData)
+    case followFollower(FollowNavigationData)
     
     // EditProfileView 内でさらに分岐する遷移
     case profileImage
@@ -97,7 +97,7 @@ struct CurrentUserProfileView: View {
                 case .wordCloud:
                     WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
                     
-                case .follow(let data):
+                case .followFollower(let data):
                     FollowFollowerView(selectedTab: data.selectedTab,
                                        currentUser: data.currentUser)
                     .environmentObject(followViewModel)
@@ -117,9 +117,25 @@ struct CurrentUserProfileView: View {
                 }
                 
             }
+            .navigationDestination(for: ProfileDestination.self) { destination in
+                switch destination {
+                case .wordCloud(let tags):
+                    WordCloudView(skillSortedTags: tags)
+                    
+                case .FollowFollower(let data):
+                    UserFollowFollowerView(follows: data.follows,
+                                           followers: data.followers,
+                                           userName: data.userName,
+                                           selectedTab: data.tabNum)
+                }
+            }
             .navigationDestination(for: UserDatePair.self) { pairData in
                 ProfileView(user: pairData.user, currentUser: viewModel.user, date: pairData.date,
                             isShowFollowButton: true, isShowDateButton: true)
+            }
+            .navigationDestination(for: User.self) { user in
+                ProfileView(user: user, currentUser: viewModel.user, date: Date(),
+                            isShowFollowButton: false, isShowDateButton: false)
             }
         }
         .tint(.black)
@@ -177,11 +193,11 @@ struct CurrentUserProfileView: View {
     /// フォローとフォロワーのカウントビュー
     private func followFollowerCountView() -> some View {
         HStack {
-            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))) {
+            NavigationLink(value: AppDestination.followFollower(FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))) {
                 CountView(count: followViewModel.followUsers.count, text: "フォロー")
             }
             
-            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))) {
+            NavigationLink(value: AppDestination.followFollower(FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))) {
                 CountView(count: followerViewModel.followers.count, text: "フォロワー")
             }
         }
