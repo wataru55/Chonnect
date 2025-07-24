@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct UserFollowFollowerView: View {
-    let follows: [RowData]
-    let followers: [RowData]
+    let follows: [User]
+    let followers: [User]
     let userName: String
     @State var selectedTab: Int
 

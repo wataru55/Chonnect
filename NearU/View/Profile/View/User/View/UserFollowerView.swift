@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserFollowerView: View {
 //    @ObservedObject var viewModel: ProfileViewModel
-    let followers: [RowData]
+    let followers: [User]
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -22,9 +22,9 @@ struct UserFollowerView: View {
                     
                 } else {
                     ForEach(followers, id: \.self) { follower in
-                        NavigationLink(value: follower.pairData) {
-                            UserRowView(user: follower.pairData.user, tags: follower.pairData.user.interestTags,
-                                        date: nil, rssi: nil, isFollower: follower.isFollowed)
+                        NavigationLink(value: follower) {
+                            UserRowView(user: follower, tags: follower.interestTags,
+                                        date: nil, rssi: nil)
                         }
                     } //foreach
                 }

@@ -10,7 +10,7 @@ import Combine
 
 struct UserFollowView: View {
 //    @ObservedObject var viewModel: ProfileViewModel
-    let follows: [RowData]
+    let follows: [User]
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -23,9 +23,9 @@ struct UserFollowView: View {
                     
                 } else {
                     ForEach(follows, id: \.self) { followUser in
-                        NavigationLink(value: followUser.pairData) {
-                            UserRowView(user: followUser.pairData.user, tags: followUser.pairData.user.interestTags,
-                                        date: nil, rssi: nil, isFollower: followUser.isFollowed)
+                        NavigationLink(value: followUser) {
+                            UserRowView(user: followUser, tags: followUser.interestTags,
+                                        date: nil, rssi: nil)
                         }
                     }//foreach
                 }

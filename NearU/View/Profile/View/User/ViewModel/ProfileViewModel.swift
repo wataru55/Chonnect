@@ -13,8 +13,8 @@ class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
     @Published var openGraphData: [OpenGraphData] = []
-    @Published var follows: [RowData] = []
-    @Published var followers: [RowData] = []
+    @Published var follows: [User] = []
+    @Published var followers: [User] = []
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     var isFollowed: Bool = false
@@ -110,16 +110,10 @@ class ProfileViewModel: ObservableObject {
                 self.follows = []
                 return
             }
-                
-            var rows: [RowData] = []
 
             for followedUser in visibleFollowedUsers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: followedUser.user.id)
-                let row = RowData(pairData: followedUser, isFollowed: isFollowed)
-                rows.append(row)
+                self.follows.append(followedUser.user)
             }
-
-            self.follows = rows
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -135,16 +129,10 @@ class ProfileViewModel: ObservableObject {
                 self.followers = []
                 return
             }
-            
-            var followerRows: [RowData] = []
 
             for follower in visibleFollowers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: follower.user.id)
-                let addData = RowData(pairData: follower, isFollowed: isFollowed)
-                followerRows.append(addData)
+                self.followers.append(follower.user)
             }
-
-            self.followers = followerRows
         } catch {
             print("Error fetching followers: \(error)")
         }
