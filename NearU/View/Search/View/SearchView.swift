@@ -87,10 +87,14 @@ struct SearchView: View {
                 }
             }
             .navigationBarHidden(true) // デフォルトのナビゲーションバーを非表示
-            .navigationDestination(for: UserDatePair.self) { pairData in
-                ProfileView(user: pairData.user, currentUser: currentUser, date: pairData.date, // 日付は仮
+            .navigationDestination(for: User.self, destination: { user in
+                ProfileView(user: user, currentUser: currentUser, date: Date(), // 日付は仮
+                            isShowFollowButton: false, isShowDateButton: false)
+            })
+            .navigationDestination(for: UserDatePair.self, destination: { pairData in
+                ProfileView(user: pairData.user, currentUser: currentUser, date: pairData.date,
                             isShowFollowButton: true, isShowDateButton: true)
-            }
+            })
             .navigationDestination(for: ProfileDestination.self) { destination in
                 switch destination {
                 case .wordCloud(let tags):
