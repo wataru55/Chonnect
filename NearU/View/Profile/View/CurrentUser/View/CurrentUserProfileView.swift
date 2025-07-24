@@ -8,13 +8,13 @@
 import SwiftUI
 import Kingfisher
 
-enum AppDestination: Hashable {
+enum CurrentUserProfileDestination: Hashable {
     case editProfile
     case editSkillTags
     case editSNSLink
     case editArticle
     case wordCloud
-    case follow(FollowNavigationData)
+    case followFollower(FollowNavigationData)
     
     // EditProfileView 内でさらに分岐する遷移
     case profileImage
@@ -81,7 +81,7 @@ struct CurrentUserProfileView: View {
                 }//scrollview
             }// zstack
             .ignoresSafeArea()
-            .navigationDestination(for: AppDestination.self) { destination in
+            .navigationDestination(for: CurrentUserProfileDestination.self) { destination in
                 switch destination {
                 case .editProfile:
                     EditProfileView()
@@ -97,7 +97,7 @@ struct CurrentUserProfileView: View {
                 case .wordCloud:
                     WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
                     
-                case .follow(let data):
+                case .followFollower(let data):
                     FollowFollowerView(selectedTab: data.selectedTab,
                                        currentUser: data.currentUser)
                     .environmentObject(followViewModel)
@@ -117,9 +117,25 @@ struct CurrentUserProfileView: View {
                 }
                 
             }
+            .navigationDestination(for: ProfileDestination.self) { destination in
+                switch destination {
+                case .wordCloud(let tags):
+                    WordCloudView(skillSortedTags: tags)
+                    
+                case .FollowFollower(let data):
+                    UserFollowFollowerView(follows: data.follows,
+                                           followers: data.followers,
+                                           userName: data.userName,
+                                           selectedTab: data.tabNum)
+                }
+            }
             .navigationDestination(for: UserDatePair.self) { pairData in
                 ProfileView(user: pairData.user, currentUser: viewModel.user, date: pairData.date,
                             isShowFollowButton: true, isShowDateButton: true)
+            }
+            .navigationDestination(for: User.self) { user in
+                ProfileView(user: user, currentUser: viewModel.user, date: Date(),
+                            isShowFollowButton: false, isShowDateButton: false)
             }
         }
         .tint(.black)
@@ -133,7 +149,7 @@ struct CurrentUserProfileView: View {
             Spacer()
             
             VStack(spacing: 10) {
-                NavigationLink(value: AppDestination.editProfile) {
+                NavigationLink(value: CurrentUserProfileDestination.editProfile) {
                     Image(systemName: "pencil")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
@@ -144,7 +160,7 @@ struct CurrentUserProfileView: View {
                         )
                 }
                 
-                NavigationLink(value: AppDestination.editSkillTags) {
+                NavigationLink(value: CurrentUserProfileDestination.editSkillTags) {
                     Image(systemName: "tag")
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -177,11 +193,11 @@ struct CurrentUserProfileView: View {
     /// フォローとフォロワーのカウントビュー
     private func followFollowerCountView() -> some View {
         HStack {
-            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))) {
+            NavigationLink(value: CurrentUserProfileDestination.followFollower(FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))) {
                 CountView(count: followViewModel.followUsers.count, text: "フォロー")
             }
             
-            NavigationLink(value: AppDestination.follow(FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))) {
+            NavigationLink(value: CurrentUserProfileDestination.followFollower(FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))) {
                 CountView(count: followerViewModel.followers.count, text: "フォロワー")
             }
         }
@@ -216,7 +232,7 @@ struct CurrentUserProfileView: View {
     @ViewBuilder
     private func skillTags() -> some View {
         if !tagsViewModel.skillSortedTags.isEmpty {
-            NavigationLink(value: AppDestination.wordCloud) {
+            NavigationLink(value: CurrentUserProfileDestination.wordCloud) {
                 Top3TabView(tags: tagsViewModel.skillSortedTags)
             }
         }
@@ -243,7 +259,7 @@ struct CurrentUserProfileView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 if viewModel.user.snsLinks.isEmpty {
-                    NavigationLink(value: AppDestination.editSNSLink) {
+                    NavigationLink(value: CurrentUserProfileDestination.editSNSLink) {
                         HStack(spacing: 0) {
                             Image(systemName: "plus.circle")
                                 .font(.title2)
@@ -261,7 +277,7 @@ struct CurrentUserProfileView: View {
                         }
                     }
                     
-                    NavigationLink(value: AppDestination.editSNSLink) {
+                    NavigationLink(value: CurrentUserProfileDestination.editSNSLink) {
                         Image(systemName: "plus")
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .frame(width: 60, height: 60)
@@ -286,7 +302,7 @@ struct CurrentUserProfileView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 if articleLinksViewModel.openGraphData.isEmpty {
-                    NavigationLink(value: AppDestination.editArticle) {
+                    NavigationLink(value: CurrentUserProfileDestination.editArticle) {
                         HStack(spacing: 0) {
                             Image(systemName: "plus.circle")
                                 .font(.title2)
@@ -303,7 +319,7 @@ struct CurrentUserProfileView: View {
                             .environmentObject(articleLinksViewModel)
                     }
                     
-                    NavigationLink(value: AppDestination.editArticle) {
+                    NavigationLink(value: CurrentUserProfileDestination.editArticle) {
                         Image(systemName: "plus")
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .frame(width: 60, height: 60)

@@ -60,7 +60,7 @@ struct EditProfileView: View {
     // MARK: - Private Functions
     
     private func editBackgroundImage() -> some View {
-        NavigationLink(value: AppDestination.profileImage) {
+        NavigationLink(value: CurrentUserProfileDestination.profileImage) {
             VStack {
                 BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
                 
@@ -74,7 +74,7 @@ struct EditProfileView: View {
     }
     
     private func editUserName() -> some View {
-        NavigationLink(value: AppDestination.userName) {
+        NavigationLink(value: CurrentUserProfileDestination.userName) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "ユーザーネーム")
@@ -94,7 +94,7 @@ struct EditProfileView: View {
     }
     
     private func editBio() -> some View {
-        NavigationLink(value: AppDestination.bio) {
+        NavigationLink(value: CurrentUserProfileDestination.bio) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "自己紹介")
@@ -116,7 +116,7 @@ struct EditProfileView: View {
     }
     
     private func editInterestTags() -> some View {
-        NavigationLink(value: AppDestination.interestTags) {
+        NavigationLink(value: CurrentUserProfileDestination.interestTags) {
             HStack {
                 VStack(spacing: 5) {
                     captionText(text: "興味タグ")

@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+enum SettingViewDestination: Hashable {
+    case blockList
+    case editEmail
+    case editPassword
+    case deleteAccount
+}
+    
+
 struct SettingView: View {
     @StateObject var viewModel : SettingViewModel
     @State private var isShowAlert: Bool = false
@@ -30,23 +38,17 @@ struct SettingView: View {
                     }
                     
                     Section(header: Text("ブロックしたユーザーの確認および解除")) {
-                        NavigationLink {
-                            BlockListView()
-                        } label: {
+                        NavigationLink(value: SettingViewDestination.blockList) {
                             Text("ブロック一覧")
                         }
                     }
                     
                     Section(header: Text("ログイン情報の変更")) {
-                        NavigationLink {
-                            EditEmailView(viewModel: viewModel)
-                        } label: {
+                        NavigationLink(value: SettingViewDestination.editEmail) {
                             Text("メールアドレス変更")
                         }
                         
-                        NavigationLink {
-                            EditPasswordView(viewModel: viewModel)
-                        } label: {
+                        NavigationLink(value: SettingViewDestination.editPassword) {
                             Text("パスワード変更")
                         }
                     }
@@ -61,15 +63,28 @@ struct SettingView: View {
                                 .foregroundStyle(.pink)
                         }
                         
-                        NavigationLink {
-                            DeleteView(viewModel: viewModel)
-                        } label: {
+                        NavigationLink(value: SettingViewDestination.deleteAccount) {
                             Text("退会")
                         }
                     }
                 }
                 .navigationTitle("設定")
                 .toolbarBackground(Color.mint, for: .navigationBar)
+            }
+            .navigationDestination(for: SettingViewDestination.self) { destination in
+                switch destination {
+                case .blockList:
+                    BlockListView()
+                    
+                case .editEmail:
+                    EditEmailView(viewModel: viewModel)
+                
+                case .editPassword:
+                    EditPasswordView(viewModel: viewModel)
+                    
+                case .deleteAccount:
+                    DeleteView(viewModel: viewModel)
+                }
             }
             .alert("確認", isPresented: $isShowAlert) {
                 Button("キャンセル", role: .cancel) {
