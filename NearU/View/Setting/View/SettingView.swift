@@ -71,7 +71,7 @@ struct SettingView: View {
                 .navigationTitle("設定")
                 .toolbarBackground(Color.mint, for: .navigationBar)
             }
-            .navigationDestination(for: SettingViewDestination.self, destination: { destination in
+            .navigationDestination(for: SettingViewDestination.self) { destination in
                 switch destination {
                 case .blockList:
                     BlockListView()
@@ -85,7 +85,7 @@ struct SettingView: View {
                 case .deleteAccount:
                     DeleteView(viewModel: viewModel)
                 }
-            })
+            }
             .alert("確認", isPresented: $isShowAlert) {
                 Button("キャンセル", role: .cancel) {
                     isShowAlert = false
