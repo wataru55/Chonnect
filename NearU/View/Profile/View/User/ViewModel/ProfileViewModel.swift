@@ -159,7 +159,8 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func followUser(date: Date) async {
+    func followUser(date: Date?) async {
+        guard let date = date else { return }
         guard let fcmToken = user.fcmtoken else { return }
         state = .loading
         do {

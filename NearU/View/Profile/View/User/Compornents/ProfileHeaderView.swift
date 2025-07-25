@@ -191,7 +191,7 @@ struct ProfileHeaderView: View {
             } else {
                 Button {
                     Task {
-                        await viewModel.followUser(date: date ?? Date())
+                        await viewModel.followUser(date: date)
                     }
                 } label: {
                     Text("フォロー")
