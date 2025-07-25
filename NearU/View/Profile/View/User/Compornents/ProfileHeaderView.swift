@@ -141,7 +141,7 @@ struct ProfileHeaderView: View {
                 .font(.subheadline)
                 .offset(y: 7)
             
-            if isShowDateButton {
+            if isShowDateButton && !viewModel.isMyProfile {
                 SupplementButtonView(date: date, userId: viewModel.user.id)
                     .padding(.leading, 10)
                     .offset(x: -5, y: 4)

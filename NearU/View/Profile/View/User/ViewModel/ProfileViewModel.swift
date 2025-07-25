@@ -28,6 +28,10 @@ class ProfileViewModel: ObservableObject {
         isFollow && isFollowed
     }
     
+    var isMyProfile: Bool {
+        user.id == currentUser.id
+    }
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser

@@ -90,7 +90,7 @@ struct ProfileView: View {
     /// SNSリンクを表示するview
     @ViewBuilder
     private func snsLinks() -> some View {
-        if !viewModel.user.snsLinks.isEmpty && viewModel.user.isPrivate && !viewModel.isMutualFollow {
+        if !viewModel.user.snsLinks.isEmpty && viewModel.user.isPrivate && !viewModel.isMutualFollow && !viewModel.isMyProfile {
             Text("非公開アカウントです")
                 .font(.subheadline)
                 .fontWeight(.bold)
@@ -110,7 +110,7 @@ struct ProfileView: View {
                     ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
                         if let url = viewModel.user.snsLinks[key] {
                             SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
-                                .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow)
+                                .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow && !viewModel.isMyProfile)
                         }
                     }
                 }//hstack
