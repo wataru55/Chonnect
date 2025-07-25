@@ -22,12 +22,9 @@ struct FollowerView: View {
                                     isAbleToReload: true)
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in
-                        NavigationLink {
-                            ProfileView(user: follower.user, currentUser: currentUser, date: follower.date,
-                                        isShowFollowButton: true, isShowDateButton: true)
-                        } label: {
+                        NavigationLink(value: follower) {
                             UserRowView(user: follower.user, tags: follower.user.interestTags,
-                                        date: follower.date, rssi: nil, isFollower: false)
+                                        date: follower.date, rssi: nil)
                         }
                     } //foreach
                 }

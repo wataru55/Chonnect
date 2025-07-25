@@ -13,10 +13,8 @@ class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var currentUser: User
     @Published var openGraphData: [OpenGraphData] = []
-    @Published var follows: [RowData] = []
-    @Published var followers: [RowData] = []
-    @Published var followCount: Int = 0
-    @Published var followerCount: Int = 0
+    @Published var follows: [User] = []
+    @Published var followers: [User] = []
     @Published var skillSortedTags: [WordElement] = []
     @Published var isFollow: Bool = false
     var isFollowed: Bool = false
@@ -30,6 +28,10 @@ class ProfileViewModel: ObservableObject {
         isFollow && isFollowed
     }
     
+    var isMyProfile: Bool {
+        user.id == currentUser.id
+    }
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
@@ -39,10 +41,10 @@ class ProfileViewModel: ObservableObject {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask {
-                    await self.loadFollowCount()
+                    await self.loadFollowUsers()
                 }
                 group.addTask {
-                    await self.loadFollowerCount()
+                    await self.loadFollowers()
                 }
                 group.addTask {
                     await self.loadSkillTags()
@@ -103,16 +105,6 @@ class ProfileViewModel: ObservableObject {
     }
     
     @MainActor
-    func loadFollowCount() async {
-        self.followCount = await FollowService.fetchFollowedUserCount(receivedId: user.id)
-    }
-    
-    @MainActor
-    func loadFollowerCount() async {
-        self.followerCount = await FollowService.fetchFollowerCount(receivedId: user.id)
-    }
-    
-    @MainActor
     func loadFollowUsers() async {
         do {
             let followedUsers = try await FollowService.fetchFollowedUsers(receivedId: user.id)
@@ -122,16 +114,10 @@ class ProfileViewModel: ObservableObject {
                 self.follows = []
                 return
             }
-                
-            var rows: [RowData] = []
 
             for followedUser in visibleFollowedUsers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: followedUser.user.id)
-                let row = RowData(pairData: followedUser, isFollowed: isFollowed)
-                rows.append(row)
+                self.follows.append(followedUser.user)
             }
-
-            self.follows = rows
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -147,16 +133,10 @@ class ProfileViewModel: ObservableObject {
                 self.followers = []
                 return
             }
-            
-            var followerRows: [RowData] = []
 
             for follower in visibleFollowers {
-                let isFollowed = await FollowService.checkIsFollowed(receivedId: follower.user.id)
-                let addData = RowData(pairData: follower, isFollowed: isFollowed)
-                followerRows.append(addData)
+                self.followers.append(follower.user)
             }
-
-            self.followers = followerRows
         } catch {
             print("Error fetching followers: \(error)")
         }
@@ -179,7 +159,8 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func followUser(date: Date) async {
+    func followUser(date: Date?) async {
+        guard let date = date else { return }
         guard let fcmToken = user.fcmtoken else { return }
         state = .loading
         do {
@@ -187,7 +168,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
             await MainActor.run {
                 self.isFollow = true
-                self.followerCount += 1
+                // フォローに成功した場合、自分をフォローリストに追加
+                self.followers.append(currentUser)
                 self.state = .success
             }
             // プッシュ通知を送信
@@ -212,7 +194,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.unFollowUser(receivedId: user.id)
             await MainActor.run {
                 self.isFollow = false
-                self.followerCount -= 1
+                // フォロー解除に成功した場合、自分をフォロワーリストからも削除
+                followers.removeAll { $0.id == currentUser.id }
                 self.state = .success
                 // 相互フォローも解除
             }
@@ -222,5 +205,4 @@ class ProfileViewModel: ObservableObject {
             self.state = .idle
         }
     }
-        
 }

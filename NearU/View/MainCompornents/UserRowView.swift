@@ -12,7 +12,6 @@ struct UserRowView: View {
     let tags: [String]
     let date: Date?
     let rssi: Int?
-    let isFollower: Bool?
 
     var body: some View {
         HStack(alignment: .center) {
@@ -27,12 +26,6 @@ struct UserRowView: View {
                             .foregroundStyle(.black)
                             .lineLimit(1)
                             .truncationMode(.tail)
-
-                        if isFollower == true {
-                            Text("フォローされています")
-                                .font(.caption2)
-                                .foregroundStyle(.gray)
-                        }
                     } //vstack
                     .padding(.leading, 5)
 
@@ -130,6 +123,5 @@ struct UserRowView: View {
                 tags: ["SwiftUI", "UIKit", "iOSDC"],
                 date: Date(),
                 rssi: nil,
-                isFollower: true
     )
 }

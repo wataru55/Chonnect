@@ -6,6 +6,11 @@
 //
 import SwiftUI
 
+enum ProfileDestination: Hashable {
+    case wordCloud([WordElement])
+    case FollowFollower(FollowFollowerData)
+}
+
 struct SearchView: View {
     @StateObject var historyManager = HistoryManager()
     @AppStorage("isOnBluetooth") var isOnBluetooth: Bool = true
@@ -82,6 +87,26 @@ struct SearchView: View {
                 }
             }
             .navigationBarHidden(true) // デフォルトのナビゲーションバーを非表示
+            .navigationDestination(for: User.self) { user in
+                ProfileView(user: user, currentUser: currentUser, date: nil, // 日付は仮
+                            isShowFollowButton: false, isShowDateButton: true)
+            }
+            .navigationDestination(for: UserDatePair.self) { pairData in
+                ProfileView(user: pairData.user, currentUser: currentUser, date: pairData.date,
+                            isShowFollowButton: true, isShowDateButton: true)
+            }
+            .navigationDestination(for: ProfileDestination.self) { destination in
+                switch destination {
+                case .wordCloud(let tags):
+                    WordCloudView(skillSortedTags: tags)
+                    
+                case .FollowFollower(let data):
+                    UserFollowFollowerView(follows: data.follows,
+                                           followers: data.followers,
+                                           userName: data.userName,
+                                           selectedTab: data.tabNum)
+                }
+            }
         }
         .tint(.black)
     }
