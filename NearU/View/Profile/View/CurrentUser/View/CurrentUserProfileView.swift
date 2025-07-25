@@ -134,8 +134,8 @@ struct CurrentUserProfileView: View {
                             isShowFollowButton: true, isShowDateButton: true)
             }
             .navigationDestination(for: User.self) { user in
-                ProfileView(user: user, currentUser: viewModel.user, date: Date(),
-                            isShowFollowButton: false, isShowDateButton: false)
+                ProfileView(user: user, currentUser: viewModel.user, date: nil,
+                            isShowFollowButton: false, isShowDateButton: true)
             }
         }
         .tint(.black)

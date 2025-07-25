@@ -13,7 +13,7 @@ struct ProfileHeaderView: View {
     @State private var isShowCheck: Bool = false
     @Environment(\.dismiss) var dismiss
 
-    let date: Date
+    let date: Date?
     let isShowFollowButton: Bool
     let isShowDateButton: Bool
 
@@ -191,7 +191,7 @@ struct ProfileHeaderView: View {
             } else {
                 Button {
                     Task {
-                        await viewModel.followUser(date: date)
+                        await viewModel.followUser(date: date ?? Date())
                     }
                 } label: {
                     Text("フォロー")

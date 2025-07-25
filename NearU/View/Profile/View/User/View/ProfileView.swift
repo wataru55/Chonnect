@@ -12,13 +12,13 @@ struct ProfileView: View {
     @StateObject var supplementButtonViewModel = SupplementButtonViewModel()
     @State var isShowWordCloud: Bool = false
 
-    let date: Date
+    let date: Date?
     let isShowFollowButton: Bool
     let isShowDateButton: Bool
     
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
+    init(user: User, currentUser: User, date: Date?, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
         self.date = date
         self.isShowFollowButton = (user.id == currentUser.id) ? false : isShowFollowButton
