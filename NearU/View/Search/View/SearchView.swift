@@ -88,8 +88,8 @@ struct SearchView: View {
             }
             .navigationBarHidden(true) // デフォルトのナビゲーションバーを非表示
             .navigationDestination(for: User.self) { user in
-                ProfileView(user: user, currentUser: currentUser, date: Date(), // 日付は仮
-                            isShowFollowButton: false, isShowDateButton: false)
+                ProfileView(user: user, currentUser: currentUser, date: nil, // 日付は仮
+                            isShowFollowButton: false, isShowDateButton: true)
             }
             .navigationDestination(for: UserDatePair.self) { pairData in
                 ProfileView(user: pairData.user, currentUser: currentUser, date: pairData.date,

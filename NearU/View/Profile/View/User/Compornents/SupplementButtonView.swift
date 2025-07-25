@@ -11,7 +11,7 @@ struct SupplementButtonView: View {
     @EnvironmentObject private var viewModel: SupplementButtonViewModel
     @Environment(\.dismiss) var dismiss
     
-    let date: Date
+    let date: Date?
     let userId: String
 
     var body: some View {
@@ -47,7 +47,7 @@ struct SupplementButtonView: View {
         }
     }
     
-    private func tapOver(date: Date) -> some View {
+    private func tapOver(date: Date?) -> some View {
         VStack(spacing: 0) {
             Text("最後にすれちがった日時：\(formattedDate(date))")
                 .font(.footnote)
@@ -82,7 +82,8 @@ struct SupplementButtonView: View {
         }
     }
     
-    private func formattedDate(_ date: Date) -> String {
+    private func formattedDate(_ date: Date?) -> String {
+        guard let date = date else { return "-" }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP") // 日本語ロケール
         formatter.dateFormat = "yyyy/MM/dd (EEE) HH:mm" // 曜日を追加

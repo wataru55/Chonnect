@@ -12,13 +12,13 @@ struct ProfileView: View {
     @StateObject var supplementButtonViewModel = SupplementButtonViewModel()
     @State var isShowWordCloud: Bool = false
 
-    let date: Date
+    let date: Date?
     let isShowFollowButton: Bool
     let isShowDateButton: Bool
     
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)
 
-    init(user: User, currentUser: User, date: Date, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
+    init(user: User, currentUser: User, date: Date?, isShowFollowButton: Bool = false, isShowDateButton: Bool) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user, currentUser: currentUser))
         self.date = date
         self.isShowFollowButton = (user.id == currentUser.id) ? false : isShowFollowButton
@@ -90,7 +90,7 @@ struct ProfileView: View {
     /// SNSリンクを表示するview
     @ViewBuilder
     private func snsLinks() -> some View {
-        if !viewModel.user.snsLinks.isEmpty && viewModel.user.isPrivate && !viewModel.isMutualFollow {
+        if !viewModel.user.snsLinks.isEmpty && viewModel.user.isPrivate && !viewModel.isMutualFollow && !viewModel.isMyProfile {
             Text("非公開アカウントです")
                 .font(.subheadline)
                 .fontWeight(.bold)
@@ -110,7 +110,7 @@ struct ProfileView: View {
                     ForEach (Array(viewModel.user.snsLinks.keys), id: \.self) { key in
                         if let url = viewModel.user.snsLinks[key] {
                             SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: false)
-                                .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow)
+                                .disabled(viewModel.user.isPrivate && !viewModel.isMutualFollow && !viewModel.isMyProfile)
                         }
                     }
                 }//hstack

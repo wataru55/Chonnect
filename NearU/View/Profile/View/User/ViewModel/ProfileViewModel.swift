@@ -28,6 +28,10 @@ class ProfileViewModel: ObservableObject {
         isFollow && isFollowed
     }
     
+    var isMyProfile: Bool {
+        user.id == currentUser.id
+    }
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
@@ -155,7 +159,8 @@ class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    func followUser(date: Date) async {
+    func followUser(date: Date?) async {
+        guard let date = date else { return }
         guard let fcmToken = user.fcmtoken else { return }
         state = .loading
         do {
@@ -163,7 +168,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
             await MainActor.run {
                 self.isFollow = true
-                // ToDo: フォローに成功した場合、自分をフォローリストに追加
+                // フォローに成功した場合、自分をフォローリストに追加
+                self.followers.append(currentUser)
                 self.state = .success
             }
             // プッシュ通知を送信
@@ -188,7 +194,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.unFollowUser(receivedId: user.id)
             await MainActor.run {
                 self.isFollow = false
-                // ToDo: フォロー解除に成功した場合、自分をフォロワーリストからも削除
+                // フォロー解除に成功した場合、自分をフォロワーリストからも削除
+                followers.removeAll { $0.id == currentUser.id }
                 self.state = .success
                 // 相互フォローも解除
             }
