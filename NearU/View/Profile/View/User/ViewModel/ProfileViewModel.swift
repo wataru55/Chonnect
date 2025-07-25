@@ -167,7 +167,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.followUser(receivedId: user.id, date: date)
             await MainActor.run {
                 self.isFollow = true
-                // ToDo: フォローに成功した場合、自分をフォローリストに追加
+                // フォローに成功した場合、自分をフォローリストに追加
+                self.followers.append(currentUser)
                 self.state = .success
             }
             // プッシュ通知を送信
@@ -192,7 +193,8 @@ class ProfileViewModel: ObservableObject {
             try await CurrentUserActions.unFollowUser(receivedId: user.id)
             await MainActor.run {
                 self.isFollow = false
-                // ToDo: フォロー解除に成功した場合、自分をフォロワーリストからも削除
+                // フォロー解除に成功した場合、自分をフォロワーリストからも削除
+                followers.removeAll { $0.id == currentUser.id }
                 self.state = .success
                 // 相互フォローも解除
             }
