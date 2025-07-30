@@ -13,16 +13,15 @@ struct AttributeView: View {
     let text: String
 
     var body: some View {
-        Text(text)
-            .foregroundStyle(.white)
-            .font(.footnote)
-            .fontWeight(.bold)
-            .padding(5)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(backgroundColor(for: text))
-                    .frame(width: 80)
-            )
+        RoundedRectangle(cornerRadius: 4)
+            .fill(backgroundColor(for: text))
+            .frame(width: 80, height: 30)
+            .overlay {
+                Text(text)
+                    .foregroundStyle(.white)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+            }
     }
 
     // タグの内容に応じた色を返す関数
