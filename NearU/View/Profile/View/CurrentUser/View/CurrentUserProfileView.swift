@@ -20,6 +20,7 @@ enum CurrentUserProfileDestination: Hashable {
     case profileImage
     case userName
     case bio
+    case attribute
     case interestTags
 }
 
@@ -111,6 +112,10 @@ struct CurrentUserProfileView: View {
                 case .bio:
                     EditBioView()
                         .environmentObject(viewModel)
+                case .attribute:
+                    EditAttributeTags()
+                        .environmentObject(viewModel)
+                        
                 case .interestTags:
                     EditInterestTagsView()
                         .environmentObject(viewModel)
