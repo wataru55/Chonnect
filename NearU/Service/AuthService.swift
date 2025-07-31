@@ -305,7 +305,7 @@ class AuthService {
     
     //Firestore Databaseにユーザ情報を追加する関数
     private func createUserDocument(id: String, uid: String, username: String, isPrivate: Bool) async -> Result<Bool, AuthError> {
-        let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:], interestTags: [])
+        let user = User(id: id, uid: uid, username: username, isPrivate: isPrivate, snsLinks: [:], attributes: [], interestTags: [])
         self.currentUser = user
 
         do {
