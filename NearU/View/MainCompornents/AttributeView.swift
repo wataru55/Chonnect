@@ -11,11 +11,12 @@ import SwiftUI
 
 struct AttributeView: View {
     let text: String
+    let availableOpacity: Bool
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 4)
-            .fill(backgroundColor(for: text))
-            .frame(width: 80, height: 30)
+        RoundedRectangle(cornerRadius: 30)
+            .fill(backgroundColor(for: text).opacity(availableOpacity ? 0.8 : 1.0))
+            .frame(width: 80, height: 25)
             .overlay {
                 Text(text)
                     .foregroundStyle(.white)
@@ -53,16 +54,29 @@ struct AttributeView: View {
     }
 }
 
-// プレビュー
-#Preview {
-    AttributeView(text: "FullStack")
-    AttributeView(text: "FrontEnd")
-    AttributeView(text: "BackEnd")
-    AttributeView(text: "Native")
-    AttributeView(text: "Game")
-    AttributeView(text: "SRE")
-    AttributeView(text: "Security")
-    AttributeView(text: "AI")
-    AttributeView(text: "Hardware")
-    AttributeView(text: "3DModeling")
+struct Attributes: View {
+    let attributes: [String]
+    let availableOpacity: Bool
+        
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(attributes, id: \.self) { attribute in
+                AttributeView(text: attribute, availableOpacity: availableOpacity)
+            }
+        }
+    }
 }
+
+// プレビュー
+//#Preview {
+//    AttributeView(text: "FullStack")
+//    AttributeView(text: "FrontEnd")
+//    AttributeView(text: "BackEnd")
+//    AttributeView(text: "Native")
+//    AttributeView(text: "Game")
+//    AttributeView(text: "SRE")
+//    AttributeView(text: "Security")
+//    AttributeView(text: "AI")
+//    AttributeView(text: "Hardware")
+//    AttributeView(text: "3DModeling")
+//}
