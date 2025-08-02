@@ -52,7 +52,7 @@ struct EditAttributeTags: View {
                         }
                     } label: {
                         HStack {
-                            AttributeView(text: attribute)
+                            AttributeView(text: attribute, availableOpacity: false)
                             
                             Spacer()
                             

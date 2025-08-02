@@ -125,12 +125,8 @@ struct EditProfileView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "属性")
                     
-                    HStack (spacing: 10) {
-                        ForEach(viewModel.user.attributes, id: \.self) { attribute in
-                            AttributeView(text: attribute)
-                        }
-                    }
-                    .padding(.horizontal, 5)
+                    Attributes(attributes: viewModel.user.attributes, availableOpacity: false)
+                        .padding(.horizontal, 5)
                 }
                 
                 Spacer()
