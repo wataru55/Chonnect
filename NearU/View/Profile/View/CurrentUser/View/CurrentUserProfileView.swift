@@ -56,6 +56,8 @@ struct CurrentUserProfileView: View {
                                 .frame(height: 200)
                             
                             VStack(alignment: .leading, spacing: 6) {
+                                Attributes(attributes: viewModel.user.attributes, availableOpacity: true)
+                                
                                 userNameAndPrivateIcon()
                                 
                                 followFollowerCountView()
@@ -187,7 +189,6 @@ struct CurrentUserProfileView: View {
                 .font(.system(size: 35, weight: .bold, design: .default))
                 .lineLimit(1)
                 .padding(.bottom, 1)
-                .padding(.top, 5)
             
             Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                 .font(.subheadline)
