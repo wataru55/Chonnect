@@ -7,20 +7,53 @@
 
 import SwiftUI
 
-import SwiftUI
+enum AttributeOption {
+    case profile
+    case edit
+    case row
+    
+    var font: Font {
+        switch self {
+        case .profile, .edit:
+            return .footnote
+        case .row:
+            return .caption
+        }
+    }
+    
+    var availableOpacity: Bool {
+        switch self {
+        case .profile:
+            return true
+        case .edit, .row:
+            return false
+        }
+    }
+    
+    var height: CGFloat {
+        switch self {
+        case .profile, .edit:
+            return 25
+            
+        case .row:
+            return 20
+        }
+    }
+    
+}
 
 struct AttributeView: View {
     let text: String
-    let availableOpacity: Bool
+    let option: AttributeOption
 
     var body: some View {
         RoundedRectangle(cornerRadius: 30)
-            .fill(backgroundColor(for: text).opacity(availableOpacity ? 0.8 : 1.0))
-            .frame(width: 80, height: 25)
+            .fill(backgroundColor(for: text).opacity(option.availableOpacity ? 0.8 : 1.0))
+            .frame(width: 80, height: option.height)
             .overlay {
                 Text(text)
                     .foregroundStyle(.white)
-                    .font(.footnote)
+                    .font(option.font)
                     .fontWeight(.bold)
             }
     }
@@ -56,12 +89,12 @@ struct AttributeView: View {
 
 struct Attributes: View {
     let attributes: [String]
-    let availableOpacity: Bool
+    let option: AttributeOption
         
     var body: some View {
         HStack(spacing: 5) {
             ForEach(attributes, id: \.self) { attribute in
-                AttributeView(text: attribute, availableOpacity: availableOpacity)
+                AttributeView(text: attribute, option: option)
             }
         }
     }

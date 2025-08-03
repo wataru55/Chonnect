@@ -125,7 +125,7 @@ struct EditProfileView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     captionText(text: "属性")
                     
-                    Attributes(attributes: viewModel.user.attributes, availableOpacity: false)
+                    Attributes(attributes: viewModel.user.attributes, option: AttributeOption.edit)
                         .padding(.horizontal, 5)
                 }
                 

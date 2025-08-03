@@ -56,7 +56,7 @@ struct CurrentUserProfileView: View {
                                 .frame(height: 200)
                             
                             VStack(alignment: .leading, spacing: 6) {
-                                Attributes(attributes: viewModel.user.attributes, availableOpacity: true)
+                                Attributes(attributes: viewModel.user.attributes, option: AttributeOption.profile)
                                 
                                 userNameAndPrivateIcon()
                                 
