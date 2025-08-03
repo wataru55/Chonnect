@@ -36,7 +36,7 @@ enum AttributeOption {
             return 25
             
         case .row:
-            return 20
+            return 18
         }
     }
     
