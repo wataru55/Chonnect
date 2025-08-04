@@ -14,6 +14,7 @@ class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var userName: String = ""
     @Published var bio: String = ""
+    @Published var attributes: [String] = []
     @Published var interestTags: [String] = []
     
     @Published var isLoading: Bool = false
@@ -39,6 +40,10 @@ class CurrentUserProfileViewModel: ObservableObject {
         user.bio != bio
     }
     
+    var isAttributesUnique: Bool {
+        user.attributes != attributes
+    }
+    
     var isInterestTagsValid: Bool {
         Validation.validateInterestTag(tags: interestTags)
     }
@@ -51,7 +56,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
+            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], attributes: [], interestTags: [])
         }
         
         setupSubscribers()
@@ -100,6 +105,23 @@ class CurrentUserProfileViewModel: ObservableObject {
             AuthService.shared.currentUser?.bio = cleanedBio
             self.state = .success
             
+        } catch {
+            self.alertType = .okOnly(message: error.localizedDescription)
+            throw error
+        }
+    }
+    
+    @MainActor
+    func saveAttributes() async throws {
+        self.isLoading = true
+        defer {
+            self.isLoading = false
+        }
+        
+        do {
+            try await CurrentUserService.updateAttributes(attributes: attributes)
+            AuthService.shared.currentUser?.attributes = attributes
+            self.state = .success
         } catch {
             self.alertType = .okOnly(message: error.localizedDescription)
             throw error

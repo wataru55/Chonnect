@@ -47,7 +47,7 @@ class EditImageViewModel: ObservableObject {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], interestTags: [])
+            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], attributes: [], interestTags: [])
         }
     }
     

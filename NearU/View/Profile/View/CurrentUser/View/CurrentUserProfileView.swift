@@ -20,6 +20,7 @@ enum CurrentUserProfileDestination: Hashable {
     case profileImage
     case userName
     case bio
+    case attribute
     case interestTags
 }
 
@@ -55,6 +56,8 @@ struct CurrentUserProfileView: View {
                                 .frame(height: 200)
                             
                             VStack(alignment: .leading, spacing: 6) {
+                                Attributes(attributes: viewModel.user.attributes, option: AttributeOption.profile)
+                                
                                 userNameAndPrivateIcon()
                                 
                                 followFollowerCountView()
@@ -111,6 +114,10 @@ struct CurrentUserProfileView: View {
                 case .bio:
                     EditBioView()
                         .environmentObject(viewModel)
+                case .attribute:
+                    EditAttributeTags()
+                        .environmentObject(viewModel)
+                        
                 case .interestTags:
                     EditInterestTagsView()
                         .environmentObject(viewModel)
@@ -182,7 +189,6 @@ struct CurrentUserProfileView: View {
                 .font(.system(size: 35, weight: .bold, design: .default))
                 .lineLimit(1)
                 .padding(.bottom, 1)
-                .padding(.top, 5)
             
             Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")
                 .font(.subheadline)

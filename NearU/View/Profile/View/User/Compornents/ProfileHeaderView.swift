@@ -31,6 +31,8 @@ struct ProfileHeaderView: View {
                     .frame(height: 250)
                 
                 VStack(alignment: .leading, spacing: 6) {
+                    Attributes(attributes: viewModel.user.attributes, option: AttributeOption.profile)
+                    
                     userNameAndInfo()
                     
                     HStack {
@@ -134,7 +136,6 @@ struct ProfileHeaderView: View {
             Text(viewModel.user.username)
                 .font(.system(size: 35, weight: .bold, design: .default))
                 .padding(.bottom, 1)
-                .padding(.top, 5)
                 .lineLimit(1)
             
             Image(systemName: viewModel.user.isPrivate ? "lock.fill" : "lock.open.fill")

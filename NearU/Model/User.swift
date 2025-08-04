@@ -17,6 +17,7 @@ struct User: Identifiable, Hashable, Codable, UserIdentifiable {
     var bio: String?
     var isPrivate: Bool
     var snsLinks: [String: String]
+    var attributes: [String]
     var interestTags: [String]
     var fcmtoken: String?
 
@@ -30,9 +31,11 @@ struct User: Identifiable, Hashable, Codable, UserIdentifiable {
 
 extension User {
     static var MOCK_USERS: [User] = [
-        .init(id: "FEstc1eg",uid: NSUUID().uuidString, username: "ironman", bio: "I am ironman", isPrivate: false, snsLinks: [:], interestTags: []),
+        .init(id: "FEstc1eg",uid: NSUUID().uuidString, username: "ironman", bio: "I am ironman",
+              isPrivate: false, snsLinks: [:], attributes: [], interestTags: []),
 
             .init(id: "FEstc1eg", uid: NSUUID().uuidString, username: "spiderman",
-                  bio: "With great power comes great responsibility", isPrivate: true, snsLinks: [:], interestTags: [])
+                  bio: "With great power comes great responsibility",
+                  isPrivate: true, snsLinks: [:], attributes: [], interestTags: [])
     ]
 }

@@ -29,6 +29,10 @@ struct EditProfileView: View {
                     
                     Divider()
                     
+                    editAttributes()
+                    
+                    Divider()
+                    
                     editInterestTags()
                 }//vstack
                 .padding(.top, 5)
@@ -103,6 +107,26 @@ struct EditProfileView: View {
                         .padding(.horizontal, 5)
                         .multilineTextAlignment(TextAlignment.leading)
                         .lineLimit(5, reservesSpace: true)
+                }
+                
+                Spacer()
+                
+                chevron()
+            }
+            .font(.subheadline)
+            .padding(5)
+            .padding(.vertical, 5)
+        }
+    }
+    
+    private func editAttributes() -> some View {
+        NavigationLink(value: CurrentUserProfileDestination.attribute) {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    captionText(text: "属性")
+                    
+                    Attributes(attributes: viewModel.user.attributes, option: AttributeOption.edit)
+                        .padding(.horizontal, 5)
                 }
                 
                 Spacer()
