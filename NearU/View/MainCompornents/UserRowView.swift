@@ -18,7 +18,10 @@ struct UserRowView: View {
             CircleImageView(user: user, size: .medium, borderColor: .clear)
             
             VStack(alignment: .leading, spacing: 5) {
+                Spacer()
+                
                 Attributes(attributes: user.attributes, option: AttributeOption.row)
+                    .padding(.top, 5)
                 
                 HStack {
                     Text(user.username)
@@ -41,7 +44,7 @@ struct UserRowView: View {
                         }
                         
                         if let date = date {
-                            HStack(spacing: 4) {
+                            VStack(alignment: .trailing, spacing: 0) {
                                 Text("最後のすれちがい")
                                 
                                 Text(formattedDate(from: date))
@@ -55,13 +58,17 @@ struct UserRowView: View {
                 if !tags.isEmpty {
                     InterestTagView(interestTags: tags, isShowDeleteButton: false, textFont: .caption)
                         .padding(.leading, 5)
+                        .padding(.bottom, 5)
                 }
                 
+                Spacer()
+                
             }// vstack
+            .frame(height: 80)
         } //hstack
         .foregroundStyle(.black)
         .padding(.horizontal)
-        .frame(height: 90)
+        .frame(height: 80)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .padding(.horizontal, 5)
