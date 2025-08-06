@@ -111,6 +111,10 @@
 		63D957D32E300A600006C73F /* FollowFollowerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D22E300A600006C73F /* FollowFollowerData.swift */; };
 		63D957D52E37B7800006C73F /* AttributeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D42E37B7800006C73F /* AttributeView.swift */; };
 		63D957D72E39FE830006C73F /* EditAttributeTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D62E39FE830006C73F /* EditAttributeTags.swift */; };
+		63D9580F2E433B380006C73F /* UserProfileDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D9580E2E433B380006C73F /* UserProfileDataCache.swift */; };
+		63D958112E433CBF0006C73F /* UserCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958102E433CBF0006C73F /* UserCache.swift */; };
+		63D958132E435A4F0006C73F /* WordElementCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958122E435A4E0006C73F /* WordElementCache.swift */; };
+		63D958152E439E1D0006C73F /* OpenGraphDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -266,6 +270,10 @@
 		63D957D22E300A600006C73F /* FollowFollowerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowFollowerData.swift; sourceTree = "<group>"; };
 		63D957D42E37B7800006C73F /* AttributeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeView.swift; sourceTree = "<group>"; };
 		63D957D62E39FE830006C73F /* EditAttributeTags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAttributeTags.swift; sourceTree = "<group>"; };
+		63D9580E2E433B380006C73F /* UserProfileDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataCache.swift; sourceTree = "<group>"; };
+		63D958102E433CBF0006C73F /* UserCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCache.swift; sourceTree = "<group>"; };
+		63D958122E435A4E0006C73F /* WordElementCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordElementCache.swift; sourceTree = "<group>"; };
+		63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenGraphDataCache.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -427,6 +435,10 @@
 				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
 				6306046F2DEEFCE600074F24 /* Article.swift */,
 				63D957D22E300A600006C73F /* FollowFollowerData.swift */,
+				63D9580E2E433B380006C73F /* UserProfileDataCache.swift */,
+				63D958102E433CBF0006C73F /* UserCache.swift */,
+				63D958122E435A4E0006C73F /* WordElementCache.swift */,
+				63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -822,6 +834,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */,
+				63D958112E433CBF0006C73F /* UserCache.swift in Sources */,
 				63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */,
 				63AEF0FB2C0C4C6500DE196E /* FollowView.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
@@ -857,6 +870,7 @@
 				63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */,
 				6306DE4E2DDC6FC600DDEECE /* ViewStateOverlayView.swift in Sources */,
 				63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */,
+				63D958132E435A4F0006C73F /* WordElementCache.swift in Sources */,
 				63FDDFE62CF6B44D00B90074 /* SupplementButtonView.swift in Sources */,
 				6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */,
 				63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */,
@@ -888,6 +902,7 @@
 				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */,
+				63D958152E439E1D0006C73F /* OpenGraphDataCache.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
 				63483AFA2E04F8A200956814 /* UploadImageError.swift in Sources */,
 				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
@@ -940,6 +955,7 @@
 				63FDDFDD2CF1DA5800B90074 /* TagIndexView.swift in Sources */,
 				639A0BE92CE5CB7F00A769C6 /* UserFollowerView.swift in Sources */,
 				63226E1E2D69BCA5006EBCCF /* SupplementButtonViewModel.swift in Sources */,
+				63D9580F2E433B380006C73F /* UserProfileDataCache.swift in Sources */,
 				63FDDFDF2CF2F5A900B90074 /* Top3TabView.swift in Sources */,
 				F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */,
 				6306DE4C2DDC6BE600DDEECE /* SuccessView.swift in Sources */,
