@@ -108,14 +108,14 @@ struct LinkService {
     
     static func fetchOpenGraphData(article: Article) async -> OpenGraphData {
         guard let url = URL(string: article.url) else {
-            return OpenGraphData(article: article, openGraph: nil)
+            return OpenGraphData(article: article, openGraphSource: nil)
         }
         
         do {
             let og = try await OpenGraph.fetch(url: url)
-            return OpenGraphData(article: article, openGraph: og)
+            return OpenGraphData(article: article, openGraphSource: og.source)
         } catch {
-            return OpenGraphData(article: article, openGraph: nil)
+            return OpenGraphData(article: article, openGraphSource: nil)
         }
     }
     

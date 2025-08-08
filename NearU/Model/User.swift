@@ -20,11 +20,6 @@ struct User: Identifiable, Hashable, Codable, UserIdentifiable {
     var attributes: [String]
     var interestTags: [String]
     var fcmtoken: String?
-
-    var isCurrentUser: Bool {
-        guard let currentUid = Auth.auth().currentUser?.uid else { return false } //現在のユーザ情報があればそれをcurrentUidに格納
-        return currentUid == uid
-    }
     
     var userIdentifier: String { id }
 }

@@ -24,7 +24,7 @@ struct SiteLinkButtonView: View {
                 }
             } label: {
                 VStack(alignment: .leading) {
-                    if let data = ogpData.openGraph {
+                    if let data = ogpData.openGraphSource {
                         // メタデータが取得できた場合のリンクプレビュー
                         VStack(alignment: .center, spacing: 10) {
                             if let imageUrl = data[.image], let url = URL(string: imageUrl) {
