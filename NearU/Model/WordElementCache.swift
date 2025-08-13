@@ -22,3 +22,9 @@ class WordElementCache: Object, ObjectKeyIdentifiable {
         self.skill = element.skill
     }
 }
+
+extension WordElementCache {
+    func toModel() -> WordElement {
+        return WordElement(id: self.id, name: self.name, skill: self.skill)
+    }
+}

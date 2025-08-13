@@ -32,37 +32,93 @@ class ProfileViewModel: ObservableObject {
         user.id == currentUser.id
     }
     
+    // Repositoryをプロパティとして保持
+    private var userProfileRepo: UserProfileRepository?
+    
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
     }
 
-    func loadData() {
-        Task {
-            await withTaskGroup(of: Void.self) { group in
-                group.addTask {
-                    await self.loadFollowUsers()
-                }
-                group.addTask {
-                    await self.loadFollowers()
-                }
-                group.addTask {
-                    await self.loadSkillTags()
-                }
-                group.addTask {
-                    await self.checkFollow()
-                }
-                group.addTask {
-                    await self.checkFollowed()
-                }
-                group.addTask {
-                    await self.fetchArticleLinks()
-                }
-            }
-            await MainActor.run {
-                self.isLoading = false
-            }
+    func loadData() async {
+        if self.userProfileRepo == nil {
+            print("🚀 Repositoryを初期化します...")
+            self.userProfileRepo = try? await UserProfileRepository()
         }
+        
+        guard let repo = userProfileRepo else {
+            print("🚫 Repositoryがまだ準備できていません。")
+            await MainActor.run { self.isLoading = false }
+            return
+        }
+        
+        let result = await repo.fetch(userId: user.id)
+        
+        switch result {
+        case .fresh(let data):
+            print("✅ 新鮮なキャッシュを利用します")
+            await updateUI(with: data)
+            
+        case .stale(let data):
+            print("⚠️ 古いキャッシュを先に表示します")
+            await updateUI(with: data)
+            
+            print("⏳ 裏側で最新データの取得を開始します...")
+            await fetchFromNetworkAndCache()
+            
+        case .notFound:
+            print("🚫 キャッシュがないため、最新データを取得します")
+            await fetchFromNetworkAndCache()
+        }
+        
+        // 最後にローディング表示を解除
+        await MainActor.run {
+            self.isLoading = false
+        }
+    }
+    
+    @MainActor
+    private func updateUI(with data: ProfileData) {
+        self.user = data.user
+        self.follows = data.follows
+        self.followers = data.followers
+        self.skillSortedTags = data.skillTags
+        
+        // OGPデータも反映
+        self.openGraphData = data.ogp.map { tuple in
+            // 新しいinitに合わせて、辞書を直接渡す
+            return OpenGraphData(article: tuple.article, openGraphSource: tuple.openGraphSource)
+        }
+        
+        // フォロー状態のチェックはリアルタイム性が高いので別途実行
+        Task {
+            await checkFollow()
+            await checkFollowed()
+        }
+    }
+    
+    // ネットワークからデータを取得し、キャッシュに保存する
+    private func fetchFromNetworkAndCache() async {
+        // ここに元のloadDataにあったwithTaskGroupの処理を入れる
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.loadFollowUsers() }
+            group.addTask { await self.loadFollowers() }
+            group.addTask { await self.loadSkillTags() }
+            group.addTask { await self.checkFollow() }
+            group.addTask { await self.checkFollowed() }
+            group.addTask { await self.fetchArticleLinks() }
+        }
+        
+        let latestData = ProfileData(user: self.user, follows: self.follows,
+                                     followers: self.followers, skillTags: self.skillSortedTags,
+                                     ogp: self.openGraphData.map { ($0.article, $0.openGraphSource) })
+        
+        // UIを最新データで更新
+        await updateUI(with: latestData)
+        
+        // 最新データをキャッシュに保存
+        await userProfileRepo?.saveOrUpdate(profileData: latestData)
+        print("✅ 最新データを取得し、キャッシュを更新しました")
     }
 
     @MainActor
