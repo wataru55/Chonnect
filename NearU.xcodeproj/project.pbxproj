@@ -24,6 +24,8 @@
 		63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */; };
 		631812262E463EBC003E2FB0 /* UserProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812252E463EBC003E2FB0 /* UserProfileRepository.swift */; };
 		631812282E46AEA3003E2FB0 /* ProfileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812272E46AEA3003E2FB0 /* ProfileData.swift */; };
+		6318122A2E4BFC97003E2FB0 /* UserEncounterCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */; };
+		6318122C2E4C010B003E2FB0 /* EncounterRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */; };
 		63226E1E2D69BCA5006EBCCF /* SupplementButtonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */; };
 		63226E202D69BF28006EBCCF /* CurrentUserActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */; };
 		63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */; };
@@ -186,6 +188,8 @@
 		63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkView.swift; sourceTree = "<group>"; };
 		631812252E463EBC003E2FB0 /* UserProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRepository.swift; sourceTree = "<group>"; };
 		631812272E46AEA3003E2FB0 /* ProfileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileData.swift; sourceTree = "<group>"; };
+		631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEncounterCache.swift; sourceTree = "<group>"; };
+		6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncounterRepository.swift; sourceTree = "<group>"; };
 		63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementButtonViewModel.swift; sourceTree = "<group>"; };
 		63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserActions.swift; sourceTree = "<group>"; };
 		63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserManager.swift; sourceTree = "<group>"; };
@@ -354,6 +358,7 @@
 				63CE6E6B2DAD7C4800B2628D /* LinkService.swift */,
 				63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */,
 				631812252E463EBC003E2FB0 /* UserProfileRepository.swift */,
+				6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -445,6 +450,7 @@
 				63D958122E435A4E0006C73F /* WordElementCache.swift */,
 				63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */,
 				631812272E46AEA3003E2FB0 /* ProfileData.swift */,
+				631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -858,6 +864,7 @@
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
 				63D957D32E300A600006C73F /* FollowFollowerData.swift in Sources */,
+				6318122C2E4C010B003E2FB0 /* EncounterRepository.swift in Sources */,
 				63D957D12E28B18A0006C73F /* NavigationBack.swift in Sources */,
 				63CE6E682DACDC7F00B2628D /* IDGenerator.swift in Sources */,
 				63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */,
@@ -911,6 +918,7 @@
 				63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */,
 				63D958152E439E1D0006C73F /* OpenGraphDataCache.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
+				6318122A2E4BFC97003E2FB0 /* UserEncounterCache.swift in Sources */,
 				63483AFA2E04F8A200956814 /* UploadImageError.swift in Sources */,
 				631812282E46AEA3003E2FB0 /* ProfileData.swift in Sources */,
 				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
