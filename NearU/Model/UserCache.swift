@@ -31,6 +31,8 @@ class UserCache: Object, ObjectKeyIdentifiable {
     // User.fcmtoken
     @Persisted var fcmtoken: String?
     
+    @Persisted var lastUpdated: Date = Date()
+    
     // UserモデルからUserCacheを作成するためのイニシャライザ
     convenience init(from user: User) {
         self.init()
@@ -50,6 +52,8 @@ class UserCache: Object, ObjectKeyIdentifiable {
         user.snsLinks.forEach { key, value in
             self.snsLinks[key] = value
         }
+        
+        self.lastUpdated = Date()
     }
 }
 

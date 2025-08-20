@@ -30,12 +30,29 @@ actor UserRepository {
         }
     }
     
-    /// userIdを指定して、キャッシュからUser（Struct）を取得する
     func fetch(userIds: [String]) -> [User] {
-        // 1. "id IN %@" を使って、ID配列に一致するUserCacheを一度に全て取得する
-        let userCaches = realm.objects(UserCache.self).filter("id IN %@", userIds)
+        let cacheTTL: TimeInterval = CacheConfig.userProfileTTL
+        let expirationDate = Date().addingTimeInterval(-cacheTTL) // 有効期限となる日時を計算
         
-        // 2. 取得した結果を、.toModel() を使って [User] (structの配列) に変換して返す
-        return Array(userCaches.map { $0.toModel() })
+        let freshCaches = realm.objects(UserCache.self)
+            .filter("id IN %@ AND lastUpdated > %@", userIds, expirationDate)
+        
+        return Array(freshCaches.map { $0.toModel() })
+    }
+    
+    func fetch(userId: String) -> User? {
+        let cacheTTL: TimeInterval = CacheConfig.userProfileTTL
+
+        guard let userCache = realm.object(ofType: UserCache.self, forPrimaryKey: userId) else {
+            return nil
+        }
+        
+        // キャッシュが有効期限切れ（stale）でないかチェック
+        if Date().timeIntervalSince(userCache.lastUpdated) > cacheTTL {
+            return nil
+        }
+        
+        // 新鮮なキャッシュはUserに変換して返す
+        return userCache.toModel()
     }
 }
