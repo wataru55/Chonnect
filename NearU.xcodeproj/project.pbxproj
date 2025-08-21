@@ -28,6 +28,7 @@
 		6318122C2E4C010B003E2FB0 /* EncounterRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */; };
 		6318122E2E4E09A5003E2FB0 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318122D2E4E09A5003E2FB0 /* UserRepository.swift */; };
 		631812312E54E353003E2FB0 /* CacheConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812302E54E353003E2FB0 /* CacheConfig.swift */; };
+		631812332E5718AF003E2FB0 /* UserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812322E5718AF003E2FB0 /* UserProvider.swift */; };
 		63226E1E2D69BCA5006EBCCF /* SupplementButtonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */; };
 		63226E202D69BF28006EBCCF /* CurrentUserActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */; };
 		63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */; };
@@ -194,6 +195,7 @@
 		6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncounterRepository.swift; sourceTree = "<group>"; };
 		6318122D2E4E09A5003E2FB0 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		631812302E54E353003E2FB0 /* CacheConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheConfig.swift; sourceTree = "<group>"; };
+		631812322E5718AF003E2FB0 /* UserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProvider.swift; sourceTree = "<group>"; };
 		63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementButtonViewModel.swift; sourceTree = "<group>"; };
 		63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserActions.swift; sourceTree = "<group>"; };
 		63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserManager.swift; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 				631812252E463EBC003E2FB0 /* UserProfileRepository.swift */,
 				6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */,
 				6318122D2E4E09A5003E2FB0 /* UserRepository.swift */,
+				631812322E5718AF003E2FB0 /* UserProvider.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -923,6 +926,7 @@
 				630B9EA62CC345B4002F06AB /* EditLanguageTagsView.swift in Sources */,
 				639A0BDB2CE4B01200A769C6 /* FollowerViewModel.swift in Sources */,
 				63DFF88C2BF8760B00A6DFB8 /* SearchView.swift in Sources */,
+				631812332E5718AF003E2FB0 /* UserProvider.swift in Sources */,
 				637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */,
 				63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */,
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
