@@ -17,20 +17,24 @@ class UserProvider {
     }
 
     /// 複数のユーザーIDを受け取り、キャッシュとネットワークを使ってユーザー情報を返す
-    func fetchUsers(with ids: [String]) async throws -> [User] {
-        // IDリストが空なら、何もしない
-        guard !ids.isEmpty else { return [] }
+    func fetchUsers<T: UserIdentifiable>(with data: [T]) async throws -> [User] {
+        // 1. 引数のデータからブロックされたユーザーをフィルタリング
+        let filteredData = BlockUserManager.shared.filterBlockedUsers(dataList: data)
         
-        // 1. まずキャッシュに一括で問い合わせる
-        let cachedUsers = await userRepo.fetch(userIds: ids)
+        // 2. フィルタリング後のデータから必要なユーザーIDを抽出
+        let requiredIds = filteredData.map { $0.userIdentifier }
+        guard !requiredIds.isEmpty else { return [] }
+        
+        // 3. まずキャッシュに一括で問い合わせる
+        let cachedUsers = await userRepo.fetch(userIds: requiredIds)
         let cachedUserIds = Set(cachedUsers.map { $0.id })
         
         var finalUsers = cachedUsers
         
-        // 2. キャッシュに不足しているユーザーIDを特定
-        let missingUserIds = ids.filter { !cachedUserIds.contains($0) }
+        // 4. キャッシュに不足しているユーザーIDを特定
+        let missingUserIds = requiredIds.filter { !cachedUserIds.contains($0) }
         
-        // 3. 不足分があれば、ネットワークに一括で問い合わせる
+        // 5. 不足分があれば、ネットワークに一括で問い合わせる
         if !missingUserIds.isEmpty {
             print("UserProvider: \(missingUserIds.count)件の不足情報をネットワークから取得します...")
             let newFetchedUsers = try await UserService.fetchUsers(missingUserIds)
