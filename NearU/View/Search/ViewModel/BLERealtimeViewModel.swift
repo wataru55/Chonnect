@@ -13,25 +13,36 @@ class BLERealtimeViewModel: ObservableObject {
     @Published var userRealtimeRecords: [UserRealtimeRecord] = []
     @Published var sortedUserRealtimeRecords: [UserRealtimeRecord] = []
     private var cancellables = Set<AnyCancellable>()
+    
+    private var userProvider: UserProvider?
 
     init() {
         Task {
+            self.userProvider = try? await UserProvider()
             await fetchRealtimeAllUsers(realtimeDataList: RealtimeDataManager.shared.realtimeData)
         }
         setupSubscribers()
     }
-
+    
     @MainActor
     func fetchRealtimeAllUsers(realtimeDataList: [EncountDataStruct]) async {
-        var addData: [UserRealtimeRecord] = []
-        
-        for data in realtimeDataList {
-            if let user = await UserService.fetchUser(withUid: data.userId) {
-                addData.append(UserRealtimeRecord(pairData: UserDatePair(user: user, date: data.date), rssi: data.rssi))
+        do {
+            // ブロックユーザーのデータをロード
+            await BlockUserManager.shared.loadAllBlockData()
+            
+            // ブロックユーザーをフィルタリング
+            let filteredRealtimeData = BlockUserManager.shared.filterBlockedUsers(dataList: realtimeDataList)
+            
+            // フィルタリング後のデータが空でないかチェック
+            guard !filteredRealtimeData.isEmpty else {
+                self.userRealtimeRecords = []
+                return
             }
+            
+            self.userRealtimeRecords = try await makeUserRealtimeRecords(with: filteredRealtimeData)
+        } catch {
+            print("error: \(error)")
         }
-        
-        self.userRealtimeRecords = addData
     }
 
     func setupSubscribers() {
@@ -59,6 +70,29 @@ class BLERealtimeViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func makeUserRealtimeRecords(with realtimeDataList: [EncountDataStruct]) async throws -> [UserRealtimeRecord] {
+        // Providerの準備
+        guard let provider = self.userProvider else {
+            print("UserProviderが準備できていません。")
+            return []
+        }
+        // ユーザー情報を取得
+        let fetchedUsers = try await provider.fetchUsers(with: realtimeDataList)
+
+        // データの作成
+        // ユーザー情報を高速に参照できるよう辞書に変換
+        let userDictionary = fetchedUsers.reduce(into: [String: User]()) { $0[$1.id] = $1 }
+        
+        let result = realtimeDataList.compactMap { data -> UserRealtimeRecord? in
+            if let user = userDictionary[data.userId] {
+                return UserRealtimeRecord(pairData: UserDatePair(user: user, date: data.date), rssi: data.rssi)
+            }
+            return nil
+        }
+        
+        return result
     }
 
 }

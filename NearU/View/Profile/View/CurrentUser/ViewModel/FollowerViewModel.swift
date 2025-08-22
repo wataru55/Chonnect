@@ -13,22 +13,37 @@ class FollowerViewModel: ObservableObject {
     @Published var followers: [UserDatePair] = []
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
+    
+    private var userProvider: UserProvider?
 
     init() {
         listenForUpdates()
         setupSubscribers()
 
         Task {
+            self.userProvider = try? await UserProvider()
             await loadFollowers()
         }
     }
 
     @MainActor
     func loadFollowers() async {
+        guard let provider = self.userProvider else {
+            print("UserProviderが準備できていません。")
+            return
+        }
+        
         do {
-            let users = try await FollowService.fetchFollowers(receivedId: "")
-            // ブロックユーザーのフィルタリング
-            self.followers = BlockUserManager.shared.filterBlockedUsers(dataList: users)
+            let followersData = try await FollowService.fetchFollowers(receivedId: "")
+            let users = try await provider.fetchUsers(with: followersData)
+            
+            let userDictionary = users.reduce(into: [String: User]()) { $0[$1.id] = $1 }
+            self.followers = followersData.compactMap { data in
+                if let user = userDictionary[data.userId] {
+                    return UserDatePair(user: user, date: data.date)
+                }
+                return nil
+            }
         } catch {
             print("Error fetching followers: \(error)")
         }

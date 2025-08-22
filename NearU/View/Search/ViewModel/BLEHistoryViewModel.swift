@@ -12,16 +12,23 @@ import Firebase
 class BLEHistoryViewModel: ObservableObject {
     @Published var historyRowData: [UserDatePair] = []
     @Published var sortedHistoryRowData: [UserDatePair] = []
-    @Published var isLoading: Bool = false
+    @Published var isLoading: Bool = true
     @Published var isShowMarker: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     private var listenerRegistration: ListenerRegistration?
     private var isFirstLoad = true
+    
+    private var userProvider: UserProvider?
 
     init() {
         setupSubscribers()
         observeFirestoreChanges()
+        
+        Task {
+            self.userProvider = try? await UserProvider()
+            await makeHistoryRowData()
+        }
     }
     
     deinit {
@@ -41,18 +48,12 @@ class BLEHistoryViewModel: ObservableObject {
         isLoading = true
         
         do {
+            // ブロックユーザーのデータをロード
             await BlockUserManager.shared.loadAllBlockData()
             
+            // Firestoreから履歴データを取得
             let historyDataList = await loadHistoryData()
-            let filteredHistoryData = BlockUserManager.shared.filterBlockedUsers(dataList: historyDataList)
-            
-            guard !filteredHistoryData.isEmpty else {
-                self.historyRowData = []
-                isLoading = false
-                return
-            }
-            
-            let userDatePair = try await createUserDatePair(historyDataList: filteredHistoryData)
+            let userDatePair = try await createUserDatePair(historyDataList: historyDataList)
             
             self.historyRowData = userDatePair
             self.isShowMarker = false
@@ -117,16 +118,24 @@ class BLEHistoryViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // ヘルパー関数
-    /// UserDatePairの作成
     private func createUserDatePair(historyDataList: [HistoryDataStruct]) async throws -> [UserDatePair] {
-        let userIds = historyDataList.map { $0.userId }
-        let dates = historyDataList.map { $0.date }
+        // Repositoryの準備
+        guard let provider = userProvider else {
+            print("Providerが準備できていません。")
+            return []
+        }
         
-        let users = try await UserService.fetchUsers(userIds)
+        let fetchedUsers = try await provider.fetchUsers(with: historyDataList)
         
-        return (0..<users.count).map { index in
-            UserDatePair(user: users[index], date: dates[index])
+        // 日付情報とユーザー情報を結合して、最終的なリストを作成
+        // 高速で結合するために、ユーザー情報を一時的に辞書に変換
+        let userDictionary = fetchedUsers.reduce(into: [String: User]()) { $0[$1.id] = $1 }
+        
+        return historyDataList.compactMap { history in
+            if let user = userDictionary[history.userId] {
+                return UserDatePair(user: user, date: history.date)
+            }
+            return nil
         }
     }
 }

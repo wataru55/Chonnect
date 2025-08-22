@@ -163,17 +163,9 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowUsers() async {
         do {
-            let followedUsers = try await FollowService.fetchFollowedUsers(receivedId: user.id)
-            let visibleFollowedUsers = BlockUserManager.shared.filterBlockedUsers(dataList: followedUsers)
+            let followsData = try await FollowService.fetchFollowedUsers(receivedId: user.id)
+            self.follows = try await UserProvider().fetchUsers(with: followsData)
             
-            guard !visibleFollowedUsers.isEmpty else {
-                self.follows = []
-                return
-            }
-
-            for followedUser in visibleFollowedUsers {
-                self.follows.append(followedUser.user)
-            }
         } catch {
             print("Error fetching follow users: \(error)")
         }
@@ -182,17 +174,9 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func loadFollowers() async {
         do {
-            let fetchedFollowers = try await FollowService.fetchFollowers(receivedId: user.id)
-            let visibleFollowers = BlockUserManager.shared.filterBlockedUsers(dataList: fetchedFollowers)
+            let followersData = try await FollowService.fetchFollowers(receivedId: user.id)
+            self.follows = try await UserProvider().fetchUsers(with: followersData)
             
-            guard !visibleFollowers.isEmpty else {
-                self.followers = []
-                return
-            }
-
-            for follower in visibleFollowers {
-                self.followers.append(follower.user)
-            }
         } catch {
             print("Error fetching followers: \(error)")
         }

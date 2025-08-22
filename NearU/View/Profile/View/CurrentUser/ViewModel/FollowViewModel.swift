@@ -13,28 +13,37 @@ class FollowViewModel: ObservableObject {
     @Published var followUsers: [UserDatePair] = []
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
+    
+    private var userProvider: UserProvider?
 
     init() {
         listenForUpdates()
         setupSubscribers()
 
         Task {
+            self.userProvider = try? await UserProvider()
             await loadFollowedUsers()
         }
     }
 
     @MainActor
     func loadFollowedUsers() async {
+        guard let provider = self.userProvider else {
+            print("UserProviderが準備できていません。")
+            return
+        }
+        
         do {
-            let followedUsers = try await FollowService.fetchFollowedUsers(receivedId: "")
-            let visibleFollowedUsers = BlockUserManager.shared.filterBlockedUsers(dataList: followedUsers)
+            let followedData = try await FollowService.fetchFollowedUsers(receivedId: "")
+            let users = try await provider.fetchUsers(with: followedData)
             
-            guard !visibleFollowedUsers.isEmpty else {
-                self.followUsers = []
-                return
+            let userDictionary = users.reduce(into: [String: User]()) { $0[$1.id] = $1 }
+            self.followUsers = followedData.compactMap { data in
+                if let user = userDictionary[data.userId] {
+                    return UserDatePair(user: user, date: data.date)
+                }
+                return nil
             }
-
-            self.followUsers = visibleFollowedUsers
 
         } catch {
             print("Error fetching connected users: \(error)")
