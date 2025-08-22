@@ -9,50 +9,26 @@ import Foundation
 import Firebase
 
 struct FollowService {
-    static func fetchFollowedUserCount(receivedId: String) async -> Int {
-        await fetchUserCount(receivedId: receivedId, collectionName: "follows")
-    }
-    
-    static func fetchFollowerCount(receivedId: String) async -> Int {
-        await fetchUserCount(receivedId: receivedId, collectionName: "followers")
-    }
-    
-    static func fetchFollowedUsers(receivedId: String) async throws -> [UserDatePair] {
+    static func fetchFollowedUsers(receivedId: String) async throws -> [HistoryDataStruct] {
         guard let documentId = AuthService.shared.currentUser?.id else { return [] }
         let snapshot = try await Firestore.firestore().collection("users")
             .document(receivedId.isEmpty ? documentId : receivedId)
             .collection("follows").getDocuments()
         
-        var followedUsers: [UserDatePair] = []
-        
-        for document in snapshot.documents {
-            let data = try document.data(as: HistoryDataStruct.self)
-            if let userData = await UserService.fetchUser(withUid: data.userId) {
-                let followedUser = UserDatePair(user: userData, date: data.date)
-                followedUsers.append(followedUser)
-            }
+        return try snapshot.documents.compactMap {
+            try $0.data(as: HistoryDataStruct.self)
         }
-        
-        return followedUsers
     }
     
-    static func fetchFollowers(receivedId: String) async throws -> [UserDatePair] {
+    static func fetchFollowers(receivedId: String) async throws -> [HistoryDataStruct] {
         guard let documentId = AuthService.shared.currentUser?.id else { return [] }
         let snapshot = try await Firestore.firestore().collection("users")
             .document(receivedId.isEmpty ? documentId : receivedId)
             .collection("followers").getDocuments()
         
-        var followers: [UserDatePair] = []
-        
-        for document in snapshot.documents {
-            let data = try document.data(as: HistoryDataStruct.self)
-            if let userData = await UserService.fetchUser(withUid: data.userId) {
-                let follower = UserDatePair(user: userData, date: data.date)
-                followers.append(follower)
-            }
+        return try snapshot.documents.compactMap {
+            try $0.data(as: HistoryDataStruct.self)
         }
-        
-        return followers
     }
     
     // フォローされているかどうかをチェックする関数
@@ -76,23 +52,6 @@ struct FollowService {
             return try await path.getDocument().exists
         } catch {
             return false
-        }
-    }
-    
-    private static func fetchUserCount(receivedId: String, collectionName: String) async -> Int {
-        guard let documentId = AuthService.shared.currentUser?.id else { return 0 }
-
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("users")
-                .document(receivedId.isEmpty ? documentId : receivedId)
-                .collection(collectionName)
-                .getDocuments()
-            
-            return snapshot.documents.count
-        } catch {
-            print("Error fetching \(collectionName) count: \(error)")
-            return 0
         }
     }
 }
