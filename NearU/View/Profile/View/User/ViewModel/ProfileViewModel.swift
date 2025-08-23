@@ -32,23 +32,34 @@ class ProfileViewModel: ObservableObject {
         user.id == currentUser.id
     }
     
+    private var profileData: ProfileData {
+        .init(
+            user: self.user,
+            follows: self.follows,
+            followers: self.followers,
+            skillTags: self.skillSortedTags,
+            ogp: self.openGraphData.map { ($0.article, $0.openGraphSource) }
+        )
+    }
+    
     // Repositoryをプロパティとして保持
     private var userProfileRepo: UserProfileRepository?
+    private var userProvider: UserProvider?
     
     init(user: User, currentUser: User) {
         self.user = user
         self.currentUser = currentUser
+        
+        Task {
+            self.userProfileRepo = try? await UserProfileRepository()
+            self.userProvider = try? await UserProvider()
+        }
     }
 
     func loadData() async {
-        if self.userProfileRepo == nil {
-            print("🚀 Repositoryを初期化します...")
-            self.userProfileRepo = try? await UserProfileRepository()
-        }
-        
         guard let repo = userProfileRepo else {
             print("🚫 Repositoryがまだ準備できていません。")
-            await MainActor.run { self.isLoading = false }
+            self.isLoading = false
             return
         }
         
@@ -83,13 +94,8 @@ class ProfileViewModel: ObservableObject {
         self.follows = data.follows
         self.followers = data.followers
         self.skillSortedTags = data.skillTags
-        
         // OGPデータも反映
-        self.openGraphData = data.ogp.map { tuple in
-            // 新しいinitに合わせて、辞書を直接渡す
-            return OpenGraphData(article: tuple.article, openGraphSource: tuple.openGraphSource)
-        }
-        
+        self.openGraphData = data.ogp.map { OpenGraphData(article: $0.article, openGraphSource: $0.openGraphSource) }
         // フォロー状態のチェックはリアルタイム性が高いので別途実行
         Task {
             await checkFollow()
@@ -99,26 +105,36 @@ class ProfileViewModel: ObservableObject {
     
     // ネットワークからデータを取得し、キャッシュに保存する
     private func fetchFromNetworkAndCache() async {
-        // ここに元のloadDataにあったwithTaskGroupの処理を入れる
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { await self.loadFollowUsers() }
-            group.addTask { await self.loadFollowers() }
-            group.addTask { await self.loadSkillTags() }
-            group.addTask { await self.checkFollow() }
-            group.addTask { await self.checkFollowed() }
-            group.addTask { await self.fetchArticleLinks() }
+        do {
+            // withThrowingTaskGroupを使い、エラーハンドリングを可能に
+            let allData = try await withThrowingTaskGroup(of: ProfileDataPartial.self, returning: ProfileData.self) { group in
+                
+                // 各データ取得タスクを追加。結果を返すように変更
+                group.addTask { .follows(try await self.fetchFollowUsers()) }
+                group.addTask { .followers(try await self.fetchFollowers()) }
+                group.addTask { .skillTags(try await self.fetchSkillTags()) }
+                group.addTask { .openGraphData(try await self.fetchArticleLinks()) }
+                
+                // TaskGroupの結果を集約
+                var partials: [ProfileDataPartial] = []
+                for try await partial in group {
+                    partials.append(partial)
+                }
+                
+                // ProfileDataを構築（不足分は現在の値で補う）
+                return ProfileData(partials: partials, initial: self.profileData)
+            }
+            
+            // 全てのデータが揃ってから、一度だけUIを更新
+            await updateUI(with: allData)
+            
+            // 全てのデータが揃ってから、一度だけキャッシュを更新
+            await userProfileRepo?.saveOrUpdate(profileData: allData)
+            print("✅ 最新データを取得し、キャッシュを更新しました")
+            
+        } catch {
+            print("‼️ ネットワークからのデータ取得に失敗しました: \(error)")
         }
-        
-        let latestData = ProfileData(user: self.user, follows: self.follows,
-                                     followers: self.followers, skillTags: self.skillSortedTags,
-                                     ogp: self.openGraphData.map { ($0.article, $0.openGraphSource) })
-        
-        // UIを最新データで更新
-        await updateUI(with: latestData)
-        
-        // 最新データをキャッシュに保存
-        await userProfileRepo?.saveOrUpdate(profileData: latestData)
-        print("✅ 最新データを取得し、キャッシュを更新しました")
     }
 
     @MainActor
@@ -132,69 +148,55 @@ class ProfileViewModel: ObservableObject {
     func checkFollowed() async {
         self.isFollowed = await FollowService.checkIsFollowed(receivedId: user.id)
     }
-
-    @MainActor
-    func loadUserData() async {
-        do {
-            let userSnapshot = try await Firestore.firestore().collection("users").document(user.id).getDocument()
-            if let fetchedUser = try? userSnapshot.data(as: User.self) {
-                self.user = fetchedUser
-            }
-
-            let currentUserSnapshot = try await Firestore.firestore().collection("users").document(currentUser.id).getDocument()
-            if let fetchedCurrentUser = try? currentUserSnapshot.data(as: User.self) {
-                self.currentUser = fetchedCurrentUser
-            }
-        } catch {
-            print("Error loading user data: \(error.localizedDescription)")
-        }
-    }
-
-    @MainActor
-    func loadSkillTags() async {
-        do {
-            let tags = try await TagsService.fetchTags(documentId: user.id)
-            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
-        } catch {
-            print("Error fetching tags: \(error)")
-        }
+    
+    private func fetchFollowUsers() async throws -> [User] {
+        // followServiceのチェックを削除
+        guard let provider = self.userProvider else { throw URLError(.badServerResponse) }
+        
+        // staticメソッドとして直接呼び出す
+        let followsData = try await FollowService.fetchFollowedUsers(receivedId: user.id)
+        
+        return try await provider.fetchUsers(with: followsData)
     }
     
-    @MainActor
-    func loadFollowUsers() async {
-        do {
-            let followsData = try await FollowService.fetchFollowedUsers(receivedId: user.id)
-            self.follows = try await UserProvider().fetchUsers(with: followsData)
-            
-        } catch {
-            print("Error fetching follow users: \(error)")
-        }
+    private func fetchFollowers() async throws -> [User] {
+        // followServiceのチェックを削除
+        guard let provider = self.userProvider else { throw URLError(.badServerResponse) }
+        
+        // staticメソッドとして直接呼び出す
+        let followersData = try await FollowService.fetchFollowers(receivedId: user.id)
+        
+        return try await provider.fetchUsers(with: followersData)
+    }
+    
+    private func fetchSkillTags() async throws -> [WordElement] {
+        let tags = try await TagsService.fetchTags(documentId: user.id)
+        return tags.sorted { $0.skill > $1.skill }
     }
 
-    @MainActor
-    func loadFollowers() async {
-        do {
-            let followersData = try await FollowService.fetchFollowers(receivedId: user.id)
-            self.follows = try await UserProvider().fetchUsers(with: followersData)
-            
-        } catch {
-            print("Error fetching followers: \(error)")
-        }
-    }
-
-    func fetchArticleLinks() async {
-        do {
-            let articles = try await LinkService.fetchArticleLinks(withUid: user.id)
+    private func fetchArticleLinks() async throws -> [OpenGraphData] {
+        // 1. まず記事のリストを取得
+        let articles = try await LinkService.fetchArticleLinks(withUid: user.id)
+        guard !articles.isEmpty else { return [] }
+        
+        // 2. TaskGroupで、全ての記事のOGPデータを「並行」で取得
+        return try await withThrowingTaskGroup(of: OpenGraphData.self, returning: [OpenGraphData].self) { group in
             
             for article in articles {
-                let ogpData = await LinkService.fetchOpenGraphData(article: article)
-                await MainActor.run {
-                    self.openGraphData.append(ogpData)
+                group.addTask {
+                    // LinkServiceからOGPデータを取得
+                    return await LinkService.fetchOpenGraphData(article: article)
                 }
-                
             }
-        } catch {
-            print("Error fetching article links: \(error)")
+            
+            var uniqueOgpDataDict: [String: OpenGraphData] = [:]
+            
+            // 全ての並行処理が終わるのを待ち、結果を集約
+            for try await ogpData in group {
+                uniqueOgpDataDict[ogpData.id] = ogpData
+            }
+            
+            return Array(uniqueOgpDataDict.values)
         }
     }
 
@@ -244,5 +246,36 @@ class ProfileViewModel: ObservableObject {
             self.isShowAlert = true
             self.state = .idle
         }
+    }
+}
+
+// withTaskGroupの結果をまとめるためのヘルパーenumと、ProfileDataの拡張
+enum ProfileDataPartial {
+    case user(User)
+    case follows([User])
+    case followers([User])
+    case skillTags([WordElement])
+    case openGraphData([OpenGraphData])
+}
+
+extension ProfileData {
+    init(partials: [ProfileDataPartial], initial: ProfileData) {
+        var user = initial.user
+        var follows = initial.follows
+        var followers = initial.followers
+        var skillTags = initial.skillTags
+        var ogp = initial.ogp.map { OpenGraphData(article: $0.article, openGraphSource: $0.openGraphSource) }
+
+        for partial in partials {
+            switch partial {
+            case .user(let value): user = value
+            case .follows(let value): follows = value
+            case .followers(let value): followers = value
+            case .skillTags(let value): skillTags = value
+            case .openGraphData(let value): ogp = value
+            }
+        }
+        
+        self.init(user: user, follows: follows, followers: followers, skillTags: skillTags, ogp: ogp.map { ($0.article, $0.openGraphSource) })
     }
 }
