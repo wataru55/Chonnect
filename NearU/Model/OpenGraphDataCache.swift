@@ -96,18 +96,10 @@ extension OpenGraphCache {
     
     // 戻り値の型をOpenGraphから辞書に変更
     func toModel() -> [OpenGraphMetadata: String] {
-        var sourceDict = [OpenGraphMetadata: String]()
-        
-        // 単一の 'element' を受け取るようにループを修正
-        for element in self.source {
-            // elementから .key と .value を取り出す
-            let key = element.key
-            let value = element.value
-            
-            if let metadataKey = OpenGraphMetadata(rawValue: key) {
-                sourceDict[metadataKey] = value
+        return self.source.reduce(into: [OpenGraphMetadata: String]()) { result, element in
+            if let metadataKey = OpenGraphMetadata(rawValue: element.key) {
+                result[metadataKey] = element.value
             }
         }
-        return sourceDict
     }
 }
