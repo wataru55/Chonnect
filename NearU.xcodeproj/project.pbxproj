@@ -22,6 +22,13 @@
 		631591BA2D361E8B00E16DE3 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591B92D361E8B00E16DE3 /* KalmanFilter.swift */; };
 		631591CC2D44E14C00E16DE3 /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631591CB2D44E14C00E16DE3 /* RealmService.swift */; };
 		63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */; };
+		631812262E463EBC003E2FB0 /* UserProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812252E463EBC003E2FB0 /* UserProfileRepository.swift */; };
+		631812282E46AEA3003E2FB0 /* ProfileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812272E46AEA3003E2FB0 /* ProfileData.swift */; };
+		6318122A2E4BFC97003E2FB0 /* UserEncounterCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */; };
+		6318122C2E4C010B003E2FB0 /* EncounterRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */; };
+		6318122E2E4E09A5003E2FB0 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318122D2E4E09A5003E2FB0 /* UserRepository.swift */; };
+		631812312E54E353003E2FB0 /* CacheConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812302E54E353003E2FB0 /* CacheConfig.swift */; };
+		631812332E5718AF003E2FB0 /* UserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631812322E5718AF003E2FB0 /* UserProvider.swift */; };
 		63226E1E2D69BCA5006EBCCF /* SupplementButtonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */; };
 		63226E202D69BF28006EBCCF /* CurrentUserActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */; };
 		63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */; };
@@ -111,6 +118,10 @@
 		63D957D32E300A600006C73F /* FollowFollowerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D22E300A600006C73F /* FollowFollowerData.swift */; };
 		63D957D52E37B7800006C73F /* AttributeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D42E37B7800006C73F /* AttributeView.swift */; };
 		63D957D72E39FE830006C73F /* EditAttributeTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D957D62E39FE830006C73F /* EditAttributeTags.swift */; };
+		63D9580F2E433B380006C73F /* UserProfileDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D9580E2E433B380006C73F /* UserProfileDataCache.swift */; };
+		63D958112E433CBF0006C73F /* UserCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958102E433CBF0006C73F /* UserCache.swift */; };
+		63D958132E435A4F0006C73F /* WordElementCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958122E435A4E0006C73F /* WordElementCache.swift */; };
+		63D958152E439E1D0006C73F /* OpenGraphDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */; };
 		63DFF87D2BF5930300A6DFB8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 63DFF87C2BF5930300A6DFB8 /* FirebaseAnalytics */; };
 		63DFF8802BF6F02A00A6DFB8 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */; };
 		63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */; };
@@ -178,6 +189,13 @@
 		631591B92D361E8B00E16DE3 /* KalmanFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
 		631591CB2D44E14C00E16DE3 /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		63173DF72C37D77600F1FE82 /* EditSNSLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSNSLinkView.swift; sourceTree = "<group>"; };
+		631812252E463EBC003E2FB0 /* UserProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRepository.swift; sourceTree = "<group>"; };
+		631812272E46AEA3003E2FB0 /* ProfileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileData.swift; sourceTree = "<group>"; };
+		631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEncounterCache.swift; sourceTree = "<group>"; };
+		6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncounterRepository.swift; sourceTree = "<group>"; };
+		6318122D2E4E09A5003E2FB0 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
+		631812302E54E353003E2FB0 /* CacheConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheConfig.swift; sourceTree = "<group>"; };
+		631812322E5718AF003E2FB0 /* UserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProvider.swift; sourceTree = "<group>"; };
 		63226E1D2D69BCA5006EBCCF /* SupplementButtonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementButtonViewModel.swift; sourceTree = "<group>"; };
 		63226E1F2D69BF28006EBCCF /* CurrentUserActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserActions.swift; sourceTree = "<group>"; };
 		63226E212D6ABFD1006EBCCF /* BlockUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserManager.swift; sourceTree = "<group>"; };
@@ -266,6 +284,10 @@
 		63D957D22E300A600006C73F /* FollowFollowerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowFollowerData.swift; sourceTree = "<group>"; };
 		63D957D42E37B7800006C73F /* AttributeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeView.swift; sourceTree = "<group>"; };
 		63D957D62E39FE830006C73F /* EditAttributeTags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAttributeTags.swift; sourceTree = "<group>"; };
+		63D9580E2E433B380006C73F /* UserProfileDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataCache.swift; sourceTree = "<group>"; };
+		63D958102E433CBF0006C73F /* UserCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCache.swift; sourceTree = "<group>"; };
+		63D958122E435A4E0006C73F /* WordElementCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordElementCache.swift; sourceTree = "<group>"; };
+		63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenGraphDataCache.swift; sourceTree = "<group>"; };
 		63DFF87F2BF6F02A00A6DFB8 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		63DFF8812BF6F14100A6DFB8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		63DFF8832BF6F1C000A6DFB8 /* CurrentUserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserProfileViewModel.swift; sourceTree = "<group>"; };
@@ -341,8 +363,20 @@
 				63CE6E692DAD774A00B2628D /* FollowService.swift */,
 				63CE6E6B2DAD7C4800B2628D /* LinkService.swift */,
 				63CE6E6D2DB01C3900B2628D /* CurrentUserService.swift */,
+				631812252E463EBC003E2FB0 /* UserProfileRepository.swift */,
+				6318122B2E4C010B003E2FB0 /* EncounterRepository.swift */,
+				6318122D2E4E09A5003E2FB0 /* UserRepository.swift */,
+				631812322E5718AF003E2FB0 /* UserProvider.swift */,
 			);
 			path = Service;
+			sourceTree = "<group>";
+		};
+		6318122F2E54E331003E2FB0 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				631812302E54E353003E2FB0 /* CacheConfig.swift */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		63226E282D6DDCF3006EBCCF /* Protocols */ = {
@@ -427,6 +461,12 @@
 				6346A03C2D90028F00EDC4E5 /* SkillTagRepository.swift */,
 				6306046F2DEEFCE600074F24 /* Article.swift */,
 				63D957D22E300A600006C73F /* FollowFollowerData.swift */,
+				63D9580E2E433B380006C73F /* UserProfileDataCache.swift */,
+				63D958102E433CBF0006C73F /* UserCache.swift */,
+				63D958122E435A4E0006C73F /* WordElementCache.swift */,
+				63D958142E439E1D0006C73F /* OpenGraphDataCache.swift */,
+				631812272E46AEA3003E2FB0 /* ProfileData.swift */,
+				631812292E4BFC97003E2FB0 /* UserEncounterCache.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -592,6 +632,7 @@
 		63B64FD62B8C763900289469 /* NearU */ = {
 			isa = PBXGroup;
 			children = (
+				6318122F2E54E331003E2FB0 /* Config */,
 				63F84BB02D1C3B82009FE5DD /* Private.json */,
 				6375622A2CCC83C900137B27 /* NearU.entitlements */,
 				63B64FE72B8C7BF200289469 /* Info.plist */,
@@ -822,6 +863,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63FDDFDB2CEF7A1800B90074 /* TagsService.swift in Sources */,
+				63D958112E433CBF0006C73F /* UserCache.swift in Sources */,
 				63226E222D6ABFD1006EBCCF /* BlockUserManager.swift in Sources */,
 				63AEF0FB2C0C4C6500DE196E /* FollowView.swift in Sources */,
 				6387321C2BF4B6B50099F68A /* IGTextFieldModifier.swift in Sources */,
@@ -837,8 +879,10 @@
 				63135DA32CB7ABCC004137AF /* HistoryManager.swift in Sources */,
 				63AEA5CD2CC66B18009A22A2 /* UserDatePair.swift in Sources */,
 				63FDDFD32CECCC2900B90074 /* WordCloudView.swift in Sources */,
+				6318122E2E4E09A5003E2FB0 /* UserRepository.swift in Sources */,
 				63FDDFD52CECCCE800B90074 /* WordElement.swift in Sources */,
 				63D957D32E300A600006C73F /* FollowFollowerData.swift in Sources */,
+				6318122C2E4C010B003E2FB0 /* EncounterRepository.swift in Sources */,
 				63D957D12E28B18A0006C73F /* NavigationBack.swift in Sources */,
 				63CE6E682DACDC7F00B2628D /* IDGenerator.swift in Sources */,
 				63226E2A2D6DDD10006EBCCF /* UserIdentifiable.swift in Sources */,
@@ -857,10 +901,12 @@
 				63173DF82C37D77600F1FE82 /* EditSNSLinkView.swift in Sources */,
 				6306DE4E2DDC6FC600DDEECE /* ViewStateOverlayView.swift in Sources */,
 				63226E322D71A2A5006EBCCF /* EditEmailView.swift in Sources */,
+				63D958132E435A4F0006C73F /* WordElementCache.swift in Sources */,
 				63FDDFE62CF6B44D00B90074 /* SupplementButtonView.swift in Sources */,
 				6344BE4A2CDE065A009F404E /* OpenGraphData.swift in Sources */,
 				63226E2C2D6E3B1E006EBCCF /* BlockListView.swift in Sources */,
 				63226E202D69BF28006EBCCF /* CurrentUserActions.swift in Sources */,
+				631812262E463EBC003E2FB0 /* UserProfileRepository.swift in Sources */,
 				63CE6E6C2DAD7C4800B2628D /* LinkService.swift in Sources */,
 				6346A03D2D90028F00EDC4E5 /* SkillTagRepository.swift in Sources */,
 				638732172BF4B4630099F68A /* AuthService.swift in Sources */,
@@ -880,6 +926,7 @@
 				630B9EA62CC345B4002F06AB /* EditLanguageTagsView.swift in Sources */,
 				639A0BDB2CE4B01200A769C6 /* FollowerViewModel.swift in Sources */,
 				63DFF88C2BF8760B00A6DFB8 /* SearchView.swift in Sources */,
+				631812332E5718AF003E2FB0 /* UserProvider.swift in Sources */,
 				637BA05B2C43934600368566 /* SNSLinkButtonView.swift in Sources */,
 				63AEF0F92C0C4C2A00DE196E /* TopTabView.swift in Sources */,
 				63DFF8822BF6F14100A6DFB8 /* EditProfileView.swift in Sources */,
@@ -888,8 +935,11 @@
 				6346A0342D799B0200EDC4E5 /* ReportView.swift in Sources */,
 				630B9EA42CC344EA002F06AB /* TagsView.swift in Sources */,
 				63483AF72DF6ACBD00956814 /* EditImageView.swift in Sources */,
+				63D958152E439E1D0006C73F /* OpenGraphDataCache.swift in Sources */,
 				63DFF89B2BFC9D9F00A6DFB8 /* CurrentUserProfileView.swift in Sources */,
+				6318122A2E4BFC97003E2FB0 /* UserEncounterCache.swift in Sources */,
 				63483AFA2E04F8A200956814 /* UploadImageError.swift in Sources */,
+				631812282E46AEA3003E2FB0 /* ProfileData.swift in Sources */,
 				63FDDFD92CEF537500B90074 /* EditSkillTagsViewModel.swift in Sources */,
 				6344BE462CDBA9A3009F404E /* UserRealtimeRecord.swift in Sources */,
 				6344BE482CDBA9F8009F404E /* BLERealtimeView.swift in Sources */,
@@ -933,6 +983,7 @@
 				638732082BF4B0E40099F68A /* MainTabView.swift in Sources */,
 				63226E3A2D76D442006EBCCF /* DeleteView.swift in Sources */,
 				63DFF8BC2C01531000A6DFB8 /* ImageUploader.swift in Sources */,
+				631812312E54E353003E2FB0 /* CacheConfig.swift in Sources */,
 				32860C6A2CD32B4300D9BBD7 /* ArticleLinksViewModel.swift in Sources */,
 				F258616A2CCB245000715D20 /* PasswordResetView.swift in Sources */,
 				6344BE382CD71678009F404E /* LoadingViewModel.swift in Sources */,
@@ -940,6 +991,7 @@
 				63FDDFDD2CF1DA5800B90074 /* TagIndexView.swift in Sources */,
 				639A0BE92CE5CB7F00A769C6 /* UserFollowerView.swift in Sources */,
 				63226E1E2D69BCA5006EBCCF /* SupplementButtonViewModel.swift in Sources */,
+				63D9580F2E433B380006C73F /* UserProfileDataCache.swift in Sources */,
 				63FDDFDF2CF2F5A900B90074 /* Top3TabView.swift in Sources */,
 				F21D2E722CD5F21E00BBDE37 /* LaunchScreen.swift in Sources */,
 				6306DE4C2DDC6BE600DDEECE /* SuccessView.swift in Sources */,

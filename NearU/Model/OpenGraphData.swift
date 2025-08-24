@@ -11,5 +11,5 @@ import OpenGraph
 struct OpenGraphData: Identifiable {
     var id: String { article.id }
     let article: Article
-    let openGraph: OpenGraph?
+    let openGraphSource: [OpenGraphMetadata: String]?
 }

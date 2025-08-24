@@ -64,8 +64,8 @@ struct ProfileView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
         .modifier(EdgeSwipe())
-        .onFirstAppear {
-            viewModel.loadData()
+        .task {
+            await viewModel.loadData()
         }
     }//body
     

@@ -52,11 +52,6 @@ struct BLEHistoryView: View {
                 }
             }
         }
-        .onFirstAppear {
-            Task {
-                await viewModel.makeHistoryRowData()
-            }
-        }
         .alert("エラー", isPresented: $isShowAlert) {
             Button("OK", role: .cancel) { }
         } message: {
