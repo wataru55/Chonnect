@@ -44,7 +44,7 @@ struct CurrentUserProfileView: View {
                 
                 ScrollView(.vertical, showsIndicators: false){
                     ZStack(alignment: .top) {
-                        BackgroundImageView(user: viewModel.user, height: 500, isGradient: true)
+                        BackgroundImageView(imageUrl: viewModel.user.backgroundImageUrl, height: 500, isGradient: true)
                         
                         VStack(spacing: 0) {
                             Spacer()

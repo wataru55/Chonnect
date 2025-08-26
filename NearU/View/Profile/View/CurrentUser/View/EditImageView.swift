@@ -23,7 +23,7 @@ struct EditImageView: View {
                         .frame(width: UIScreen.main.bounds.width, height: 500)
                         .clipped()
                 } else {
-                    BackgroundImageView(user: viewModel.user, height: 500, isGradient: false)
+                    BackgroundImageView(imageUrl: viewModel.user.backgroundImageUrl, height: 500, isGradient: false)
                 }
                 
                 Button {
