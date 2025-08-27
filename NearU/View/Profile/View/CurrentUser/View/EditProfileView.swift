@@ -66,7 +66,7 @@ struct EditProfileView: View {
     private func editBackgroundImage() -> some View {
         NavigationLink(value: CurrentUserProfileDestination.profileImage) {
             VStack {
-                BackgroundImageView(user: viewModel.user, height: 250, isGradient: false)
+                BackgroundImageView(imageUrl: viewModel.user.backgroundImageUrl, height: 250, isGradient: false)
                 
                 Text("プロフィール画像を変更")
                     .font(.footnote)

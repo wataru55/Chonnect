@@ -12,17 +12,17 @@ struct UserRowView: View {
     let tags: [String]
     let date: Date?
     let rssi: Int?
-    
+
     var body: some View {
         HStack(alignment: .center) {
             CircleImageView(user: user, size: .medium, borderColor: .clear)
-            
+
             VStack(alignment: .leading, spacing: 5) {
                 Spacer()
-                
+
                 Attributes(attributes: user.attributes, option: AttributeOption.row)
                     .padding(.top, 5)
-                
+
                 HStack {
                     Text(user.username)
                         .font(.subheadline)
@@ -31,41 +31,43 @@ struct UserRowView: View {
                         .lineLimit(1)
                         .truncationMode(.tail)
                         .padding(.leading, 5)
-                    
+
                     Spacer()
-                    
+
                     VStack {
                         if let rssi = rssi {
-                            HStack(spacing: 4) {
+                            VStack(alignment: .trailing, spacing: 0) {
                                 Text("推定距離")
-                                
+
                                 Text(distance(fromRSSI: rssi))
                             }
                         }
-                        
+
                         if let date = date {
                             VStack(alignment: .trailing, spacing: 0) {
                                 Text("最後のすれちがい")
-                                
+
                                 Text(formattedDate(from: date))
                             }
                         }
-                    } //vstack
+                    }  //vstack
                     .font(.caption2)
                     .foregroundStyle(.gray)
-                } //hstack
-                
+                }  //hstack
+
                 if !tags.isEmpty {
-                    InterestTagView(interestTags: tags, isShowDeleteButton: false, textFont: .caption)
-                        .padding(.leading, 5)
-                        .padding(.bottom, 5)
+                    InterestTagView(
+                        interestTags: tags, isShowDeleteButton: false, textFont: .caption
+                    )
+                    .padding(.leading, 5)
+                    .padding(.bottom, 5)
                 }
-                
+
                 Spacer()
-                
-            }// vstack
+
+            }  // vstack
             .frame(height: 80)
-        } //hstack
+        }  //hstack
         .foregroundStyle(.black)
         .padding(.horizontal)
         .frame(height: 80)
@@ -76,7 +78,7 @@ struct UserRowView: View {
                 .shadow(color: .gray.opacity(0.5), radius: 2, x: 2, y: 2)
         )
     }
-    
+
     // フォーマッターを追加
     private var standardDateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -85,12 +87,12 @@ struct UserRowView: View {
         formatter.locale = Locale(identifier: "ja_JP")
         return formatter
     }
-    
+
     private func formattedDate(from date: Date) -> String {
         let now = Date()
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day, .hour, .minute], from: date, to: now)
-        
+
         if let day = components.day, day < 31 {
             if day >= 1 {
                 return "\(day)日前"
@@ -105,20 +107,20 @@ struct UserRowView: View {
             return standardDateFormatter.string(from: date)
         }
     }
-    
+
     // RSSI値を基に距離を計算する関数
     func distance(fromRSSI rssi: Int) -> String {
-        let txPower = -60 // デバイスの送信電力（RSSI値が1メートルの距離における理論的な値）。環境により調整が必要。
-        let n = 2.0 // 環境による減衰係数（例：屋内では2.0、屋外では3.0）
-        
+        let txPower = -60  // デバイスの送信電力（RSSI値が1メートルの距離における理論的な値）。環境により調整が必要。
+        let n = 2.0  // 環境による減衰係数（例：屋内では2.0、屋外では3.0）
+
         if rssi == 0 {
             return "距離不明"
         }
-        
+
         // RSSIとtxPowerの差を計算
         let ratio = Double(txPower - rssi) / (10 * n)
         let distanceMeters = pow(10.0, ratio)
-        
+
         // 距離をメートル単位で表示（小数点以下1桁）
         let formattedDistance = String(format: "%.1fメートル", distanceMeters)
         return formattedDistance
@@ -126,9 +128,10 @@ struct UserRowView: View {
 }
 
 #Preview {
-    UserRowView(user: User.MOCK_USERS[0],
-                tags: ["SwiftUI", "UIKit", "iOSDC"],
-                date: Date(),
-                rssi: nil,
+    UserRowView(
+        user: User.MOCK_USERS[0],
+        tags: ["SwiftUI", "UIKit", "iOSDC"],
+        date: Date(),
+        rssi: nil,
     )
 }

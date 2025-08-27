@@ -5,8 +5,8 @@
 //  Created by  髙橋和 on 2024/05/21.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 enum ProfileImageSize {
     case xsmall
@@ -35,24 +35,24 @@ struct CircleImageView: View {
 
     var body: some View {
         if let imageUrl = user.backgroundImageUrl {
-            AsyncImage(url: URL(string: imageUrl)) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: size.dimension, height: size.dimension)
-                    .clipShape(Circle())
-                    .overlay {
-                        Circle()
-                            .stroke(Color(borderColor), lineWidth: 1)
-                    }
-            } placeholder: {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: size.dimension, height: size.dimension)
-                    .clipShape(Circle())
-                    .foregroundColor(Color(.systemGray4))
-            }
+            KFImage(URL(string: imageUrl))
+                .placeholder {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: size.dimension, height: size.dimension)
+                        .clipShape(Circle())
+                        .foregroundColor(Color(.systemGray4))
+                }
+                .fade(duration: 0.5)  // フェードインアニメーション
+                .resizable()
+                .scaledToFill()
+                .frame(width: size.dimension, height: size.dimension)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .stroke(Color(borderColor), lineWidth: 1)
+                }
         } else {
             Image(systemName: "person.circle.fill")
                 .resizable()
