@@ -5,10 +5,10 @@
 //  Created by  髙橋和 on 2024/05/17.
 //
 
+import Combine
+import Firebase
 import PhotosUI
 import SwiftUI
-import Firebase
-import Combine
 
 class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
@@ -16,52 +16,54 @@ class CurrentUserProfileViewModel: ObservableObject {
     @Published var bio: String = ""
     @Published var attributes: [String] = []
     @Published var interestTags: [String] = []
-    
+
     @Published var isLoading: Bool = false
     @Published var state: ViewState = .idle
     @Published var alertType: AlertType? = nil
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     var isUsernameValid: Bool {
         Validation.validateUsername(username: userName)
     }
-    
+
     var isUsernameUnique: Bool {
         //　変更前と変更後のユーザーネームが同じでない
         user.username != userName
     }
-    
+
     var isBioValid: Bool {
         bio.count <= 100
     }
-    
+
     var isBioUnique: Bool {
         user.bio != bio
     }
-    
+
     var isAttributesUnique: Bool {
         user.attributes != attributes
     }
-    
+
     var isInterestTagsValid: Bool {
         Validation.validateInterestTag(tags: interestTags)
     }
-    
+
     var isInterestTagsUnique: Bool {
         user.interestTags != interestTags
     }
-    
+
     init() {
         if let currentUser = AuthService.shared.currentUser {
             self.user = currentUser
         } else {
-            self.user = User(id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], attributes: [], interestTags: [])
+            self.user = User(
+                id: "", uid: "", username: "", isPrivate: false, snsLinks: [:], attributes: [],
+                interestTags: [])
         }
-        
+
         setupSubscribers()
     }
-    
+
     func setupSubscribers() {
         // currentUserプロパティが変更されるとクロージャが実行される
         AuthService.shared.$currentUser
@@ -71,14 +73,14 @@ class CurrentUserProfileViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     @MainActor
     func saveUserName() async throws {
         self.isLoading = true
         defer {
             self.isLoading = false
         }
-        
+
         do {
             try await CurrentUserService.updateUserName(username: userName)
             AuthService.shared.currentUser?.username = userName
@@ -89,17 +91,17 @@ class CurrentUserProfileViewModel: ObservableObject {
             throw error
         }
     }
-    
+
     @MainActor
     func saveBio() async throws {
         self.isLoading = true
         defer {
             self.isLoading = false
         }
-        
+
         // 空白行削除
         let cleanedBio = bio.removingBlankLines()
-        
+
         do {
             try await CurrentUserService.updateBio(bio: cleanedBio)
             AuthService.shared.currentUser?.bio = cleanedBio
@@ -110,17 +112,21 @@ class CurrentUserProfileViewModel: ObservableObject {
             throw error
         }
     }
-    
+
     @MainActor
     func saveAttributes() async throws {
         self.isLoading = true
         defer {
             self.isLoading = false
         }
-        
+
         do {
             try await CurrentUserService.updateAttributes(attributes: attributes)
-            AuthService.shared.currentUser?.attributes = attributes
+            // currentUserの参照を変更してCombineオブザーバーを発火させる
+            if var currentUser = AuthService.shared.currentUser {
+                currentUser.attributes = attributes
+                AuthService.shared.currentUser = currentUser
+            }
             self.state = .success
         } catch {
             self.alertType = .okOnly(message: error.localizedDescription)
@@ -134,17 +140,18 @@ class CurrentUserProfileViewModel: ObservableObject {
         defer {
             self.isLoading = false
         }
-        
+
         do {
             try await CurrentUserService.updateInterestTags(tags: interestTags)
             AuthService.shared.currentUser?.interestTags = interestTags
             self.state = .success
+            
         } catch {
             self.alertType = .okOnly(message: error.localizedDescription)
             throw error
         }
     }
-    
+
     @MainActor
     func deleteTag(at index: Int) {
         guard interestTags.indices.contains(index) else { return }
