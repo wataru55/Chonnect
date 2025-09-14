@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditAttributeTags: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @EnvironmentObject var viewModel: EditProfileViewModel
     @Environment(\.dismiss) var dismiss
     
     private let attributes: [String] = [

@@ -9,9 +9,9 @@ import SwiftUI
 import PhotosUI
 
 struct EditProfileView: View {
+    @EnvironmentObject var viewModel: EditProfileViewModel
     @State var path = NavigationPath()
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
 
     let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
 
