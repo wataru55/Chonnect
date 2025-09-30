@@ -22,8 +22,30 @@ actor UserRepository {
             let userCache = UserCache(from: user)
 
             try await realm.asyncWrite {
-                // .modifiedオプション付きで追加・更新
-                realm.add(userCache, update: .modified)
+                // 既存のキャッシュを削除
+                if let existingCache = realm.object(ofType: UserCache.self, forPrimaryKey: user.id)
+                {
+                    existingCache.username = user.username
+                    existingCache.bio = user.bio
+                    existingCache.isPrivate = user.isPrivate
+                    existingCache.fcmtoken = user.fcmtoken
+                    existingCache.lastUpdated = Date()
+
+                    existingCache.attributes.removeAll()
+                    existingCache.attributes.append(objectsIn: user.attributes)
+
+                    existingCache.interestTags.removeAll()
+                    existingCache.interestTags.append(objectsIn: user.interestTags)
+
+                    // SNS Linksを完全にクリアしてから新しい値を設定
+                    existingCache.snsLinks.removeAll()
+                    for (key, value) in user.snsLinks {
+                        existingCache.snsLinks[key] = value
+                    }
+                } else {
+                    let userCache = UserCache(from: user)
+                    realm.add(userCache)
+                }
             }
         } catch {
             print("Error saving or updating single UserCache: \(error)")

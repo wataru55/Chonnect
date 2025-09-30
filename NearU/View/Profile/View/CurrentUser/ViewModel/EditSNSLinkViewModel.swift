@@ -5,31 +5,29 @@
 //  Created by  髙橋和 on 2024/07/13.
 //
 
+import Combine
+import Firebase
 import PhotosUI
 import SwiftUI
-import Firebase
 
 class EditSNSLinkViewModel: ObservableObject {
-    @Published var snsUrls: [String: String] = [:] // SNSリンクを保存
     @Published var inputUrls: [String] = [""]
     @Published var isShowAlert: Bool = false
     @Published var state: ViewState = .idle
-    
+
     var errorMessage: String?
-    
+    private var cancellables = Set<AnyCancellable>()
+
+    var snsUrls: [String: String] {
+        AuthService.shared.currentUser?.snsLinks ?? [:]
+    }
+
     var isSNSLinkValid: Bool {
         Validation.validateSNSURL(urls: inputUrls)
     }
-    
+
     var isInputUrlsAllEmpty: Bool {
         inputUrls.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-    }
-
-
-    init() {
-        Task {
-            await loadSNSLinks()
-        }
     }
 
     /// サービスとその対応するホスト名のマッピング
@@ -44,7 +42,7 @@ class EditSNSLinkViewModel: ObservableObject {
         "Zenn": ["zenn.dev"],
         "Wantedly": ["wantedly.com"],
         "Linkedin": ["linkedin.com"],
-        "Threads": ["threads.net"]
+        "Threads": ["threads.net"],
     ]
 
     private func getServiceName(urlString: String) -> Result<String, Error> {
@@ -67,9 +65,9 @@ class EditSNSLinkViewModel: ObservableObject {
     @MainActor
     func updateSNSLink(urls: [String]) async {
         self.state = .loading
-        
+
         var updateDict: [String: String] = [:]
-        
+
         for url in urls {
             if !url.isEmpty {
                 let result = getServiceName(urlString: url)
@@ -82,17 +80,17 @@ class EditSNSLinkViewModel: ObservableObject {
                 }
             }
         }
-        
+
         do {
             try await LinkService.saveSNSLink(updateDict: updateDict)
             for (field, value) in updateDict {
                 // field = "snsLinks.{serviceName}", value = url
                 let serviceName = field.replacingOccurrences(of: "snsLinks.", with: "")
-                addSNSLinks(serviceName: serviceName, urlString: value)
+                AuthService.shared.currentUser?.snsLinks[serviceName] = value
             }
             self.inputUrls = [""]
             self.state = .success
-            
+
         } catch let error as FireStoreSaveError {
             self.state = .idle
             self.errorMessage = error.localizedDescription
@@ -109,9 +107,9 @@ class EditSNSLinkViewModel: ObservableObject {
         self.state = .loading
         do {
             try await LinkService.deleteSNSLink(serviceName: serviceName, url: url)
-            snsUrls[serviceName] = nil // 該当のキーを削除
+            AuthService.shared.currentUser?.snsLinks[serviceName] = nil
             self.state = .success
-        
+
         } catch let error as FireStoreSaveError {
             self.state = .idle
             self.errorMessage = error.localizedDescription
@@ -121,23 +119,5 @@ class EditSNSLinkViewModel: ObservableObject {
             self.errorMessage = "予期せぬエラーです"
             self.isShowAlert = true
         }
-    }
-
-    @MainActor
-    func loadSNSLinks() async {
-        let result = await CurrentUserService.loadCurrentUser()
-        switch result {
-        case .success(let user):
-            self.snsUrls = user.snsLinks
-            
-        case .failure(let error):
-            print(error.localizedDescription)
-        }
-    
-    }
-    
-    @MainActor
-    func addSNSLinks(serviceName: String, urlString: String) {
-        self.snsUrls[serviceName] = urlString
     }
 }
