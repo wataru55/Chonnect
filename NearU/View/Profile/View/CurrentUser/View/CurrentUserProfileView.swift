@@ -162,8 +162,9 @@ struct CurrentUserProfileView: View {
         }
         .tint(.black)
         .onAppear {
-            // ArticleLinksViewModelにCurrentUserProfileViewModelを設定
+            // 各ViewModelにCurrentUserProfileViewModelを設定
             articleLinksViewModel.setCurrentUserProfileViewModel(viewModel)
+            tagsViewModel.setCurrentUserProfileViewModel(viewModel)
         }
     }  // body
 
