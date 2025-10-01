@@ -28,7 +28,6 @@ struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var editProfileviewModel = EditProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
-    @StateObject var addLinkViewModel = EditSNSLinkViewModel()
     @StateObject var followViewModel = FollowViewModel()
     @StateObject var followerViewModel = FollowerViewModel()
     @StateObject var tagsViewModel = EditSkillTagsViewModel()
@@ -93,18 +92,18 @@ struct CurrentUserProfileView: View {
                 switch destination {
                 case .editProfile:
                     EditProfileView()
-                    
+                        .environmentObject(editProfileviewModel)
+
                 case .editSkillTags:
                     EditSkillTagsView(viewModel: tagsViewModel)
-                    
+
                 case .editSNSLink:
                     EditSNSLinkView()
-                        .environmentObject(addLinkViewModel)
-                    
+
                 case .editArticle:
                     EditArticleView()
                         .environmentObject(articleLinksViewModel)
-                    
+
                 case .wordCloud:
                     WordCloudView(skillSortedTags: tagsViewModel.skillSortedTags)
 
@@ -118,15 +117,15 @@ struct CurrentUserProfileView: View {
 
                 case .profileImage:
                     EditImageView()
-                    
+
                 case .userName:
                     EditUserNameView()
                         .environmentObject(editProfileviewModel)
-                    
+
                 case .bio:
                     EditBioView()
                         .environmentObject(editProfileviewModel)
-                    
+
                 case .attribute:
                     EditAttributeTags()
                         .environmentObject(editProfileviewModel)
@@ -162,6 +161,10 @@ struct CurrentUserProfileView: View {
             }
         }
         .tint(.black)
+        .onAppear {
+            // ArticleLinksViewModelにCurrentUserProfileViewModelを設定
+            articleLinksViewModel.setCurrentUserProfileViewModel(viewModel)
+        }
     }  // body
 
     //MARK: - Helper Functions
