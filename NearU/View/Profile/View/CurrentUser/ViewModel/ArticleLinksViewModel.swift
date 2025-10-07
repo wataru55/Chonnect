@@ -42,11 +42,29 @@ class ArticleLinksViewModel: ObservableObject {
 
         do {
             let articles = try await LinkService.saveArticleLink(urls: articleUrls)
-            for article in articles {
-                let ogpData = await LinkService.fetchOpenGraphData(article: article)
-                currentUserProfileViewModel?.openGraphData.append(ogpData)
+
+            // TaskGroupを使用して並行処理
+            let ogpDataArray = try await withThrowingTaskGroup(
+                of: OpenGraphData.self,
+                returning: [OpenGraphData].self
+            ) { group in
+                // 各記事のOGPデータ取得を並行で開始
+                for article in articles {
+                    group.addTask {
+                        return await LinkService.fetchOpenGraphData(article: article)
+                    }
+                }
+
+                // 全てのタスクの完了を待つ
+                var results: [OpenGraphData] = []
+                for try await ogpData in group {
+                    results.append(ogpData)
+                }
+                return results
             }
 
+            // 結果を一括で追加
+            currentUserProfileViewModel?.openGraphData.append(contentsOf: ogpDataArray)
             await currentUserProfileViewModel?.updateCache()
             self.articleUrls = [""]
 

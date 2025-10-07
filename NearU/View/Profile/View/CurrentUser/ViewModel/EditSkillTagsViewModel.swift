@@ -20,6 +20,7 @@ class EditSkillTagsViewModel: ObservableObject {
 
     private weak var currentUserProfileViewModel: CurrentUserProfileViewModel?
     private var cancellables = Set<AnyCancellable>()
+    private var skillTagsCancellable: AnyCancellable?
     let skillLevels = ["1", "2", "3", "4", "5"]
 
     var mergedTags: [WordElement] {
@@ -38,13 +39,13 @@ class EditSkillTagsViewModel: ObservableObject {
     func setCurrentUserProfileViewModel(_ viewModel: CurrentUserProfileViewModel) {
         self.currentUserProfileViewModel = viewModel
 
-        cancellables.removeAll()
-        viewModel.$skillSortedTags
+        skillTagsCancellable?.cancel()
+
+        skillTagsCancellable = viewModel.$skillSortedTags
             .sink { [weak self] tags in
                 guard let self = self else { return }
                 self.skillSortedTags = sortSkillTags(tags: tags)
             }
-            .store(in: &cancellables)
     }
 
     @MainActor
@@ -100,6 +101,10 @@ class EditSkillTagsViewModel: ObservableObject {
     func reset() {
         self.languages = [WordElement(id: UUID(), name: "", skill: "3")]
         self.skillSortedTags = currentUserProfileViewModel?.skillSortedTags ?? []
+    }
+
+    deinit {
+        skillTagsCancellable?.cancel()
     }
 
 }
