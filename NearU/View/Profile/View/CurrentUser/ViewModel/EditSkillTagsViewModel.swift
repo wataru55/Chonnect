@@ -5,9 +5,9 @@
 //  Created by  髙橋和 on 2024/11/21.
 //
 
-import SwiftUI
-import Firebase
 import Combine
+import Firebase
+import SwiftUI
 
 class EditSkillTagsViewModel: ObservableObject {
     @Published var skillSortedTags: [WordElement] = []
@@ -17,37 +17,49 @@ class EditSkillTagsViewModel: ObservableObject {
     @Published var state: ViewState = .idle
     @Published var isShowAlert: Bool = false
     @Published var errorMessage: String?
-    
+
+    private weak var currentUserProfileViewModel: CurrentUserProfileViewModel?
+    private var cancellables = Set<AnyCancellable>()
+    private var skillTagsCancellable: AnyCancellable?
     let skillLevels = ["1", "2", "3", "4", "5"]
-    
+
     var mergedTags: [WordElement] {
         let newLanguages = languages.filter { language in
             !language.name.isEmpty && !skillSortedTags.contains(where: { $0.name == language.name })
         }
-        
+
         return skillSortedTags + newLanguages
     }
-        
 
-    private var cancellables = Set<AnyCancellable>()
+    var isAbleToSave: Bool {
+        return currentUserProfileViewModel?.skillSortedTags != mergedTags
+    }
 
-    init() {
-        Task {
-            await loadSkillTags()
-        }
+    // CurrentUserProfileViewModelを設定するメソッド
+    func setCurrentUserProfileViewModel(_ viewModel: CurrentUserProfileViewModel) {
+        self.currentUserProfileViewModel = viewModel
+
+        skillTagsCancellable?.cancel()
+
+        skillTagsCancellable = viewModel.$skillSortedTags
+            .sink { [weak self] tags in
+                guard let self = self else { return }
+                self.skillSortedTags = sortSkillTags(tags: tags)
+            }
     }
 
     @MainActor
     func saveSkillTags() async {
         state = .loading
-        
+
         do {
             try await TagsService.saveTags(tagData: mergedTags)
-            self.skillSortedTags = sortSkillTags(tags: mergedTags)
-            languages = [WordElement(id: UUID(), name: "", skill: "3")]
+            currentUserProfileViewModel?.skillSortedTags = mergedTags
+            await currentUserProfileViewModel?.updateCache()
+            self.languages = [WordElement(id: UUID(), name: "", skill: "3")]
             state = .success
-            
-        } catch let error as FireStoreSaveError{
+
+        } catch let error as FireStoreSaveError {
             self.isShowAlert = true
             self.errorMessage = error.localizedDescription
             state = .idle
@@ -60,26 +72,17 @@ class EditSkillTagsViewModel: ObservableObject {
     }
 
     @MainActor
-    func loadSkillTags() async {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        
-        do {
-            let tags = try await TagsService.fetchTags(documentId: documentId)
-            self.skillSortedTags = tags.sorted { $0.skill > $1.skill }
-        } catch {
-            print("DEBUG: Error fetching tags \(error)")
-        }
-    }
-
-    @MainActor
     func deleteSkillTag(id: String) async {
         state = .loading
-        
+
         do {
             try await TagsService.deleteTag(id: id)
-            skillSortedTags.removeAll(where: { $0.id.uuidString == id })
+            currentUserProfileViewModel?.skillSortedTags.removeAll(
+                where: { $0.id.uuidString == id }
+            )
+            await currentUserProfileViewModel?.updateCache()
             state = .success
-            
+
         } catch let error as FireStoreSaveError {
             self.isShowAlert = true
             self.errorMessage = error.localizedDescription
@@ -90,9 +93,18 @@ class EditSkillTagsViewModel: ObservableObject {
             state = .idle
         }
     }
-    
+
     func sortSkillTags(tags: [WordElement]) -> [WordElement] {
         return tags.sorted { $0.skill > $1.skill }
+    }
+
+    func reset() {
+        self.languages = [WordElement(id: UUID(), name: "", skill: "3")]
+        self.skillSortedTags = currentUserProfileViewModel?.skillSortedTags ?? []
+    }
+
+    deinit {
+        skillTagsCancellable?.cancel()
     }
 
 }

@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct EditSNSLinkView: View {
-    @EnvironmentObject var viewModel: EditSNSLinkViewModel
-    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98) // デフォルトの背景色
-    
+    @StateObject var viewModel = EditSNSLinkViewModel()
+    let backgroundColor: Color = Color(red: 0.96, green: 0.97, blue: 0.98)  // デフォルトの背景色
+
     // 登録可能なSNS一覧
     let availableSNS = [
         "GitHub", "X", "Instagram", "YouTube", "Facebook",
-        "TikTok", "Qiita", "Zenn", "Wantedly", "LinkedIn", "Threads"
+        "TikTok", "Qiita", "Zenn", "Wantedly", "LinkedIn", "Threads",
     ]
-    
+
     var body: some View {
         ZStack {
             backgroundColor.ignoresSafeArea()
-            
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text("SNSのURLを追加")
@@ -28,12 +28,12 @@ struct EditSNSLinkView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 5)
                         .padding(.top, 10)
-                    
+
                     VStack(alignment: .leading) {
                         Text("登録可能なSNS:")
                             .font(.caption2)
                             .foregroundColor(.gray)
-                        
+
                         Text(availableSNS.joined(separator: ", "))
                             .font(.caption2)
                             .foregroundColor(.gray)
@@ -41,7 +41,7 @@ struct EditSNSLinkView: View {
                     .padding(.top, 3)
                     .padding(.leading, 9)
                     .padding(.bottom, 10)
-                    
+
                     if !viewModel.isSNSLinkValid {
                         Text("登録できないURLが含まれています")
                             .font(.footnote)
@@ -49,7 +49,7 @@ struct EditSNSLinkView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.bottom, 5)
                     }
-                    
+
                     VStack(spacing: 3) {
                         ForEach(viewModel.inputUrls.indices, id: \.self) { index in
                             TextField("URLを入力", text: $viewModel.inputUrls[index])
@@ -58,7 +58,7 @@ struct EditSNSLinkView: View {
                                 .background(Color(.systemGray5))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                        
+
                         Button {
                             viewModel.inputUrls.append("")
                         } label: {
@@ -73,14 +73,14 @@ struct EditSNSLinkView: View {
                         }
                         .padding(.horizontal, 15)
                         .padding(.bottom, 10)
-                        
+
                         Text("SNS一覧")
                             .font(.footnote)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 5)
                             .padding(.vertical, 10)
-                        
+
                         if viewModel.snsUrls.isEmpty {
                             Text("SNSのリンクがありません")
                                 .font(.subheadline)
@@ -88,18 +88,22 @@ struct EditSNSLinkView: View {
                                 .foregroundColor(.gray)
                                 .padding()
                         } else {
-                            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 10) {
+                            LazyVGrid(
+                                columns: Array(repeating: .init(.flexible()), count: 3), spacing: 10
+                            ) {
                                 ForEach(Array(viewModel.snsUrls.keys), id: \.self) { key in
                                     if let url = viewModel.snsUrls[key] {
-                                        SNSLinkButtonView(selectedSNS: key, sns_url: url, isShowDeleteButton: true)
-                                            .environmentObject(viewModel)
+                                        SNSLinkButtonView(
+                                            selectedSNS: key, sns_url: url, isShowDeleteButton: true
+                                        )
+                                        .environmentObject(viewModel)
                                     }
                                 }
-                            } // LazyVGrid
+                            }  // LazyVGrid
                             .padding(.horizontal, 10)
                         }
-                    } // VStack
-                } // VStack
+                    }  // VStack
+                }  // VStack
                 .padding()
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("SNSの追加・削除")
@@ -114,11 +118,13 @@ struct EditSNSLinkView: View {
                         Text("追加")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundStyle(viewModel.isSNSLinkValid && !viewModel.isInputUrlsAllEmpty ? Color.mint : Color.gray)
+                            .foregroundStyle(
+                                viewModel.isSNSLinkValid && !viewModel.isInputUrlsAllEmpty
+                                    ? Color.mint : Color.gray)
                     }
                     .disabled(!viewModel.isSNSLinkValid || viewModel.isInputUrlsAllEmpty)
                     .alert("Error", isPresented: $viewModel.isShowAlert) {
-                        Button("OK", role: .cancel) { }
+                        Button("OK", role: .cancel) {}
                     } message: {
                         if let errorMessage = viewModel.errorMessage {
                             Text(errorMessage)
@@ -126,9 +132,9 @@ struct EditSNSLinkView: View {
                     }
                 }
             }
-            
+
             ViewStateOverlayView(state: $viewModel.state)
-        } // ZStack
+        }  // ZStack
         .navigationBack()
         .onDisappear {
             viewModel.inputUrls = [""]

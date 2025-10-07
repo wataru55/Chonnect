@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditInterestTagsView: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @EnvironmentObject var viewModel: EditProfileViewModel
     @Environment(\.dismiss) var dismiss
     @FocusState private var isFocused: Bool
     

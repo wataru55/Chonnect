@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditUserNameView: View {
-    @EnvironmentObject var viewModel: CurrentUserProfileViewModel
+    @EnvironmentObject var viewModel: EditProfileViewModel
     @Environment(\.dismiss) var dismiss
     @FocusState private var isFocused: Bool
     
@@ -111,6 +111,6 @@ struct EditUserNameView: View {
     }
 }
 
-#Preview {
-    EditUserNameView()
-}
+//#Preview {
+//    EditUserNameView()
+//}

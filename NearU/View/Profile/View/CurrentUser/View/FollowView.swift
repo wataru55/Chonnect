@@ -10,39 +10,39 @@ import SwiftUI
 struct FollowView: View {
     @EnvironmentObject var viewModel: FollowViewModel
 
-    var currentUser: User
-
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
-                if viewModel.followUsers.isEmpty {
-                    NothingDataView(text: "フォローしているユーザーがいません",
-                                    explanation: "ここでは、あなたがフォローしたユーザーの一覧が表示されます。",
-                                    isSystemImage: true,
-                                    isAbleToReload: true)
+                if viewModel.follows.isEmpty {
+                    NothingDataView(
+                        text: "フォローしているユーザーがいません",
+                        explanation: "ここでは、あなたがフォローしたユーザーの一覧が表示されます。",
+                        isSystemImage: true,
+                        isAbleToReload: true)
 
                 } else {
-                    ForEach(viewModel.followUsers, id: \.self) { followUser in
+                    ForEach(viewModel.follows, id: \.self) { followUser in
                         NavigationLink(value: followUser) {
-                            UserRowView(user: followUser.user, tags: followUser.user.interestTags,
-                                        date: followUser.date, rssi: nil)
+                            UserRowView(
+                                user: followUser.user, tags: followUser.user.interestTags,
+                                date: followUser.date, rssi: nil)
                         }
-                    }//foreach
+                    }  //foreach
                 }
-            }//lazyvstack
+            }  //lazyvstack
             .padding(.top, 8)
             .padding(.bottom, 100)
 
-        }//scrollview
+        }  //scrollview
         .refreshable {
             Task {
-                await viewModel.loadFollowedUsers()
+                await viewModel.reload()
             }
         }
     }
 }
 
-#Preview {
-    FollowView(currentUser: User.MOCK_USERS[0])
-        .environmentObject(FollowViewModel())
-}
+// #Preview {
+//     FollowView()
+//         .environmentObject(FollowViewModel())
+// }

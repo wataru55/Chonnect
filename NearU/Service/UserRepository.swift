@@ -10,17 +10,54 @@ import Foundation
 
 actor UserRepository {
     var realm: Realm!
-    
+
     init() async throws {
         realm = try await Realm(actor: self)
     }
-    
+
+    /// 単一のUserオブジェクトを受け取り、UserCacheとして保存・更新する
+    func saveOrUpdate(user: User) async {
+        do {
+            // UserをUserCacheに変換
+            let userCache = UserCache(from: user)
+
+            try await realm.asyncWrite {
+                // 既存のキャッシュを削除
+                if let existingCache = realm.object(ofType: UserCache.self, forPrimaryKey: user.id)
+                {
+                    existingCache.username = user.username
+                    existingCache.bio = user.bio
+                    existingCache.isPrivate = user.isPrivate
+                    existingCache.fcmtoken = user.fcmtoken
+                    existingCache.lastUpdated = Date()
+
+                    existingCache.attributes.removeAll()
+                    existingCache.attributes.append(objectsIn: user.attributes)
+
+                    existingCache.interestTags.removeAll()
+                    existingCache.interestTags.append(objectsIn: user.interestTags)
+
+                    // SNS Linksを完全にクリアしてから新しい値を設定
+                    existingCache.snsLinks.removeAll()
+                    for (key, value) in user.snsLinks {
+                        existingCache.snsLinks[key] = value
+                    }
+                } else {
+                    let userCache = UserCache(from: user)
+                    realm.add(userCache)
+                }
+            }
+        } catch {
+            print("Error saving or updating single UserCache: \(error)")
+        }
+    }
+
     /// Userオブジェクトを受け取り、UserCacheとして保存・更新する
     func saveOrUpdate(users: [User]) async {
         do {
             // 1. [User] (structの配列) を [UserCache] (Realm Objectの配列) に変換
             let userCaches = users.map { UserCache(from: $0) }
-            
+
             try await realm.asyncWrite {
                 // 2. 変換した配列を、.modifiedオプション付きで一括で追加・更新
                 realm.add(userCaches, update: .modified)
@@ -29,29 +66,29 @@ actor UserRepository {
             print("Error saving or updating multiple UserCaches: \(error)")
         }
     }
-    
+
     func fetch(userIds: [String]) -> [User] {
         let cacheTTL: TimeInterval = CacheConfig.userProfileTTL
-        let expirationDate = Date().addingTimeInterval(-cacheTTL) // 有効期限となる日時を計算
-        
+        let expirationDate = Date().addingTimeInterval(-cacheTTL)  // 有効期限となる日時を計算
+
         let freshCaches = realm.objects(UserCache.self)
             .filter("id IN %@ AND lastUpdated > %@", userIds, expirationDate)
-        
+
         return Array(freshCaches.map { $0.toModel() })
     }
-    
+
     func fetch(userId: String) -> User? {
         let cacheTTL: TimeInterval = CacheConfig.userProfileTTL
 
         guard let userCache = realm.object(ofType: UserCache.self, forPrimaryKey: userId) else {
             return nil
         }
-        
+
         // キャッシュが有効期限切れ（stale）でないかチェック
         if Date().timeIntervalSince(userCache.lastUpdated) > cacheTTL {
             return nil
         }
-        
+
         // 新鮮なキャッシュはUserに変換して返す
         return userCache.toModel()
     }

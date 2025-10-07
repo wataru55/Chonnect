@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-struct HistoryDataStruct: Codable, UserIdentifiable {
+struct HistoryDataStruct: Codable, UserIdentifiable, Hashable {
     let userId: String
     var date: Date
-    
+
     var userIdentifier: String { userId }
-    
+
     init(from object: HistoryData) {
         self.userId = object.userId
         self.date = object.date
     }
-    
+
     // Realmオブジェクトに変換するメソッド
     func toRealmObject() -> HistoryData {
         let realmObject = HistoryData()
@@ -26,4 +26,3 @@ struct HistoryDataStruct: Codable, UserIdentifiable {
         return realmObject
     }
 }
-

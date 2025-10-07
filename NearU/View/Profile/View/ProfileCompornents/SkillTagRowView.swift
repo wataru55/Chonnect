@@ -67,7 +67,6 @@ struct SkillTagRowView: View {
                     Button("削除", role: .destructive) {
                         Task {
                             await viewModel.deleteSkillTag(id: $language.id.uuidString)
-                            await viewModel.loadSkillTags()
                         }
                     }
                 } message: {
