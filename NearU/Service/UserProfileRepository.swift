@@ -38,10 +38,6 @@ actor UserProfileRepository {
                 // 各データをCache用のObjectに変換
                 profileCache.user = UserCache(from: profileData.user)
 
-                profileCache.follows.append(
-                    objectsIn: profileData.follows.map { UserCache(from: $0) })
-                profileCache.followers.append(
-                    objectsIn: profileData.followers.map { UserCache(from: $0) })
                 profileCache.skillTags.append(
                     objectsIn: profileData.skillTags.map { WordElementCache(from: $0) })
 
@@ -71,13 +67,11 @@ actor UserProfileRepository {
         guard let user = profileCache.user?.toModel() else { return .notFound }
 
         // 各データを変換
-        let follows = Array(profileCache.follows.map { $0.toModel() })
-        let followers = Array(profileCache.followers.map { $0.toModel() })
         let skillTags = Array(profileCache.skillTags.map { $0.toModel() })
         let ogp = Array(profileCache.ogp.compactMap { $0.toModel() })
 
         let data = ProfileData(
-            user: user, follows: follows, followers: followers, skillTags: skillTags, ogp: ogp)
+            user: user, skillTags: skillTags, ogp: ogp)
 
         // --- TTLのチェックロジック ---
         // キャッシュの有効期限を1時間（3600秒）とする場合
