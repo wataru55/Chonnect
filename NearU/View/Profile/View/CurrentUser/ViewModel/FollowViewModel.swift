@@ -5,19 +5,20 @@
 //  Created by  髙橋和 on 2024/06/03.
 //
 
-import Foundation
 import Combine
 import Firebase
+import Foundation
 
 class FollowViewModel: ObservableObject {
-    @Published var followUsers: [UserDatePair] = []
+    @Published var follows: [UserDatePair] = []
+    private var followData: [HistoryDataStruct]
     private var listener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
-    
+
     private var userProvider: UserProvider?
 
-    init() {
-        listenForUpdates()
+    init(followData: [HistoryDataStruct]) {
+        self.followData = followData
         setupSubscribers()
 
         Task {
@@ -32,13 +33,12 @@ class FollowViewModel: ObservableObject {
             print("UserProviderが準備できていません。")
             return
         }
-        
+
         do {
-            let followedData = try await FollowService.fetchFollowedUsers(receivedId: "")
-            let users = try await provider.fetchUsers(with: followedData)
-            
-            let userDictionary = users.reduce(into: [String: User]()) { $0[$1.id] = $1 }
-            self.followUsers = followedData.compactMap { data in
+            let followUsers = try await provider.fetchUsers(with: followData)
+            let userDictionary = Dictionary(uniqueKeysWithValues: followUsers.map { ($0.id, $0) })
+
+            self.follows = followData.compactMap { data in
                 if let user = userDictionary[data.userId] {
                     return UserDatePair(user: user, date: data.date)
                 }
@@ -50,41 +50,26 @@ class FollowViewModel: ObservableObject {
         }
     }
 
-    func listenForUpdates() {
-        guard let documentId = AuthService.shared.currentUser?.id else { return }
-        listener = Firestore.firestore().collection("users").document(documentId).collection("follows")
-            .addSnapshotListener { [weak self] querySnapshot, error in
-                guard let self = self else { return }
-                if let error = error {
-                    print("Error listening for updates: \(error)")
-                    return
-                }
-                guard let _ = querySnapshot else {
-                    print("QuerySnapshot data was empty.")
-                    return
-                }
-                // ドキュメントに変更があれば fetchfollowedUsers() を実行
-                Task {
-                    await self.loadFollowedUsers()
-                }
-            }
+    @MainActor
+    func reload() async {
+        do {
+            self.followData = try await FollowService.fetchFollowedUsers(receivedId: "")
+            await loadFollowedUsers()
+        } catch {
+            print("Error reloading followed users: \(error)")
+        }
     }
-    
+
     private func setupSubscribers() {
         BlockUserManager.shared.$blockUserIds
             .sink { [weak self] blockUserIds in
                 guard let self = self else { return }
-                
+
                 // blockUserIdsに含まれるユーザーを除外
-                self.followUsers = self.followUsers.filter { followUser in
+                self.follows = self.follows.filter { followUser in
                     !blockUserIds.contains(followUser.userIdentifier)
                 }
             }
             .store(in: &cancellables)
     }
-
-    deinit {
-        listener?.remove()
-    }
 }
-

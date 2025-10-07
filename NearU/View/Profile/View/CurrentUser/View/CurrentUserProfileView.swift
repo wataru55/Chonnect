@@ -28,8 +28,6 @@ struct CurrentUserProfileView: View {
     @StateObject private var viewModel = CurrentUserProfileViewModel()
     @StateObject var editProfileviewModel = EditProfileViewModel()
     @StateObject var articleLinksViewModel = ArticleLinksViewModel()
-    @StateObject var followViewModel = FollowViewModel()
-    @StateObject var followerViewModel = FollowerViewModel()
     @StateObject var tagsViewModel = EditSkillTagsViewModel()
 
     @State var path = NavigationPath()
@@ -110,10 +108,9 @@ struct CurrentUserProfileView: View {
                 case .followFollower(let data):
                     FollowFollowerView(
                         selectedTab: data.selectedTab,
-                        currentUser: data.currentUser
+                        followData: data.followData,
+                        followerData: data.followerData
                     )
-                    .environmentObject(followViewModel)
-                    .environmentObject(followerViewModel)
 
                 case .profileImage:
                     EditImageView()
@@ -221,14 +218,18 @@ struct CurrentUserProfileView: View {
         HStack {
             NavigationLink(
                 value: CurrentUserProfileDestination.followFollower(
-                    FollowNavigationData(selectedTab: 0, currentUser: viewModel.user))
+                    FollowNavigationData(
+                        selectedTab: 0, followData: viewModel.followUsers,
+                        followerData: viewModel.followers))
             ) {
                 CountView(count: viewModel.followUsers.count, text: "フォロー")
             }
 
             NavigationLink(
                 value: CurrentUserProfileDestination.followFollower(
-                    FollowNavigationData(selectedTab: 1, currentUser: viewModel.user))
+                    FollowNavigationData(
+                        selectedTab: 1, followData: viewModel.followUsers,
+                        followerData: viewModel.followers))
             ) {
                 CountView(count: viewModel.followers.count, text: "フォロワー")
             }
@@ -379,5 +380,6 @@ struct CurrentUserProfileView: View {
 
 struct FollowNavigationData: Hashable {
     let selectedTab: Int
-    let currentUser: User
+    let followData: [HistoryDataStruct]
+    let followerData: [HistoryDataStruct]
 }

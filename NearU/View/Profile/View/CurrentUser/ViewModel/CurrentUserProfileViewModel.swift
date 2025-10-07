@@ -12,12 +12,15 @@ import SwiftUI
 
 class CurrentUserProfileViewModel: ObservableObject {
     @Published var user: User
-    @Published var followUsers: [User] = []
-    @Published var followers: [User] = []
     @Published var skillSortedTags: [WordElement] = []
     @Published var openGraphData: [OpenGraphData] = []
 
+    @Published var followUsers: [HistoryDataStruct] = []
+    @Published var followers: [HistoryDataStruct] = []
+
     private var userProfileRepo: UserProfileRepository?
+    private var followsListener: ListenerRegistration?
+    private var followersListener: ListenerRegistration?
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -30,6 +33,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         }
 
         setupSubscribers()
+        listenForUpdates()
 
         Task {
             self.userProfileRepo = try? await UserProfileRepository()
@@ -51,10 +55,12 @@ class CurrentUserProfileViewModel: ObservableObject {
         case .fresh(let data):
             print("✅ CurrentUserの新鮮なキャッシュを利用します")
             await updateUI(with: data)
+            await fetchFollowData()
 
         case .stale(let data):
             print("⚠️ CurrentUserの古いキャッシュを先に表示します")
             await updateUI(with: data)
+            await fetchFollowData()
 
             print("⏳ 裏側で最新データの取得を開始します...")
             await fetchFromNetworkAndCache()
@@ -62,6 +68,7 @@ class CurrentUserProfileViewModel: ObservableObject {
         case .notFound:
             print("�� CurrentUserのキャッシュがないため、最新データを取得します")
             await fetchFromNetworkAndCache()
+            await fetchFollowData()
         }
     }
 
@@ -70,8 +77,6 @@ class CurrentUserProfileViewModel: ObservableObject {
 
         let currentProfileData = ProfileData(
             user: user,
-            follows: followUsers,
-            followers: followers,
             skillTags: skillSortedTags,
             ogp: openGraphData.map { ($0.article, $0.openGraphSource) }
         )
@@ -82,9 +87,6 @@ class CurrentUserProfileViewModel: ObservableObject {
 
     @MainActor
     private func updateUI(with data: ProfileData) {
-        // フォロー・フォロワーデータをUserDatePairに変換
-        self.followUsers = data.follows
-        self.followers = data.followers
         self.skillSortedTags = data.skillTags
         self.openGraphData = data.ogp.map {
             OpenGraphData(article: $0.article, openGraphSource: $0.openGraphSource)
@@ -98,9 +100,6 @@ class CurrentUserProfileViewModel: ObservableObject {
             let allData = try await withThrowingTaskGroup(
                 of: ProfileDataPartial.self, returning: ProfileData.self
             ) { group in
-
-                group.addTask { .follows(try await self.fetchFollowUsers()) }
-                group.addTask { .followers(try await self.fetchFollowers()) }
                 group.addTask { .skillTags(try await self.fetchSkillTags()) }
                 group.addTask { .openGraphData(try await self.fetchArticleLinks()) }
 
@@ -113,8 +112,6 @@ class CurrentUserProfileViewModel: ObservableObject {
                     partials: partials,
                     initial: ProfileData(
                         user: currentUser,
-                        follows: [],
-                        followers: [],
                         skillTags: [],
                         ogp: []
                     ))
@@ -129,24 +126,21 @@ class CurrentUserProfileViewModel: ObservableObject {
         }
     }
 
-    private func fetchFollowUsers() async throws -> [User] {
-        guard let provider: UserProvider = try? await UserProvider() else {
-            print("UserProviderが準備できていません。")
-            return []
-        }
-        let followsData: [HistoryDataStruct] = try await FollowService.fetchFollowedUsers(
-            receivedId: "")
-        return try await provider.fetchUsers(with: followsData)
-    }
+    private func fetchFollowData() async {
+        do {
+            async let followsTask = FollowService.fetchFollowedUsers(receivedId: "")
+            async let followersTask = FollowService.fetchFollowers(receivedId: "")
 
-    private func fetchFollowers() async throws -> [User] {
-        guard let provider: UserProvider = try? await UserProvider() else {
-            print("UserProviderが準備できていません。")
-            return []
+            let (follows, followers) = try await (followsTask, followersTask)
+
+            await MainActor.run {
+                self.followUsers = follows
+                self.followers = followers
+            }
+
+        } catch {
+            print("current: フォロー・フォロワー情報の取得に失敗しました: \(error)")
         }
-        let followersData: [HistoryDataStruct] = try await FollowService.fetchFollowers(
-            receivedId: "")
-        return try await provider.fetchUsers(with: followersData)
     }
 
     private func fetchSkillTags() async throws -> [WordElement] {
@@ -184,6 +178,50 @@ class CurrentUserProfileViewModel: ObservableObject {
         }
     }
 
+    private func listenForUpdates() {
+        guard let documentId = AuthService.shared.currentUser?.id else { return }
+
+        // followsコレクションのリスナー
+        followsListener = Firestore.firestore()
+            .collection("users")
+            .document(documentId)
+            .collection("follows")
+            .addSnapshotListener { [weak self] querySnapshot, error in
+                guard let self = self else { return }
+                if let error = error {
+                    print("Error listening for follows updates: \(error)")
+                    return
+                }
+                guard querySnapshot != nil else {
+                    print("Follows QuerySnapshot data was empty.")
+                    return
+                }
+                Task {
+                    await self.fetchFollowData()
+                }
+            }
+
+        // followersコレクションのリスナー
+        followersListener = Firestore.firestore()
+            .collection("users")
+            .document(documentId)
+            .collection("followers")
+            .addSnapshotListener { [weak self] querySnapshot, error in
+                guard let self = self else { return }
+                if let error = error {
+                    print("Error listening for followers updates: \(error)")
+                    return
+                }
+                guard querySnapshot != nil else {
+                    print("Followers QuerySnapshot data was empty.")
+                    return
+                }
+                Task {
+                    await self.fetchFollowData()
+                }
+            }
+    }
+
     private func setupSubscribers() {
         AuthService.shared.$currentUser
             .compactMap({ $0 })
@@ -191,5 +229,11 @@ class CurrentUserProfileViewModel: ObservableObject {
                 self?.user = currentUser
             }
             .store(in: &cancellables)
+    }
+
+    deinit {
+        print("----------deinit CurrentUserProfileViewModel--------")
+        followsListener?.remove()
+        followersListener?.remove()
     }
 }

@@ -10,38 +10,38 @@ import SwiftUI
 struct FollowerView: View {
     @EnvironmentObject var viewModel: FollowerViewModel
 
-    var currentUser: User
-
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 16) {
                 if viewModel.followers.isEmpty {
-                    NothingDataView(text: "フォローされたユーザーがいません",
-                                    explanation: "ここでは、あなたをフォローしたユーザーの一覧が表示されます。",
-                                    isSystemImage: true,
-                                    isAbleToReload: true)
+                    NothingDataView(
+                        text: "フォローされたユーザーがいません",
+                        explanation: "ここでは、あなたをフォローしたユーザーの一覧が表示されます。",
+                        isSystemImage: true,
+                        isAbleToReload: true)
                 } else {
                     ForEach(viewModel.followers, id: \.self) { follower in
                         NavigationLink(value: follower) {
-                            UserRowView(user: follower.user, tags: follower.user.interestTags,
-                                        date: follower.date, rssi: nil)
+                            UserRowView(
+                                user: follower.user, tags: follower.user.interestTags,
+                                date: follower.date, rssi: nil)
                         }
-                    } //foreach
+                    }  //foreach
                 }
-            } //lazyvstack
+            }  //lazyvstack
             .padding(.top, 8)
             .padding(.bottom, 100)
 
-        } //scrollview
+        }  //scrollview
         .refreshable {
             Task {
-                await viewModel.loadFollowers()
+                await viewModel.reload()
             }
         }
     }
 }
 
-#Preview {
-    FollowerView(currentUser: User.MOCK_USERS[0])
-        .environmentObject(FollowerViewModel())
-}
+// #Preview {
+//     FollowerView()
+//         .environmentObject(FollowerViewModel())
+// }
